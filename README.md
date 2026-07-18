@@ -59,16 +59,19 @@ They are copied so this project stands alone; they are **not** paper content.
 | Module | Role |
 | --- | --- |
 | `RadicalRelativity/OrderUnitSpace.lean`     | order-unit-space scaffold (leaf) |
-| `RadicalRelativity/SequentialProduct.lean`  | sequential-product axioms |
+| `RadicalRelativity/SequentialProduct.lean`  | exact S1--S7 interface plus a separately named algebraic core |
 | `RadicalRelativity/LocalTomography.lean`    | composite / local-tomography structures |
-| `RadicalRelativity/SpinFactor.lean`         | spin-factor instance |
+| `RadicalRelativity/SpinFactor.lean`         | spin-factor algebraic-core instance (S2 not yet claimed) |
 
 ### Paper modules
 
 **Twist normal form**
 - `RadicalRelativity/TwistNormalForm.lean`
 
-**Master theorem chain — capstone `master_chain` (11 modules)**
+**Exact statement boundary (target, not a classification proof)**
+- `RadicalRelativity/PaperA/Statement.lean`
+
+**Master theorem chain — capstone `master_chain` (12 modules including Central)**
 - `RadicalRelativity/MasterTheorem/Interface.lean`
 - `RadicalRelativity/MasterTheorem/Coalescence.lean`
 - `RadicalRelativity/MasterTheorem/DiagonalHom.lean`
@@ -80,6 +83,7 @@ They are copied so this project stands alone; they are **not** paper content.
 - `RadicalRelativity/MasterTheorem/Adapter.lean`
 - `RadicalRelativity/MasterTheorem/Master.lean`
 - `RadicalRelativity/MasterTheorem/RankTwo.lean`
+- `RadicalRelativity/MasterTheorem/Central.lean`
 
 **Selection — earlier block-core development (pair-local ansatz route)**
 - `RadicalRelativity/Selection/BaseEquality.lean`

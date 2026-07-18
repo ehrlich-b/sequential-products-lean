@@ -21,7 +21,7 @@ import RadicalRelativity.Selection.TwistIsotropy
 -- Part I type exclusion: base-equality dichotomy.
 import RadicalRelativity.Selection.BaseEquality
 
--- Master theorem chain (capstone `master_chain`), 11 modules.
+-- Master theorem chain (capstone `master_chain`), 12 modules including Central.
 import RadicalRelativity.MasterTheorem.Interface
 import RadicalRelativity.MasterTheorem.Coalescence
 import RadicalRelativity.MasterTheorem.DiagonalHom
@@ -38,3 +38,7 @@ import RadicalRelativity.MasterTheorem.RankTwo
 -- componentwise. Adds the machine-checked componentwise formula; summand-inheritance
 -- is a documented paper-only follow-up.
 import RadicalRelativity.MasterTheorem.Central
+
+-- Exact paper-facing S1--S7 and product-conclusion statement boundary.  This
+-- freezes the target signature; it does not claim the classification is proved.
+import RadicalRelativity.PaperA.Statement

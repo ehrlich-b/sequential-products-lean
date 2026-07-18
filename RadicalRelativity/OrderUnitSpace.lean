@@ -4,7 +4,7 @@ Released under Apache 2.0 license.
 Authors: Bryan Ehrlich
 -/
 import Mathlib.Data.Real.Basic
-import Mathlib.Algebra.Module.Basic
+import Mathlib.Analysis.Normed.Module.Basic
 import Mathlib.Algebra.Order.Group.Defs
 import Mathlib.Tactic.Linarith
 
@@ -32,8 +32,8 @@ noncomputable section
 /-- An order unit space is a real vector space with a partial order compatible
     with addition and a distinguished Archimedean order unit. -/
 class OrderUnitSpace (V : Type*) extends
-    AddCommGroup V,
-    Module ℝ V,
+    NormedAddCommGroup V,
+    NormedSpace ℝ V,
     PartialOrder V where
   /-- Addition respects order on the left. -/
   add_le_add_left : ∀ (a b : V), a ≤ b → ∀ c, c + a ≤ c + b

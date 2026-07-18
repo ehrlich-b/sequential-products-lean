@@ -36,7 +36,7 @@ as **explicit hypotheses** (`hproj`, `hcompat`, `hunit`, the central decompositi
 assuming the Jordan reference structure the paper is agnostic about.
 
 The two axioms the proof genuinely *consumes* are S5 (`sp_assoc_of_compatible`) and S1
-(`sp_add_right`), both already fields of `SequentialProduct`. What Lean checks:
+(`sp_add_right`), both already fields of `SequentialProductCore`. What Lean checks:
 
 * `central_component` — the load-bearing per-summand identity
   `a & (π α b) = (π α a) & (π α b)`, from S5 + the carried imports. Zero `sorry`.
@@ -60,11 +60,11 @@ follow-up. This module makes no claim to formalize it.
 
 noncomputable section
 
-open OrderUnitSpace SequentialProduct
+open OrderUnitSpace SequentialProduct SequentialProductCore
 
 namespace MasterTheorem.Central
 
-variable {V : Type*} [SequentialProduct V]
+variable {V : Type*} [SequentialProductCore V]
 
 /-- **Right additivity of the sequential product over a finite sum** (iterated S1).
 For an effect `a` and a family `c : ι → V` whose partial sums are all effects
@@ -126,7 +126,7 @@ Imports carried as hypotheses (the cited bridge/vdW-Prop-5.2 surface, NOT derive
 
 Proof: `sp_sum_right` (iterated S1) pushes `a &` through `b = ∑ α, π α b`, then
 `central_component` (S5 + imports) rewrites each term `a & (π α b)` to
-`(π α a) & (π α b)`. The two axioms consumed are S1 and S5, both `SequentialProduct`
+`(π α a) & (π α b)`. The two axioms consumed are S1 and S5, both `SequentialProductCore`
 fields; the summand-inheritance clause is a documented paper-only follow-up (see the
 module docstring). -/
 theorem central_decomposition {m : ℕ} (e : Fin m → V) (π : Fin m → V → V)

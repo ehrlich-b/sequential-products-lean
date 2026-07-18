@@ -5,15 +5,24 @@ Authors: Bryan Ehrlich
 -/
 import RadicalRelativity.OrderUnitSpace
 import Mathlib.Tactic.Abel
+import Mathlib.Topology.Basic
 
 set_option linter.style.longLine false
 
 /-!
-# Sequential Product Spaces
+# Sequential Product Spaces: exact S1--S7 boundary
 
 A **sequential product space** is an order unit space equipped with a binary
-operation `&` on the effect space [0,1]_V satisfying axioms S1-S7 from
+operation `&` on the effect space [0,1]_V satisfying axioms S1--S7 from
 van de Wetering (arXiv:1803.11139, Definition 2).
+
+This file separates the algebraic core (S1 and S3--S7) from the topological
+axiom S2 without weakening the public definition. `SequentialProductCore`
+carries the algebraic core and effect closure. `FirstArgContinuous` is the
+literal S2 predicate in the norm topology supplied by `OrderUnitSpace`.
+`SequentialProduct` extends the core with that S2 proof; on the paper's
+finite-dimensional simple EJAs, where the carried norm is equivalent to the
+order-unit norm, it is exactly the seven-axiom paper interface.
 
 The sequential product `a & b` encodes: "first test a, then test b" with
 intermediate model update. This is the foundational structure from which
@@ -21,7 +30,9 @@ quantum mechanics is derived.
 
 ## Main definitions
 
-* `SequentialProduct` — typeclass for the & operation satisfying S1-S7
+* `SequentialProductCore` — algebraic core: S1, S3--S7, and effect closure
+* `FirstArgContinuous` — exact S2, continuity of `a ↦ a & b` on effects
+* `SequentialProduct` — exact paper interface, S1--S7
 * `SequentialProduct.Compatible` — two effects commute under &
 * `SequentialProduct.jordanProd` — the Jordan product `a ∘ b = ½(a & b + b & a)`
 
@@ -34,21 +45,20 @@ noncomputable section
 
 open OrderUnitSpace
 
-/-- A **sequential product space** is an order unit space (V, 𝟙) equipped with
-    a binary operation `sp : V → V → V` on effects satisfying axioms S1-S7.
+/-- The **algebraic core** of a sequential product space: an order unit space
+    `(V, 𝟙)` equipped with a binary operation `sp : V → V → V` whose
+    restriction to effects satisfies S1 and S3--S7.
 
     We define `sp` on all of V for convenience; the axioms only constrain
-    behavior on the effect space [0,1]_V. -/
-class SequentialProduct (V : Type*) extends OrderUnitSpace V where
+    behavior on the effect space `[0,1]_V`.  `sp_effect` is not an eighth axiom:
+    it records the codomain of the paper's effect-level operation.  Paper S2 is
+    the separate predicate `FirstArgContinuous` below. -/
+class SequentialProductCore (V : Type*) extends OrderUnitSpace V where
   /-- The sequential product operation `a & b`. -/
   sp : V → V → V
   -- S1: Additivity in second argument: a & (b + c) = a & b + a & c when b + c ≤ 𝟙
   sp_add_right : ∀ {a b c : V}, IsEffect a → IsEffect b → IsEffect c →
     b + c ≤ ousUnit → sp a (b + c) = sp a b + sp a c
-  -- S2: Positivity in second argument (equivalent to right-monotonicity via S1)
-  -- Van de Wetering S2: b ↦ a & b is positive, i.e. b₁ ≤ b₂ → a & b₁ ≤ a & b₂
-  sp_mono_right : ∀ {a b₁ b₂ : V}, IsEffect a → IsEffect b₁ → IsEffect b₂ →
-    b₁ ≤ b₂ → sp a b₁ ≤ sp a b₂
   -- S3: Unitality: 𝟙 & a = a
   sp_unit_left : ∀ {a : V}, IsEffect a → sp ousUnit a = a
   -- S4: Symmetry of orthogonality: a & b = 0 → b & a = 0
@@ -71,18 +81,39 @@ class SequentialProduct (V : Type*) extends OrderUnitSpace V where
     sp a (sp b c) = sp (sp b c) a
   -- Effect closure: sp maps effects to effects
   sp_effect : ∀ {a b : V}, IsEffect a → IsEffect b → IsEffect (sp a b)
-  -- Linearity of L_a on effect differences: a & (b - c) = a & b - a & c
-  -- Follows from van de Wetering's S2 (continuity of b ↦ a & b).
-  -- Strictly stronger than sp_sub_right (which requires c ≤ b).
-  sp_sub_right_general : ∀ {a b c : V}, IsEffect a → IsEffect b → IsEffect c →
-    sp a (b - c) = sp a b - sp a c
 
 namespace SequentialProduct
 
-variable {V : Type*} [SequentialProduct V]
+open SequentialProductCore
+
+variable {V : Type*} [SequentialProductCore V]
 
 /-- Notation for the sequential product. -/
-scoped infixl:70 " & " => SequentialProduct.sp
+scoped infixl:70 " & " => SequentialProductCore.sp
+
+/-- **Paper axiom S2, exactly.** For every effect `b`, the map
+`a ↦ a & b` is continuous on the effect interval in the ambient topology.
+
+The ambient topology is the norm topology carried by `OrderUnitSpace`
+(`NormedAddCommGroup`/`NormedSpace ℝ`); on the paper's finite-dimensional simple
+EJAs this is the order-unit norm, all norms there being equivalent.  Naming the
+predicate prevents the former variable-swap bug, where second-variable
+monotonicity was labelled "S2" even though Definition 2 requires first-variable
+norm continuity. -/
+def FirstArgContinuous : Prop :=
+  ∀ ⦃b : V⦄, IsEffect b →
+    ContinuousOn (fun a : V => a & b) {a : V | IsEffect a}
+
+/-- The exact S1--S7 sequential-product interface of van de Wetering,
+Definition 2. S1 and S3--S7 come from the inherited algebraic core; the field
+is precisely first-variable norm continuity S2. -/
+class _root_.SequentialProduct (V : Type*) extends SequentialProductCore V where
+  sp_continuous_left : FirstArgContinuous (V := V)
+
+/-- Unbundled spelling of the paper's S2 (first-variable continuity), useful in
+theorem signatures and statement-fidelity audits; S1 and S3--S7 remain
+typeclass-side in `SequentialProductCore`. -/
+def PaperS2 : Prop := FirstArgContinuous (V := V)
 
 /-- Two effects are compatible if they commute under &. -/
 def Compatible (a b : V) : Prop :=
@@ -145,6 +176,24 @@ theorem unit_compatible {a : V} (ha : IsEffect a) :
 theorem sp_nonneg {a b : V} (ha : IsEffect a) (hb : IsEffect b) :
     (0 : V) ≤ a & b :=
   (sp_effect ha hb).1
+
+/-- Right monotonicity is derived from S1 and effect closure; it is not paper
+S2 and therefore is not an independent structure field. -/
+theorem sp_mono_right {a b₁ b₂ : V} (ha : IsEffect a)
+    (hb₁ : IsEffect b₁) (hb₂ : IsEffect b₂) (hle : b₁ ≤ b₂) :
+    a & b₁ ≤ a & b₂ := by
+  have hdiff : IsEffect (b₂ - b₁) :=
+    ⟨sub_nonneg_of_le hle,
+      le_trans (sub_le_self_of_nonneg hb₁.1) hb₂.2⟩
+  have hsum : b₁ + (b₂ - b₁) ≤ (𝟙 : V) := by
+    have heq : b₁ + (b₂ - b₁) = b₂ := by abel
+    rw [heq]
+    exact hb₂.2
+  have hadd := sp_add_right ha hb₁ hdiff hsum
+  have heq : b₁ + (b₂ - b₁) = b₂ := by abel
+  rw [heq] at hadd
+  rw [hadd]
+  exact le_add_of_nonneg_right (sp_effect ha hdiff).1
 
 /-- The sequential product is bounded by the left argument: a & b ≤ a. -/
 theorem sp_le_left {a b : V} (ha : IsEffect a) (hb : IsEffect b) :

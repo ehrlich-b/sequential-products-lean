@@ -11,12 +11,14 @@ import Mathlib.Tactic.NormNum
 set_option linter.style.longLine false
 
 /-!
-# Spin Factor V₃: A Non-Commutative Sequential Product Space
+# Spin Factor V₃: the algebraic sequential-product core
 
 The **spin factor** V₃ = ℝ × ℝ² is the simplest non-commutative Euclidean Jordan algebra,
 isomorphic to M₂(ℝ)^sa (self-adjoint 2×2 real matrices). It provides a concrete
-non-commutative instance of `SequentialProduct`, complementing the commutative
-diagonal instance in `M2CInstance.lean`.
+non-commutative instance of `SequentialProductCore` (S1 and
+S3--S7).  The first-variable continuity axiom S2 is deliberately not claimed by
+this module until continuity of the explicit piecewise `sqrtPSD` formula is
+proved at its degenerate locus.
 
 ## Representation
 
@@ -773,19 +775,9 @@ theorem matTripleProd_assoc_parallel (s t c : SpinFactor)
 /-! ### SequentialProduct instance -/
 
 set_option maxHeartbeats 1600000 in
-instance : SequentialProduct SpinFactor where
+instance : SequentialProductCore SpinFactor where
   sp := seqProd
   sp_add_right := by intro a b c _ _ _ _; simp only [seqProd, matTripleProd_add_right]
-  sp_mono_right := by
-    intro a b₁ b₂ ha _ _ hle
-    -- seqProd a b₂ - seqProd a b₁ = matTripleProd(√a, b₂ - b₁) by linearity.
-    -- Since b₂ - b₁ ≥ 0 and √a ≥ 0, matTripleProd_nonneg gives the result.
-    change IsNonneg (seqProd a b₂ - seqProd a b₁)
-    have ha_nn : IsNonneg a := by have h := ha.1; simp only [le_def] at h; simpa using h
-    have h_eq : seqProd a b₂ - seqProd a b₁ = matTripleProd (sqrtPSD a) (b₂ - b₁) := by
-      simp only [seqProd, matTripleProd]; ext <;> simp <;> ring
-    rw [h_eq]
-    exact matTripleProd_nonneg _ _ (sqrtPSD_nonneg a ha_nn) hle
   sp_unit_left := by intro a _; change seqProd unit a = a; simp only [seqProd, sqrtPSD_unit, matTripleProd_unit_left]
   sp_zero_symm := by
     intro a b ha hb h0
@@ -1047,9 +1039,4 @@ instance : SequentialProduct SpinFactor where
           · nlinarith [sq_nonneg (s * t - (p * x + q * y))]
           · push_neg at hpos; nlinarith
         exact key _ _ _ _ _ _ h1.1 h2.1 h1.2 h2.2⟩
-  sp_sub_right_general := by
-    intro a b c ha _ _
-    -- seqProd a (b - c) = matTripleProd(√a, b - c) = matTripleProd(√a, b) - matTripleProd(√a, c)
-    simp only [seqProd, matTripleProd]; ext <;> simp <;> ring
-
 end SpinFactor
