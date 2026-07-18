@@ -34,6 +34,19 @@ Lean's three core axioms:
 
 No custom `axiom` declarations appear in the `master_chain` import tree.
 
+## SymPy cross-check
+
+`verify_n2.py` corroborates the rank-two algebraic identities (labels V1–V10)
+of the paper's §6 in exact symbolic arithmetic:
+
+```bash
+python3 verify_n2.py   # prints per-identity PASS lines; exits 0 on success
+```
+
+Runs under Python 3 with SymPy (tested: Python 3.14, SymPy 1.14); exact
+symbolic arithmetic only, no floating point. It corroborates the
+self-contained paper proofs of §6 rather than replacing them.
+
 ## Module map
 
 `RadicalRelativity.lean` (root) aggregates the paper's modules.
