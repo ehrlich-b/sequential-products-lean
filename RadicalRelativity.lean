@@ -42,3 +42,8 @@ import RadicalRelativity.MasterTheorem.Central
 -- Exact paper-facing S1--S7 and product-conclusion statement boundary.  This
 -- freezes the target signature; it does not claim the classification is proved.
 import RadicalRelativity.PaperA.Statement
+
+-- Persisted statement-fidelity pins for the audit harness.  Named theorems (not
+-- anonymous `example`s) so the axiom census in AxiomAudit.lean visits them: a
+-- `sorry` or stray axiom substituted for any pin's direct proof fails the census.
+import RadicalRelativity.PaperA.AuditPins
