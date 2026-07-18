@@ -1,22 +1,65 @@
-import RadicalRelativity.MasterTheorem.Master
-import RadicalRelativity.MasterTheorem.Central
-import RadicalRelativity.MasterTheorem.Globalization
-import RadicalRelativity.MasterTheorem.Adapter
-import RadicalRelativity.MasterTheorem.RankTwo
-import RadicalRelativity.PaperA.Statement
+import RadicalRelativity
 
-/-! # Axiom-closure allowlist
+open Lean
 
-Each `#guard_msgs`-guarded `#print axioms` below fails elaboration unless the
-named theorem's axiom closure is exactly Lean's three core axioms
-(`propext`, `Classical.choice`, `Quot.sound`).  The list is not just the
-`master_chain` capstone: it covers one principal advertised result per module
-family (the four produced branches, the central decomposition, the two
-globalization results, the adapter globalizer, and the rank-two classification
-endpoints), so a stray `axiom`, `sorry`, or `native_decide` anywhere in their
-cones turns the audit red.  The two cited-import axioms
-(`aczel_continuous_multiplicative`, `bgw_canonical_composite`) live in the
-normal-form and composition legs, outside every cone probed here. -/
+/-! # Axiom census, closure allowlist, and statement-fidelity gates
+
+Three layers, all enforced by elaborating this file
+(`lake env lean AxiomAudit.lean`):
+
+1. a **project-wide axiom census** — every declaration defined in a
+   `RadicalRelativity.*` module may depend only on Lean's three core axioms
+   (`propext`, `Classical.choice`, `Quot.sound`) and the two disclosed
+   cited-literature axioms (`Selection.aczel_continuous_multiplicative`,
+   `TwistNormalForm.bgw_canonical_composite`).  A `sorryAx`, `native_decide`,
+   or any other axiom anywhere in the tree fails elaboration.  This is the
+   global no-`sorry`/no-stray-axiom gate;
+2. **exact-closure sentinels** — one principal advertised result per module
+   family, each pinned by `#guard_msgs` to *exactly* the three core axioms
+   (i.e. not even the two cited axioms enter these cones);
+3. **statement-fidelity pins** — the public S2 predicate, the two product-level
+   conclusion shapes, and the effect-level product, pinned by definitional
+   equality so a `True` body or a dropped quantifier fails elaboration.
+-/
+
+-- Layer 1: project-wide axiom census.
+run_cmd do
+  let env ← getEnv
+  let allowed : List Name :=
+    [``propext, ``Classical.choice, ``Quot.sound,
+     ``Selection.aczel_continuous_multiplicative,
+     ``TwistNormalForm.bgw_canonical_composite]
+  let isProject := fun (n : Name) =>
+    match env.getModuleFor? n with
+    | some m => (`RadicalRelativity).isPrefixOf m
+    | none => false
+  -- fast union pass over all project declarations (shared, memoised state)
+  let mut st : Lean.CollectAxioms.State := {}
+  for (n, _) in env.constants.toList do
+    if isProject n then
+      st := (((Lean.CollectAxioms.collect n).run env).run st).2
+  let bad := st.axioms.filter (fun a => !allowed.contains a)
+  if bad.isEmpty then
+    logInfo m!"Axiom census PASS: every RadicalRelativity declaration depends only on {allowed}"
+  else
+    -- attribute offenders (this second pass runs only on failure)
+    let mut offenders : Array Name := #[]
+    for (n, _) in env.constants.toList do
+      if isProject n then
+        let (_, s) := ((Lean.CollectAxioms.collect n).run env).run {}
+        if s.axioms.any (fun a => !allowed.contains a) then
+          offenders := offenders.push n
+    throwError m!"Project-wide axiom census FAILED. Unpermitted axioms: {bad}. Offending declarations: {offenders}"
+
+/-! ## Layer 2: exact-closure sentinels
+
+Each `#guard_msgs (whitespace := lax)` fails elaboration unless the named
+theorem's axiom closure is *exactly* Lean's three core axioms.  The list covers
+one principal advertised result per module family (the four produced branches,
+the central decomposition, the two globalization results, the adapter
+globalizer, and the rank-two classification endpoints).  The project-wide census
+above already bounds *every* declaration; these sentinels additionally certify
+that the advertised endpoints do not lean on the two cited axioms. -/
 
 /-- info: 'MasterTheorem.master_chain' depends on axioms: [propext, Classical.choice, Quot.sound] -/
 #guard_msgs (whitespace := lax) in
@@ -66,13 +109,12 @@ normal-form and composition legs, outside every cone probed here. -/
 #guard_msgs (whitespace := lax) in
 #print axioms MasterTheorem.RankTwo.sp_tau_std_is_unit_twist
 
-/-! ## Statement-fidelity compile gates
+/-! ## Layer 3: statement-fidelity pins
 
 These do not claim the classification theorem; they make the audit fail if the
-public S2 predicate or the two product-level target shapes silently change.  The
-Lüders and unique-twist gates pin the **complete** definitions by definitional
-equality (`rfl`), so replacing either body by `True` — or dropping a quantifier
-or the effect-product equality — breaks the audit. -/
+public S2 predicate, the two product-level target shapes, or the effect-level
+product silently change.  The Lüders and unique-twist gates pin the **complete**
+definitions by definitional equality (`rfl`). -/
 
 example {V : Type*} [SequentialProduct V] {b : V}
     (hb : OrderUnitSpace.IsEffect b) :
@@ -80,6 +122,10 @@ example {V : Type*} [SequentialProduct V] {b : V}
       (fun a : V => SequentialProductCore.sp a b)
       {a : V | OrderUnitSpace.IsEffect a} :=
   PaperA.s2_first_argument hb
+
+example {V : Type*} [SequentialProduct V] (a b : PaperA.Effect V) :
+    (PaperA.effectProduct V a b : V) = SequentialProductCore.sp a.1 b.1 :=
+  rfl
 
 example {V : Type*} [SequentialProduct V] (luders : PaperA.EffectProduct V) :
     PaperA.LudersConclusion V luders
