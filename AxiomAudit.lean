@@ -17,7 +17,11 @@ Four layers, all enforced by elaborating this file
    axiom declarations in the project — a new stray `axiom` anywhere fails; and
    (c) **source coverage**: the set of `RadicalRelativity` modules on disk
    equals the set imported here, so a new unimported module or a removed root
-   import fails, closing the "invisible module" escape;
+   import fails, closing the "invisible module" escape.  The source→module map
+   is first checked to reject dotted path segments and to be injective, so a
+   file like `PaperA.Statement.lean` cannot collide with the nested module
+   `PaperA/Statement` and smuggle an unimported `sorry`/`axiom` past the set
+   comparison;
 2. **exact-closure sentinels** — one principal advertised result per module
    family, each pinned by `#guard_msgs` to *exactly* the three core axioms
    (i.e. not even the two cited axioms enter these cones);
@@ -91,7 +95,25 @@ run_cmd do
   unless (← rrDir.isDir) do
     throwError m!"Module-coverage gate: run from the package root ('RadicalRelativity/' not found in the current directory)"
   let files ← auditCollectLeanFiles rrDir
-  let diskMods : List Name := (`RadicalRelativity :: files.toList.map auditPathToModule).eraseDups
+  -- (c0) reject malformed source paths: below the `.lean` suffix every path
+  -- segment must be a single module identifier with no embedded dot.  Otherwise a
+  -- file like `RadicalRelativity/PaperA.Statement.lean` rewrites under the `/`→`.`
+  -- map to the SAME name as the nested module `RadicalRelativity/PaperA/Statement`,
+  -- and an unimported `sorry`/`axiom` source could hide behind that collision.
+  for p in files do
+    let s := p.toString
+    for seg in s.splitOn "/" do
+      let dots := (seg.toList.filter (fun c => c == '.')).length
+      let ok := if seg.endsWith ".lean" then dots == 1 else dots == 0
+      unless ok do
+        throwError m!"Module-coverage gate FAILED: source path with a dotted segment (module-name collision hazard): {p}"
+  -- (c1) the source-path → module-name map must be injective on the source tree,
+  -- so two distinct files can never collapse to one name and mask an unimported
+  -- source before the `eraseDups` below.
+  let mappedMods : List Name := files.toList.map auditPathToModule
+  if mappedMods.length ≠ mappedMods.eraseDups.length then
+    throwError m!"Module-coverage gate FAILED: source-path→module map is not injective; distinct source files share a module name: {mappedMods}"
+  let diskMods : List Name := (`RadicalRelativity :: mappedMods).eraseDups
   let importedMods : List Name :=
     (env.header.moduleNames.toList.filter (fun m => (`RadicalRelativity).isPrefixOf m)).eraseDups
   let onlyDisk := diskMods.filter (fun m => !importedMods.contains m)
@@ -162,8 +184,11 @@ that the advertised endpoints do not lean on the two cited axioms. -/
 
 The four fidelity statements are named, persisted theorems in
 `RadicalRelativity.PaperA.AuditPins` (visited by the Layer 1 census).  Each is
-additionally exact-closure guarded below, so a pin proof weakened to `sorry` or
-a stray axiom fails both the census and its sentinel. -/
+additionally exact-closure guarded below (so a pin proof weakened to `sorry` or a
+stray axiom fails both the census and its sentinel) **and type-frozen** by a
+`#guard_msgs`/`#check` pair (so a silent change to a pin's *statement* — even one
+carried by a matching core-only direct proof — changes the printed type and fails
+elaboration). -/
 
 /-- info: 'PaperA.auditPin_s2' depends on axioms: [propext, Classical.choice, Quot.sound] -/
 #guard_msgs (whitespace := lax) in
@@ -180,6 +205,27 @@ a stray axiom fails both the census and its sentinel. -/
 /-- info: 'PaperA.auditPin_uniqueTwist' depends on axioms: [propext, Classical.choice, Quot.sound] -/
 #guard_msgs (whitespace := lax) in
 #print axioms PaperA.auditPin_uniqueTwist
+
+-- Type freezes: the exact printed statement of each fidelity pin.
+/-- info: @PaperA.auditPin_s2 : ∀ {V : Type u_1} [inst : SequentialProduct V] {b : V},
+  OrderUnitSpace.IsEffect b → ContinuousOn (fun a => SequentialProductCore.sp a b) {a | OrderUnitSpace.IsEffect a} -/
+#guard_msgs (whitespace := lax) in
+#check @PaperA.auditPin_s2
+
+/-- info: @PaperA.auditPin_effectProduct : ∀ {V : Type u_1} [inst : SequentialProduct V] (a b : PaperA.Effect V),
+  ↑(PaperA.effectProduct V a b) = SequentialProductCore.sp ↑a ↑b -/
+#guard_msgs (whitespace := lax) in
+#check @PaperA.auditPin_effectProduct
+
+/-- info: @PaperA.auditPin_luders : ∀ {V : Type u_1} [inst : SequentialProduct V] (luders : PaperA.EffectProduct V),
+  PaperA.LudersConclusion V luders = ∀ (a b : PaperA.Effect V), PaperA.effectProduct V a b = luders a b -/
+#guard_msgs (whitespace := lax) in
+#check @PaperA.auditPin_luders
+
+/-- info: @PaperA.auditPin_uniqueTwist : ∀ {V : Type u_1} [inst : SequentialProduct V] (twist : ℝ → PaperA.EffectProduct V),
+  PaperA.UniqueTwistConclusion V twist = ∃! t, ∀ (a b : PaperA.Effect V), PaperA.effectProduct V a b = twist t a b -/
+#guard_msgs (whitespace := lax) in
+#check @PaperA.auditPin_uniqueTwist
 
 /-! ## Layer 4: cited-axiom type pins
 

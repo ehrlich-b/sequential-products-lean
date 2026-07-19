@@ -14,11 +14,15 @@ set_option linter.style.longLine false
 # Order Unit Spaces
 
 An **order unit space** (V, V⁺, 1) is a real ordered vector space with a distinguished
-Archimedean order unit.
+order unit.  Two honesty notes on this encoding: the domination field below is the
+*order-unit* boundedness property (`a ≤ r • 1`), not the full Archimedean condition;
+and the carried `NormedAddCommGroup`/`NormedSpace` structure is an independent normed
+structure, not derived here as the order-unit norm.
 
 ## Main definitions
 
-* `OrderUnitSpace` — typeclass for ordered real vector spaces with Archimedean order unit
+* `OrderUnitSpace` — typeclass for ordered real vector spaces with an order unit
+  (order-unit boundedness)
 * `OrderUnitSpace.IsEffect` — predicate for the effect space [0, 1]_V
 
 ## References
@@ -30,7 +34,8 @@ Archimedean order unit.
 noncomputable section
 
 /-- An order unit space is a real vector space with a partial order compatible
-    with addition and a distinguished Archimedean order unit. -/
+    with addition and a distinguished order unit (order-unit boundedness; see the
+    `archimedean` field note). -/
 class OrderUnitSpace (V : Type*) extends
     NormedAddCommGroup V,
     NormedSpace ℝ V,
@@ -43,7 +48,10 @@ class OrderUnitSpace (V : Type*) extends
   smul_nonneg_mono : ∀ (r : ℝ), 0 ≤ r → ∀ {a b : V}, a ≤ b → r • a ≤ r • b
   /-- The order unit is positive. -/
   ousUnit_nonneg : (0 : V) ≤ ousUnit
-  /-- Archimedean: every element bounded by a scalar multiple of the unit. -/
+  /-- **Order-unit boundedness** (the order-unit axiom): every element is dominated
+      by some nonnegative scalar multiple of the unit, `a ≤ r • 1`.  This is the
+      order-unit property, weaker than the full Archimedean condition; the field name
+      is retained for continuity. -/
   archimedean : ∀ a : V, ∃ r : ℝ, 0 ≤ r ∧ a ≤ r • ousUnit
 
 namespace OrderUnitSpace

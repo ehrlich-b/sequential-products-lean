@@ -17,8 +17,10 @@ This file and its companion `RadicalRelativity/TwistNormalForm.lean` are the
 (the pair-local ansatz route). They predate the shipped manuscript and use its
 earlier internal labels (`thm:normal-form`, `lem:mult-rep`, `prop:coherence`,
 `prop:closure`, `def:canonical-composite`, `def:paths`), which are *not* section
-labels of the shipped paper; both axioms declared here lie outside the
-`master_chain` import tree and do not enter its axiom closure.
+labels of the shipped paper.  The two axioms of this development —
+`aczel_continuous_multiplicative` (declared in this file) and
+`bgw_canonical_composite` (declared in the companion `TwistNormalForm.lean`) —
+both lie outside the `master_chain` import tree and do not enter its axiom closure.
 
 This file formalizes the **existence** direction of the block twist normal form
 (that development's `thm:normal-form`): on a non-classical Peirce `1`-space `W`,
@@ -76,10 +78,10 @@ restates it relative to fixed ansatz data `D`: the twist is a function of `D.E`.
    harmless — the off-diagonal action `x^A y^B` is defined for every positive scalar
    and the multiplicative / coalescence identities hold verbatim — and it lets the
    coalescence generator `A+B` be read off by a two-sided derivative at the unit.
-3. **`lem:mult-rep` is axiomatized (the full lemma).**  That earlier development
-   proves `lem:mult-rep` elementarily (an integration argument turning the
-   continuous semigroup into a `C¹` one-parameter subgroup); we do not formalize
-   that analytic argument.  The operator form is standard one-parameter-group
+3. **`lem:mult-rep` is axiomatized (the full lemma).**  The earlier *manuscript*
+   argument establishes `lem:mult-rep` elementarily (an integration argument turning
+   the continuous semigroup into a `C¹` one-parameter subgroup); this Lean file does
+   not formalize that analytic argument and takes the lemma as an axiom instead.  The operator form is standard one-parameter-group
    theory (a continuous multiplicative map is `GL`-valued and `t ↦ h(e^{-t})` is
    a continuous, hence smooth, one-parameter group); the scalar functional
    equation is classical (Aczél 1966).  The axiom states the lemma verbatim —

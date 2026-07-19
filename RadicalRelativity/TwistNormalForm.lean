@@ -136,10 +136,13 @@ with commuting `A, B ∈ End(W)`, `A + B = Id`, equivalently
 `NormalForm` is an *interface* (a `structure`): it posits the endomorphisms
 `A, B`, their commuting, and the coalescence identity `A + B = Id` that
 Theorem `thm:normal-form` *derives* from S2/S3/S5 and the decomposition-independent
-ansatz.  Reproducing that existence derivation (Aczél's continuous
-one-parameter-subgroup theorem + the coalescence limit) is scheduled as `W2-5`;
-carrying the normal form as a structure rather than an existence theorem is what
-keeps this file **axiom-free**.
+ansatz.  Reproducing that existence derivation — the operator one-parameter-group
+argument (standard theory; the underlying scalar functional equation is Aczél 1966)
+together with the coalescence limit — is not formalized here.  Carrying the normal
+form as a structure rather than an existence theorem is what keeps the operator
+normal-form material free of any *custom* axiom; the sole axiom this file declares,
+`bgw_canonical_composite`, supports the separate canonical-composite construction
+below and lies outside the `master_chain` closure.
 
 `coherence_forces_luders` is the reciprocity elimination of Proposition
 `prop:coherence`.  The read/write reciprocity premise eq. (recognition-symmetry),
