@@ -46,7 +46,6 @@ Peirce/spectral fact (`Analysis on Symmetric Cones`, Ch. IV), specialized to the
 
 * Ehrlich 2026, *Sequential-Product Moduli on Simple Euclidean Jordan Algebras*,
   `lem:coalescence`, `lem:frame-fix`.
-* `research/qm-genericity-review/C6-TRANSPLANT-TEST-2026-07-13.md`, T2/T3 (= D3).
 * Faraut–Korányi, *Analysis on Symmetric Cones*, 1994, Ch. IV (Peirce theory).
 -/
 

@@ -18,10 +18,10 @@ import Mathlib.LinearAlgebra.Dimension.Constructions
 set_option linter.style.longLine false
 
 /-!
-# Descent results of the selection theorem (Part II, `sections/selection.tex`)
+# Descent results of the selection theorem (Part II of the companion manuscript)
 
-This file formalizes four descent results of Part II of "Self-Modeling Selects Complex
-Quantum Mechanics", each with zero paper-specific axioms:
+This file formalizes four descent results of Part II of a companion manuscript
+(in preparation), each with zero paper-specific axioms:
 
 * `Selection.inertia_obstruction` — `prop:inertia-obstruction`: for a reachable tower
   presentation the gauge projection `π : Aut(x) → S_A × Aut(Σ)` is injective.

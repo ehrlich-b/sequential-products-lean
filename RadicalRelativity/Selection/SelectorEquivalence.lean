@@ -12,8 +12,7 @@ set_option linter.style.longLine false
 # Selector equivalence (`thm:selector`) — interface-level legs
 
 This file formalizes, at the twist-normal-form interface level, the block-local
-content of Theorem `thm:selector` of Paper A ("Twist Normal Forms and Global
-Rigidity for Peirce-Respecting Sequential Products").  On a single Peirce `1`-space
+content of Theorem `thm:selector` of the twist-normal-form paper (Paper A).  On a single Peirce `1`-space
 `W`, working with the `TwistNormalForm.NormalForm` data (`A, B, T = A − ½·Id`) and
 the block action `E`, the theorem's selectors are:
 

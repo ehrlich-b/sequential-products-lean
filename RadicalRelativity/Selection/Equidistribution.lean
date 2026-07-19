@@ -18,8 +18,8 @@ set_option linter.style.longLine false
 # Block-restricted equidistribution over a finite field (`lem:equidistribution`)
 
 This file formalizes the manuscript's block-restricted equidistribution lemma
-(`lem:equidistribution` in `sections/selection.tex` of "Self-Modeling Selects
-Complex Quantum Mechanics", Part II), the finite-field fiber-counting estimate
+(`lem:equidistribution`, Part II of a companion manuscript in preparation), the
+finite-field fiber-counting estimate
 that drives the classical-suppression density bound `((q+1)/2q)^{a_s - t}` of
 `thm:classical-suppression`.
 
@@ -67,7 +67,7 @@ that drives the classical-suppression density bound `((q+1)/2q)^{a_s - t}` of
 
 ## References
 
-* Ehrlich 2026, "Self-Modeling Selects Complex Quantum Mechanics",
+* Ehrlich 2026, companion manuscript (in preparation),
   Lemma (block-restricted equidistribution bound), used in
   Theorem (classical suppression).
 -/
@@ -417,8 +417,8 @@ theorem block_restricted_equidistribution
 /-! ## Fixed-window suppression core (`thm:classical-suppression`, single window)
 
 The single-window density estimate at the heart of the classical-suppression
-theorem (`thm:classical-suppression` of `sections/selection.tex`, proof in
-supplement §S.4), obtained here directly from
+theorem (`thm:classical-suppression` of the companion manuscript, proof in
+its supplement), obtained here directly from
 `block_restricted_equidistribution`.
 
 Reading `block_restricted_equidistribution` on the record-interface block `J`

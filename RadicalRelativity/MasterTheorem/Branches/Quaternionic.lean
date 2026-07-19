@@ -13,8 +13,7 @@ set_option linter.unusedSectionVars false
 # Master Theorem chain — the quaternionic branch (`thm:quaternionic`)
 
 The quaternionic typewise branch of the master theorem
-(`landing/papers/twist-normal-form/main.tex`, `thm:quaternionic`; cross-type note
-`research/qm-genericity-review/C1-CROSSTYPE-STABILIZER-2026-07-13.md`, Piece 4).
+(`landing/papers/twist-normal-form/main.tex`, `thm:quaternionic`).
 
 On `Hₙ(ℍ)` with `n ≥ 3` the frame-stabilizer Lie algebra is `(Im ℍ)ⁿ`, and a
 stabilizer element `ξ = (ξ₁, …, ξₙ)` acts on the coherence block

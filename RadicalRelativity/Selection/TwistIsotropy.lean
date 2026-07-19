@@ -22,10 +22,8 @@ open scoped InnerProductSpace
 # Twist geometry on the rank-two block cone (`prop:boost`, `prop:isotropy`)
 
 This file formalizes the two twist-geometry propositions of the twist-normal-form
-paper's `sec:sp-twist` / `\S`~`sec:twist-geometry` ("Twist Normal Forms and Global
-Rigidity for Peirce-Respecting Sequential Products", the audited standalone
-extraction; the companion "Self-Modeling Selects Complex Quantum Mechanics" carries
-the same statements):
+paper's `sec:sp-twist` / `\S`~`sec:twist-geometry` (the audited standalone
+extraction; a companion manuscript in preparation carries the same statements):
 
 * **`prop:boost` (Boost criterion).**  On a rank-two Peirce block, the cone is the
   spin-factor ("ice-cream") cone `α, β ≥ 0 ∧ ‖w‖² ≤ αβ` in coordinates

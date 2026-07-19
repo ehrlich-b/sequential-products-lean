@@ -7,21 +7,26 @@ open Lean System
 Four layers, all enforced by elaborating this file
 (`lake env lean AxiomAudit.lean`):
 
-1. a **project-wide census** — over every declaration defined in a
-   `RadicalRelativity.*` module it enforces three things at once:
+1. a **tracked-tree census** — over every *persisted* declaration whose defining
+   module has prefix `RadicalRelativity` (this file, `AxiomAudit.lean`, and any
+   future package-root module outside that prefix are not visited; an anonymous
+   `example := by sorry` persists no declaration and is not visited either) it
+   enforces three things at once:
    (a) the axiom closure depends only on Lean's three core axioms
    (`propext`, `Classical.choice`, `Quot.sound`) and the two disclosed
    cited-literature axioms (`Selection.aczel_continuous_multiplicative`,
    `TwistNormalForm.bgw_canonical_composite`) — a `sorryAx`, `native_decide`,
    or any other axiom fails elaboration; (b) those two are the *only* custom
-   axiom declarations in the project — a new stray `axiom` anywhere fails; and
-   (c) **source coverage**: the set of `RadicalRelativity` modules on disk
-   equals the set imported here, so a new unimported module or a removed root
-   import fails, closing the "invisible module" escape.  The source→module map
-   is first checked to reject dotted path segments and to be injective, so a
-   file like `PaperA.Statement.lean` cannot collide with the nested module
-   `PaperA/Statement` and smuggle an unimported `sorry`/`axiom` past the set
-   comparison;
+   axiom declarations in the tracked tree — a new stray `axiom` in any tracked
+   module fails; and
+   (c) **source coverage + frozen manifest**: the set of `RadicalRelativity`
+   modules on disk equals the set imported here *and* equals a pinned 26-name
+   manifest, so a new unimported module, a removed root import, a name-colliding
+   source path, or a coordinated module+import deletion (which preserves
+   `disk == imported`) fails, closing both the "invisible module" and the
+   "shrink-both-sets" escapes.  The source→module map is first checked to reject
+   dotted path segments and to be injective, so a file like `PaperA.Statement.lean`
+   cannot collide with the nested module `PaperA/Statement`;
 2. **exact-closure sentinels** — one principal advertised result per module
    family, each pinned by `#guard_msgs` to *exactly* the three core axioms
    (i.e. not even the two cited axioms enter these cones);
@@ -116,11 +121,49 @@ run_cmd do
   let diskMods : List Name := (`RadicalRelativity :: mappedMods).eraseDups
   let importedMods : List Name :=
     (env.header.moduleNames.toList.filter (fun m => (`RadicalRelativity).isPrefixOf m)).eraseDups
+  -- (c2) frozen expected-module manifest.  `disk == imported` alone is preserved
+  -- by deleting a module AND its sole root import together (both sets shrink
+  -- equally), so the tracked surface is additionally pinned to this exact 26-name
+  -- list: any coordinated deletion, replacement (a count-preserving swap), or
+  -- addition fails against `expectedMods`.
+  let expectedMods : List Name :=
+    [`RadicalRelativity,
+     `RadicalRelativity.LocalTomography,
+     `RadicalRelativity.OrderUnitSpace,
+     `RadicalRelativity.SequentialProduct,
+     `RadicalRelativity.SpinFactor,
+     `RadicalRelativity.TwistNormalForm,
+     `RadicalRelativity.MasterTheorem.Adapter,
+     `RadicalRelativity.MasterTheorem.Central,
+     `RadicalRelativity.MasterTheorem.Coalescence,
+     `RadicalRelativity.MasterTheorem.DiagonalHom,
+     `RadicalRelativity.MasterTheorem.Globalization,
+     `RadicalRelativity.MasterTheorem.Interface,
+     `RadicalRelativity.MasterTheorem.Master,
+     `RadicalRelativity.MasterTheorem.RankTwo,
+     `RadicalRelativity.MasterTheorem.Branches.Albert,
+     `RadicalRelativity.MasterTheorem.Branches.Complex,
+     `RadicalRelativity.MasterTheorem.Branches.Quaternionic,
+     `RadicalRelativity.MasterTheorem.Branches.Real,
+     `RadicalRelativity.PaperA.AuditPins,
+     `RadicalRelativity.PaperA.Statement,
+     `RadicalRelativity.Selection.BaseEquality,
+     `RadicalRelativity.Selection.Descent,
+     `RadicalRelativity.Selection.Equidistribution,
+     `RadicalRelativity.Selection.NormalFormExistence,
+     `RadicalRelativity.Selection.SelectorEquivalence,
+     `RadicalRelativity.Selection.TwistIsotropy]
+  let missExpDisk := expectedMods.filter (fun m => !diskMods.contains m)
+  let extraDisk   := diskMods.filter (fun m => !expectedMods.contains m)
+  let missExpImp  := expectedMods.filter (fun m => !importedMods.contains m)
+  let extraImp    := importedMods.filter (fun m => !expectedMods.contains m)
+  if !missExpDisk.isEmpty || !extraDisk.isEmpty || !missExpImp.isEmpty || !extraImp.isEmpty then
+    throwError m!"Module-manifest gate FAILED (expected surface drifted). Expected-but-missing on disk: {missExpDisk}. Unexpected on disk: {extraDisk}. Expected-but-missing in imports: {missExpImp}. Unexpected in imports: {extraImp}"
   let onlyDisk := diskMods.filter (fun m => !importedMods.contains m)
   let onlyImported := importedMods.filter (fun m => !diskMods.contains m)
   if !onlyDisk.isEmpty || !onlyImported.isEmpty then
     throwError m!"Module-coverage gate FAILED. On disk but not imported (unimported source): {onlyDisk}. Imported but absent from disk (removed source / stale build): {onlyImported}"
-  logInfo m!"Census PASS: {diskMods.length} RadicalRelativity modules, custom axioms exactly {citedAxioms}, every declaration's closure ⊆ {allowed}"
+  logInfo m!"Census PASS: {diskMods.length} tracked RadicalRelativity modules (== frozen 26-name manifest), custom axioms exactly {citedAxioms}, every persisted declaration's closure ⊆ {allowed}"
 
 /-! ## Layer 2: exact-closure sentinels
 
@@ -271,3 +314,75 @@ citation audit, as the paper states.) -/
                       LocalTomography.EJAType.real (4 * m * n) } -/
 #guard_msgs (whitespace := lax) in
 #check @TwistNormalForm.bgw_canonical_composite
+
+/-! ## Layer 5: S1--S7 interface type freezes
+
+The seven paper axioms (S1, S3--S7), the effect-closure rider, the S2 predicate,
+and the `IsEffect`/`Effect` boundary are the small surface whose *statements* must
+not silently drift.  Each printed type is frozen here (parallel to the fidelity
+pins and cited axioms); a change to any field's shape changes the printed type and
+fails elaboration even if the build stays green.  `open SequentialProduct` so the
+`&` sequential-product notation prints as it does in the source.  (The census in
+Layer 1 already bounds every declaration's *axioms*; these freezes lock the S1--S7
+*shapes* against a source comparison drifting silently.) -/
+
+open SequentialProduct
+
+/-- info: @SequentialProductCore.sp_add_right : ∀ {V : Type u_1} [self : SequentialProductCore V] {a b c : V},
+  OrderUnitSpace.IsEffect a →
+    OrderUnitSpace.IsEffect b → OrderUnitSpace.IsEffect c → b + c ≤ OrderUnitSpace.ousUnit → a & (b + c) = a & b + a & c -/
+#guard_msgs (whitespace := lax) in
+#check @SequentialProductCore.sp_add_right
+
+/-- info: @SequentialProductCore.sp_unit_left : ∀ {V : Type u_1} [self : SequentialProductCore V] {a : V},
+  OrderUnitSpace.IsEffect a → OrderUnitSpace.ousUnit & a = a -/
+#guard_msgs (whitespace := lax) in
+#check @SequentialProductCore.sp_unit_left
+
+/-- info: @SequentialProductCore.sp_zero_symm : ∀ {V : Type u_1} [self : SequentialProductCore V] {a b : V},
+  OrderUnitSpace.IsEffect a → OrderUnitSpace.IsEffect b → a & b = 0 → b & a = 0 -/
+#guard_msgs (whitespace := lax) in
+#check @SequentialProductCore.sp_zero_symm
+
+/-- info: @SequentialProductCore.sp_assoc_of_compatible : ∀ {V : Type u_1} [self : SequentialProductCore V] {a b c : V},
+  OrderUnitSpace.IsEffect a →
+    OrderUnitSpace.IsEffect b → OrderUnitSpace.IsEffect c → a & b = b & a → a & (b & c) = a & b & c -/
+#guard_msgs (whitespace := lax) in
+#check @SequentialProductCore.sp_assoc_of_compatible
+
+/-- info: @SequentialProductCore.compatible_ortho : ∀ {V : Type u_1} [self : SequentialProductCore V] {a b : V},
+  OrderUnitSpace.IsEffect a →
+    OrderUnitSpace.IsEffect b → a & b = b & a → a & (OrderUnitSpace.ousUnit - b) = (OrderUnitSpace.ousUnit - b) & a -/
+#guard_msgs (whitespace := lax) in
+#check @SequentialProductCore.compatible_ortho
+
+/-- info: @SequentialProductCore.compatible_add : ∀ {V : Type u_1} [self : SequentialProductCore V] {a b c : V},
+  OrderUnitSpace.IsEffect a →
+    OrderUnitSpace.IsEffect b →
+      OrderUnitSpace.IsEffect c →
+        b + c ≤ OrderUnitSpace.ousUnit → a & b = b & a → a & c = c & a → a & (b + c) = (b + c) & a -/
+#guard_msgs (whitespace := lax) in
+#check @SequentialProductCore.compatible_add
+
+/-- info: @SequentialProductCore.compatible_sp : ∀ {V : Type u_1} [self : SequentialProductCore V] {a b c : V},
+  OrderUnitSpace.IsEffect a →
+    OrderUnitSpace.IsEffect b → OrderUnitSpace.IsEffect c → a & b = b & a → a & c = c & a → a & (b & c) = b & c & a -/
+#guard_msgs (whitespace := lax) in
+#check @SequentialProductCore.compatible_sp
+
+/-- info: @SequentialProductCore.sp_effect : ∀ {V : Type u_1} [self : SequentialProductCore V] {a b : V},
+  OrderUnitSpace.IsEffect a → OrderUnitSpace.IsEffect b → OrderUnitSpace.IsEffect (a & b) -/
+#guard_msgs (whitespace := lax) in
+#check @SequentialProductCore.sp_effect
+
+/-- info: @FirstArgContinuous : {V : Type u_1} → [SequentialProductCore V] → Prop -/
+#guard_msgs (whitespace := lax) in
+#check @SequentialProduct.FirstArgContinuous
+
+/-- info: @OrderUnitSpace.IsEffect : {V : Type u_1} → [OrderUnitSpace V] → V → Prop -/
+#guard_msgs (whitespace := lax) in
+#check @OrderUnitSpace.IsEffect
+
+/-- info: PaperA.Effect : (V : Type u_1) → [OrderUnitSpace V] → Type u_1 -/
+#guard_msgs (whitespace := lax) in
+#check @PaperA.Effect

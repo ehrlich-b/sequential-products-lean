@@ -16,8 +16,8 @@ set_option linter.style.longLine false
 # Base-equality dichotomy for diachronic narrowness (`prop:diachronic`)
 
 This file formalizes the arithmetic core of the manuscript's diachronic
-narrowness proposition (`prop:diachronic` in `sections/type-exclusion.tex` of
-"Self-Modeling Selects Complex Quantum Mechanics"): the base-equality
+narrowness proposition (`prop:diachronic` of a companion manuscript in
+preparation): the base-equality
 dichotomy and the zero-offset identity at the complex type.
 
 ## Manuscript statements
