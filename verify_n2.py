@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """verify_n2.py -- Exact symbolic verification for the n = 2 frame-dependent
-twist theorem (the qubit-boundary theorem) of "Twist Normal Forms and Global
-Rigidity for Peirce-Respecting Sequential Products".
+twist theorem (the qubit-boundary theorem) of "A Classification of Sequential
+Products on Simple Euclidean Jordan Algebras of Rank >= 3".
 
 All checks are exact (SymPy symbols / rational arithmetic; no floating point).
 The product under test is

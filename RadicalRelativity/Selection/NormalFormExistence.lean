@@ -10,17 +10,23 @@ import Mathlib.Analysis.SpecialFunctions.ExpDeriv
 set_option linter.style.longLine false
 
 /-!
-# Existence half of the twist normal form (`thm:normal-form`)
+# Existence half of the twist normal form
 
-This file formalizes the **existence** direction of the block twist normal form,
-Theorem `thm:normal-form` of Paper A ("Twist Normal Forms and Global Rigidity for
-Peirce-Respecting Sequential Products"): on a non-classical Peirce `1`-space `W`,
+This file and its companion `RadicalRelativity/TwistNormalForm.lean` are the
+**separate earlier Lean development** described in the shipped paper's appendix
+(the pair-local ansatz route). They predate the shipped manuscript and use its
+earlier internal labels (`thm:normal-form`, `lem:mult-rep`, `prop:coherence`,
+`prop:closure`, `def:canonical-composite`, `def:paths`), which are *not* section
+labels of the shipped paper; both axioms declared here lie outside the
+`master_chain` import tree and do not enter its axiom closure.
+
+This file formalizes the **existence** direction of the block twist normal form
+(that development's `thm:normal-form`): on a non-classical Peirce `1`-space `W`,
 continuity, unitality, and compatible associativity force the off-diagonal action
 into the shape `E(x,y) = x^A y^B` with commuting `A, B ∈ End(W)` and `A + B = Id`
 — i.e. they *produce* a `TwistNormalForm.NormalForm W`.  The companion file
-`RadicalRelativity/TwistNormalForm.lean` (Wave `W2-1`) carries the `NormalForm`
-interface itself and the *coherence* direction (`prop:coherence`,
-`coherence_forces_luders`); this file supplies the missing construction of that
+carries the `NormalForm` interface itself and the *coherence* direction
+(`coherence_forces_luders`); this file supplies the missing construction of that
 interface from the sequential-product axioms.
 
 ## What is proved
@@ -70,14 +76,17 @@ restates it relative to fixed ansatz data `D`: the twist is a function of `D.E`.
    harmless — the off-diagonal action `x^A y^B` is defined for every positive scalar
    and the multiplicative / coalescence identities hold verbatim — and it lets the
    coalescence generator `A+B` be read off by a two-sided derivative at the unit.
-3. **`lem:mult-rep` is axiomatized (the full lemma).**  The paper *proves*
-   `lem:mult-rep` elementarily (an integration argument turning the continuous
-   semigroup into a `C¹` one-parameter subgroup); we do not formalize that analytic
-   argument.  The axiom states the lemma verbatim — both the existence and the
-   uniqueness of `A` (`∃!`).  For the scalar case the statement is classical
-   (Aczél 1966).  The uniqueness half of `thm:normal-form` is nonetheless re-derived
-   here by differentiation rather than by invoking the axiom's `∃!`, so it carries
-   no axiom beyond the standard three.
+3. **`lem:mult-rep` is axiomatized (the full lemma).**  That earlier development
+   proves `lem:mult-rep` elementarily (an integration argument turning the
+   continuous semigroup into a `C¹` one-parameter subgroup); we do not formalize
+   that analytic argument.  The operator form is standard one-parameter-group
+   theory (a continuous multiplicative map is `GL`-valued and `t ↦ h(e^{-t})` is
+   a continuous, hence smooth, one-parameter group); the scalar functional
+   equation is classical (Aczél 1966).  The axiom states the lemma verbatim —
+   both the existence and the uniqueness of `A` (`∃!`).  The uniqueness half of
+   `thm:normal-form` is nonetheless re-derived here by differentiation rather
+   than by invoking the axiom's `∃!`, so it carries no axiom beyond the standard
+   three.
 4. **`W`** is the manuscript's "arbitrary real vector space" (the Peirce `1`-space),
    encoded — as in `TwistNormalForm.lean` — as a finite-dimensional real normed
    space with `End(W) = W →L[ℝ] W`.
@@ -101,25 +110,28 @@ variable {W : Type*} [NormedAddCommGroup W] [NormedSpace ℝ W]
 
 /-! ## The Aczél leg (`lem:mult-rep`), axiomatized -/
 
-/-- **Multiplicative one-parameter representation** (Paper A, `lem:mult-rep`; the
-Aczél leg of Theorem `thm:normal-form`).
+/-- **Multiplicative one-parameter representation** (the analytic leg of the
+earlier development's `thm:normal-form`; its `lem:mult-rep`).
 
 A continuous multiplicative map `h : (0,∞) → End(W)` with `h(1) = Id` has the form
 `h(x) = x^A := exp((log x)·A)` for a **unique** generator `A ∈ End(W)`; in
 particular `h` is `GL(W)`-valued.  This is the sole imported analytic fact of both
 halves of `thm:normal-form`.
 
-The paper *proves* this lemma (an integration argument reducing the continuous
-semigroup `g(t) = h(e^{-t})` to a `C¹` one-parameter subgroup, then integrating
-`g' = gA'`, with `A` recovered by differentiating at the identity — whence its
-uniqueness); for the scalar case it is classical (Aczél 1966).  We axiomatize the
-operator statement rather than formalize that analytic argument.  The statement here
-is the paper's `lem:mult-rep` verbatim (both the existence and the uniqueness clause
-of `A`), not a weakening: the existence half of `thm:normal-form` consumes the
-existence clause, the uniqueness half of `thm:normal-form` matches the uniqueness
-clause (and is here re-derived independently by differentiation, so it does not lean
-on the axiom's `∃!`).  Faithfulness delta: stated on all of `(0,∞)` rather than the
-paper's `(0,1]` (a harmless extension; see the module docstring). -/
+This is the operator form of the classical multiplicative-continuity theorem:
+`h` is automatically `GL`-valued and `g(t) = h(e^{-t})` is a continuous
+one-parameter group, hence has a bounded generator (standard
+one-parameter-semigroup theory; `A` is recovered by differentiating at the
+identity, whence uniqueness).  The scalar functional equation is classical
+(Aczél 1966).  We axiomatize the operator statement rather than formalize that
+analytic argument.  The statement matches the earlier development's `lem:mult-rep`
+verbatim (both the existence and the uniqueness clause of `A`), not a weakening:
+the existence half of `thm:normal-form` consumes the existence clause, the
+uniqueness half matches the uniqueness clause (and is here re-derived
+independently by differentiation, so it does not lean on the axiom's `∃!`).
+Faithfulness delta: stated on all of `(0,∞)` rather than the earlier `(0,1]`
+form (a harmless strengthening of the hypotheses, i.e. a weakening of the
+axiom; see the module docstring). -/
 axiom aczel_continuous_multiplicative
     {W : Type*} [NormedAddCommGroup W] [NormedSpace ℝ W]
     [FiniteDimensional ℝ W] [CompleteSpace W]

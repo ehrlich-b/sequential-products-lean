@@ -12,47 +12,34 @@ import Mathlib.Tactic.Module
 set_option linter.style.longLine false
 
 /-!
-# Twist Normal Form and Selection: landing sites (statement-level scaffold)
+# Twist normal form: retained legacy scaffold
 
-This file records, at statement level, the Lean landing sites for the NEW
-mathematics of the redesigned manuscript ("Self-Modeling Selects Complex
-Quantum Mechanics") that is **not yet formalized**, and proves the small
-mechanical fragments that are safe today.
+This file and `Selection/NormalFormExistence.lean` are the **separate earlier
+Lean development** described in the shipped paper's appendix (the pair-local
+ansatz route). Their internal labels (`thm:normal-form`, `prop:coherence`,
+`prop:closure`, `def:canonical-composite`, `def:paths`) come from an earlier
+manuscript and are **not** section labels of the shipped Paper A ("A
+Classification of Sequential Products on Simple Euclidean Jordan Algebras of
+Rank ≥ 3").
 
-Absent (see `research/qm-genericity-review/LEAN-INTEGRATION-PLAN.md`):
+Live content in the standalone release:
 
-* Part I twist story: `prop:boost`, `prop:isotropy`, `thm:global-rigidity`,
-  `thm:selector`.
-* Part II selection: `prop:closure`, `lem:equidistribution`,
-  `thm:classical-suppression`, `thm:selection`, and the moduli apparatus.
-
-Now present (Wave `W2-1`, operator level, see the final section):
-
-* `thm:normal-form` as the interface `NormalForm` (the endomorphisms `A, B` with
-  `A + B = Id` and `[A,B] = 0`, and the off-diagonal action `E(x,y) = x^A y^B`);
-  its *existence* half (that S2/S3/S5 force this shape) remains Wave `W2-5`.
-* `prop:coherence` fully proved from that interface as `coherence_forces_luders`:
-  reciprocity `E(x,y) = E(y,x)` forces `T = 0` and the Lüders value
-  `E(x,y) = √(xy)·Id`.
-
-The remaining analytic heart (`thm:normal-form` existence, `lem:equidistribution`)
-is scheduled later in the integration plan. This file introduces **no axioms**
-and leaves **no `sorry`**; besides the operator-level normal form it also proves:
-
-* `prop:type-table`  — the Peirce multiplicity `d` and local twist group `SO(d)`;
-* the scalar shadow of `thm:normal-form`/`prop:coherence` — the Lüders mixing
-  scalar `√(xy)` is multiplicative and symmetric (reciprocity), matching
-  eq. (endo-compose) and eq. (recognition-symmetry) at the scalar level;
-* `prop:closure` diagonal — the complex/real self-square closure and the
-  quaternionic self-defect, as `rfl` facts on `EJAType`.
+* the operator-level normal form as the interface `NormalForm` (endomorphisms
+  `A, B` with `A + B = Id`, `[A,B] = 0`, action `E(x,y) = x^A y^B`), with
+  `coherence_forces_luders`: reciprocity `E(x,y) = E(y,x)` forces `T = 0` and the
+  Lüders value `E(x,y) = √(xy)·Id`;
+* the Peirce multiplicity / local twist group facts (`SO(d)`) and the scalar
+  Lüders-mixing identities;
+* the `EJAType` composite-closure / self-defect facts (`rfl` on the label type);
+* the imported `bgw_canonical_composite` axiom — the Barnum–Graydon–Wilce
+  composite table (see its own docstring). This is the file's **one axiom**; it
+  supports the retained self-composition material and lies outside the
+  `master_chain` import tree, so it does not enter `master_chain`'s closure.
 
 ## References
 
-* Ehrlich 2026, "Self-Modeling Selects Complex Quantum Mechanics",
-  Thm (block normal form), Prop (scalar action), Prop (type table),
-  Prop (closure or defect).
-* Faraut–Korányi 1994 (Peirce multiplicities); Barnum–Graydon–Wilce 2020
-  (composite closure table).
+* Barnum–Graydon–Wilce 2020 (composite closure table, Table 3);
+  Faraut–Korányi 1994 (Peirce multiplicities).
 -/
 
 noncomputable section
@@ -356,9 +343,12 @@ the pairwise composites of the three simple matrix families
   H_m│ H_{mn}  C_{2mn}  R_{4mn}
 ```
 
-Every entry is a result of Barnum–Graydon–Wilce 2020 — the division-ring
-tensor law (`ℝ⊗D = D`, `ℂ⊗ℂ = ℂ` on the connected/canonical column rather
-than the universal `ℂ⊕ℂ`, `ℂ⊗ℍ = M₂(ℂ)`, `ℍ⊗ℍ = M₄(ℝ)`). It is *imported*,
+Every entry is a Barnum–Graydon–Wilce 2020 result at matrix ranks `m, n ≥ 2`
+(Table 3 there) — the division-ring tensor law (`ℝ⊗D = D`, `ℂ⊗ℂ = ℂ` on the
+connected/canonical column rather than the universal `ℂ⊕ℂ`, `ℂ⊗ℍ = M₂(ℂ)`,
+`ℍ⊗ℍ = M₄(ℝ)`). At the degenerate indices `m` or `n ∈ {0,1}` the row is a
+formal label value, not a BGW result; those instances are consumed nowhere and
+lie outside the `master_chain` closure. It is *imported*,
 not derived here: the whole table is carried as the single axiom
 `bgw_canonical_composite`, packaging the composite operation with its nine
 matrix-row entries so that `#print axioms` on anything downstream records the

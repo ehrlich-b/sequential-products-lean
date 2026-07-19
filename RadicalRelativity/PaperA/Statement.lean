@@ -30,8 +30,8 @@ The exact S1--S7 data are the root typeclass `SequentialProduct`:
 The concrete EJA reference maps `Q_{√a}` and
 `a^(1/2+it) b a^(1/2-it)` do not yet exist in this development.  Consequently
 they are parameters below.  Replacing those parameters by concrete definitions
-and proving the resulting propositions is a release-blocking item, documented
-in the accompanying lock report.
+and proving the resulting propositions is future work beyond the scope of the
+released conditional skeleton, which the paper's appendix discloses as such.
 -/
 
 noncomputable section
