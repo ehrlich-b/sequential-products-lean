@@ -4,7 +4,7 @@ open Lean System
 
 /-! # Axiom census, closure allowlist, coverage, and statement-fidelity gates
 
-Four layers, all enforced by elaborating this file
+Five layers, all enforced by elaborating this file
 (`lake env lean AxiomAudit.lean`):
 
 1. a **tracked-tree census** — over every *persisted* declaration whose defining
@@ -38,6 +38,17 @@ Four layers, all enforced by elaborating this file
 4. **cited-axiom type pins** — the exact printed types of the two custom axioms
    are frozen by `#guard_msgs`, so a silent statement drift under either name
    fails.
+5. **S1--S7 / effect-boundary freezes** — the printed *types* of the S1, S3--S7
+   fields and `sp_effect`, plus *body pins* for the S2 predicate, `IsEffect`,
+   `Effect`, and `EffectProduct` (named `rfl`/`Iff.rfl` theorems in `AuditPins`,
+   each type-frozen), plus *constructor freezes* for `SequentialProductCore.mk`,
+   `SequentialProduct.mk`, and the S2 projection.  Together these make the small
+   boundary deterministic against three body/class escapes that a type-only
+   freeze misses: conjoining `False` onto S2, replacing `Effect` by an empty
+   subtype, and adding a hidden impossible field to the `SequentialProduct`
+   class (the last is caught by the changed constructor type).  This does *not*
+   claim `master_chain`'s statement is frozen — Layer 2 guards its axiom closure
+   only; the paper discloses it as a conditional skeleton.
 -/
 
 -- A recursive `.lean` source enumeration for the coverage check in Layer 1(c).
@@ -58,7 +69,7 @@ def auditPathToModule (p : FilePath) : Name :=
   let s := if s.endsWith ".lean" then s.take (s.length - 5) else s
   (s.replace "/" ".").toName
 
--- Layer 1: project-wide census (closure allowlist + custom-axiom set + coverage).
+-- Layer 1: tracked-tree census (closure allowlist + custom-axiom set + coverage).
 run_cmd do
   let env ← getEnv
   let allowed : List Name :=
@@ -89,7 +100,7 @@ run_cmd do
         let (_, s) := ((Lean.CollectAxioms.collect n).run env).run {}
         if s.axioms.any (fun a => !allowed.contains a) then
           offenders := offenders.push n
-    throwError m!"Project-wide axiom census FAILED. Unpermitted axioms: {bad}. Offending declarations: {offenders}"
+    throwError m!"Tracked-tree axiom census FAILED. Unpermitted axioms: {bad}. Offending declarations: {offenders}"
   -- (b) exactly the two disclosed custom axioms exist.
   let unexpectedAx := projectAxiomDecls.toList.filter (fun a => !citedAxioms.contains a)
   let missingAx := citedAxioms.filter (fun a => !projectAxiomDecls.contains a)
@@ -163,7 +174,7 @@ run_cmd do
   let onlyImported := importedMods.filter (fun m => !diskMods.contains m)
   if !onlyDisk.isEmpty || !onlyImported.isEmpty then
     throwError m!"Module-coverage gate FAILED. On disk but not imported (unimported source): {onlyDisk}. Imported but absent from disk (removed source / stale build): {onlyImported}"
-  logInfo m!"Census PASS: {diskMods.length} tracked RadicalRelativity modules (== frozen 26-name manifest), custom axioms exactly {citedAxioms}, every persisted declaration's closure ⊆ {allowed}"
+  logInfo m!"Census PASS: {diskMods.length} tracked RadicalRelativity modules (== frozen 26-name manifest), custom axioms exactly {citedAxioms}, every tracked persisted declaration's closure ⊆ {allowed}"
 
 /-! ## Layer 2: exact-closure sentinels
 
@@ -171,8 +182,9 @@ Each `#guard_msgs (whitespace := lax)` fails elaboration unless the named
 theorem's axiom closure is *exactly* Lean's three core axioms.  The list covers
 one principal advertised result per module family (the four produced branches,
 the central decomposition, the two globalization results, the adapter
-globalizer, and the rank-two classification endpoints).  The project-wide census
-above already bounds *every* declaration; these sentinels additionally certify
+globalizer, and the selected rank-two algebraic endpoints — which do not
+formalize the rank-two classification).  The tracked-tree census above already
+bounds every tracked persisted declaration; these sentinels additionally certify
 that the advertised endpoints do not lean on the two cited axioms. -/
 
 /-- info: 'MasterTheorem.master_chain' depends on axioms: [propext, Classical.choice, Quot.sound] -/
@@ -323,8 +335,8 @@ not silently drift.  Each printed type is frozen here (parallel to the fidelity
 pins and cited axioms); a change to any field's shape changes the printed type and
 fails elaboration even if the build stays green.  `open SequentialProduct` so the
 `&` sequential-product notation prints as it does in the source.  (The census in
-Layer 1 already bounds every declaration's *axioms*; these freezes lock the S1--S7
-*shapes* against a source comparison drifting silently.) -/
+Layer 1 already bounds every tracked persisted declaration's *axioms*; these freezes
+lock the S1--S7 *shapes* against a source comparison drifting silently.) -/
 
 open SequentialProduct
 
@@ -386,3 +398,101 @@ open SequentialProduct
 /-- info: PaperA.Effect : (V : Type u_1) → [OrderUnitSpace V] → Type u_1 -/
 #guard_msgs (whitespace := lax) in
 #check @PaperA.Effect
+
+/-! ### Layer 5b: boundary *body* pins and class-constructor freezes
+
+The type freezes above lock each definition's *outer* type but not its *body*:
+`FirstArgContinuous : … → Prop` is unchanged by replacing its body with
+`(…) ∧ False`, `IsEffect : … → V → Prop` is unchanged by a body drift, and
+`PaperA.Effect : … → Type` is unchanged by an empty subtype.  The four `_body`
+pins in `PaperA.AuditPins` state each body by `Iff.rfl`/`rfl`, and the four
+exact type-freezes below make any silent edit of those pins visible.  The three
+constructor freezes then close the last escape: because the tree constructs no
+concrete full `SequentialProduct` instance, a hidden impossible extra field on
+that class would pass every field/type guard, but it changes `SequentialProduct.mk`'s
+printed type.  (A hidden field on `SequentialProductCore` is separately caught by
+the concrete `SpinFactor` core instance failing to build; `SequentialProductCore.mk`
+is frozen too for uniformity.)  The `_body` pins are also visited by the Layer-1
+census and exact-closure guarded here. -/
+
+/-- info: 'PaperA.auditPin_firstArgContinuous_body' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs (whitespace := lax) in
+#print axioms PaperA.auditPin_firstArgContinuous_body
+
+/-- info: 'PaperA.auditPin_isEffect_body' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs (whitespace := lax) in
+#print axioms PaperA.auditPin_isEffect_body
+
+/-- info: 'PaperA.auditPin_effect_body' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs (whitespace := lax) in
+#print axioms PaperA.auditPin_effect_body
+
+/-- info: 'PaperA.auditPin_effectProduct_body' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs (whitespace := lax) in
+#print axioms PaperA.auditPin_effectProduct_body
+
+/-- info: @PaperA.auditPin_firstArgContinuous_body : ∀ {V : Type u_1} [inst : SequentialProductCore V],
+  FirstArgContinuous ↔
+    ∀ ⦃b : V⦄, OrderUnitSpace.IsEffect b → ContinuousOn (fun a => a & b) {a | OrderUnitSpace.IsEffect a} -/
+#guard_msgs (whitespace := lax) in
+#check @PaperA.auditPin_firstArgContinuous_body
+
+/-- info: @PaperA.auditPin_isEffect_body : ∀ {V : Type u_1} [inst : OrderUnitSpace V] (a : V),
+  OrderUnitSpace.IsEffect a ↔ 0 ≤ a ∧ a ≤ OrderUnitSpace.ousUnit -/
+#guard_msgs (whitespace := lax) in
+#check @PaperA.auditPin_isEffect_body
+
+/-- info: PaperA.auditPin_effect_body : ∀ (V : Type u_1) [inst : OrderUnitSpace V],
+  PaperA.Effect V = { a // OrderUnitSpace.IsEffect a } -/
+#guard_msgs (whitespace := lax) in
+#check @PaperA.auditPin_effect_body
+
+/-- info: PaperA.auditPin_effectProduct_body : ∀ (V : Type u_1) [inst : OrderUnitSpace V],
+  PaperA.EffectProduct V = (PaperA.Effect V → PaperA.Effect V → PaperA.Effect V) -/
+#guard_msgs (whitespace := lax) in
+#check @PaperA.auditPin_effectProduct_body
+
+-- Constructor freezes.  Under `open SequentialProduct` the full class constructor
+-- `SequentialProduct.mk` prints as `@mk` and the S2 projection as `@sp_continuous_left`.
+/-- info: @SequentialProductCore.mk : {V : Type u_1} →
+  [toOrderUnitSpace : OrderUnitSpace V] →
+    (sp : V → V → V) →
+      (∀ {a b c : V},
+          OrderUnitSpace.IsEffect a →
+            OrderUnitSpace.IsEffect b →
+              OrderUnitSpace.IsEffect c → b + c ≤ OrderUnitSpace.ousUnit → sp a (b + c) = sp a b + sp a c) →
+        (∀ {a : V}, OrderUnitSpace.IsEffect a → sp OrderUnitSpace.ousUnit a = a) →
+          (∀ {a b : V}, OrderUnitSpace.IsEffect a → OrderUnitSpace.IsEffect b → sp a b = 0 → sp b a = 0) →
+            (∀ {a b c : V},
+                OrderUnitSpace.IsEffect a →
+                  OrderUnitSpace.IsEffect b →
+                    OrderUnitSpace.IsEffect c → sp a b = sp b a → sp a (sp b c) = sp (sp a b) c) →
+              (∀ {a b : V},
+                  OrderUnitSpace.IsEffect a →
+                    OrderUnitSpace.IsEffect b →
+                      sp a b = sp b a → sp a (OrderUnitSpace.ousUnit - b) = sp (OrderUnitSpace.ousUnit - b) a) →
+                (∀ {a b c : V},
+                    OrderUnitSpace.IsEffect a →
+                      OrderUnitSpace.IsEffect b →
+                        OrderUnitSpace.IsEffect c →
+                          b + c ≤ OrderUnitSpace.ousUnit →
+                            sp a b = sp b a → sp a c = sp c a → sp a (b + c) = sp (b + c) a) →
+                  (∀ {a b c : V},
+                      OrderUnitSpace.IsEffect a →
+                        OrderUnitSpace.IsEffect b →
+                          OrderUnitSpace.IsEffect c →
+                            sp a b = sp b a → sp a c = sp c a → sp a (sp b c) = sp (sp b c) a) →
+                    (∀ {a b : V},
+                        OrderUnitSpace.IsEffect a → OrderUnitSpace.IsEffect b → OrderUnitSpace.IsEffect (sp a b)) →
+                      SequentialProductCore V -/
+#guard_msgs (whitespace := lax) in
+#check @SequentialProductCore.mk
+
+/-- info: @mk : {V : Type u_1} →
+  [toSequentialProductCore : SequentialProductCore V] → FirstArgContinuous → SequentialProduct V -/
+#guard_msgs (whitespace := lax) in
+#check @SequentialProduct.mk
+
+/-- info: @sp_continuous_left : ∀ {V : Type u_1} [self : SequentialProduct V], FirstArgContinuous -/
+#guard_msgs (whitespace := lax) in
+#check @SequentialProduct.sp_continuous_left

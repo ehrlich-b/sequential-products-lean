@@ -13,7 +13,7 @@ any other program code; the only external dependency is Mathlib.
 
 ```bash
 lake exe cache get   # download prebuilt Mathlib oleans (same pin as manifest)
-lake build           # builds the paper's modules; must finish with zero `sorry`
+lake build           # builds the paper's modules (no-sorry / axiom-closure gate: AxiomAudit.lean, not this command)
 ```
 
 - Toolchain: `leanprover/lean4:v4.28.0` (see `lean-toolchain`).
@@ -93,7 +93,9 @@ They are copied so this project stands alone; they are **not** paper content.
 - `RadicalRelativity/Selection/SelectorEquivalence.lean`
 - `RadicalRelativity/Selection/TwistIsotropy.lean`
 
-The Selection development carries two cited-import `axiom` declarations
-(`RadicalRelativity.aczel_continuous_multiplicative` in `NormalFormExistence`
-and `bgw_canonical_composite` in `TwistNormalForm`); these are outside the
+The development carries two cited-import `axiom` declarations:
+`Selection.aczel_continuous_multiplicative` (declared in
+`RadicalRelativity/Selection/NormalFormExistence.lean`) and
+`TwistNormalForm.bgw_canonical_composite` (declared in
+`RadicalRelativity/TwistNormalForm.lean`); both are outside the
 `master_chain` import tree and do not affect its axiom closure above.
