@@ -1,0 +1,185 @@
+# Theorem-to-file map
+
+Paper statements against Lean declarations, plus — equally important — what is
+**not** machine-checked. Labels are the manuscript's `\label` keys, which the
+`MasterTheorem/` and `PaperA/` docstrings also cite. The legacy
+`Selection/` modules predate this manuscript and cite the labels of the earlier
+development instead; they are listed in §3, not here.
+
+## 1. Machine-checked, closure = Lean core only
+
+Each of these is pinned in `AxiomAudit.lean` Layer 2 to *exactly* `propext`,
+`Classical.choice`, `Quot.sound` — not even the two cited axioms enter.
+
+**Read §2 before reading this table as a verification claim.** The rows fall into
+three kinds, and only the first is conditional on §2:
+
+- **Conditional on the interface fields of §2**, which are assumed rather than
+  proved: `master_chain` and the four typewise-branch rows
+  (`luders_real_produced`, `luders_quaternionic_produced`,
+  `luders_albert_produced`, `complex_perFrame_produced`), which quantify over
+  `ComparisonSetup` / `CoalescenceSetup` / `DiagonalHomSetup` /
+  `StabilizerCoupling` / `IsAlbertModel`.
+- **Conditional on explicit hypotheses that are not §2 fields**, each discharged by
+  a paper proof: `central_decomposition` takes the `SequentialProductCore` class
+  (S1 and S3–S7; S2 is not assumed) plus eight named hypotheses;
+  `global_twist_of_perFrame` and
+  `t_eq_globalT` take frame connectivity and cross-coherence overlap directly.
+- **Unconditional**: `real_character_unique` is pure analysis; `n2_necessity` takes
+  a linear `angle` with a vanishing hypothesis and no `ComparisonSetup`; three
+  concrete `M₂(ℂ)` computations (`sp_blockForm`, `sp_tau_had_is_luders`,
+  `sp_tau_std_is_unit_twist`) plus the generator-level exchange selector
+  `n2_exchange_selects_luders`, a statement about a linear functional on
+  `Fin 2 → ℝ`, carry no interface fields at all.
+
+| Paper statement | Lean declaration | File |
+| --- | --- | --- |
+| `mthm:master` — **dependency skeleton only**, see §3 | `MasterTheorem.master_chain` | `MasterTheorem/Master.lean` |
+| `prop:central`, **componentwise identity only** — the summand inheritance of S1–S7 and the converse assembly remain paper proofs | `MasterTheorem.Central.central_decomposition` | `MasterTheorem/Central.lean` |
+| `prop:real` (real type rigid) | `MasterTheorem.luders_real_produced` | `MasterTheorem/Master.lean` |
+| `thm:quaternionic` (quaternionic rigid) | `MasterTheorem.luders_quaternionic_produced` | `MasterTheorem/Master.lean` |
+| `thm:albert` (exceptional rigid) | `MasterTheorem.luders_albert_produced` | `MasterTheorem/Master.lean` |
+| `thm:complex`, per-frame half | `MasterTheorem.complex_perFrame_produced` | `MasterTheorem/Master.lean` |
+| `thm:complex`, globalization | `MasterTheorem.global_twist_of_perFrame`, `Globalization.ComplexGlobalizationData.t_eq_globalT` | `MasterTheorem/Adapter.lean`, `MasterTheorem/Globalization.lean` |
+| character uniqueness used by the globalization | `MasterTheorem.Globalization.real_character_unique` | `MasterTheorem/Globalization.lean` |
+| `prop:n2-necessity`, generator level | `MasterTheorem.RankTwo.n2_necessity` | `MasterTheorem/RankTwo.lean` |
+| `rem:n2-selection` (exchange covariance ⟹ Lüders) | `MasterTheorem.RankTwo.n2_exchange_selects_luders` | `MasterTheorem/RankTwo.lean` |
+| `thm:qubit-boundary`(i), block form (V1) | `MasterTheorem.RankTwo.sp_blockForm` | `MasterTheorem/RankTwo.lean` |
+| `thm:qubit-boundary`(iii), frame-dependence pair (V9) | `RankTwo.sp_tau_had_is_luders`, `RankTwo.sp_tau_std_is_unit_twist` | `MasterTheorem/RankTwo.lean` |
+
+`n2_necessity` is worth reading directly. It takes a **linear** `angle` on `ℝ²`
+vanishing on the diagonal and concludes the rotation factors as
+`tF * (r 0 - r 1)` for **all** `r : Fin 2 → ℝ` — quantified over both signs of
+`r₀ − r₁`, with no ordering of eigenvalue magnitudes. That is the signed
+ordered-frame convention the manuscript's §6 uses.
+
+### Statement-fidelity pins
+
+Named theorems in `RadicalRelativity/PaperA/AuditPins.lean`, closure-guarded and
+type-frozen, so the audited surface cannot drift from the paper's wording:
+`auditPin_s2`, plus
+`auditPin_effectProduct`, `auditPin_luders`, `auditPin_uniqueTwist`, and `_body`
+pins for the S2 predicate, `IsEffect`, `Effect`, `EffectProduct`.
+
+The S1, S3–S7 fields match the paper's Definition 2.1 clause by clause, including
+the effect riders and the `b + c ≤ 1` domain condition; that effects are closed
+under the product is carried separately by `sp_effect` as a codomain condition
+rather than an eighth axiom. **One literal caveat on (S2):** the paper states
+continuity in the *order-unit norm*, whereas `OrderUnitSpace` carries an ambient
+norm that Lean never identifies with the order-unit norm. So `auditPin_s2` freezes
+first-argument continuity in the *carried* norm. On the intended
+finite-dimensional EJA instances the two are equivalent — all norms there induce
+the same topology — but the generic interface does not literally state the paper's
+(S2), and the direction of the variable (first argument, on effects) is what the
+pin does establish.
+
+## 2. Carried as cited interface hypotheses — supplied, not proved
+
+The skeleton is **conditional**. Imported results enter as *fields* of five
+interface structures. A green build says nothing about their truth; they are
+citations, discharged by source review in the manuscript, not by Lean. Note the
+structures live in four different files:
+
+**The tree constructs no witness of any of these five structures**, so a green
+build does not establish that they are inhabited. `AxiomAudit.lean` Layer 6
+freezes their constructors against field drift, but a frozen constructor type
+names helper definitions opaquely: redefining `MasterTheorem.OpCommute`'s *body*
+to `False` would make `ComparisonSetup.frame_opCommute` and
+`CoalescenceSetup.simDiag_opCommute` unsatisfiable — hence the whole skeleton
+vacuous — with every printed type, the manifest, and every axiom closure
+unchanged. (One companion edit is needed for silence: `OpCommute.symm`'s
+`Eq.symm h` must become `fun h => h`.) Layer 6's docstring states this in full.
+One concrete interface witness would convert that failure mode into a build
+error; none is claimed here.
+
+| Structure | File |
+| --- | --- |
+| `ComparisonSetup`, `StabilizerCoupling` | `MasterTheorem/Interface.lean` |
+| `CoalescenceSetup` | `MasterTheorem/Coalescence.lean` |
+| `DiagonalHomSetup` | `MasterTheorem/DiagonalHom.lean` |
+| `IsAlbertModel` | `MasterTheorem/Branches/Albert.lean` |
+
+| Field | Cited source | Paper location |
+| --- | --- | --- |
+| `ComparisonSetup.Θ_jordan` | van de Wetering Prop. 5.3 + van Imhoff–Roelands Cor. 2.5 / Prop. 2.6, taken as the imported *conclusion*: the Lean structure does not encode the JB-algebra premises | `prop:theta` |
+| `ComparisonSetup.Θ_fix` | van de Wetering Prop. 5.5. **Stronger than the source as stated**: the field quantifies over all of `J`, the source is effect-level. The span extension is the manuscript's short argument (the commutant is an order-unit subspace spanned by its effects), not Lean's | `prop:theta` |
+| `ComparisonSetup`'s use of `aOf r` outside the negative orthant | van de Wetering's normalization extension `Θ_{λq} = Θ_q`, which defines `Θ_q` for arbitrary positive order-preserving `q` after rescaling | `lem:cone-ext` |
+| comparison cocycle | van de Wetering Prop. 5.7, specialized to the commuting diagonal family — **weaker** than the source, not stronger | `prop:theta` |
+| `DiagonalHomSetup.dχAdd`, `dχAdd_cont`, differentiated coalescence | **not a rendering of one cited theorem**: these begin *after* the paper's comparison-to-differential analysis. Lean neither differentiates `Θ` nor proves `dχAdd` is its derivative | `lem:homomorphism` |
+| `IsAlbertModel.block_injective` | Yokota's triality identification of the pointwise frame stabilizer with `Spin(8)`, **plus** a standard simplicity/kernel argument (nontrivial representation of a simple Lie algebra has zero kernel). Injectivity is a composite consequence, not Yokota's literal text | `thm:albert` |
+
+Two cited results are recorded as `axiom` declarations, deliberately outside the
+Layer-2 cones. Their printed types are frozen by Layer 4; fidelity to the cited
+literature remains a human audit, and in both cases the attribution is compound:
+
+- `Selection.aczel_continuous_multiplicative` — Aczél supplies the scalar
+  functional-equation lineage; the operator-valued conclusion
+  `h(x) = exp((log x)·A)` is finite-dimensional one-parameter-group theory
+  (Engel–Nagel). Not a theorem of Aczél alone in this form.
+- `TwistNormalForm.bgw_canonical_composite` — the nine entries agree with
+  Barnum–Graydon–Wilce's composite table for the standardly embedded matrix
+  systems, but the axiom **quantifies over all natural-number labels**, and at
+  degenerate indices the values are formal labels not backed by that source. The
+  statement is therefore broader than the citation. It is unused by
+  `master_chain` and by every result in §1, so it cannot contaminate the paper's
+  theorems, but the attribution is imprecise as it stands.
+
+## 3. Not machine-checked at all
+
+State these plainly rather than inferring coverage from a green build. This list
+is intended to be exhaustive; where it and the supplement's inventory differ, the
+supplement governs.
+
+**Supplied rather than derived, in addition to the interface fields of §2:** the
+construction of the comparison character and its differential from `Θ_a`; the
+operator-to-character translation on the cross-coherence space; the geometric
+two-plane frame-connectivity move; the concrete `(S2)` and invertible-density
+inputs; the remaining rank-two cocycle and compatibility cases; the complete
+seven-axiom verification; and the contents of the cited van de Wetering
+propositions themselves.
+
+**Statements with no Lean counterpart:**
+
+- **`mthm:master` itself.** `master_chain` audits the *composition* of the case
+  split over one abstract algebra; it constructs no concrete simple EJA, and does
+  not prove that a given algebra is of a particular coordinate type, that an
+  operation satisfies S1–S7, that `L_a = Q_{√a}Θ_a`, that `Θ_a = id`, or any
+  product equality. Its own docstring says so.
+- **The lifting step in `prop:n2-necessity`** — that a continuous homomorphism
+  `ℝ² → SO(2)` lifts through the universal cover to a linear functional. Lean
+  *assumes* `angle` is linear and proves only the factorization, so this step is
+  supplied by the paper, not checked.
+- **`lem:n2-bounded`, `lem:n2-continuity`, `lem:n2-descent`** (boundedness,
+  continuity, evenness/descent to `ℝP²`) and the assembled bijection
+  `cor:qubit-classification`. The rank-two Lean content is the fixed-frame
+  *algebraic* core on concrete `M₂(ℂ)`, not the classification.
+- **`mthm:omnibus`** (the finite-dimensional omnibus classification) and
+  **`prop:pseudo-transfer`**.
+- **`prop:singular`** exists as a standalone lemma but is *not* invoked by
+  `master_chain`.
+- Analytic content generally: norm continuity arguments, spectral theory, and
+  the singular-effect extensions live in the paper.
+
+## 4. SymPy labels
+
+**Label convention.** The manuscript cites these checks as `V1`–`V10`; the script
+itself prints its groups as `1.`–`10c.` **without the `V` prefix**. Paper label
+`Vk` is script group `k`; sub-labels (`4a`, `5b'`, …) are individual checks
+within a group. The 33 `PASS` lines are:
+
+| Paper label | Script group | Content |
+| --- | --- | --- |
+| `V1` | `1.` | block normal form in `a`'s eigenbasis |
+| `V2` | `2a`–`2b` | scalar effects are twist-invisible |
+| `V3` | `3.` | rank-deficient first argument gives the Lüders value |
+| `V4` | `4a`–`4c` | trace identities behind the compatibility lemma |
+| `V5` | `5a`–`5d` | phase cocycle `F_a F_b = ζ F_{ab}`, including scalar and zero-eigenvalue cases |
+| `V6` | `6a`–`6e` | S5 across the compatible cases |
+| `V7` | `7a`–`7b` | compatibility, backward direction |
+| `V8` | `8a`–`8c` | remaining displayed identities |
+| `V9` | `9a`–`9e` | frame-dependence pair of `thm:qubit-boundary` |
+| `V10` | `10a`–`10c` | auxiliary constant (critical point and boundary values) |
+
+These corroborate finite calculations in exact arithmetic with the twist carried
+as a free real parameter. They do not replace the proof, and they cover no
+continuity, infinite-dimensional, or descent claim.

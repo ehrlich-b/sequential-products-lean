@@ -2,12 +2,24 @@
 
 Standalone Lean 4 development accompanying the paper
 
-> **A Classification of Sequential Products on Simple Euclidean Jordan
-> Algebras of Rank ≥ 3** (twist normal form).
+> **Sequential Products on Euclidean Jordan Algebras: Classification in Rank
+> at Least Three and the Complex Qubit**.
 
 This project is a self-contained extract of the paper's modules from the
 parent *Radical Relativity* Lean development. It has **zero dependency** on
 any other program code; the only external dependency is Mathlib.
+
+## Theorem-to-file map
+
+`THEOREM-MAP.md` records which paper statements are machine-checked, which are
+carried as cited interface hypotheses, and which are not formalized at all.
+Its §2 has to be read before any row of §1 is read as a verification claim.
+
+The anonymized archive accompanying the journal submission is this same tree
+with two directories renamed — `RadicalRelativity/` to
+`SequentialProductsArtifact/` and `PaperA/` to `PaperStatements/` — so that no
+path carries a program or paper identifier. Declaration names are identical in
+both, so the map's declaration column transfers unchanged.
 
 ## Build
 
