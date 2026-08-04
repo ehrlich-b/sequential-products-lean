@@ -44,6 +44,13 @@ import RadicalRelativity.MasterTheorem.Central
 -- instantiation — see the module docstring and LEDGER.md).
 import RadicalRelativity.MasterTheorem.Witnesses
 
+-- Vendored physlib HermitianMat island (Apache 2.0, pinned; see
+-- RadicalRelativity/Vendor/VENDOR.md): the M1 carrier substrate — Hermitian
+-- matrices with Loewner order, trace inner product, CFC, and the symmetrized
+-- (Jordan) product. Importing Jordan + Proj pulls the whole 17-file closure.
+import RadicalRelativity.Vendor.HermitianMat.Jordan
+import RadicalRelativity.Vendor.HermitianMat.Proj
+
 -- Exact paper-facing S1--S7 and product-conclusion statement boundary.  This
 -- freezes the target signature; it does not claim the classification is proved.
 import RadicalRelativity.PaperA.Statement

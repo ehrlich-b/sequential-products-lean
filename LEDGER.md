@@ -29,15 +29,28 @@ sorry-free Wigner rigidity — see 3.0.
 
 ## M1 — Complex sufficiency (twists satisfy S1–S7 on H_n(ℂ))
 
-- **1.1 Carrier + instances.** `Matrix.IsHermitian` subtype (or selfAdjoint
-  submodule) as the order unit space; Loewner order; effects. [INV✓]:
-  `Matrix.PosSemidef` API full (incl. `PosSemidef.sqrt := CFC.sqrt` with
-  uniqueness `sqrt_unique`/`eq_sqrt_iff_sq_eq`); Loewner order + StarOrderedRing
-  EXIST but SCOPED — `open scoped MatrixOrder` mandatory (H5). No Jordan product
-  on `selfAdjoint A` anywhere; HARVEST: physlib `HermitianMat` + its
-  `Jordan.lean` `symmMul` (leanprover-community/physlib, active 2026-08) is the
-  closest existing special-EJA substrate — evaluate as pattern source or
-  dependency before hand-building the carrier. Risk LOW.
+- **1.1 Carrier + instances — DECIDED 2026-08-04: VENDOR physlib's HermitianMat
+  island** (evaluation report banked; not `lake require` — physlib pins mathlib
+  v4.32 and is fast-moving, which would chain our zero-sorry claim to a live
+  upstream; not reimplement — their design is the one we'd pick and the CFC
+  plumbing is ~2kL already done). Vendored 2026-08-04: 17 files ≈ 7kL from
+  physlib @ `ad1d812` (Apache-2.0, headers retained) into
+  `RadicalRelativity/Vendor/` — carrier `HermitianMat n α :=
+  selfAdjoint (Matrix n n α)` (opaque def synonym), Loewner `PartialOrder` via
+  scoped MatrixOrder, trace inner product + Frobenius `NormedSpace ℝ` +
+  `CompleteSpace`, `HermitianMat.cfc` (ℝ→ℝ) with continuity block,
+  `symmMul` Jordan product + scoped `HermMul` `IsCommJordan` instance,
+  `Proj.lean` (projectors, posPart/negPart, `{A ≤ₚ B}`). Provenance + edit log:
+  `RadicalRelativity/Vendor/VENDOR.md`. **Backport v4.32→v4.28 DONE 2026-08-04**
+  (drift log in VENDOR.md; zero statement changes; gates verified first-hand:
+  build green, census 44 modules / one axiom). **What the vendor does NOT give (= 1.1's
+  remaining work):** order-unit norm (the `Norm` slot is occupied by Frobenius
+  — the OU norm must be an unbundled def or type synonym, NEVER a competing
+  instance), order unit + Archimedean statements (`le_trace_smul_one`,
+  `lt_smul_of_norm_lt` are the starting bounds), an effect-interval object
+  (only `unitInterval_IsCompact` exists), extreme-points-are-projections
+  (feeds M3 bridge 1), and everything Jordan-structural past the `IsCommJordan`
+  mixin. Risk LOW-MED (backport residue).
 - **1.2 Twist definition.** `a^{1/2+it} b a^{1/2-it}` via CFC. [INV✓]: matrix
   CFC instance is `Matrix.IsHermitian.instContinuousFunctionalCalculus` (over ℝ,
   predicate `IsSelfAdjoint`, real file `Analysis/Matrix/
