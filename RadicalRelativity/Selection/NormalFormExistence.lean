@@ -17,10 +17,11 @@ This file and its companion `RadicalRelativity/TwistNormalForm.lean` are the
 (the pair-local ansatz route). They predate the shipped manuscript and use its
 earlier internal labels (`thm:normal-form`, `lem:mult-rep`, `prop:coherence`,
 `prop:closure`, `def:canonical-composite`, `def:paths`), which are *not* section
-labels of the shipped paper.  The two axioms of this development —
-`aczel_continuous_multiplicative` (declared in this file) and
-`bgw_canonical_composite` (declared in the companion `TwistNormalForm.lean`) —
-both lie outside the `master_chain` import tree and do not enter its axiom closure.
+labels of the shipped paper.  The sole axiom of this development,
+`aczel_continuous_multiplicative` (declared in this file), lies outside the
+`master_chain` import tree and does not enter its axiom closure. (The former
+companion axiom `bgw_canonical_composite` in `TwistNormalForm.lean` was
+eliminated 2026-08-04 into the proved-table definition `bgwComposite`.)
 
 This file formalizes the **existence** direction of the block twist normal form
 (that development's `thm:normal-form`): on a non-classical Peirce `1`-space `W`,

@@ -105,9 +105,13 @@ They are copied so this project stands alone; they are **not** paper content.
 - `RadicalRelativity/Selection/SelectorEquivalence.lean`
 - `RadicalRelativity/Selection/TwistIsotropy.lean`
 
-The development carries two cited-import `axiom` declarations:
+The development carries one cited-import `axiom` declaration:
 `Selection.aczel_continuous_multiplicative` (declared in
-`RadicalRelativity/Selection/NormalFormExistence.lean`) and
-`TwistNormalForm.bgw_canonical_composite` (declared in
-`RadicalRelativity/TwistNormalForm.lean`); both are outside the
-`master_chain` import tree and do not affect its axiom closure above.
+`RadicalRelativity/Selection/NormalFormExistence.lean`); it is outside the
+`master_chain` import tree and does not affect its axiom closure above.
+(A second axiom, `TwistNormalForm.bgw_canonical_composite`, was eliminated
+2026-08-04: it asserted only the existence of an operation with nine
+specified table values — constructible, hence not falsifiable — and is now
+the definition `bgwComposite` with the nine rows proved by `rfl`; the
+Barnum–Graydon–Wilce citation attaches to the table's interpretation, in
+prose, as before.)

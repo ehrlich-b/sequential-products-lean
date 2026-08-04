@@ -13,12 +13,13 @@ Six layers, all enforced by elaborating this file
    `example := by sorry` persists no declaration and is not visited either) it
    enforces three things at once:
    (a) the axiom closure depends only on Lean's three core axioms
-   (`propext`, `Classical.choice`, `Quot.sound`) and the two disclosed
-   cited-literature axioms (`Selection.aczel_continuous_multiplicative`,
-   `TwistNormalForm.bgw_canonical_composite`) — a `sorryAx`, `native_decide`,
-   or any other axiom fails elaboration; (b) those two are the *only* custom
-   axiom declarations in the tracked tree — a new stray `axiom` in any tracked
-   module fails; and
+   (`propext`, `Classical.choice`, `Quot.sound`) and the single disclosed
+   cited-literature axiom (`Selection.aczel_continuous_multiplicative`;
+   the former `TwistNormalForm.bgw_canonical_composite` was eliminated
+   2026-08-04 into the proved-table definition `bgwComposite`) — a `sorryAx`,
+   `native_decide`, or any other axiom fails elaboration; (b) that is the
+   *only* custom axiom declaration in the tracked tree — a new stray `axiom`
+   in any tracked module fails; and
    (c) **source coverage + frozen manifest**: the set of `RadicalRelativity`
    modules on disk equals the set imported here *and* equals a pinned 27-name
    manifest, so a new unimported module, a removed root import, a name-colliding
@@ -29,15 +30,14 @@ Six layers, all enforced by elaborating this file
    cannot collide with the nested module `PaperA/Statement`;
 2. **exact-closure sentinels** — one principal advertised result per module
    family, each pinned by `#guard_msgs` to *exactly* the three core axioms
-   (i.e. not even the two cited axioms enter these cones);
+   (i.e. not even the cited axiom enters these cones);
 3. **statement-fidelity pins** — the public S2 predicate, the two product-level
    conclusion shapes, and the effect-level product, are named, persisted
    theorems in `RadicalRelativity.PaperA.AuditPins` (so the census in Layer 1
    visits them: a `sorry` or stray axiom substituted for a pin's direct proof
    fails the census); here each is additionally exact-closure guarded;
-4. **cited-axiom type pins** — the exact printed types of the two custom axioms
-   are frozen by `#guard_msgs`, so a silent statement drift under either name
-   fails.
+4. **cited-axiom type pin** — the exact printed type of the custom axiom is
+   frozen by `#guard_msgs`, so a silent statement drift under its name fails.
 5. **S1--S7 / effect-boundary freezes** — the printed *types* of the S1, S3--S7
    fields and `sp_effect`, plus *body pins* for the S2 predicate, `IsEffect`,
    `Effect`, and `EffectProduct` (named `rfl`/`Iff.rfl` theorems in `AuditPins`,
@@ -82,11 +82,9 @@ run_cmd do
   let env ← getEnv
   let allowed : List Name :=
     [``propext, ``Classical.choice, ``Quot.sound,
-     ``Selection.aczel_continuous_multiplicative,
-     ``TwistNormalForm.bgw_canonical_composite]
+     ``Selection.aczel_continuous_multiplicative]
   let citedAxioms : List Name :=
-    [``Selection.aczel_continuous_multiplicative,
-     ``TwistNormalForm.bgw_canonical_composite]
+    [``Selection.aczel_continuous_multiplicative]
   let isProject := fun (n : Name) =>
     match env.getModuleFor? n with
     | some m => (`RadicalRelativity).isPrefixOf m
@@ -109,7 +107,7 @@ run_cmd do
         if s.axioms.any (fun a => !allowed.contains a) then
           offenders := offenders.push n
     throwError m!"Tracked-tree axiom census FAILED. Unpermitted axioms: {bad}. Offending declarations: {offenders}"
-  -- (b) exactly the two disclosed custom axioms exist.
+  -- (b) exactly the disclosed custom-axiom set exists.
   let unexpectedAx := projectAxiomDecls.toList.filter (fun a => !citedAxioms.contains a)
   let missingAx := citedAxioms.filter (fun a => !projectAxiomDecls.contains a)
   if !unexpectedAx.isEmpty || !missingAx.isEmpty then
@@ -293,10 +291,12 @@ elaboration). -/
 
 /-! ## Layer 4: cited-axiom type pins
 
-The exact printed type of each disclosed custom axiom is frozen.  A silent
-statement drift under either allowlisted name changes the printed type and fails
-elaboration.  (Fidelity to Aczel and to Barnum-Graydon-Wilce remains a human
-citation audit, as the paper states.) -/
+The exact printed type of the disclosed custom axiom is frozen.  A silent
+statement drift under the allowlisted name changes the printed type and fails
+elaboration.  (Fidelity to Aczel remains a human citation audit, as the paper
+states.  The former Barnum-Graydon-Wilce axiom was eliminated 2026-08-04 into
+the proved-table definition `TwistNormalForm.bgwComposite`, so no pin for it
+remains.) -/
 
 /-- info: @Selection.aczel_continuous_multiplicative : ∀ {W : Type u_1} [inst : NormedAddCommGroup W] [inst_1 : NormedSpace ℝ W]
   [FiniteDimensional ℝ W] [CompleteSpace W] (h : ℝ → W →L[ℝ] W),
@@ -305,36 +305,6 @@ citation audit, as the paper states.) -/
       h 1 = 1 → ∃! A, ∀ (x : ℝ), 0 < x → h x = NormedSpace.exp (Real.log x • A) -/
 #guard_msgs (whitespace := lax) in
 #check @Selection.aczel_continuous_multiplicative
-
-/-- info: TwistNormalForm.bgw_canonical_composite : { comp //
-  (∀ (m n : ℕ),
-      comp (LocalTomography.EJAType.real m) (LocalTomography.EJAType.real n) = LocalTomography.EJAType.real (m * n)) ∧
-    (∀ (m n : ℕ),
-        comp (LocalTomography.EJAType.real m) (LocalTomography.EJAType.complex n) =
-          LocalTomography.EJAType.complex (m * n)) ∧
-      (∀ (m n : ℕ),
-          comp (LocalTomography.EJAType.real m) (LocalTomography.EJAType.quatern n) =
-            LocalTomography.EJAType.quatern (m * n)) ∧
-        (∀ (m n : ℕ),
-            comp (LocalTomography.EJAType.complex m) (LocalTomography.EJAType.real n) =
-              LocalTomography.EJAType.complex (m * n)) ∧
-          (∀ (m n : ℕ),
-              comp (LocalTomography.EJAType.complex m) (LocalTomography.EJAType.complex n) =
-                LocalTomography.EJAType.complex (m * n)) ∧
-            (∀ (m n : ℕ),
-                comp (LocalTomography.EJAType.complex m) (LocalTomography.EJAType.quatern n) =
-                  LocalTomography.EJAType.complex (2 * m * n)) ∧
-              (∀ (m n : ℕ),
-                  comp (LocalTomography.EJAType.quatern m) (LocalTomography.EJAType.real n) =
-                    LocalTomography.EJAType.quatern (m * n)) ∧
-                (∀ (m n : ℕ),
-                    comp (LocalTomography.EJAType.quatern m) (LocalTomography.EJAType.complex n) =
-                      LocalTomography.EJAType.complex (2 * m * n)) ∧
-                  ∀ (m n : ℕ),
-                    comp (LocalTomography.EJAType.quatern m) (LocalTomography.EJAType.quatern n) =
-                      LocalTomography.EJAType.real (4 * m * n) } -/
-#guard_msgs (whitespace := lax) in
-#check @TwistNormalForm.bgw_canonical_composite
 
 /-! ## Layer 5: S1--S7 interface type freezes
 

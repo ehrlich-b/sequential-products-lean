@@ -121,8 +121,11 @@ namespace MasterTheorem
 
 The off-diagonal Peirce multiplicity `d = dim V_{ij}` classifies the branch:
 `1, 2, 4, 8` for `Hₙ(ℝ), Hₙ(ℂ), Hₙ(ℍ), H₃(𝕆)` (Faraut–Korányi). Redefined locally
-(rather than imported from `TwistNormalForm`) to keep this module axiom-free — avoiding
-`TwistNormalForm`'s `bgw_canonical_composite` axiom in the closure. -/
+(rather than imported from `TwistNormalForm`) to keep the master-chain foundation
+independent of the Part-II selection development. (Historical note: until
+2026-08-04 `TwistNormalForm` declared the `bgw_canonical_composite` axiom, which
+this isolation kept out of the closure; that axiom is now a proved-table
+definition, and the isolation is retained as layering hygiene.) -/
 
 /-- Off-diagonal Peirce multiplicity `d = dim V_{ij}` of a simple EJA type
     (Faraut–Korányi). -/

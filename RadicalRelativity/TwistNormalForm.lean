@@ -31,10 +31,13 @@ Live content in the standalone release:
 * the Peirce multiplicity / local twist group facts (`SO(d)`) and the scalar
   Lüders-mixing identities;
 * the `EJAType` composite-closure / self-defect facts (`rfl` on the label type);
-* the imported `bgw_canonical_composite` axiom — the Barnum–Graydon–Wilce
-  composite table (see its own docstring). This is the file's **one axiom**; it
-  supports the retained self-composition material and lies outside the
-  `master_chain` import tree, so it does not enter `master_chain`'s closure.
+* the Barnum–Graydon–Wilce composite table, carried as the **definition**
+  `bgwComposite` with `rfl`-proved rows (`bgwComposite_table`). The former
+  packaging as this file's one `axiom` (`bgw_canonical_composite`) was
+  eliminated 2026-08-04 (`LEDGER.md` 2.8): it asserted only a constructible
+  existence, so it recorded no falsifiable import. This file now declares
+  **no custom axiom**; the BGW attribution is prose provenance (see the
+  `prop:closure` section docstring).
 
 ## References
 
@@ -140,9 +143,9 @@ ansatz.  Reproducing that existence derivation — the operator one-parameter-gr
 argument (standard theory; the underlying scalar functional equation is Aczél 1966)
 together with the coalescence limit — is not formalized here.  Carrying the normal
 form as a structure rather than an existence theorem is what keeps the operator
-normal-form material free of any *custom* axiom; the sole axiom this file declares,
-`bgw_canonical_composite`, supports the separate canonical-composite construction
-below and lies outside the `master_chain` closure.
+normal-form material free of any *custom* axiom; since the 2026-08-04 elimination
+of the former `bgw_canonical_composite` axiom (now the proved-table definition
+`bgwComposite` below), this file declares no custom axiom at all.
 
 `coherence_forces_luders` is the reciprocity elimination of Proposition
 `prop:coherence`.  The read/write reciprocity premise eq. (recognition-symmetry),
@@ -351,13 +354,22 @@ Every entry is a Barnum–Graydon–Wilce 2020 result at matrix ranks `m, n ≥ 
 connected/canonical column rather than the universal `ℂ⊕ℂ`, `ℂ⊗ℍ = M₂(ℂ)`,
 `ℍ⊗ℍ = M₄(ℝ)`). At the degenerate indices `m` or `n ∈ {0,1}` the row is a
 formal label value, not a BGW result; those instances are consumed nowhere and
-lie outside the `master_chain` closure. It is *imported*,
-not derived here: the whole table is carried as the single axiom
-`bgw_canonical_composite`, packaging the composite operation with its nine
-matrix-row entries so that `#print axioms` on anything downstream records the
-Barnum–Graydon–Wilce dependency. `bgwComposite` is the underlying operation;
-non-matrix rows (spin, Albert) are left unpinned, mirroring the manuscript's
-partial/undefined composite for the exceptional and non-matrix candidates.
+lie outside the `master_chain` closure. The table is carried as the
+**definition** `bgwComposite`, with the nine matrix rows proved by `rfl`
+(`bgwComposite_table`). The former packaging as a single `axiom`
+(`bgw_canonical_composite`, eliminated 2026-08-04, campaign `LEDGER.md` 2.8)
+asserted only the *existence* of an operation with these nine values — a
+constructible statement that cannot be false — so it padded the axiom ledger
+without recording any falsifiable import. What IS imported from
+Barnum–Graydon–Wilce 2020 is the **interpretation**: that this table is the
+composition table of their canonical standard-embedding composite `⊙c`
+(`def:canonical-composite`). That identification lives here and in
+`THEOREM-MAP.md` as prose provenance — exactly where it lived before, since
+`#print axioms` never checked fidelity to the source either. Non-matrix rows
+(spin, Albert) carry the junk-total convention `.real 0`, consumed nowhere,
+mirroring the manuscript's partial/undefined composite — the same epistemic
+status as the former axiom's opaque unpinned values, but visibly junk rather
+than opaquely junk.
 
 The diagonal self-square flow `τ ↦ τ⋆τ` (`def:paths`) then reads off the
 table as `ℝ↦ℝ`, `ℂ↦ℂ`, `ℍ↦ℝ`: the real and complex families are closed under
@@ -365,30 +377,30 @@ strict self-composition, and a quaternionic system defects to the real family
 (`R_{4n²}`, since `ℍ⊗ℍ = M₄(ℝ)`) at its first self-square, so no homogeneous
 quaternionic tower of depth ≥ 1 exists. -/
 
-/-- **`prop:closure` (imported, Barnum–Graydon–Wilce 2020).** The canonical
-standard-embedding composite `⊙c` on the simple matrix families, packaged as a
-single imported fact: an operation `comp` on `EJAType` together with the nine
-entries of the R/C/H composition table. Carrying operation and table as one
-axiom records that the table is *imported* from Barnum–Graydon–Wilce 2020, not
-proved in Lean. -/
-axiom bgw_canonical_composite :
-    { comp : EJAType → EJAType → EJAType //
-        (∀ m n : ℕ, comp (.real m)    (.real n)    = .real (m * n)) ∧
-        (∀ m n : ℕ, comp (.real m)    (.complex n) = .complex (m * n)) ∧
-        (∀ m n : ℕ, comp (.real m)    (.quatern n) = .quatern (m * n)) ∧
-        (∀ m n : ℕ, comp (.complex m) (.real n)    = .complex (m * n)) ∧
-        (∀ m n : ℕ, comp (.complex m) (.complex n) = .complex (m * n)) ∧
-        (∀ m n : ℕ, comp (.complex m) (.quatern n) = .complex (2 * m * n)) ∧
-        (∀ m n : ℕ, comp (.quatern m) (.real n)    = .quatern (m * n)) ∧
-        (∀ m n : ℕ, comp (.quatern m) (.complex n) = .complex (2 * m * n)) ∧
-        (∀ m n : ℕ, comp (.quatern m) (.quatern n) = .real (4 * m * n)) }
+/-- **`prop:closure` (table definition; interpretation cited to
+Barnum–Graydon–Wilce 2020).** The canonical standard-embedding composite `⊙c`
+on `EJAType` (`def:canonical-composite`), as an explicit table. The nine
+matrix-row values are the content of `prop:closure`; their agreement with the
+BGW canonical composite is a cited *interpretation* (see the section
+docstring), not a Lean-checked fact — exactly as when this was carried by the
+(eliminated) `bgw_canonical_composite` axiom. Non-matrix rows are the
+junk-total convention `.real 0`, consumed nowhere. -/
+def bgwComposite : EJAType → EJAType → EJAType
+  | .real m,    .real n    => .real (m * n)
+  | .real m,    .complex n => .complex (m * n)
+  | .real m,    .quatern n => .quatern (m * n)
+  | .complex m, .real n    => .complex (m * n)
+  | .complex m, .complex n => .complex (m * n)
+  | .complex m, .quatern n => .complex (2 * m * n)
+  | .quatern m, .real n    => .quatern (m * n)
+  | .quatern m, .complex n => .complex (2 * m * n)
+  | .quatern m, .quatern n => .real (4 * m * n)
+  | _,          _          => .real 0
 
-/-- The canonical Barnum–Graydon–Wilce composite operation `⊙c` on `EJAType`
-    (`def:canonical-composite`), underlying `prop:closure`. -/
-def bgwComposite : EJAType → EJAType → EJAType := bgw_canonical_composite.val
-
-/-- **`prop:closure`, full table.** The nine R/C/H entries of the canonical
-    composition table, each an imported Barnum–Graydon–Wilce 2020 result. -/
+/-- **`prop:closure`, full table (PROVED, `rfl` per row, no axiom).** The nine
+    R/C/H entries of the canonical composition table. Formerly the `.property`
+    of the eliminated `bgw_canonical_composite` axiom; the BGW-2020 citation
+    now attaches to the table's interpretation, not to a Lean assumption. -/
 theorem bgwComposite_table :
     (∀ m n : ℕ, bgwComposite (.real m)    (.real n)    = .real (m * n)) ∧
     (∀ m n : ℕ, bgwComposite (.real m)    (.complex n) = .complex (m * n)) ∧
@@ -399,7 +411,8 @@ theorem bgwComposite_table :
     (∀ m n : ℕ, bgwComposite (.quatern m) (.real n)    = .quatern (m * n)) ∧
     (∀ m n : ℕ, bgwComposite (.quatern m) (.complex n) = .complex (2 * m * n)) ∧
     (∀ m n : ℕ, bgwComposite (.quatern m) (.quatern n) = .real (4 * m * n)) :=
-  bgw_canonical_composite.property
+  ⟨fun _ _ => rfl, fun _ _ => rfl, fun _ _ => rfl, fun _ _ => rfl, fun _ _ => rfl,
+   fun _ _ => rfl, fun _ _ => rfl, fun _ _ => rfl, fun _ _ => rfl⟩
 
 /-- Table row `R_m ⊙ R_n = R_{mn}` (Barnum–Graydon–Wilce 2020). -/
 theorem bgwComposite_real_real (m n : ℕ) :

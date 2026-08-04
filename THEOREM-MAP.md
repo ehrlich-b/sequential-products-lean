@@ -9,7 +9,7 @@ development instead; they are listed in §3, not here.
 ## 1. Machine-checked, closure = Lean core only
 
 Each of these is pinned in `AxiomAudit.lean` Layer 2 to *exactly* `propext`,
-`Classical.choice`, `Quot.sound` — not even the two cited axioms enter.
+`Classical.choice`, `Quot.sound` — not even the cited axiom enters.
 
 **Read §2 before reading this table as a verification claim.** The rows fall into
 three kinds, and only the first is conditional on §2:
@@ -116,21 +116,26 @@ intended instances is `LEDGER.md`.
 | `DiagonalHomSetup.dχAdd`, `dχAdd_cont`, differentiated coalescence | **not a rendering of one cited theorem**: these begin *after* the paper's comparison-to-differential analysis. Lean neither differentiates `Θ` nor proves `dχAdd` is its derivative | `lem:homomorphism` |
 | `IsAlbertModel.block_injective` | Yokota's triality identification of the pointwise frame stabilizer with `Spin(8)`, **plus** a standard simplicity/kernel argument (nontrivial representation of a simple Lie algebra has zero kernel). Injectivity is a composite consequence, not Yokota's literal text | `thm:albert` |
 
-Two cited results are recorded as `axiom` declarations, deliberately outside the
-Layer-2 cones. Their printed types are frozen by Layer 4; fidelity to the cited
-literature remains a human audit, and in both cases the attribution is compound:
+One cited result is recorded as an `axiom` declaration, deliberately outside the
+Layer-2 cones. Its printed type is frozen by Layer 4; fidelity to the cited
+literature remains a human audit, and the attribution is compound:
 
 - `Selection.aczel_continuous_multiplicative` — Aczél supplies the scalar
   functional-equation lineage; the operator-valued conclusion
   `h(x) = exp((log x)·A)` is finite-dimensional one-parameter-group theory
-  (Engel–Nagel). Not a theorem of Aczél alone in this form.
-- `TwistNormalForm.bgw_canonical_composite` — the nine entries agree with
-  Barnum–Graydon–Wilce's composite table for the standardly embedded matrix
-  systems, but the axiom **quantifies over all natural-number labels**, and at
-  degenerate indices the values are formal labels not backed by that source. The
-  statement is therefore broader than the citation. It is unused by
-  `master_chain` and by every result in §1, so it cannot contaminate the paper's
-  theorems, but the attribution is imprecise as it stands.
+  (Engel–Nagel). Not a theorem of Aczél alone in this form. Scheduled for
+  discharge in campaign M2 (`LEDGER.md` 2.7).
+- `TwistNormalForm.bgw_canonical_composite` — **ELIMINATED 2026-08-04
+  (`LEDGER.md` 2.8).** The former axiom asserted the existence of an operation
+  with nine specified table values — a constructible statement that cannot be
+  false — and it quantified over all natural-number labels, broader than the
+  BGW citation (the attribution imprecision previously flagged here). It is now
+  the definition `TwistNormalForm.bgwComposite` with the nine rows proved by
+  `rfl` (`bgwComposite_table`); the Barnum–Graydon–Wilce 2020 citation attaches
+  to the table's *interpretation* (that it is their canonical standard-embedding
+  composite), as prose provenance in the module docstring — which is all
+  `#print axioms` ever certified anyway. The tracked tree now carries exactly
+  ONE custom axiom.
 
 ## 3. Not machine-checked at all
 

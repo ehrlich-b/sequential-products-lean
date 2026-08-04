@@ -86,11 +86,13 @@ sorry-free Wigner rigidity — see 3.0.
   Precedent: PR #33813 (Cauchy-log characterization) was closed unmerged
   2026-01 — build in-repo, harvest to Mathlib later (T4). ~200–350 lines
   estimate stands, lean high. Risk MED.
-- **2.8 `bgw_canonical_composite` ELIMINATION.** Used only by legacy
-  `TwistNormalForm`/`Selection` lanes; content is a finite table ⟹ replace
-  `axiom` with a `def` by pattern-match + nine proved agreement lemmas (BGW
-  stays a prose citation for canonicity, not a Lean axiom). Custom-axiom count
-  2 → 1 immediately; → 0 after 2.7. Risk LOW, ~1 day. **Do early.**
+- **2.8 `bgw_canonical_composite` ELIMINATION — DONE 2026-08-04.** Replaced the
+  axiom (a constructible existence claim, hence not falsifiable) with the
+  pattern-match definition `bgwComposite` + `rfl`-proved `bgwComposite_table`;
+  non-matrix rows = documented junk-total `.real 0`, consumed nowhere. Audit
+  updated (allowlist + citedAxioms to one, Layer-4 bgw pin removed, docstrings);
+  README / THEOREM-MAP §2 / NormalFormExistence / Interface docstrings updated.
+  **Custom-axiom count: 2 → 1** (Aczél alone); → 0 after 2.7.
 - **2.9 prop:singular (singular-effect extension).** Boundary continuity
   argument; standalone lemma exists but is unwired. Risk MED, tail item.
 
