@@ -4,7 +4,7 @@ open Lean System
 
 /-! # Axiom census, closure allowlist, coverage, and statement-fidelity gates
 
-Five layers, all enforced by elaborating this file
+Six layers, all enforced by elaborating this file
 (`lake env lean AxiomAudit.lean`):
 
 1. a **tracked-tree census** — over every *persisted* declaration whose defining
@@ -20,7 +20,7 @@ Five layers, all enforced by elaborating this file
    axiom declarations in the tracked tree — a new stray `axiom` in any tracked
    module fails; and
    (c) **source coverage + frozen manifest**: the set of `RadicalRelativity`
-   modules on disk equals the set imported here *and* equals a pinned 26-name
+   modules on disk equals the set imported here *and* equals a pinned 27-name
    manifest, so a new unimported module, a removed root import, a name-colliding
    source path, or a coordinated module+import deletion (which preserves
    `disk == imported`) fails, closing both the "invisible module" and the
@@ -49,6 +49,14 @@ Five layers, all enforced by elaborating this file
    class (the last is caught by the changed constructor type).  This does *not*
    claim `master_chain`'s statement is frozen — Layer 2 guards its axiom closure
    only; the paper discloses it as a conditional skeleton.
+6. **interface constructor freezes** — the printed constructor types of the five
+   master-chain interface structures (`ComparisonSetup`, `CoalescenceSetup`,
+   `DiagonalHomSetup`, `StabilizerCoupling`, `IsAlbertModel`) are frozen, so
+   silent field drift on the §2 import ledger fails.  Body-hollowing of the
+   helpers those types name opaquely (the `OpCommute`-to-`False` escape) is
+   separately caught by the constructed witnesses in
+   `RadicalRelativity.MasterTheorem.Witnesses`, and neither guard claims the
+   fields are *true* on the intended EJA instances (see `LEDGER.md`).
 -/
 
 -- A recursive `.lean` source enumeration for the coverage check in Layer 1(c).
@@ -134,7 +142,7 @@ run_cmd do
     (env.header.moduleNames.toList.filter (fun m => (`RadicalRelativity).isPrefixOf m)).eraseDups
   -- (c2) frozen expected-module manifest.  `disk == imported` alone is preserved
   -- by deleting a module AND its sole root import together (both sets shrink
-  -- equally), so the tracked surface is additionally pinned to this exact 26-name
+  -- equally), so the tracked surface is additionally pinned to this exact 27-name
   -- list: any coordinated deletion, replacement (a count-preserving swap), or
   -- addition fails against `expectedMods`.
   let expectedMods : List Name :=
@@ -152,6 +160,7 @@ run_cmd do
      `RadicalRelativity.MasterTheorem.Interface,
      `RadicalRelativity.MasterTheorem.Master,
      `RadicalRelativity.MasterTheorem.RankTwo,
+     `RadicalRelativity.MasterTheorem.Witnesses,
      `RadicalRelativity.MasterTheorem.Branches.Albert,
      `RadicalRelativity.MasterTheorem.Branches.Complex,
      `RadicalRelativity.MasterTheorem.Branches.Quaternionic,
@@ -174,7 +183,7 @@ run_cmd do
   let onlyImported := importedMods.filter (fun m => !diskMods.contains m)
   if !onlyDisk.isEmpty || !onlyImported.isEmpty then
     throwError m!"Module-coverage gate FAILED. On disk but not imported (unimported source): {onlyDisk}. Imported but absent from disk (removed source / stale build): {onlyImported}"
-  logInfo m!"Census PASS: {diskMods.length} tracked RadicalRelativity modules (== frozen 26-name manifest), custom axioms exactly {citedAxioms}, every tracked persisted declaration's closure ⊆ {allowed}"
+  logInfo m!"Census PASS: {diskMods.length} tracked RadicalRelativity modules (== frozen 27-name manifest), custom axioms exactly {citedAxioms}, every tracked persisted declaration's closure ⊆ {allowed}"
 
 /-! ## Layer 2: exact-closure sentinels
 
@@ -496,3 +505,105 @@ census and exact-closure guarded here. -/
 /-- info: @sp_continuous_left : ∀ {V : Type u_1} [self : SequentialProduct V], FirstArgContinuous -/
 #guard_msgs (whitespace := lax) in
 #check @SequentialProduct.sp_continuous_left
+
+/-! ### Layer 6: master-chain interface constructor freezes
+
+The five interface structures of `THEOREM-MAP.md` §2 (`ComparisonSetup`,
+`CoalescenceSetup`, `DiagonalHomSetup`, `StabilizerCoupling`, `IsAlbertModel`)
+carry the cited imports as *fields*, so their constructor types ARE the import
+ledger: a silently added, removed, or re-typed field changes the printed
+constructor type and fails the corresponding freeze below.  Two escapes remain
+outside a type-only freeze and are closed elsewhere: (i) a frozen constructor
+names helper definitions opaquely — redefining a helper *body* (e.g.
+`MasterTheorem.OpCommute` to `False`) leaves every printed type unchanged while
+making fields unsatisfiable, so the skeleton would go vacuous silently; the
+constructed witnesses in `RadicalRelativity.MasterTheorem.Witnesses` (visited by
+the Layer-1 census) consume those bodies through real proofs, so that edit class
+now fails the build there; (ii) no freeze speaks to the *truth* of the fields on
+the intended EJA instances — the witnesses are explicitly degenerate, and
+discharging the fields on the intended algebras is the formalization campaign
+(`LEDGER.md`). -/
+
+/-- info: @MasterTheorem.ComparisonSetup.mk : {J : Type u_1} →
+  [inst : NormedAddCommGroup J] →
+    [inst_1 : InnerProductSpace ℝ J] →
+      (jordan : J →ₗ[ℝ] J →ₗ[ℝ] J) →
+        (e : J) →
+          (∀ (x y : J), (jordan x) y = (jordan y) x) →
+            (∀ (x : J), (jordan e) x = x) →
+              (n : ℕ) →
+                3 ≤ n →
+                  (p : Fin n → J) →
+                    (nonneg Inv : J → Prop) →
+                      (aOf : (Fin n → ℝ) → J) →
+                        (∀ (r : Fin n → ℝ), Inv (aOf r)) →
+                          (Θ : J → J ≃ₗ[ℝ] J) →
+                            (∀ (a : J), Inv a → (Θ a) e = e) →
+                              (∀ (a : J), Inv a → ∀ (x : J), nonneg x ↔ nonneg ((Θ a) x)) →
+                                (∀ (a : J), Inv a → ∀ (x y : J), (Θ a) ((jordan x) y) = (jordan ((Θ a) x)) ((Θ a) y)) →
+                                  (∀ (a : J), Inv a → ∀ (b : J), MasterTheorem.OpCommute jordan a b → (Θ a) b = b) →
+                                    (∀ (r : Fin n → ℝ) (i : Fin n), MasterTheorem.OpCommute jordan (aOf r) (p i)) →
+                                      (∀ (r r' : Fin n → ℝ),
+                                          (∀ (i : Fin n), r i ≤ 0) →
+                                            (∀ (i : Fin n), r' i ≤ 0) → Θ (aOf (r + r')) = Θ (aOf r) ≪≫ₗ Θ (aOf r')) →
+                                        MasterTheorem.ComparisonSetup J -/
+#guard_msgs (whitespace := lax) in
+#check @MasterTheorem.ComparisonSetup.mk
+
+/-- info: @MasterTheorem.StabilizerCoupling.mk : {n : ℕ} →
+  {Stab : Type u_1} →
+    [inst : AddCommGroup Stab] →
+      [inst_1 : _root_.Module ℝ Stab] →
+        {V : Type u_2} →
+          [inst_2 : NormedAddCommGroup V] →
+            [inst_3 : InnerProductSpace ℝ V] →
+              (ρ : Fin n → Fin n → Stab →ₗ[ℝ] V →ₗ[ℝ] V) →
+                (∀ (i j : Fin n) (ξ : Stab) (x : V), inner ℝ (((ρ i j) ξ) x) x = 0) →
+                  (dχ : (Fin n → ℝ) →ₗ[ℝ] Stab) →
+                    (T : Fin n → Fin n → V →ₗ[ℝ] V) →
+                      (∀ (i j : Fin n) (r : Fin n → ℝ), (ρ i j) (dχ r) = (r i - r j) • T i j) →
+                        3 ≤ n → MasterTheorem.StabilizerCoupling n Stab V -/
+#guard_msgs (whitespace := lax) in
+#check @MasterTheorem.StabilizerCoupling.mk
+
+/-- info: @MasterTheorem.CoalescenceSetup.mk : {J : Type u_1} →
+  [inst : NormedAddCommGroup J] →
+    [inst_1 : InnerProductSpace ℝ J] →
+      (toComparisonSetup : MasterTheorem.ComparisonSetup J) →
+        (J2 ScalarOn : Fin toComparisonSetup.n → Fin toComparisonSetup.n → J → Prop) →
+          (∀ (i j : Fin toComparisonSetup.n) (a b : J),
+              ScalarOn i j a → J2 i j b → MasterTheorem.OpCommute toComparisonSetup.jordan a b) →
+            (∀ (r : Fin toComparisonSetup.n → ℝ) (i j : Fin toComparisonSetup.n),
+                r i = r j → ScalarOn i j (toComparisonSetup.aOf r)) →
+              (∀ (i j : Fin toComparisonSetup.n) (x : J),
+                  MasterTheorem.IsBlockElt toComparisonSetup.jordan toComparisonSetup.p i j x → J2 i j x) →
+                MasterTheorem.CoalescenceSetup J -/
+#guard_msgs (whitespace := lax) in
+#check @MasterTheorem.CoalescenceSetup.mk
+
+/-- info: @MasterTheorem.DiagonalHomSetup.mk : {J : Type u_1} →
+  [inst : NormedAddCommGroup J] →
+    [inst_1 : InnerProductSpace ℝ J] →
+      {Stab : Type u_2} →
+        [inst_2 : NormedAddCommGroup Stab] →
+          [inst_3 : NormedSpace ℝ Stab] →
+            {V : Type u_3} →
+              [inst_4 : NormedAddCommGroup V] →
+                [inst_5 : InnerProductSpace ℝ V] →
+                  (toCoalescenceSetup : MasterTheorem.CoalescenceSetup J) →
+                    (ρ : Fin toCoalescenceSetup.n → Fin toCoalescenceSetup.n → Stab →ₗ[ℝ] V →ₗ[ℝ] V) →
+                      (∀ (i j : Fin toCoalescenceSetup.n) (ξ : Stab) (x : V), inner ℝ (((ρ i j) ξ) x) x = 0) →
+                        (dχAdd : (Fin toCoalescenceSetup.n → ℝ) →+ Stab) →
+                          Continuous ⇑dχAdd →
+                            (∀ (i j : Fin toCoalescenceSetup.n) (r : Fin toCoalescenceSetup.n → ℝ),
+                                r i = r j → (ρ i j) (dχAdd r) = 0) →
+                              MasterTheorem.DiagonalHomSetup J Stab V -/
+#guard_msgs (whitespace := lax) in
+#check @MasterTheorem.DiagonalHomSetup.mk
+
+/-- info: @MasterTheorem.IsAlbertModel.mk : ∀ {Stab : Type u_1} [inst : AddCommGroup Stab] [inst_1 : _root_.Module ℝ Stab]
+  {V : Type u_2} [inst_2 : NormedAddCommGroup V] [inst_3 : InnerProductSpace ℝ V]
+  {S : MasterTheorem.StabilizerCoupling 3 Stab V},
+  (∀ (i j : Fin 3), i ≠ j → Function.Injective ⇑(S.ρ i j)) → MasterTheorem.IsAlbertModel S -/
+#guard_msgs (whitespace := lax) in
+#check @MasterTheorem.IsAlbertModel.mk

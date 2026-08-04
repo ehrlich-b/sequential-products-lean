@@ -80,17 +80,25 @@ interface structures. A green build says nothing about their truth; they are
 citations, discharged by source review in the manuscript, not by Lean. Note the
 structures live in four different files:
 
-**The tree constructs no witness of any of these five structures**, so a green
-build does not establish that they are inhabited. `AxiomAudit.lean` Layer 6
-freezes their constructors against field drift, but a frozen constructor type
-names helper definitions opaquely: redefining `MasterTheorem.OpCommute`'s *body*
-to `False` would make `ComparisonSetup.frame_opCommute` and
-`CoalescenceSetup.simDiag_opCommute` unsatisfiable — hence the whole skeleton
+**Each of the five structures now has a constructed witness**
+(`MasterTheorem/Witnesses.lean`, added 2026-08-04), and `AxiomAudit.lean`
+Layer 6 freezes the five constructor types against field drift. (Honesty note:
+until 2026-08-04 the "Layer 6" earlier revisions of this paragraph referenced
+did not exist in the audit file; both the freezes and the witnesses are now
+real and enforced.) The witnesses close the body-hollowing escape this
+paragraph used to document: redefining `MasterTheorem.OpCommute`'s *body* to
+`False` would have made `ComparisonSetup.frame_opCommute` and
+`CoalescenceSetup.simDiag_opCommute` unsatisfiable — the whole skeleton
 vacuous — with every printed type, the manifest, and every axiom closure
-unchanged. (One companion edit is needed for silence: `OpCommute.symm`'s
-`Eq.symm h` must become `fun h => h`.) Layer 6's docstring states this in full.
-One concrete interface witness would convert that failure mode into a build
-error; none is claimed here.
+unchanged. `Witnesses.lean` now proves an actual `OpCommute` (and an actual
+`Function.Injective` for the `IsAlbertModel` witness), so that edit class fails
+the build. **The witnesses are degenerate** — carrier `ℝ` (or a `PUnit`
+stabilizer), zero frame, identity comparison maps, zero block representations:
+they establish *inhabitedness*, not truth. They model no rank `≥ 3` EJA, carry
+no sequential product, and instantiate none of the cited van de Wetering /
+van Imhoff–Roelands / Faraut–Korányi / Yokota content, so the skeleton remains
+exactly as conditional as this section states. The discharge plan for the
+intended instances is `LEDGER.md`.
 
 | Structure | File |
 | --- | --- |

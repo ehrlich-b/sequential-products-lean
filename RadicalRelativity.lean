@@ -39,6 +39,11 @@ import RadicalRelativity.MasterTheorem.RankTwo
 -- is a documented paper-only follow-up.
 import RadicalRelativity.MasterTheorem.Central
 
+-- Interface inhabitedness witnesses: one degenerate instance per interface
+-- structure (vacuity guard; certifies inhabitedness only, NOT the intended EJA
+-- instantiation — see the module docstring and LEDGER.md).
+import RadicalRelativity.MasterTheorem.Witnesses
+
 -- Exact paper-facing S1--S7 and product-conclusion statement boundary.  This
 -- freezes the target signature; it does not claim the classification is proved.
 import RadicalRelativity.PaperA.Statement
