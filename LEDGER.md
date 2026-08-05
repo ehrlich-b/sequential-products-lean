@@ -384,6 +384,37 @@ sorry-free Wigner rigidity — see 3.0.
   part 2c = `multiParameter_eq_exp` ⟹ linear dχ with `χ̃ r = exp (dχ r)`;
   then ρ/coalescence_diff/Setup instantiations.
 
+  **χ̃ PARTS 2b+2c DONE 2026-08-05** (`Necessity/ChiContinuity.lean`, census 62,
+  gates green): the ANALYTIC HALF of `lem:homomorphism`, which the interface
+  docstrings explicitly scope out of the abstract tree, is now machine-checked
+  on the concrete carrier. Continuity ladder: S2 `ContinuousOn` composed with
+  the effect-valued diagonal curve (`comp_continuous`) → `spPos` → `seqLeftMul`
+  (posPart-split, all `show`-rfl unfolds) → `theta` (Q⁻¹-part = EXPLICIT
+  diagonal conj via `cfc_diagonal`, `Continuous.matrix_diagonal/_mul/
+  _conjTranspose`) → `thetaUnit.val` (`continuous_clm_apply` findim reduction)
+  → inverse factor (`Ring.inverse_unit` + `NormedRing.inverse_continuousAt`) →
+  `continuous_chiTilde_line`. Then `chiTilde_eq_exp` = `multiParameter_eq_exp`
+  at 𝔸 := End(H_n(ℂ)): ∃! LINEAR dχ with χ̃(r) = exp(dχ(r)); `dChi` = the data.
+  The abstract `dχAdd`/`dχAdd_cont` fields are thereby PROVED for the intended
+  instance (a linear map is additive; findim linear is continuous).
+  TRAPS (all resolved, remember these): (1) CLM's ambient TopologicalSpace =
+  strong topology ≠ (syntactically) the norm topology — `IsTopologicalRing`/
+  `ContinuousMul` DO NOT synthesize although plain-`rfl` proves the topologies
+  defeq at default transparency; registered a local Prop-mixin instance
+  `IsTopologicalRing (H →L H)` via `by exact @NonUnitalSeminormedRing.
+  toIsTopologicalRing _ _` (explicit type arg, else stuck metas). (2) The Units
+  instance diamond: `ˣ` elaborates over `ContinuousLinearMap.monoidWithZero`,
+  `NormedRing.inverse_continuousAt` over `NormedRing.toRing`-path — rigid
+  unification REFUSES though `Ring.inverse`-A = `Ring.inverse`-B by plain rfl;
+  fix = repackage the unit field-by-field ⟨val, inv, val_inv, inv_val⟩ inside
+  `by exact`. (3) `ContinuousAt.comp` higher-order unification grabs
+  `f := Units.val` from a coerced point — pin `(f := …) (x := t₀)` explicitly.
+  (4) `import Mathlib.Analysis.Normed.Ring.Lemmas` required for the
+  seminormed→topological-ring instance at all.
+  Remaining for 2.6: coalescence_diff (differentiate the fixed-subspace
+  property: exp(t·dχ(r)) fixes the {i,j}-block when rᵢ = rⱼ ⟹ dχ(r) kills it),
+  concrete ρ (block compression), CoalescenceSetup/DiagonalHomSetup wiring.
+
   **WIRING DESIGN (banked 2026-08-05, before χ̃ part 2):** build the
   `ComparisonSetup (HermitianMat (Fin N) ℂ)` instance NEXT — the abstract
   DiagonalHom layer then supplies `chi_hom`/`chi_comm`/`chi_extend_wellDefined`

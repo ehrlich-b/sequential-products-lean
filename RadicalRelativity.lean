@@ -161,6 +161,13 @@ import RadicalRelativity.Necessity.ComparisonInstance
 -- thetaUnit(r inf 0 - r)^{-1} with chiTilde_add/zero/of_nonpos.
 import RadicalRelativity.Necessity.ChiExtension
 
+-- The analytic half of lem:homomorphism on H_n(C): the S2 continuity ladder
+-- (sp -> spPos -> seqLeftMul -> theta via the explicit diagonal Q-inverse),
+-- line-continuity of chi-tilde, and multiParameter_eq_exp giving the LINEAR
+-- differential dChi with chiTilde r = exp (dChi r) -- linearity/continuity of
+-- the abstract dChiAdd fields PROVED here, not imported.
+import RadicalRelativity.Necessity.ChiContinuity
+
 -- Exact paper-facing S1--S7 and product-conclusion statement boundary.  This
 -- freezes the target signature; it does not claim the classification is proved.
 import RadicalRelativity.PaperA.Statement
