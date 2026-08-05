@@ -134,6 +134,12 @@ import RadicalRelativity.Necessity.ThetaCocycle
 -- discharges the Aczel axiom in the next unit.
 import RadicalRelativity.Necessity.OneParameter
 
+-- M2 necessity core, ninth unit (LEDGER 2.6 instantiation data): the exponential
+-- diagonal family aOf r = diag(exp r_i) and the standard frame — the semigroup
+-- law, positive definiteness, effect-ness on the negative orthant, the frame
+-- decomposition, and frame commutation; product-independent matrix bookkeeping.
+import RadicalRelativity.Necessity.DiagonalFamily
+
 -- Exact paper-facing S1--S7 and product-conclusion statement boundary.  This
 -- freezes the target signature; it does not claim the classification is proved.
 import RadicalRelativity.PaperA.Statement
