@@ -48,7 +48,7 @@ three kinds, and only the first is conditional on §2:
 | `rem:n2-selection` (exchange covariance ⟹ Lüders) | `MasterTheorem.RankTwo.n2_exchange_selects_luders` | `MasterTheorem/RankTwo.lean` |
 | `thm:qubit-boundary`(i), block form (V1) | `MasterTheorem.RankTwo.sp_blockForm` | `MasterTheorem/RankTwo.lean` |
 | `thm:qubit-boundary`(iii), frame-dependence pair (V9) | `RankTwo.sp_tau_had_is_luders`, `RankTwo.sp_tau_std_is_unit_twist` | `MasterTheorem/RankTwo.lean` |
-| `lem:twist-sufficiency` — every twist product satisfies S1–S7 on `H_n(ℂ)`, packaged per `t`; **S2 is proved in the carried (Frobenius) norm** — the order-unit-norm identification is LEDGER 1.4 | `HermitianMat.twistSequentialProductCore`, `HermitianMat.twistSequentialProduct` | `Hermitian/Sequential.lean` |
+| `lem:twist-sufficiency` — every twist product satisfies S1–S7 on `H_n(ℂ)`, packaged per `t`; S2 holds in the carried norm AND (ε–δ, `twistSeq_continuousAt_ouNorm`) in the order-unit norm — the norm caveat is discharged for this row | `HermitianMat.twistSequentialProductCore`, `HermitianMat.twistSequentialProduct` | `Hermitian/Sequential.lean` |
 
 `n2_necessity` is worth reading directly. It takes a **linear** `angle` on `ℝ²`
 vanishing on the diagonal and concludes the rotation factors as
@@ -74,10 +74,16 @@ first-argument continuity in the *carried* norm. On the intended
 finite-dimensional EJA instances the two are equivalent — all norms there induce
 the same topology — but the generic interface does not literally state the paper's
 (S2), and the direction of the variable (first argument, on effects) is what the
-pin does establish.  The concrete carrier now carries the order-unit norm as an
-unbundled def (`HermitianMat.ouNorm`, `RadicalRelativity/Hermitian/OrderUnit.lean`)
-with the defining infimum attained; identifying it with the carried Frobenius norm
-on `H_n(𝕜)` is the discharge tracked as LEDGER 1.4.
+pin does establish.  **On the concrete carrier this caveat is now discharged**
+(LEDGER 1.4, 2026-08-05): `HermitianMat.ouNorm` carries the two-sided comparison
+`ouNorm ≤ ‖·‖ ≤ √(card n) · ouNorm` (`ouNorm_le_norm`,
+`norm_le_sqrt_card_mul_ouNorm`, `Hermitian/OrderUnit.lean`), and
+`twistSeq_continuousAt_ouNorm` (`Hermitian/Sequential.lean`) states first-argument
+ε–δ continuity of the twist product *in the order-unit norm itself* — the paper's
+literal (S2) for `lem:twist-sufficiency`.  The remaining caveat is generic-interface
+only: the abstract `OrderUnitSpace` still never identifies its carried norm with
+the order-unit norm, which matters for the *necessity* direction's S2 hypothesis,
+not for the sufficiency row.
 
 ### M1 carrier layer (supporting infrastructure, no paper labels)
 
@@ -90,8 +96,9 @@ Census-tracked (49-module manifest), closure = Lean core only:
   vendored compactness applies verbatim); order-unit boundedness with explicit
   witness `r = ‖a‖`; the **full Archimedean property** over ℂ (strictly stronger
   than the class's order-unit-boundedness field); the order-unit norm `ouNorm` as
-  an unbundled def with attainment, minimality, `ouNorm ≤ ‖·‖`, negation/triangle,
-  and definiteness.
+  an unbundled def with attainment, minimality, negation/triangle, definiteness,
+  and the two-sided carried-norm comparison `ouNorm ≤ ‖·‖ ≤ √(card n) · ouNorm`
+  (LEDGER 1.4, via `abs_eigenvalues_le_ouNorm`).
 - `RadicalRelativity/Hermitian/ExtremeEffects.lean` — extreme points of the effect
   interval are exactly the projections `p ^ 2 = p`: projections-are-extreme is
   `RCLike`-uniform (quadratic-form kernel pinch), the converse is proved over ℂ

@@ -39,7 +39,9 @@ the master chain, and defines the order-unit norm.
 * `HermitianMat.eigenvalues_mem_Icc_of_effect` — effects have spectrum in `[0,1]` (ℂ).
 
 The norm-equivalence discharge `ouNorm ≍ ‖·‖` (THEOREM-MAP's S2 literal-fidelity
-caveat) is LEDGER item 1.4, not this file.
+caveat, LEDGER 1.4) is the final section: `ouNorm_le_norm` and
+`norm_le_sqrt_card_mul_ouNorm` give the two-sided comparison
+`ouNorm ≤ ‖·‖ ≤ √(card n) · ouNorm`.
 -/
 
 noncomputable section
@@ -120,7 +122,8 @@ theorem eigenvalues_mem_Icc_of_effect {a : HermitianMat n ℂ}
 Deliberately an unbundled `def`, not a `Norm` instance: the carrier's `Norm` slot
 is occupied by the Frobenius norm (which feeds the inner-product and `CompleteSpace`
 structure), and a competing bundled norm would make instance resolution ambiguous.
-Norm equivalence on this finite-dimensional carrier is LEDGER 1.4. -/
+The two-sided comparison with the carried norm (`ouNorm_le_norm`,
+`norm_le_sqrt_card_mul_ouNorm`) is proved below. -/
 def ouNorm (a : HermitianMat n 𝕜) : ℝ :=
   sInf {t : ℝ | 0 ≤ t ∧ -(t • 1) ≤ a ∧ a ≤ t • 1}
 
@@ -166,7 +169,7 @@ theorem ouNorm_le {a : HermitianMat n 𝕜} {t : ℝ}
   csInf_le (bddBelow_ouNorm_set a) ⟨ht, h₁, h₂⟩
 
 /-- The order-unit norm is dominated by the Frobenius norm.  (The reverse
-comparison, hence norm equivalence, is LEDGER 1.4.) -/
+comparison is `norm_le_sqrt_card_mul_ouNorm` below.) -/
 theorem ouNorm_le_norm (a : HermitianMat n 𝕜) : ouNorm a ≤ ‖a‖ :=
   ouNorm_le (norm_nonneg a) (neg_norm_smul_one_le a) (le_norm_smul_one a)
 
@@ -207,5 +210,48 @@ theorem ouNorm_le_one_of_effect {a : HermitianMat n 𝕜}
   ouNorm_le zero_le_one
     (le_trans (by simpa using neg_nonpos.mpr (zero_le_one (α := HermitianMat n 𝕜))) h0)
     (by simpa using h1)
+
+/-! ### Norm comparison (LEDGER 1.4): `ouNorm ≤ ‖·‖ ≤ √(card n) · ouNorm`
+
+Together with `ouNorm_le_norm` this identifies the order-unit and carried
+(Frobenius) topologies on the finite-dimensional carrier — the content of
+THEOREM-MAP's (S2) literal-fidelity caveat. -/
+
+/-- Every eigenvalue is bounded by the order-unit norm in absolute value.  The
+lower bound goes through `-a` and the eigenvalue permutation of `cfc_eigenvalues`. -/
+theorem abs_eigenvalues_le_ouNorm (a : HermitianMat n ℂ) (i : n) :
+    |a.H.eigenvalues i| ≤ ouNorm a := by
+  rw [abs_le]
+  constructor
+  · have hneg : -a ≤ ouNorm a • 1 := neg_le.mpr (neg_ouNorm_smul_one_le a)
+    have hcfc : a.cfc (fun x => -x) = -a := by
+      have h := cfc_neg_apply (A := a) (f := id)
+      simpa using h
+    obtain ⟨e, he⟩ := cfc_eigenvalues (fun x => -x) a
+    rw [hcfc] at he
+    have h2 := le_smul_one_imp_eigenvalues_le (-a) (ouNorm a) hneg (e.symm i)
+    rw [he] at h2
+    simp only [Function.comp_apply, Equiv.apply_symm_apply] at h2
+    linarith
+  · exact le_smul_one_imp_eigenvalues_le a (ouNorm a) (le_ouNorm_smul_one a) i
+
+/-- **The reverse norm comparison**: the carried (Frobenius) norm is at most
+`√(card n)` times the order-unit norm. -/
+theorem norm_le_sqrt_card_mul_ouNorm (a : HermitianMat n ℂ) :
+    ‖a‖ ≤ Real.sqrt (Fintype.card n) * ouNorm a := by
+  have hsq : ‖a‖ ^ 2 ≤ (Fintype.card n : ℝ) * ouNorm a ^ 2 := by
+    rw [norm_eq_sum_eigenvalues_sq]
+    calc ∑ i, (a.H.eigenvalues i) ^ 2
+        ≤ ∑ _i : n, ouNorm a ^ 2 := by
+          apply Finset.sum_le_sum
+          intro i _
+          rw [← sq_abs]
+          exact pow_le_pow_left₀ (abs_nonneg _) (abs_eigenvalues_le_ouNorm a i) 2
+      _ = (Fintype.card n : ℝ) * ouNorm a ^ 2 := by
+          rw [Finset.sum_const, nsmul_eq_mul, Finset.card_univ]
+  calc ‖a‖ = Real.sqrt (‖a‖ ^ 2) := (Real.sqrt_sq (norm_nonneg a)).symm
+    _ ≤ Real.sqrt ((Fintype.card n : ℝ) * ouNorm a ^ 2) := Real.sqrt_le_sqrt hsq
+    _ = Real.sqrt (Fintype.card n) * ouNorm a := by
+        rw [Real.sqrt_mul (by positivity), Real.sqrt_sq (ouNorm_nonneg a)]
 
 end HermitianMat

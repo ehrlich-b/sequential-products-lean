@@ -421,6 +421,35 @@ theorem continuous_twistSeq_left (t : ℝ) (b : HermitianMat n ℂ) :
     exact ((continuous_twistFactor t).matrix_mul continuous_const).matrix_mul h2
   exact hmat.subtype_mk _
 
+/-- **S2 in the order-unit norm** (ε–δ form): first-argument continuity of the
+twist product holds for `ouNorm` as well, via the two-sided norm comparison
+(`ouNorm_le_norm`, `norm_le_sqrt_card_mul_ouNorm`).  This closes THEOREM-MAP's
+(S2) literal-fidelity caveat on the concrete carrier. -/
+theorem twistSeq_continuousAt_ouNorm (t : ℝ) (b a : HermitianMat n ℂ)
+    {ε : ℝ} (hε : 0 < ε) :
+    ∃ δ > 0, ∀ a' : HermitianMat n ℂ, ouNorm (a' - a) < δ →
+      ouNorm (twistSeq t a' b - twistSeq t a b) < ε := by
+  have hc := (continuous_twistSeq_left t b).continuousAt (x := a)
+  rw [Metric.continuousAt_iff] at hc
+  obtain ⟨δ₀, hδ₀, hball⟩ := hc ε hε
+  refine ⟨δ₀ / (Real.sqrt (Fintype.card n) + 1), by positivity, fun a' h => ?_⟩
+  have hin : dist a' a < δ₀ := by
+    rw [dist_eq_norm]
+    calc ‖a' - a‖ ≤ Real.sqrt (Fintype.card n) * ouNorm (a' - a) :=
+          norm_le_sqrt_card_mul_ouNorm _
+      _ ≤ (Real.sqrt (Fintype.card n) + 1) * ouNorm (a' - a) := by
+          have := ouNorm_nonneg (a' - a)
+          nlinarith [Real.sqrt_nonneg (Fintype.card n : ℝ)]
+      _ < (Real.sqrt (Fintype.card n) + 1) * (δ₀ / (Real.sqrt (Fintype.card n) + 1)) := by
+          have hpos : (0 : ℝ) < Real.sqrt (Fintype.card n) + 1 := by positivity
+          exact mul_lt_mul_of_pos_left h hpos
+      _ = δ₀ := by field_simp
+  have hout := hball hin
+  rw [dist_eq_norm] at hout
+  calc ouNorm (twistSeq t a' b - twistSeq t a b)
+      ≤ ‖twistSeq t a' b - twistSeq t a b‖ := ouNorm_le_norm _
+    _ < ε := hout
+
 /-! ## Packaging: the S1–S7 interface -/
 
 /-- **The twist product is an S1–S7 sequential product on `H_n(ℂ)`** (paper

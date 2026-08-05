@@ -146,10 +146,18 @@ sorry-free Wigner rigidity — see 3.0.
 - **1.4 (S2) norm caveat discharge.** Prove order-unit norm ≡ carried norm on
   the finite-dim instance (all norms equivalent, Mathlib has finite-dim
   equivalence) — closes THEOREM-MAP's S2 literal-fidelity caveat. Risk LOW.
-  Half done 2026-08-04: `ouNorm_le_norm` (OU ≤ Frobenius) is proved; remaining
-  = the reverse comparison (e.g. `‖a‖ ≤ √n · ouNorm a` via
-  `norm_eq_sum_eigenvalues_sq`, or abstract finite-dim equivalence) and smul
-  homogeneity of `ouNorm` if the S2 discharge route needs the full norm laws.
+  Half done 2026-08-04: `ouNorm_le_norm` (OU ≤ Frobenius) is proved.
+  **DONE 2026-08-05** (same-day as 1.3; census unchanged at 49): the reverse
+  comparison `norm_le_sqrt_card_mul_ouNorm : ‖a‖ ≤ √(card n) · ouNorm a` via
+  `abs_eigenvalues_le_ouNorm` (upper bound from the attained `le_ouNorm_smul_one`
+  + vendored `le_smul_one_imp_eigenvalues_le`; lower bound through `-a` and the
+  `cfc_eigenvalues` permutation — no new spectral machinery) and
+  `norm_eq_sum_eigenvalues_sq`; plus the paper-facing transfer
+  `twistSeq_continuousAt_ouNorm` (ε–δ first-argument continuity of the twist
+  product IN THE ORDER-UNIT NORM, `Hermitian/Sequential.lean`), which is the
+  literal (S2) reading on the concrete carrier. smul homogeneity of `ouNorm`
+  was NOT needed (the ε–δ route uses only the two inequalities) — not proved,
+  by design. **M1 IS COMPLETE.**
 
 ## M2 — Complex necessity core
 
