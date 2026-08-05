@@ -104,6 +104,45 @@ sorry-free Wigner rigidity — see 3.0.
   `cfc_comp'`, `cfc_pow`, order lemmas `cfc_mono`/`cfc_le_iff`, commutation
   `Commute.cfc`, norms `norm_cfc`). The SymPy V1–V10 checks are the
   computational shadow; each becomes a lemma. Risk LOW, volume moderate.
+  **DONE 2026-08-05** (`Hermitian/Resolution.lean` + `Hermitian/Sequential.lean`;
+  census green at 49 modules, one axiom; paper row `lem:twist-sufficiency` now in
+  THEOREM-MAP §1, unconditional — no §2 interface structures in its closure).
+  Proof architecture, chosen to avoid ALL simultaneous-diagonalization machinery
+  (none exists in Mathlib for matrices):
+  (i) *Resolution layer*: `specProj a μ := a.cfc 1_{x=μ}` (matrix cfc needs no
+  continuity, so indicators are legal), `mat_cfc_eq_sum_specProj` (every cfc
+  expands over the value-indexed family, by cfc-congruence on the spectrum plus
+  linearity), and `mat_cfc_of_resolution` — cfc respects ANY pairwise-orthogonal
+  idempotent presentation `M = Σ cᵢ•Rᵢ`, by Lagrange interpolation at the nodes
+  `{cᵢ} ∪ σ(M)` (`Mathlib.LinearAlgebra.Lagrange`) reducing to the polynomial
+  case, which is ring algebra.
+  (ii) *Compat ⟹ commute* (the Gudder–Nagy trick at general twist): from
+  `a &ₜ b = b &ₜ a`, the Frobenius certificate `C := b^{1/2+it}·a − a·b^{1/2+it}`
+  has `tr(C·Cᴴ) = 2tr(ba²) − τ − τ̄ = 0` (where `τ = tr((b &ₜ a)·a)` equals
+  `tr(ba²)` by the hypothesis plus the one-variable identity
+  `tr((a &ₜ b)·a) = tr(ba²)`), so `C = 0` via
+  `Matrix.trace_mul_conjTranspose_self_eq_zero_iff`; conjugate-transposing gives
+  commutation with `b^{1/2-it}` too, and their product is `b`. No Fuglede, no
+  spectral theory.
+  (iii) *Commute ⟹ compat + value*: `a &ₜ b = a·b` for commuting pairs rides the
+  vendored `Commute.cfc_right` — free.
+  (iv) *S5*: reduces to `(ab)^{1/2+it} = a^{1/2+it}·b^{1/2+it}` on commuting
+  positives (`twistFactor_mul_of_commute`): present `ab` by the JOINT family
+  `P_μ·Q_ν` (products of the two spectral-projection families — commuting
+  orthogonal idempotents summing to 1), apply the resolution lemma, and finish
+  with the scalar character law `g(μν) = g(μ)g(ν)` on `[0,∞)` — the paper's
+  `g(0) = 0` convention makes the zero-eigenvalue cases definitional.
+  (v) *S4*: trace route — `tr(a &ₜ b) = tr(b·a)`, trace symmetry, PSD +
+  trace-zero ⟹ zero (eigenvalue sum). (vi) *S6a/S6b/S7*: one-line consequences
+  of (ii)+(iii) and `Commute` algebra. (vii) *S2*: GLOBAL norm continuity of
+  `a ↦ a &ₜ b` — the component functions `√x·cos/sin(t·log x)` are continuous on
+  all of ℝ (squeeze `|√x·c| ≤ √x` at the spectral origin; the junk values for
+  `x < 0` vanish identically), then the vendored `HermitianMat.cfc_continuous` +
+  `Continuous.matrix_mul`. Packaged as `twistSequentialProductCore t` /
+  `twistSequentialProduct t` (defs per twist parameter, parents = the 1.1
+  instance; `IsEffect`/`ousUnit` discharge definitionally). The V1–V10 shadow is
+  superseded pointwise by these lemmas on the n≥3 side; V9/V10's rank-two content
+  was already in `MasterTheorem/RankTwo.lean`.
 - **1.4 (S2) norm caveat discharge.** Prove order-unit norm ≡ carried norm on
   the finite-dim instance (all norms equivalent, Mathlib has finite-dim
   equivalence) — closes THEOREM-MAP's S2 literal-fidelity caveat. Risk LOW.
@@ -287,6 +326,20 @@ sorry-free Wigner rigidity — see 3.0.
   "`Mathlib.Tactic.subscriptTerm` has not been implemented" errors. Always
   `open scoped Matrix` BEFORE entering the namespace (or write
   `open scoped _root_.Matrix`). Diagnosed 2026-08-04 (order-unit layer).
+  Same family (2026-08-05): the vendor also declares `HermitianMat.pow_zero`
+  (Basic.lean:275), which shadows the ROOT `pow_zero` inside the namespace and
+  makes `simp only [pow_zero]` a silent no-op on `Matrix`/ℝ powers — write
+  `_root_.pow_zero`. Audit any bare root-algebra simp name used inside
+  `namespace HermitianMat` against the vendor's declarations.
+- **H7. Expected-type elaboration of resolution-shaped lemmas times out.**
+  Applying `mat_cfc_of_resolution` with `(R := fun q => …)`/`(c := fun q => …)`
+  named AND a type-ascribed `have` makes the unifier grind through `specProj`
+  bodies (cfc → eigendecomposition) — deterministic whnf timeout even at 800k
+  heartbeats. The fix is forward inference:
+  `have hres := fun f => mat_cfc_of_resolution hidem horth hsum hM f` with NO
+  type ascription and NO named lambdas — instant, and the (β-unreduced) inferred
+  type rewrites fine downstream. Diagnosed 2026-08-05 (S1–S7 unit, bisected via
+  probe file).
 - **H5. Scoped-instance gotcha (the costliest inventory discovery).** The
   Loewner order + `StarOrderedRing` on `Matrix` require `open scoped
   MatrixOrder` (`Analysis/Matrix/Order.lean`); the matrix C*-norm requires

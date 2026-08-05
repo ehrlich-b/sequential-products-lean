@@ -65,6 +65,19 @@ import RadicalRelativity.Hermitian.ExtremeEffects
 -- the t = 0 Lüders specialization.
 import RadicalRelativity.Hermitian.Twist
 
+-- M1 spectral-resolution infrastructure (LEDGER 1.3): value-indexed spectral
+-- projections `specProj` with the expansion of every cfc over them, and the
+-- resolution lemma (cfc respects ANY orthogonal-idempotent presentation, via
+-- Lagrange interpolation) — the two-variable engine behind the S5 verification.
+import RadicalRelativity.Hermitian.Resolution
+
+-- M1 S1–S7 verification (LEDGER 1.3, paper `lem:twist-sufficiency`): S4 by the
+-- trace route, compatibility ⟺ commutation (Frobenius certificate / Gudder–Nagy
+-- at general twist), the two-variable law `(ab)^{1/2+it} = a^{1/2+it}·b^{1/2+it}`
+-- on commuting positives, S5–S7, S2 norm continuity, and the packaged
+-- `twistSequentialProductCore` / `twistSequentialProduct` per twist parameter.
+import RadicalRelativity.Hermitian.Sequential
+
 -- Exact paper-facing S1--S7 and product-conclusion statement boundary.  This
 -- freezes the target signature; it does not claim the classification is proved.
 import RadicalRelativity.PaperA.Statement

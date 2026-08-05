@@ -30,7 +30,9 @@ three kinds, and only the first is conditional on §2:
   concrete `M₂(ℂ)` computations (`sp_blockForm`, `sp_tau_had_is_luders`,
   `sp_tau_std_is_unit_twist`) plus the generator-level exchange selector
   `n2_exchange_selects_luders`, a statement about a linear functional on
-  `Fin 2 → ℝ`, carry no interface fields at all.
+  `Fin 2 → ℝ`, carry no interface fields at all.  The `lem:twist-sufficiency`
+  row is likewise unconditional: it is proved on the concrete carrier
+  `HermitianMat n ℂ` with no §2 structures anywhere in its closure.
 
 | Paper statement | Lean declaration | File |
 | --- | --- | --- |
@@ -46,6 +48,7 @@ three kinds, and only the first is conditional on §2:
 | `rem:n2-selection` (exchange covariance ⟹ Lüders) | `MasterTheorem.RankTwo.n2_exchange_selects_luders` | `MasterTheorem/RankTwo.lean` |
 | `thm:qubit-boundary`(i), block form (V1) | `MasterTheorem.RankTwo.sp_blockForm` | `MasterTheorem/RankTwo.lean` |
 | `thm:qubit-boundary`(iii), frame-dependence pair (V9) | `RankTwo.sp_tau_had_is_luders`, `RankTwo.sp_tau_std_is_unit_twist` | `MasterTheorem/RankTwo.lean` |
+| `lem:twist-sufficiency` — every twist product satisfies S1–S7 on `H_n(ℂ)`, packaged per `t`; **S2 is proved in the carried (Frobenius) norm** — the order-unit-norm identification is LEDGER 1.4 | `HermitianMat.twistSequentialProductCore`, `HermitianMat.twistSequentialProduct` | `Hermitian/Sequential.lean` |
 
 `n2_necessity` is worth reading directly. It takes a **linear** `angle` on `ℝ²`
 vanishing on the diagonal and concludes the rotation factors as
@@ -78,7 +81,7 @@ on `H_n(𝕜)` is the discharge tracked as LEDGER 1.4.
 
 ### M1 carrier layer (supporting infrastructure, no paper labels)
 
-Census-tracked (46-module manifest), closure = Lean core only:
+Census-tracked (49-module manifest), closure = Lean core only:
 
 - `RadicalRelativity/Hermitian/OrderUnit.lean` — `OrderUnitSpace (HermitianMat n 𝕜)`
   instance over the vendored carrier (parents = the existing vendored instances; the
@@ -101,8 +104,25 @@ Census-tracked (46-module manifest), closure = Lean core only:
   definitionally); `twistSeq t a b := b.conj (twistFactor a t)`; proved:
   `(a^{1/2+it})ᴴ = a^{1/2-it}`, `X·Xᴴ = Xᴴ·X = a` on `0 ≤ a`, both unit laws,
   positivity, S1-additivity and monotonicity in the second argument, effect
-  closure, and the `t = 0` Lüders specialization.  S4–S7 and the
-  `SequentialProductCore` instance are LEDGER 1.3.
+  closure, and the `t = 0` Lüders specialization.
+- `RadicalRelativity/Hermitian/Resolution.lean` — value-indexed spectral
+  projections `specProj a μ := a.cfc 1_{x=μ}` with the expansion of *every*
+  `a.cfc f` over them (`mat_cfc_eq_sum_specProj`), and the **resolution lemma**
+  (`mat_cfc_of_resolution`): the functional calculus respects any presentation of
+  `M` by a pairwise-orthogonal idempotent family summing to `1`, proved by
+  Lagrange interpolation at the nodes `{c i} ∪ σ(M)` plus ring algebra — no
+  simultaneous-diagonalization machinery anywhere.
+- `RadicalRelativity/Hermitian/Sequential.lean` — the S1–S7 verification
+  (LEDGER 1.3, `lem:twist-sufficiency`): S4 by the trace route (a PSD matrix with
+  zero trace is zero); **compatibility ⟺ commutation** — the forward direction is
+  the Frobenius certificate `tr(C·Cᴴ) = 0` for `C = [b^{1/2+it}, a]` (Gudder–Nagy
+  normality trick at general twist), the converse rides the vendored
+  `Commute.cfc_right`; the two-variable law `(ab)^{1/2+it} = a^{1/2+it}·b^{1/2+it}`
+  on commuting positives via the joint resolution `P_μ·Q_ν` and the resolution
+  lemma, with the scalar character law handling zero eigenvalues definitionally;
+  S5–S7 from these; S2 as *global* norm continuity of `a ↦ a &ₜ b` (squeeze at the
+  spectral origin); and the packaged `twistSequentialProductCore` /
+  `twistSequentialProduct` per twist parameter `t`.
 
 ## 2. Carried as cited interface hypotheses — supplied, not proved
 
@@ -178,9 +198,10 @@ supplement governs.
 construction of the comparison character and its differential from `Θ_a`; the
 operator-to-character translation on the cross-coherence space; the geometric
 two-plane frame-connectivity move; the concrete `(S2)` and invertible-density
-inputs; the remaining rank-two cocycle and compatibility cases; the complete
-seven-axiom verification; and the contents of the cited van de Wetering
-propositions themselves.
+inputs; the remaining rank-two cocycle and compatibility cases; and the contents
+of the cited van de Wetering propositions themselves.  (The complete seven-axiom
+verification of the twist products — formerly on this list — is now
+machine-checked on the concrete carrier: `lem:twist-sufficiency` in §1.)
 
 **Statements with no Lean counterpart:**
 
