@@ -436,6 +436,38 @@ sorry-free Wigner rigidity — see 3.0.
   the memory note) + dχAdd/dχAdd_cont (ALREADY PROVED via dChi: linear ⟹
   additive, findim ⟹ continuous).
 
+  **ℂ-LANE ENDGAME DESIGN (banked 2026-08-05, after reading
+  Branches/Complex.lean consumption).** `complex_perFrame_rho` consumes a
+  StabilizerCoupling + the TORUS MODEL `hmodel : ρ_{ij}(dχ r) = (θᵢ(r) −
+  θⱼ(r)) • J` — the model is MORE than the coupling (per-index characters θᵢ,
+  not per-pair). Decoded discharge route, in order:
+  (u1) **ouNorm-isometry of Θ** (order-iso + unital ⟹ preserves order-unit
+  intervals ⟹ ouNorm-isometric) — cheap, uses the M1 ouNorm kit.
+  (u2) **Block ouNorm = Euclidean**: on V_{ij}, x = zE_ij + z̄E_ji has
+  x² = |z|²(E_ii + E_jj), so ouNorm x = |z| — the block order-unit norm IS the
+  ℝ²-norm. Skewness mechanism: exp(t·dχ) preserves blocks + is
+  ouNorm-isometric ⟹ block restriction is a Euclidean isometry group ⟹
+  generator skew (d/dt ‖exp(tT)v‖² = 0 at t = 0). NO trace-preservation, NO
+  compactness import.
+  (u3) **dχ(r) preserves blocks** (differentiate concrete block-preservation).
+  (u4) **coalescence_diff — STRONG form** (dχ(r) kills the block pointwise
+  when rᵢ = rⱼ): χ̃(t•r) fixes corner elements ∀t (corner_commute +
+  thetaNorm-fix at both canonical exponents, which inherit rᵢ = rⱼ), and
+  exp(t•dχ(r))x ≡ x differentiates to dχ(r)x = 0 (hasDerivAt_exp_smul_const +
+  CLM-apply + constant-curve uniqueness).
+  (u5) **Stab := the submodule of block-skew CLMs**; ρ i j := block
+  compression via ε_{ij}/β_{ij} (ℝ² coordinates a+bi ↦ zE_ij + z̄E_ji);
+  ρ_skew holds ∀ξ ∈ Stab BY MEMBERSHIP; dχ(r) ∈ Stab by u2/u3.
+  DiagonalHomSetup instance: dχAdd := (dChi …).toAddMonoidHom, dχAdd_cont by
+  findim, coalescence_diff from u4 (compression of a pointwise-killed block).
+  (u6) **hmodel via the phase cocycle**: V_ij ∘ V_jk ⊆ V_ik with the ℂ-mult
+  formula (zE_ij + z̄E_ji)∘(wE_jk + w̄E_kj) = ½(zwE_ik + conj), so hjord forces
+  the block rotations to satisfy R_ik(zw) = R_ij(z)·R_jk(w); orthogonal +
+  multiplicative + connected-to-identity ⟹ R_ij = rotation by φ_{ij} with
+  φ_{ij} + φ_{jk} = φ_{ik} ⟹ φ_{ij} = θᵢ − θⱼ (anchor θᵢ := φ_{i,i₀}). This is
+  the paper's torus identification, machine-checkable without classifying
+  Aut(H_n(ℂ)).
+
   **WIRING DESIGN (banked 2026-08-05, before χ̃ part 2):** build the
   `ComparisonSetup (HermitianMat (Fin N) ℂ)` instance NEXT — the abstract
   DiagonalHom layer then supplies `chi_hom`/`chi_comm`/`chi_extend_wellDefined`
