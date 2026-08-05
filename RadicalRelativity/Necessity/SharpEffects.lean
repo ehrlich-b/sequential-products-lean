@@ -3,8 +3,9 @@ Copyright (c) 2026 Bryan Ehrlich. All rights reserved.
 Released under Apache 2.0 license.
 Authors: Bryan Ehrlich
 -/
-import RadicalRelativity.Necessity.LeftMultiplication
+import RadicalRelativity.Necessity.FirstArgument
 import RadicalRelativity.Hermitian.ExtremeEffects
+import RadicalRelativity.Hermitian.Resolution
 
 set_option linter.style.longLine false
 
@@ -198,5 +199,209 @@ theorem sp_proj_orth' {p q : HermitianMat n ℂ} (hp : p.IsProjection)
 theorem sp_comm_proj_orth {p q : HermitianMat n ℂ} (hp : p.IsProjection)
     (hq : q.IsProjection) (hpq : p.mat * q.mat = 0) : P.sp p q = P.sp q p := by
   rw [sp_proj_orth P hp hq hpq, sp_proj_orth' P hp hq hpq]
+
+end Necessity
+
+/-!
+## Orthogonal families and the vdW 5.2 value transfer  (campaign LEDGER 2.1d)
+
+For a pairwise-orthogonal family of projections `p i` and coefficients in `[0,1]`,
+any S1–S7+S2 product computes the STANDARD value on the span:
+`(∑ λᵢ•pᵢ) ◦' (∑ μᵢ•pᵢ) = ∑ (λᵢμᵢ)•pᵢ` (`sp_orthFamily_value`), hence any two
+effects diagonal in one orthogonal family are ◦'-compatible
+(`sp_orthFamily_comm`).  This is the matrix instance of van de Wetering's
+Proposition 5.2 (transfer of value and compatibility), covering everything the Θ
+construction needs — on a finite-dimensional carrier every effect is "simple".
+S2 enters only through first-argument homogeneity (`sp_smul_left`).
+-/
+
+namespace Necessity
+
+variable {n : Type*} [Fintype n] [DecidableEq n]
+
+omit [Fintype n] in
+theorem mat_finsetSum {ι : Type*} (s : Finset ι) (f : ι → HermitianMat n ℂ) :
+    (∑ i ∈ s, f i).mat = ∑ i ∈ s, (f i).mat :=
+  map_sum (AddSubmonoidClass.subtype _) _ _
+
+/-- A finite sum of pairwise-orthogonal projections is a projection. -/
+theorem sum_proj_isProjection {ι : Type*} {s : Finset ι} {p : ι → HermitianMat n ℂ}
+    (hproj : ∀ i ∈ s, (p i).IsProjection)
+    (horth : ∀ i ∈ s, ∀ j ∈ s, i ≠ j → (p i).mat * (p j).mat = 0) :
+    (∑ i ∈ s, p i).IsProjection := by
+  rw [HermitianMat.isProjection_iff_mat_mul_self, mat_finsetSum]
+  have h := HermitianMat.resolution_mul (R := fun i => (p i).mat) (s := s)
+    (fun i hi => HermitianMat.isProjection_iff_mat_mul_self.mp (hproj i hi)) horth
+    (fun _ => (1 : ℝ)) (fun _ => (1 : ℝ))
+  simpa using h
+
+/-- Diagonal combinations `∑ λᵢ•pᵢ` with `λᵢ ∈ [0,1]` over a pairwise-orthogonal
+projection family are effects. -/
+theorem sum_smul_proj_isEffect {ι : Type*} {s : Finset ι} {p : ι → HermitianMat n ℂ}
+    (hproj : ∀ i ∈ s, (p i).IsProjection)
+    (horth : ∀ i ∈ s, ∀ j ∈ s, i ≠ j → (p i).mat * (p j).mat = 0)
+    {lam : ι → ℝ} (hlam0 : ∀ i ∈ s, 0 ≤ lam i) (hlam1 : ∀ i ∈ s, lam i ≤ 1) :
+    IsEffect (∑ i ∈ s, lam i • p i) := by
+  have h1 : (0 : HermitianMat n ℂ) ≤ ∑ i ∈ s, lam i • p i :=
+    Finset.sum_nonneg fun i hi => smul_nonneg (hlam0 i hi) (hproj i hi).nonneg
+  have h2 : (∑ i ∈ s, lam i • p i) ≤ 1 := by
+    calc ∑ i ∈ s, lam i • p i ≤ ∑ i ∈ s, p i := by
+          apply Finset.sum_le_sum
+          intro i hi
+          calc lam i • p i ≤ (1 : ℝ) • p i :=
+                smul_le_smul_of_nonneg_right (hlam1 i hi) (hproj i hi).nonneg
+            _ = p i := one_smul _ _
+      _ ≤ 1 := (sum_proj_isProjection hproj horth).le_one
+  exact ⟨h1, h2⟩
+
+variable (P : SequentialProductOn (HermitianMat n ℂ))
+
+/-- Second-argument additivity over finite families of effects with a dominated sum. -/
+theorem sp_sum_right {a : HermitianMat n ℂ} (ha : IsEffect a) {ι : Type*}
+    {s : Finset ι} {g : ι → HermitianMat n ℂ}
+    (hg : ∀ i ∈ s, IsEffect (g i)) (hall : (∑ i ∈ s, g i) ≤ 1) :
+    P.sp a (∑ i ∈ s, g i) = ∑ i ∈ s, P.sp a (g i) := by
+  classical
+  induction s using Finset.induction_on with
+  | empty => simp [P.sp_zero_right ha]
+  | insert j s' hj ih =>
+    have hgj : IsEffect (g j) := hg j (Finset.mem_insert_self j s')
+    have hg' : ∀ i ∈ s', IsEffect (g i) := fun i hi => hg i (Finset.mem_insert_of_mem hi)
+    have hsub : (∑ i ∈ s', g i) ≤ ∑ i ∈ insert j s', g i :=
+      Finset.sum_le_sum_of_subset_of_nonneg (Finset.subset_insert j s')
+        fun i hi _ => (hg i hi).1
+    have hsum' : (∑ i ∈ s', g i) ≤ 1 := le_trans hsub hall
+    have hs'eff : IsEffect (∑ i ∈ s', g i) :=
+      ⟨Finset.sum_nonneg fun i hi => (hg' i hi).1, hsum'⟩
+    have hle : g j + ∑ i ∈ s', g i ≤ ousUnit := by
+      rw [HermitianMat.ousUnit_eq_one, ← Finset.sum_insert hj]
+      exact hall
+    rw [Finset.sum_insert hj, P.sp_add_right ha hgj hs'eff hle, ih hg' hsum',
+      Finset.sum_insert hj]
+
+/-- First-argument additivity over ◦'-compatible summands (derived from S6b + S1,
+not an axiom). -/
+theorem sp_add_left_of_comm {a b c : HermitianMat n ℂ} (ha : IsEffect a)
+    (hb : IsEffect b) (hc : IsEffect c) (hab : a + b ≤ 1)
+    (hac : P.sp a c = P.sp c a) (hbc : P.sp b c = P.sp c b) :
+    P.sp (a + b) c = P.sp a c + P.sp b c := by
+  have hle : a + b ≤ ousUnit := by rw [HermitianMat.ousUnit_eq_one]; exact hab
+  have h6b := P.compatible_add hc ha hb hle hac.symm hbc.symm
+  rw [← h6b, P.sp_add_right hc ha hb hle, hac, hbc]
+
+/-- Compatibility with each summand gives compatibility with the sum. -/
+theorem sp_comm_sum {c : HermitianMat n ℂ} (hc : IsEffect c) {ι : Type*}
+    {s : Finset ι} {g : ι → HermitianMat n ℂ}
+    (hg : ∀ i ∈ s, IsEffect (g i)) (hall : (∑ i ∈ s, g i) ≤ 1)
+    (hcomm : ∀ i ∈ s, P.sp (g i) c = P.sp c (g i)) :
+    P.sp (∑ i ∈ s, g i) c = P.sp c (∑ i ∈ s, g i) := by
+  classical
+  induction s using Finset.induction_on with
+  | empty => simp [P.sp_zero_right hc, P.sp_zero_left hc]
+  | insert j s' hj ih =>
+    have hgj : IsEffect (g j) := hg j (Finset.mem_insert_self j s')
+    have hg' : ∀ i ∈ s', IsEffect (g i) := fun i hi => hg i (Finset.mem_insert_of_mem hi)
+    have hsub : (∑ i ∈ s', g i) ≤ ∑ i ∈ insert j s', g i :=
+      Finset.sum_le_sum_of_subset_of_nonneg (Finset.subset_insert j s')
+        fun i hi _ => (hg i hi).1
+    have hsum' : (∑ i ∈ s', g i) ≤ 1 := le_trans hsub hall
+    have hs'eff : IsEffect (∑ i ∈ s', g i) :=
+      ⟨Finset.sum_nonneg fun i hi => (hg' i hi).1, hsum'⟩
+    have hcomm' : ∀ i ∈ s', P.sp (g i) c = P.sp c (g i) :=
+      fun i hi => hcomm i (Finset.mem_insert_of_mem hi)
+    have hle : g j + ∑ i ∈ s', g i ≤ ousUnit := by
+      rw [HermitianMat.ousUnit_eq_one, ← Finset.sum_insert hj]
+      exact hall
+    have h6b := P.compatible_add hc hgj hs'eff hle
+      (hcomm j (Finset.mem_insert_self j s')).symm (ih hg' hsum' hcomm').symm
+    rw [Finset.sum_insert hj]
+    exact h6b.symm
+
+/-- First-argument additivity over finite ◦'-compatible families. -/
+theorem sp_sum_left_of_comm {c : HermitianMat n ℂ} (hc : IsEffect c) {ι : Type*}
+    {s : Finset ι} {g : ι → HermitianMat n ℂ}
+    (hg : ∀ i ∈ s, IsEffect (g i)) (hall : (∑ i ∈ s, g i) ≤ 1)
+    (hcomm : ∀ i ∈ s, P.sp (g i) c = P.sp c (g i)) :
+    P.sp (∑ i ∈ s, g i) c = ∑ i ∈ s, P.sp (g i) c := by
+  have hs_eff : IsEffect (∑ i ∈ s, g i) :=
+    ⟨Finset.sum_nonneg fun i hi => (hg i hi).1, hall⟩
+  rw [sp_comm_sum P hc hg hall hcomm, sp_sum_right P hc hg hall]
+  exact Finset.sum_congr rfl fun i hi => (hcomm i hi).symm
+
+/-- **The vdW 5.2 value law on matrices** (LEDGER 2.1d): over a pairwise-orthogonal
+projection family, any S1–S7+S2 product takes the standard diagonal value. -/
+theorem sp_orthFamily_value (hS2 : P.FirstArgContinuous) {ι : Type*}
+    {s : Finset ι} {p : ι → HermitianMat n ℂ}
+    (hproj : ∀ i ∈ s, (p i).IsProjection)
+    (horth : ∀ i ∈ s, ∀ j ∈ s, i ≠ j → (p i).mat * (p j).mat = 0)
+    {lam mu : ι → ℝ}
+    (hlam0 : ∀ i ∈ s, 0 ≤ lam i) (hlam1 : ∀ i ∈ s, lam i ≤ 1)
+    (hmu0 : ∀ i ∈ s, 0 ≤ mu i) (hmu1 : ∀ i ∈ s, mu i ≤ 1) :
+    P.sp (∑ i ∈ s, lam i • p i) (∑ i ∈ s, mu i • p i)
+      = ∑ i ∈ s, (lam i * mu i) • p i := by
+  classical
+  have ha : IsEffect (∑ i ∈ s, lam i • p i) :=
+    sum_smul_proj_isEffect hproj horth hlam0 hlam1
+  -- the first argument against a single family member
+  have hkey : ∀ j ∈ s, P.sp (∑ i ∈ s, lam i • p i) (p j) = lam j • p j := by
+    intro j hj
+    have hpj : IsEffect (p j) := ⟨(hproj j hj).nonneg, (hproj j hj).le_one⟩
+    have hcomm : ∀ i ∈ s, P.sp (lam i • p i) (p j) = P.sp (p j) (lam i • p i) := by
+      intro i hi
+      have hpi : IsEffect (p i) := ⟨(hproj i hi).nonneg, (hproj i hi).le_one⟩
+      have hbase : P.sp (p i) (p j) = P.sp (p j) (p i) := by
+        rcases eq_or_ne i j with rfl | hij
+        · rfl
+        · exact sp_comm_proj_orth P (hproj i hi) (hproj j hj) (horth i hi j hj hij)
+      rw [sp_smul_left P hS2 hpi hpj (hlam0 i hi) (hlam1 i hi),
+        sp_smul_of_mem_unitInterval P hpj hpi (hlam0 i hi) (hlam1 i hi), hbase]
+    have hgle : (∑ i ∈ s, lam i • p i) ≤ 1 := ha.2
+    have hge : ∀ i ∈ s, IsEffect (lam i • p i) := by
+      intro i hi
+      exact ⟨smul_nonneg (hlam0 i hi) (hproj i hi).nonneg,
+        le_trans (by calc lam i • p i ≤ (1:ℝ) • p i :=
+            smul_le_smul_of_nonneg_right (hlam1 i hi) (hproj i hi).nonneg
+          _ = p i := one_smul _ _) (hproj i hi).le_one⟩
+    rw [sp_sum_left_of_comm P hpj hge hgle hcomm]
+    -- collapse: only the j-term survives
+    rw [Finset.sum_eq_single_of_mem j hj]
+    · rw [sp_smul_left P hS2 ⟨(hproj j hj).nonneg, (hproj j hj).le_one⟩
+        ⟨(hproj j hj).nonneg, (hproj j hj).le_one⟩ (hlam0 j hj) (hlam1 j hj),
+        sp_proj_self P (hproj j hj)]
+    · intro i hi hij
+      have hpi : IsEffect (p i) := ⟨(hproj i hi).nonneg, (hproj i hi).le_one⟩
+      have hpj' : IsEffect (p j) := ⟨(hproj j hj).nonneg, (hproj j hj).le_one⟩
+      rw [sp_smul_left P hS2 hpi hpj' (hlam0 i hi) (hlam1 i hi),
+        sp_proj_orth P (hproj i hi) (hproj j hj) (horth i hi j hj hij), smul_zero]
+  -- expand the second argument
+  have hmu_eff : ∀ i ∈ s, IsEffect (mu i • p i) := by
+    intro i hi
+    exact ⟨smul_nonneg (hmu0 i hi) (hproj i hi).nonneg,
+      le_trans (by calc mu i • p i ≤ (1:ℝ) • p i :=
+          smul_le_smul_of_nonneg_right (hmu1 i hi) (hproj i hi).nonneg
+        _ = p i := one_smul _ _) (hproj i hi).le_one⟩
+  have hmu_le : (∑ i ∈ s, mu i • p i) ≤ 1 :=
+    (sum_smul_proj_isEffect hproj horth hmu0 hmu1).2
+  rw [sp_sum_right P ha hmu_eff hmu_le]
+  apply Finset.sum_congr rfl
+  intro j hj
+  have hpj : IsEffect (p j) := ⟨(hproj j hj).nonneg, (hproj j hj).le_one⟩
+  rw [sp_smul_of_mem_unitInterval P ha hpj (hmu0 j hj) (hmu1 j hj), hkey j hj,
+    smul_smul, mul_comm]
+
+/-- **The vdW 5.2 compatibility transfer on matrices**: two effects diagonal in one
+orthogonal projection family are ◦'-compatible. -/
+theorem sp_orthFamily_comm (hS2 : P.FirstArgContinuous) {ι : Type*}
+    {s : Finset ι} {p : ι → HermitianMat n ℂ}
+    (hproj : ∀ i ∈ s, (p i).IsProjection)
+    (horth : ∀ i ∈ s, ∀ j ∈ s, i ≠ j → (p i).mat * (p j).mat = 0)
+    {lam mu : ι → ℝ}
+    (hlam0 : ∀ i ∈ s, 0 ≤ lam i) (hlam1 : ∀ i ∈ s, lam i ≤ 1)
+    (hmu0 : ∀ i ∈ s, 0 ≤ mu i) (hmu1 : ∀ i ∈ s, mu i ≤ 1) :
+    P.sp (∑ i ∈ s, lam i • p i) (∑ i ∈ s, mu i • p i)
+      = P.sp (∑ i ∈ s, mu i • p i) (∑ i ∈ s, lam i • p i) := by
+  rw [sp_orthFamily_value P hS2 hproj horth hlam0 hlam1 hmu0 hmu1,
+    sp_orthFamily_value P hS2 hproj horth hmu0 hmu1 hlam0 hlam1]
+  exact Finset.sum_congr rfl fun i _ => by rw [mul_comm]
 
 end Necessity

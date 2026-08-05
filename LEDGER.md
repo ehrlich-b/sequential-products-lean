@@ -218,12 +218,19 @@ sorry-free Wigner rigidity — see 3.0.
   ~20 lines on the carrier), `orth_compl_isProjection`/`proj_orth_le_one_sub`
   (1−p−q is a projection when pq = 0), `sp_proj_orth`/`sp_proj_orth'` (S4 for
   the flip), `sp_comm_proj_orth`. No S2 anywhere in this unit.
-  (2.1d) **vdW 5.2 transfer on matrices**: every matrix effect is "simple"
-  (finite spectrum), so for OPERATOR-commuting a,b sharing a joint spectral
-  family, S6b-assembly over the family gives `a |' b` AND `a◦'b = a◦b`
-  (standard value). Special case actually needed first: `b |' ν` for
-  ν = normalized pseudo-inverse of b (SAME spectral projections — no joint
-  diagonalization needed, it is a cfc of b).
+  (2.1d) **vdW 5.2 transfer on matrices — DONE 2026-08-05** (appended to
+  `Necessity/SharpEffects.lean`, census unchanged 52, gates green):
+  `sp_orthFamily_value` — over any pairwise-orthogonal projection family,
+  `(∑λᵢ•pᵢ) ◦' (∑μᵢ•pᵢ) = ∑(λᵢμᵢ)•pᵢ` (the STANDARD value) for any S1–S7+S2
+  product — and `sp_orthFamily_comm` (compatibility transfer). Supporting:
+  `sum_proj_isProjection` (rides Resolution's `resolution_mul` with x=y=1),
+  `sum_smul_proj_isEffect`, `sp_sum_right` (S1 over families, dominated-sum
+  side conditions via `Finset.sum_le_sum_of_subset_of_nonneg`),
+  `sp_add_left_of_comm` + `sp_comm_sum` + `sp_sum_left_of_comm` (first-argument
+  additivity over compatible summands: S6b-fold then S1-flip — NOT an axiom).
+  S2 enters only through `sp_smul_left`. The pseudo-inverse compatibility
+  `b |' ν` is now an instantiation: both are diagonal in b's `specProj` family
+  (2.1e wires it).
   (2.1e) **Pseudo-inverse + order reflection** (vdW 4.19 for invertible
   effects): with `ν◦'b = c·1` (c = normalization) and S5 via `ν |' b`:
   `L'_ν ∘ L'_b = c·L'_1 = c·id` on effects, extended linearly (2.1a); hence
