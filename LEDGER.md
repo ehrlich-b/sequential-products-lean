@@ -184,10 +184,45 @@ sorry-free Wigner rigidity — see 3.0.
   applies (discovered as an instance-mismatch wall at the first 2.1 build). The
   final per-type `mthm:master` statements must quantify over
   `SequentialProductOn (HermitianMat n ℂ)` + unbundled S2 for the same reason.
-  Remaining in 2.1: `Q_{√a}` as a linear equiv (conj by `cfc √` with the
-  `NonSingular` inverse), `Θ_a` as `LinearEquiv`, vdW 5.2/5.3 unital + order-iso
-  (needs L_a bijectivity on invertible effects — read vdW's proof at source
-  before building; pseudo-inverse route per lem:simple-bridge(iii)).
+  Remaining in 2.1 — **PROOF PLAN DECODED AT SOURCE 2026-08-05**
+  (arXiv:1803.08453 = Wetering2018three, fetched via curl+pdftotext; §3.9, §4.17–4.22,
+  §5.2–5.7 read in full). Unit ladder, in dependency order:
+  (2.1b) **lem:homog(ii) = first-argument homogeneity** `(λa)◦'b = λ(a◦'b)`,
+  λ ∈ [0,1] — vdW 3.9 adapted: (i) rational-multiples self-compat ladder
+  `qa |' a` by iterated S6b from `(1/n)a |' (1/n)a`; (ii) `qa⊥ |' a⊥` same, then
+  S6a gives `qa⊥ |' a`; (iii) S6b: `a |' (qa + qa⊥) = q·1`, and
+  `(q1)◦'a = a◦'(q1) = qa` by second-arg homogeneity (HAVE) + unit law;
+  (iv) the ONLY S2 use: `(λ1)◦'b = λb` by rational approximation in the first
+  argument (qᵢ1 → λ1 in norm, S2 passes the limit); `a |' λ1` then holds since
+  both sides equal λa by (iii)-style computation, NO normality needed;
+  (v) S5 with `a |' λ1`: `(λa)◦'b = (a◦'(λ1))◦'b = a◦'((λ1)◦'b) = a◦'(λb) = λ(a◦'b)`.
+  (2.1c) **Sharp-effect base layer** (abstract S1–S7, Gudder–Greechie 2002
+  facts): projections idempotent under ◦'; orthogonal projections ◦'-annihilate
+  (`p◦'q = 0` from `q ≤ 1−p` + S1-subtractive + `p◦'p = p`); commuting-sharp
+  compat. Feeds 5.2-transfer.
+  (2.1d) **vdW 5.2 transfer on matrices**: every matrix effect is "simple"
+  (finite spectrum), so for OPERATOR-commuting a,b sharing a joint spectral
+  family, S6b-assembly over the family gives `a |' b` AND `a◦'b = a◦b`
+  (standard value). Special case actually needed first: `b |' ν` for
+  ν = normalized pseudo-inverse of b (SAME spectral projections — no joint
+  diagonalization needed, it is a cfc of b).
+  (2.1e) **Pseudo-inverse + order reflection** (vdW 4.19 for invertible
+  effects): with `ν◦'b = c·1` (c = normalization) and S5 via `ν |' b`:
+  `L'_ν ∘ L'_b = c·L'_1 = c·id` on effects, extended linearly (2.1a); hence
+  `L'_b` is INJECTIVE and order-REFLECTING (`b◦'x ≥ 0 → x ≥ 0` via applying the
+  positive map `L'_ν`); surjectivity from injectivity in finite dimension.
+  (2.1f) **Θ assembly**: `Q_{√a}` as `LinearEquiv` (vendored conj by `cfc √a`,
+  inverse = conj by `cfc (√·)⁻¹`, needs `NonSingular`); `Θ_a := Q_{√a}⁻¹ ∘ L'_a`;
+  `Θ_unital` = one line from `seqLeftMul_one` + `Q⁻¹(a) = 1`;
+  `Θ_orderIso` = conj-positivity (both ways, invertible) + (2.1e);
+  `Θ_fix` (vdW 5.5) = for `b` commuting with `a`: `a◦'b = a◦b` (2.1d) so
+  `Q_{√a}Θ_a b = a◦b = Q_{√a} b`, cancel; `Θ_cocycle` (vdW 5.7(2)) = the
+  `L'_{a◦'b} = L'_a L'_b`-on-commuting computation + invertibility, PLUS 5.7(1)
+  `Θ_b L_a = L_a Θ_b` which needs INVARIANCE of the standard product only
+  (Lüders is Jordan-defined ⟹ invariant; on matrices this is a concrete
+  conjugation identity — no Kadison input). `Θ_jordan` stays M3.
+  Notes: vdW 5.3's quotient universal property is NOT needed on matrices — Θ is
+  defined directly; 5.4 (`Θ_{λq} = Θ_q`) is 2.3 and falls out of (2.1b).
 - **2.2 Θ_fix (vdW 5.5) + span extension.** Effect-level fixing + extension to
   J by linearity (the span argument the paper supplies). Risk MED.
 - **2.3 cone-ext (Θ_{λq} = Θ_q normalization).** Cheap once 2.1 lands. LOW.
