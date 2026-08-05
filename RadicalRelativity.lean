@@ -147,6 +147,13 @@ import RadicalRelativity.Necessity.DiagonalFamily
 -- the M3 Jordan-preservation field, per vdW's own accounting).
 import RadicalRelativity.Necessity.Chi
 
+-- The concrete ComparisonSetup instance on H_N(C): jordanBilin, the machine-checked
+-- FK/vdW compatibility bridge (operator commutation = matrix commutation, via the
+-- quarter identity [L_a,L_b]y = (1/4)[[a,b],y]), the span-extended vdW 5.5, and
+-- thetaNorm (Theta made total by 2.3-normalization); the only remaining field
+-- hypothesis is ThetaPreservesJordan (= milestone M3).
+import RadicalRelativity.Necessity.ComparisonInstance
+
 -- Exact paper-facing S1--S7 and product-conclusion statement boundary.  This
 -- freezes the target signature; it does not claim the classification is proved.
 import RadicalRelativity.PaperA.Statement

@@ -351,6 +351,23 @@ sorry-free Wigner rigidity — see 3.0.
   `Matrix.diagonal_sum` at pin — use `map_sum diagonalAddMonoidHom`;
   `Matrix.PosSemidef.diagonal` wants the Pi-order `0 ≤ d` (show-normalize
   `0 i`); rw cannot rewrite under `∑`-binders — `simp only [show …]`.
+  **WIRING EXECUTED 2026-08-05** (`Necessity/ComparisonInstance.lean`, census 60,
+  gates green): `comparisonSetup {N} (hN : 3 ≤ N) (P) (hS2) (hjord :
+  ThetaPreservesJordan P) : ComparisonSetup (HermitianMat (Fin N) ℂ)` — every
+  interface field discharged by a proved theorem except `Θ_jordan := hjord` (the
+  isolated M3 import). Upgraded-from-cited-to-PROVED along the way: the FK/vdW
+  **compatibility bridge** `opCommute_iff_commute` (quarter identity
+  `[L_a,L_b]y = ¼[[a,b],y]`; commutator commutes with all Hermitians ⟹ scalar via
+  `Matrix.mem_range_scalar_of_commute_single` ⟹ traceless ⟹ 0), the
+  **span-extended vdW 5.5** `theta_fix_general` (posPart/negPart + normalization
+  cancel), and `thetaNorm` (Θ total on PosDef via the 2.3 normalization law —
+  vdW 5.4's raison d'être). Downstream abstract layers (`Coalescence`,
+  `DiagonalHom`) now instantiate on the concrete carrier through this def.
+  Traps: HermitianMat is a subtype ⟹ posPart dot-notation resolves to `Subtype.*`
+  (use `b⁺`/`b⁻` notation; lemmas are `posPart_eq_cfc_max`/`negPart_eq_cfc_min`);
+  `dite` on PosDef needs `letI := Classical.dec`; the (r+r')-orthant proof must be
+  ascribed `∀ i, (r + r') i ≤ 0` or unification pins `fun i => r i + r' i` (H7).
+
   **WIRING DESIGN (banked 2026-08-05, before χ̃ part 2):** build the
   `ComparisonSetup (HermitianMat (Fin N) ℂ)` instance NEXT — the abstract
   DiagonalHom layer then supplies `chi_hom`/`chi_comm`/`chi_extend_wellDefined`

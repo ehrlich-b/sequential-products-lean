@@ -156,7 +156,13 @@ they establish *inhabitedness*, not truth. They model no rank `≥ 3` EJA, carry
 no sequential product, and instantiate none of the cited van de Wetering /
 van Imhoff–Roelands / Faraut–Korányi / Yokota content, so the skeleton remains
 exactly as conditional as this section states. The discharge plan for the
-intended instances is `LEDGER.md`.
+intended instances is `LEDGER.md`. **As of 2026-08-05 a concrete instance
+exists**: `Necessity.comparisonSetup : ComparisonSetup (HermitianMat (Fin N) ℂ)`
+(`Necessity/ComparisonInstance.lean`), with every field discharged by a proved
+theorem of the necessity development except `Θ_jordan`, which enters as the
+isolated hypothesis `ThetaPreservesJordan` (= campaign milestone M3). The rows
+below describe the *interface*; the instance column of truth for what is still
+imported on `H_N(ℂ)` is that single hypothesis plus the S2 continuity field.
 
 | Structure | File |
 | --- | --- |
@@ -168,8 +174,8 @@ intended instances is `LEDGER.md`.
 | Field | Cited source | Paper location |
 | --- | --- | --- |
 | `ComparisonSetup.Θ_jordan` | van de Wetering Prop. 5.3 + van Imhoff–Roelands Cor. 2.5 / Prop. 2.6, taken as the imported *conclusion*: the Lean structure does not encode the JB-algebra premises | `prop:theta` |
-| `ComparisonSetup.Θ_fix` | van de Wetering Prop. 5.5. **Stronger than the source as stated**: the field quantifies over all of `J`, the source is effect-level. The span extension is the manuscript's short argument (the commutant is an order-unit subspace spanned by its effects), not Lean's | `prop:theta` |
-| `ComparisonSetup`'s use of `aOf r` outside the negative orthant | van de Wetering's normalization extension `Θ_{λq} = Θ_q`, which defines `Θ_q` for arbitrary positive order-preserving `q` after rescaling | `lem:cone-ext` |
+| `ComparisonSetup.Θ_fix` | van de Wetering Prop. 5.5. **Stronger than the source as stated**: the field quantifies over all of `J`, the source is effect-level. On the concrete carrier the span extension IS now Lean's (`Necessity.theta_fix_general`, 2026-08-05, via `b = b⁺ − b⁻` + normalization), and so is the compatibility bridge it rides on (`Necessity.opCommute_iff_commute`: Jordan-operator commutation = matrix commutation, quarter identity `[L_a,L_b]y = ¼[[a,b],y]`) | `prop:theta` |
+| `ComparisonSetup`'s use of `aOf r` outside the negative orthant | van de Wetering's normalization extension `Θ_{λq} = Θ_q`, which defines `Θ_q` for arbitrary positive order-preserving `q` after rescaling. On the concrete carrier this is proved: `Necessity.thetaNorm` (total on PosDef points) + the 2.3 law `theta_smul` | `lem:cone-ext` |
 | comparison cocycle | van de Wetering Prop. 5.7, specialized to the commuting diagonal family — **weaker** than the source, not stronger | `prop:theta` |
 | `DiagonalHomSetup.dχAdd`, `dχAdd_cont`, differentiated coalescence | **not a rendering of one cited theorem**: these begin *after* the paper's comparison-to-differential analysis. Lean neither differentiates `Θ` nor proves `dχAdd` is its derivative | `lem:homomorphism` |
 | `IsAlbertModel.block_injective` | Yokota's triality identification of the pointwise frame stabilizer with `Spin(8)`, **plus** a standard simplicity/kernel argument (nontrivial representation of a simple Lie algebra has zero kernel). Injectivity is a composite consequence, not Yokota's literal text | `thm:albert` |
