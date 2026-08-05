@@ -92,6 +92,12 @@ import RadicalRelativity.Necessity.LeftMultiplication
 -- law, the SINGLE S2 limit (t•1) & b = t•b, and the S5 assembly.
 import RadicalRelativity.Necessity.FirstArgument
 
+-- M2 necessity core, third unit (LEDGER 2.1c, sharp-effect base layer): projections
+-- are sharp product-independently (the conjugation pinch), hence idempotent under
+-- ANY sequential product (S6a on trivial self-compatibility + the S1 splitting),
+-- and orthogonal projections annihilate in both orders (S4) and are compatible.
+import RadicalRelativity.Necessity.SharpEffects
+
 -- Exact paper-facing S1--S7 and product-conclusion statement boundary.  This
 -- freezes the target signature; it does not claim the classification is proved.
 import RadicalRelativity.PaperA.Statement

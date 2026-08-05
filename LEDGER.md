@@ -209,10 +209,15 @@ sorry-free Wigner rigidity — see 3.0.
   argument (qᵢ1 → λ1 in norm, S2 passes the limit); `a |' λ1` then holds since
   both sides equal λa by (iii)-style computation, NO normality needed;
   (v) S5 with `a |' λ1`: `(λa)◦'b = (a◦'(λ1))◦'b = a◦'((λ1)◦'b) = a◦'(λb) = λ(a◦'b)`.
-  (2.1c) **Sharp-effect base layer** (abstract S1–S7, Gudder–Greechie 2002
-  facts): projections idempotent under ◦'; orthogonal projections ◦'-annihilate
-  (`p◦'q = 0` from `q ≤ 1−p` + S1-subtractive + `p◦'p = p`); commuting-sharp
-  compat. Feeds 5.2-transfer.
+  (2.1c) **Sharp-effect base layer — DONE 2026-08-05**
+  (`Necessity/SharpEffects.lean`, census 52, gates green): `proj_pinch`
+  (product-independent sharpness of projections by two conjugation pinches +
+  the √e Frobenius kill), `sp_proj_compl`/`sp_proj_self` (p◦'(1−p) = 0 and
+  p◦'p = p — S6a applied to the TRIVIAL self-compat `p |' p` makes the two S1
+  splittings pinch it; this is the whole Gudder–Greechie sharpness theorem in
+  ~20 lines on the carrier), `orth_compl_isProjection`/`proj_orth_le_one_sub`
+  (1−p−q is a projection when pq = 0), `sp_proj_orth`/`sp_proj_orth'` (S4 for
+  the flip), `sp_comm_proj_orth`. No S2 anywhere in this unit.
   (2.1d) **vdW 5.2 transfer on matrices**: every matrix effect is "simple"
   (finite spectrum), so for OPERATOR-commuting a,b sharing a joint spectral
   family, S6b-assembly over the family gives `a |' b` AND `a◦'b = a◦b`
