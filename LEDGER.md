@@ -261,6 +261,21 @@ sorry-free Wigner rigidity — see 3.0.
   (`Θ_{λq} = Θ_q`) is 2.3 and falls out of (2.1b).
 - **2.2 Θ_fix (vdW 5.5) + span extension.** Effect-level fixing + extension to
   J by linearity (the span argument the paper supplies). Risk MED.
+  **Effect-level fixing DONE 2026-08-05** (`Necessity/ThetaFix.lean`, census 55,
+  gates green): `jointProj` (the joint spectral family `P_μ·Q_ν` of a commuting
+  pair — Hermitian by commutation, projections, pairwise orthogonal), the padding
+  lemmas (`sum_smul_specProj_pad`/`_pad_left`: any `cfc` of one factor is
+  diagonal in the joint family), `a_eq_sum_jointProj`/`b_eq_sum_jointProj`,
+  `sp_eq_quadRep_of_commute` (**the unknown product takes the standard Lüders
+  value on commuting pairs**: unknown side = 2.1d value law over the joint
+  family; standard side = two `resolution_mul` passes + `√μ·ν·√μ = μν`), and
+  `theta_fix : Θ_a b = b` by cancelling `Q_{√a}` through `quadRep_theta`.
+  The span extension to all of J is definitionally free here (Θ is already a
+  total linear map — vdW needed the span argument only because his Θ lived on
+  an order ideal). Traps: no `Finset.sum_product_comm` at this pin (use
+  `Finset.sum_product` + `Finset.sum_comm`); inside a `set s := …` scope, state
+  `show`-terms over `s` so `rw` matches syntactically (ascription checks by
+  defeq, rewriting does not).
 - **2.3 cone-ext (Θ_{λq} = Θ_q normalization).** Cheap once 2.1 lands. LOW.
 - **2.4 Θ_cocycle (vdW 5.7, commuting diagonal family).** Matrix-concrete
   computation in the joint eigenbasis. Risk MED.

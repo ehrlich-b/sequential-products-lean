@@ -110,6 +110,13 @@ import RadicalRelativity.Necessity.PseudoInverse
 -- finite dimension), UNITAL, and an ORDER ISOMORPHISM in both directions.
 import RadicalRelativity.Necessity.Theta
 
+-- M2 necessity core, sixth unit (LEDGER 2.2, vdW 5.5): Theta fixes commuting
+-- effects — the joint spectral family of a commuting pair (both effects diagonal
+-- in it via the padding lemmas), the unknown product takes the standard Lueders
+-- value on commuting pairs, and theta_fix by cancelling the quadratic
+-- representation through the defining equation.
+import RadicalRelativity.Necessity.ThetaFix
+
 -- Exact paper-facing S1--S7 and product-conclusion statement boundary.  This
 -- freezes the target signature; it does not claim the classification is proved.
 import RadicalRelativity.PaperA.Statement
