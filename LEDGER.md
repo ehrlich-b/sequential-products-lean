@@ -506,6 +506,31 @@ sorry-free Wigner rigidity — see 3.0.
   normalize. Remaining: u2 (block-Euclidean + skewness), u5 (Stab +
   DiagonalHomSetup), u6 (phase cocycle → hmodel).
 
+  **u2 PART 1 (block model) DONE 2026-08-05** (`Necessity/BlockModel.lean`,
+  census 67, gates green): `blockHerm i j z = z E_ij + z̄ E_ji`; the SQUARE LAW
+  `blockHerm_symmMul_self : x∘x = |z|²•(pᵢ+pⱼ)` (four single-products, the
+  e1–e4 haves by simp with the ne-facts); entry helpers
+  `single_one_mul_apply`/`mul_single_one_apply`; and the SUPPORT
+  CHARACTERIZATION `eq_blockHerm_of_peirce` (Peirce relations ⟹
+  x = blockHerm i j x_{ij}; rows/cols kill via the annihilations, diagonals
+  via the ½-relations + linear_combination, 7-case entry bash subst-free with
+  eq_true/eq_false condition facts + conv_lhs). TRAPS: `subst` on ext-locals
+  can eliminate THEOREM PARAMETERS (i became a — later i-references break) —
+  case-bash subst-free; lambdas in simp-arg lists parse badly — use
+  eq_false/eq_true `have`s; `Complex.mul_conj` is stated with starRingEnd —
+  `rw [Complex.star_def]` first; `if_pos rfl` may be pre-reduced to `if True`
+  by the rewriting lemma — `simp only [if_true]`.
+  REMAINING u2 part 2 (next stretch, plan): `thetaNorm_fixes_frameProj`
+  (fix_of_commute + diagFamily_commute_frameProj), blockHerm Peirce relations
+  (frameProj∘blockHerm computations, same four products), Θ-transport of the
+  relations (hjord 3-line pattern) ⟹ `thetaNorm_block : Θ(blockHerm z) =
+  blockHerm (entry)`, then the CAPSTONE `normSq_thetaNorm_block`: square law
+  on both sides + Θ(x∘x) = Θx∘Θx + Θ fixes pᵢ+pⱼ ⟹ |w|² = |z|² by the (i,i)
+  entry (ofReal_inj). Then u5: V := EuclideanSpace ℝ (Fin 2), blockCoord/
+  blockEmbed CLMs, R(t) := coord∘χ̃(t•r)∘embed norm-preserving ⟹ generator
+  skew (differentiate ‖R(t)v‖² via exp_apply_hasDerivAt), Stab := submodule of
+  block-skew CLMs, DiagonalHomSetup instance, toStabilizerCoupling. Then u6.
+
   **WIRING DESIGN (banked 2026-08-05, before χ̃ part 2):** build the
   `ComparisonSetup (HermitianMat (Fin N) ℂ)` instance NEXT — the abstract
   DiagonalHom layer then supplies `chi_hom`/`chi_comm`/`chi_extend_wellDefined`

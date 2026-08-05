@@ -194,6 +194,12 @@ import RadicalRelativity.Necessity.ThetaIsometry
 -- completes the differential-face geometry of dChi.
 import RadicalRelativity.Necessity.BlockInvariance
 
+-- The off-diagonal block model: blockHerm i j z = z E_ij + conj z E_ji, the
+-- square law x.x = |z|^2 (p_i + p_j), and the support characterization (the
+-- Peirce eigenrelations force x = blockHerm i j x_ij) -- the concrete V_ij
+-- coordinates for the stabilizer coupling.
+import RadicalRelativity.Necessity.BlockModel
+
 -- Exact paper-facing S1--S7 and product-conclusion statement boundary.  This
 -- freezes the target signature; it does not claim the classification is proved.
 import RadicalRelativity.PaperA.Statement
