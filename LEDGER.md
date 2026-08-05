@@ -322,6 +322,23 @@ sorry-free Wigner rigidity — see 3.0.
   (`AddMonoidHom.toRealLinearMap` [INV✓]); the differentiation/smoothing of χ̃
   itself is bespoke analysis — the single largest M2 line-count risk. Risk
   HIGH (budget, not feasibility).
+  **GENERIC CORE DONE 2026-08-05** (appended to `Necessity/OneParameter.lean`,
+  census 57 unchanged, gates green — closure pure Lean core):
+  `multiParameter_eq_exp` — a multiplicative family `χ : E → 𝔸` (E any real
+  vector space) with `χ 0 = 1` and continuity ALONG LINES equals
+  `r ↦ exp (D r)` for a unique LINEAR `D`. **The risk-HIGH item collapsed**:
+  the line generators from `oneParameter_eq_exp` are ℝ-homogeneous and
+  additive BY THE UNIQUENESS CLAUSE (reparametrize / merge commuting
+  exponentials via `commute_of_commute_exp`, generators of commuting flows
+  commute by differentiating twice), so linearity needs NO continuity input —
+  Cartan smoothness is free, and `dχAdd_cont` is then automatic on the
+  finite-dimensional source (`LinearMap.continuous_of_finiteDimensional`).
+  REMAINING in 2.6 (instantiation side): build χ̃ from Θ on the concrete
+  carrier (2.4's cocycle + `thetaEquiv` inverses per `chi_extend_wellDefined`),
+  verify line-continuity from S2, choose the concrete ρ/Stab, and derive
+  `coalescence_diff` from the group-level coalescence by differentiating the
+  fixed-subspace property (the derivative of a curve constant on V_ij has
+  vanishing V_ij-component).
 - **2.7 Aczél axiom DISCHARGE (`Selection.aczel_continuous_multiplicative`).**
   Scalar Cauchy machinery present [INV✓ area 7a]; multiplicative classification
   absent [INV✓ 7d — build it]: continuous hom (0,∞)→ℂ* via log/exp covering

@@ -245,4 +245,107 @@ theorem aczel_multiplicative_classification
     have hexp := hB (Real.exp t) (Real.exp_pos t)
     rwa [Real.log_exp] at hexp
 
+/-! ## Multi-parameter families: the differential of a character
+(campaign LEDGER 2.6, the analytic core)
+
+For a multiplicative family on `ℝⁿ` that is continuous along lines, the
+line-generators from `oneParameter_eq_exp` are automatically ℝ-homogeneous and
+additive BY UNIQUENESS, hence assemble into a linear differential — Cartan
+smoothness costs nothing once the one-parameter theorem exists. -/
+
+/-- Commuting exponential flows have commuting generators (differentiate twice). -/
+theorem commute_of_commute_exp {A B : 𝔸}
+    (h : ∀ s t : ℝ, Commute (exp (t • A)) (exp (s • B))) : Commute A B := by
+  have h1 : ∀ s : ℝ, A * exp (s • B) = exp (s • B) * A := by
+    intro s
+    have hd1 : HasDerivAt (fun t : ℝ => exp (t • A) * exp (s • B))
+        (A * exp (s • B)) 0 := by
+      have := (hasDerivAt_exp_smul_const (𝕂 := ℝ) A 0).mul_const (exp (s • B))
+      simpa using this
+    have hd2 : HasDerivAt (fun t : ℝ => exp (t • A) * exp (s • B))
+        (exp (s • B) * A) 0 := by
+      have hfun : (fun t : ℝ => exp (s • B) * exp (t • A))
+          = fun t : ℝ => exp (t • A) * exp (s • B) :=
+        funext fun t => ((h s t).symm).eq
+      have := (hasDerivAt_exp_smul_const (𝕂 := ℝ) A 0).const_mul (exp (s • B))
+      rw [hfun] at this
+      simpa using this
+    exact hd1.unique hd2
+  have hd1 : HasDerivAt (fun s : ℝ => A * exp (s • B)) (A * B) 0 := by
+    have := (hasDerivAt_exp_smul_const (𝕂 := ℝ) B 0).const_mul A
+    simpa using this
+  have hd2 : HasDerivAt (fun s : ℝ => A * exp (s • B)) (B * A) 0 := by
+    have hfun : (fun s : ℝ => exp (s • B) * A) = fun s : ℝ => A * exp (s • B) :=
+      funext fun s => (h1 s).symm
+    have := (hasDerivAt_exp_smul_const (𝕂 := ℝ) B 0).mul_const A
+    rw [hfun] at this
+    simpa using this
+  exact hd1.unique hd2
+
+/-- **The differential of a multiplicative family** (LEDGER 2.6 core): a family on
+`ℝⁿ` (any real normed source works) with `χ (r + r') = χ r * χ r'`, `χ 0 = 1`, and
+continuity along lines is `r ↦ exp (D r)` for a unique LINEAR `D` — additivity and
+homogeneity of the generator map come from the uniqueness clause of
+`oneParameter_eq_exp`, so no Cartan-smoothness input is needed. -/
+theorem multiParameter_eq_exp {E : Type*} [AddCommGroup E] [Module ℝ E]
+    (χ : E → 𝔸)
+    (hmul : ∀ r r' : E, χ (r + r') = χ r * χ r')
+    (hone : χ 0 = 1)
+    (hcont : ∀ v : E, Continuous fun t : ℝ => χ (t • v)) :
+    ∃! D : E →ₗ[ℝ] 𝔸, ∀ r : E, χ r = exp (D r) := by
+  classical
+  -- the line semigroups and their unique generators
+  have hline : ∀ v : E, ∃! A : 𝔸, ∀ t : ℝ, χ (t • v) = exp (t • A) := by
+    intro v
+    have hgmul : ∀ s t : ℝ, χ ((s + t) • v) = χ (s • v) * χ (t • v) := by
+      intro s t
+      rw [add_smul]
+      exact hmul _ _
+    have hgone : χ ((0 : ℝ) • v) = 1 := by rw [zero_smul]; exact hone
+    exact oneParameter_eq_exp (fun t : ℝ => χ (t • v)) (hcont v) hgmul hgone
+  choose A hA hAuniq using hline
+  -- χ-values commute, hence the generators commute
+  have hχcomm : ∀ r r' : E, Commute (χ r) (χ r') := by
+    intro r r'
+    have h1 := hmul r r'
+    have h2 := hmul r' r
+    rw [add_comm] at h2
+    exact (h1.symm.trans h2)
+  have hgen_comm : ∀ v w : E, Commute (A v) (A w) := by
+    intro v w
+    apply commute_of_commute_exp
+    intro s t
+    rw [← hA v t, ← hA w s]
+    exact hχcomm _ _
+  -- homogeneity by uniqueness
+  have hsmul : ∀ (c : ℝ) (v : E), A (c • v) = c • A v := by
+    intro c v
+    refine (hAuniq (c • v) (c • A v) ?_).symm
+    intro t
+    rw [smul_smul, hA v (t * c), mul_smul]
+  -- additivity by uniqueness (through commuting exponentials)
+  have hadd : ∀ v w : E, A (v + w) = A v + A w := by
+    intro v w
+    refine (hAuniq (v + w) (A v + A w) ?_).symm
+    intro t
+    have hc : Commute (t • A v) (t • A w) := ((hgen_comm v w).smul_left t).smul_right t
+    have hexp : exp ((t • A v) + (t • A w)) = exp (t • A v) * exp (t • A w) :=
+      exp_add_of_commute_of_mem_ball (𝕂 := ℝ) hc
+        ((expSeries_radius_eq_top ℝ 𝔸).symm ▸ edist_lt_top _ _)
+        ((expSeries_radius_eq_top ℝ 𝔸).symm ▸ edist_lt_top _ _)
+    rw [smul_add, hmul, hA v t, hA w t, ← hexp, ← smul_add]
+  -- assemble the linear differential
+  refine ⟨{ toFun := A, map_add' := hadd,
+            map_smul' := by intro c v; simpa using hsmul c v }, ?_, ?_⟩
+  · intro r
+    have h1 := hA r 1
+    rw [one_smul, one_smul] at h1
+    exact h1
+  · intro D' hD'
+    apply LinearMap.ext
+    intro v
+    exact hAuniq v (D' v) fun t => by
+      have h := hD' (t • v)
+      rwa [map_smul] at h
+
 end Necessity
