@@ -104,6 +104,12 @@ import RadicalRelativity.Necessity.SharpEffects
 -- the unknown product's left multiplication is order-REFLECTING and injective.
 import RadicalRelativity.Necessity.PseudoInverse
 
+-- M2 necessity core, fifth unit (LEDGER 2.1f, closing 2.1; vdW 5.3): the comparison
+-- map Theta_a := Q_{sqrt a}^{-1} composed with the unknown left multiplication, as a
+-- LinearEquiv (injectivity from the pseudo-inverse cancellation, surjectivity from
+-- finite dimension), UNITAL, and an ORDER ISOMORPHISM in both directions.
+import RadicalRelativity.Necessity.Theta
+
 -- Exact paper-facing S1--S7 and product-conclusion statement boundary.  This
 -- freezes the target signature; it does not claim the classification is proved.
 import RadicalRelativity.PaperA.Statement

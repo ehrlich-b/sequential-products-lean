@@ -161,7 +161,8 @@ sorry-free Wigner rigidity — see 3.0.
 
 ## M2 — Complex necessity core
 
-- **2.1 Θ construction (vdW Prop 5.2/5.3).** Define `Θ_a := Q_{√a}⁻¹ ∘ L_a` on
+- **2.1 Θ construction (vdW Prop 5.2/5.3) — CLOSED 2026-08-05 (all six units
+  2.1a–2.1f below).** Define `Θ_a := Q_{√a}⁻¹ ∘ L_a` on
   invertible effects; prove unital linear order-iso. Matrix-concrete. Risk MED.
   **First unit DONE 2026-08-05 — `lem:homog`(i)** (`Necessity/LeftMultiplication.lean`,
   census 50, gates green): for an ARBITRARY product on the carrier, `seqLeftMul P a`
@@ -242,18 +243,22 @@ sorry-free Wigner rigidity — see 3.0.
   which at this pin takes `span = ⊤` directly); `seqLeftMul_reflectsNonneg` +
   `seqLeftMul_injective`. Surjectivity deferred to 2.1f (finite-dim
   injective ⟹ bijective at the LinearEquiv packaging).
-  (2.1f) **Θ assembly**: `Q_{√a}` as `LinearEquiv` (vendored conj by `cfc √a`,
-  inverse = conj by `cfc (√·)⁻¹`, needs `NonSingular`); `Θ_a := Q_{√a}⁻¹ ∘ L'_a`;
-  `Θ_unital` = one line from `seqLeftMul_one` + `Q⁻¹(a) = 1`;
-  `Θ_orderIso` = conj-positivity (both ways, invertible) + (2.1e);
-  `Θ_fix` (vdW 5.5) = for `b` commuting with `a`: `a◦'b = a◦b` (2.1d) so
-  `Q_{√a}Θ_a b = a◦b = Q_{√a} b`, cancel; `Θ_cocycle` (vdW 5.7(2)) = the
-  `L'_{a◦'b} = L'_a L'_b`-on-commuting computation + invertibility, PLUS 5.7(1)
-  `Θ_b L_a = L_a Θ_b` which needs INVARIANCE of the standard product only
-  (Lüders is Jordan-defined ⟹ invariant; on matrices this is a concrete
-  conjugation identity — no Kadison input). `Θ_jordan` stays M3.
-  Notes: vdW 5.3's quotient universal property is NOT needed on matrices — Θ is
-  defined directly; 5.4 (`Θ_{λq} = Θ_q`) is 2.3 and falls out of (2.1b).
+  (2.1f) **Θ assembly — DONE 2026-08-05, and with it 2.1 IS CLOSED**
+  (`Necessity/Theta.lean`, census 54, gates green; compiled clean on the first
+  pass): `quadRepEquiv` (`Q_{√a}` as a `LinearEquiv` via vendored `conjLinear`;
+  inverse = conj at `(√·)⁻¹` through `cfc_congr_of_posDef`, no `NonSingular`
+  machinery needed — `conj_conj_mat` composes conjugations); `theta P ha hbd :=
+  Q⁻¹ ∘ₗ seqLeftMul`, `quadRep_theta` (the paper's defining equation
+  `L'_a = Q_{√a} Θ_a`), `thetaEquiv` (injective from 2.1e cancellation,
+  surjective by `LinearMap.injective_iff_surjective` + the vendored
+  `FiniteDimensional` instance), `theta_one` (UNITAL, vdW 5.3), and
+  `theta_nonneg_iff`/`theta_le_iff` (ORDER ISO both directions: forward =
+  2.1e reflection, backward = conj positivity). `Θ_fix` (vdW 5.5) = 2.2 next
+  (via the JOINT specProj family of two commuting effects, both diagonal in it —
+  same construction as M1's `twistFactor_mul_of_commute` family);
+  `Θ_cocycle` = 2.4 (needs only Lüders invariance, no Kadison). `Θ_jordan`
+  stays M3. vdW 5.3's quotient universal property was never needed; 5.4
+  (`Θ_{λq} = Θ_q`) is 2.3 and falls out of (2.1b).
 - **2.2 Θ_fix (vdW 5.5) + span extension.** Effect-level fixing + extension to
   J by linearity (the span argument the paper supplies). Risk MED.
 - **2.3 cone-ext (Θ_{λq} = Θ_q normalization).** Cheap once 2.1 lands. LOW.
