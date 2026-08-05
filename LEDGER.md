@@ -373,10 +373,15 @@ sorry-free Wigner rigidity — see 3.0.
   definition); FTC-2 = `intervalIntegral.integral_hasDerivAt_right` +
   `Continuous.stronglyMeasurable.stronglyMeasurableAtFilter` (no explicit
   args); constancy via `is_const_of_fderiv_eq_zero` (needs the MeanValue
-  import; no deriv-named variant exists at pin). REMAINING for 2.7: the
-  wrapper `g := h ∘ Real.exp` + the axiom→theorem swap in
-  NormalFormExistence.lean + audit-allowlist surgery (census message strings,
-  Layer-2 pins expecting the axiom in closures, README/THEOREM-MAP prose).
+  import; no deriv-named variant exists at pin).
+  **2.7 COMPLETE 2026-08-05: THE TREE IS AT ZERO CUSTOM AXIOMS.** The wrapper
+  `aczel_multiplicative_classification` (same file) substitutes
+  `g := h ∘ Real.exp`; `Selection.aczel_continuous_multiplicative` is now a
+  THEOREM aliasing it (name + signature preserved, both call sites untouched);
+  audit surgery done (allowlist = the three core axioms, citedAxioms = [],
+  Layer-4 pin refrozen on the theorem, prose in AxiomAudit/README/THEOREM-MAP).
+  Gate verified first-hand: "custom axioms exactly [], every tracked persisted
+  declaration's closure ⊆ [propext, Classical.choice, Quot.sound]".
 - **2.8 `bgw_canonical_composite` ELIMINATION — DONE 2026-08-04.** Replaced the
   axiom (a constructible existence claim, hence not falsifiable) with the
   pattern-match definition `bgwComposite` + `rfl`-proved `bgwComposite_table`;
