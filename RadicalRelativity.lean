@@ -78,6 +78,14 @@ import RadicalRelativity.Hermitian.Resolution
 -- `twistSequentialProductCore` / `twistSequentialProduct` per twist parameter.
 import RadicalRelativity.Hermitian.Sequential
 
+-- M2 necessity core, first unit (LEDGER 2.1, paper lem:homog(i)): for an ARBITRARY
+-- sequential product on the carrier's fixed Loewner order (`SequentialProductOn`,
+-- the carrier-pinned formulation added to SequentialProduct.lean), the left
+-- multiplication b ↦ a & b extends to a positive linear map `seqLeftMul` —
+-- ℕ/ℚ/ℝ-homogeneity by finite additivity plus the Archimedean squeeze, cone
+-- extension, and the posPart/negPart difference construction.
+import RadicalRelativity.Necessity.LeftMultiplication
+
 -- Exact paper-facing S1--S7 and product-conclusion statement boundary.  This
 -- freezes the target signature; it does not claim the classification is proved.
 import RadicalRelativity.PaperA.Statement

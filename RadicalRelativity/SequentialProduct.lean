@@ -223,3 +223,120 @@ theorem sp_sub_right {a b c : V} (ha : IsEffect a) (hb : IsEffect b)
   exact this.symm
 
 end SequentialProduct
+
+/-! ## Sequential products ON a fixed order-unit space
+
+The necessity direction quantifies over the unknown product while the order-unit
+structure stays THE structure of the concrete carrier (the paper fixes the EJA
+and classifies operations on its effects).  An instance-quantified
+`[SequentialProductCore V]` cannot express this: it carries its own
+`toOrderUnitSpace` parent, which the elaborator treats as unrelated to the
+carrier's canonical instance, so none of the carrier's order/norm/spectral
+lemmas apply to the effects it speaks about.  `SequentialProductOn` is the
+carrier-pinned formulation: the same eight fields, elaborated over the *ambient*
+`[OrderUnitSpace V]`. -/
+
+/-- An S1, S3–S7 sequential product structure **on** a fixed order-unit space:
+the fields of `SequentialProductCore`, with the order-unit parent pinned to the
+ambient instance rather than bundled.  Paper S2 for a `P : SequentialProductOn V`
+is the unbundled `P.FirstArgContinuous` below. -/
+structure SequentialProductOn (V : Type*) [OrderUnitSpace V] where
+  /-- The sequential product operation `a & b`. -/
+  sp : V → V → V
+  sp_add_right : ∀ {a b c : V}, IsEffect a → IsEffect b → IsEffect c →
+    b + c ≤ ousUnit → sp a (b + c) = sp a b + sp a c
+  sp_unit_left : ∀ {a : V}, IsEffect a → sp ousUnit a = a
+  sp_zero_symm : ∀ {a b : V}, IsEffect a → IsEffect b → sp a b = 0 → sp b a = 0
+  sp_assoc_of_compatible : ∀ {a b c : V},
+    IsEffect a → IsEffect b → IsEffect c →
+    sp a b = sp b a → sp a (sp b c) = sp (sp a b) c
+  compatible_ortho : ∀ {a b : V}, IsEffect a → IsEffect b →
+    sp a b = sp b a → sp a (ousUnit - b) = sp (ousUnit - b) a
+  compatible_add : ∀ {a b c : V}, IsEffect a → IsEffect b → IsEffect c →
+    b + c ≤ ousUnit →
+    sp a b = sp b a → sp a c = sp c a →
+    sp a (b + c) = sp (b + c) a
+  compatible_sp : ∀ {a b c : V}, IsEffect a → IsEffect b → IsEffect c →
+    sp a b = sp b a → sp a c = sp c a →
+    sp a (sp b c) = sp (sp b c) a
+  sp_effect : ∀ {a b : V}, IsEffect a → IsEffect b → IsEffect (sp a b)
+
+namespace SequentialProductOn
+
+variable {V : Type*} [OrderUnitSpace V]
+
+/-- Repackage as a bundled `SequentialProductCore` whose parent is *definitionally*
+the ambient instance — the bridge that lets the derived lemma layer of
+`SequentialProduct` apply to a pinned product. -/
+def toCore (P : SequentialProductOn V) : SequentialProductCore V :=
+  { ‹OrderUnitSpace V› with
+    sp := P.sp
+    sp_add_right := P.sp_add_right
+    sp_unit_left := P.sp_unit_left
+    sp_zero_symm := P.sp_zero_symm
+    sp_assoc_of_compatible := P.sp_assoc_of_compatible
+    compatible_ortho := P.compatible_ortho
+    compatible_add := P.compatible_add
+    compatible_sp := P.compatible_sp
+    sp_effect := P.sp_effect }
+
+/-- Paper S2 for a pinned product: first-argument continuity on effects in the
+carrier's norm topology. -/
+def FirstArgContinuous (P : SequentialProductOn V) : Prop :=
+  ∀ ⦃b : V⦄, IsEffect b → ContinuousOn (fun a : V => P.sp a b) {a : V | IsEffect a}
+
+variable (P : SequentialProductOn V)
+
+/-- A bundled `SequentialProductCore` on any type is a pinned product over its own
+parent order-unit structure (the converse packaging). -/
+def _root_.SequentialProductCore.toSequentialProductOn
+    (W : Type*) [inst : SequentialProductCore W] :
+    @SequentialProductOn W inst.toOrderUnitSpace :=
+  { sp := SequentialProductCore.sp
+    sp_add_right := SequentialProductCore.sp_add_right
+    sp_unit_left := SequentialProductCore.sp_unit_left
+    sp_zero_symm := SequentialProductCore.sp_zero_symm
+    sp_assoc_of_compatible := SequentialProductCore.sp_assoc_of_compatible
+    compatible_ortho := SequentialProductCore.compatible_ortho
+    compatible_add := SequentialProductCore.compatible_add
+    compatible_sp := SequentialProductCore.compatible_sp
+    sp_effect := SequentialProductCore.sp_effect }
+
+/- Derived lemmas, transported from the `SequentialProduct` layer through
+`toCore` (whose parent is definitionally the ambient instance). -/
+
+theorem sp_zero_right {a : V} (ha : IsEffect a) : P.sp a 0 = 0 :=
+  letI := P.toCore
+  SequentialProduct.sp_zero_right ha
+
+theorem sp_zero_left {a : V} (ha : IsEffect a) : P.sp 0 a = 0 :=
+  letI := P.toCore
+  SequentialProduct.sp_zero_left ha
+
+theorem sp_unit_right {a : V} (ha : IsEffect a) : P.sp a ousUnit = a :=
+  letI := P.toCore
+  SequentialProduct.sp_unit_right ha
+
+theorem sp_nonneg {a b : V} (ha : IsEffect a) (hb : IsEffect b) :
+    (0 : V) ≤ P.sp a b :=
+  letI := P.toCore
+  SequentialProduct.sp_nonneg ha hb
+
+theorem sp_mono_right {a b₁ b₂ : V} (ha : IsEffect a)
+    (hb₁ : IsEffect b₁) (hb₂ : IsEffect b₂) (hle : b₁ ≤ b₂) :
+    P.sp a b₁ ≤ P.sp a b₂ :=
+  letI := P.toCore
+  SequentialProduct.sp_mono_right ha hb₁ hb₂ hle
+
+theorem sp_le_left {a b : V} (ha : IsEffect a) (hb : IsEffect b) :
+    P.sp a b ≤ a :=
+  letI := P.toCore
+  SequentialProduct.sp_le_left ha hb
+
+theorem sp_sub_right {a b c : V} (ha : IsEffect a) (hb : IsEffect b)
+    (hc : IsEffect c) (hle : c ≤ b) (hbc_eff : IsEffect (b - c)) :
+    P.sp a (b - c) = P.sp a b - P.sp a c :=
+  letI := P.toCore
+  SequentialProduct.sp_sub_right ha hb hc hle hbc_eff
+
+end SequentialProductOn

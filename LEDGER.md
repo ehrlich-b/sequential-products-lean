@@ -163,6 +163,31 @@ sorry-free Wigner rigidity — see 3.0.
 
 - **2.1 Θ construction (vdW Prop 5.2/5.3).** Define `Θ_a := Q_{√a}⁻¹ ∘ L_a` on
   invertible effects; prove unital linear order-iso. Matrix-concrete. Risk MED.
+  **First unit DONE 2026-08-05 — `lem:homog`(i)** (`Necessity/LeftMultiplication.lean`,
+  census 50, gates green): for an ARBITRARY product on the carrier, `seqLeftMul P a`
+  is the positive linear extension of `b ↦ P.sp a b` to all of `H_n(ℂ)`, with
+  effect-agreement, positivity, monotonicity, and the unit law
+  `seqLeftMul P a 1 = a`. Ladder: ℕ→ℚ homogeneity by finite additivity (S1 only),
+  ℝ-homogeneity by the rational order squeeze closed with
+  `le_zero_of_forall_le_smul_one` (this is where the full Archimedean property
+  earns its keep), cone extension normalized by `‖x‖+1` with normalization
+  independence, and the `posPart/negPart` difference construction with a
+  representation-independence lemma (`spPos_sub_congr`). NO S2 used — matches the
+  paper's hypothesis accounting for lem:homog(i).
+  **DESIGN DECISION (binding for all of M2–M5): the unknown product is
+  `SequentialProductOn V` — the S1/S3–S7 fields over the AMBIENT `[OrderUnitSpace V]`
+  (added to `SequentialProduct.lean`, with `toCore` bridging to the derived-lemma
+  layer; parent definitionally the ambient instance).** An instance-quantified
+  `[SequentialProductCore (HermitianMat n ℂ)]` is WRONG for necessity statements:
+  it bundles its own `toOrderUnitSpace`, which the elaborator treats as unrelated
+  to the carrier's canonical instance, so no carrier order/norm/spectral lemma
+  applies (discovered as an instance-mismatch wall at the first 2.1 build). The
+  final per-type `mthm:master` statements must quantify over
+  `SequentialProductOn (HermitianMat n ℂ)` + unbundled S2 for the same reason.
+  Remaining in 2.1: `Q_{√a}` as a linear equiv (conj by `cfc √` with the
+  `NonSingular` inverse), `Θ_a` as `LinearEquiv`, vdW 5.2/5.3 unital + order-iso
+  (needs L_a bijectivity on invertible effects — read vdW's proof at source
+  before building; pseudo-inverse route per lem:simple-bridge(iii)).
 - **2.2 Θ_fix (vdW 5.5) + span extension.** Effect-level fixing + extension to
   J by linearity (the span argument the paper supplies). Risk MED.
 - **2.3 cone-ext (Θ_{λq} = Θ_q normalization).** Cheap once 2.1 lands. LOW.
