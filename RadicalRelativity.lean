@@ -175,6 +175,13 @@ import RadicalRelativity.Necessity.ChiContinuity
 -- qxq = x). Only cited field in the combined structure: Theta_jordan (M3).
 import RadicalRelativity.Necessity.CoalescenceInstance
 
+-- Differentiated coalescence in the STRONG pointwise form: when r_i = r_j the
+-- differential dChi(r) annihilates the Peirce-2 corner (chiTilde fixes corners
+-- at both canonical exponents; exp(t . dChi r) x = x differentiates to
+-- dChi(r) x = 0). Any block compression rho then satisfies the abstract
+-- DiagonalHomSetup.coalescence_diff field.
+import RadicalRelativity.Necessity.CoalescenceDiff
+
 -- Exact paper-facing S1--S7 and product-conclusion statement boundary.  This
 -- freezes the target signature; it does not claim the classification is proved.
 import RadicalRelativity.PaperA.Statement

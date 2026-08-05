@@ -468,6 +468,19 @@ sorry-free Wigner rigidity — see 3.0.
   the paper's torus identification, machine-checkable without classifying
   Aut(H_n(ℂ)).
 
+  **u4 (coalescence_diff) DONE 2026-08-05** (`Necessity/CoalescenceDiff.lean`,
+  census 64, gates green): `dChi_kills_corner` — when rᵢ = rⱼ the differential
+  ANNIHILATES the Peirce-2 corner pointwise (strong form; any compression ρ
+  then discharges the abstract field). Chain: both canonical exponents of
+  χ̃(t•r) inherit the coalescence → `corner_commute` + `thetaNorm_fix_of_commute`
+  (+ inverse-fix through the LinearEquiv) → χ̃(t•r) x ≡ x → `exp_apply_const_kill`
+  (hasDerivAt_exp_smul_const + HasDerivAt.clm_apply against the constant curve).
+  Trap: `rw [zero_smul]` will NOT match `(0:ℝ) • A` inside exp (OfNat-vs-Zero
+  zero forms); use `rw [show (0:ℝ) • A = 0 from zero_smul ℝ A]`. Remaining for
+  2.6: u1/u2 (ouNorm-isometry + block-Euclidean skewness), u3 (block
+  invariance of dχ), u5 (Stab submodule + DiagonalHomSetup instance), u6
+  (phase-cocycle torus model).
+
   **WIRING DESIGN (banked 2026-08-05, before χ̃ part 2):** build the
   `ComparisonSetup (HermitianMat (Fin N) ℂ)` instance NEXT — the abstract
   DiagonalHom layer then supplies `chi_hom`/`chi_comm`/`chi_extend_wellDefined`
