@@ -415,6 +415,27 @@ sorry-free Wigner rigidity — see 3.0.
   property: exp(t·dχ(r)) fixes the {i,j}-block when rᵢ = rⱼ ⟹ dχ(r) kills it),
   concrete ρ (block compression), CoalescenceSetup/DiagonalHomSetup wiring.
 
+  **COALESCENCE INSTANCE DONE 2026-08-05** (`Necessity/CoalescenceInstance.lean`,
+  census 63, gates green): `coalescenceSetup` extends `comparisonSetup`; all
+  three FK fields DISCHARGED. `cornerQ i j` = diagonal indicator of {i,j}
+  (idempotent for ALL i j incl. i = j — this dodges the i=j degenerate case the
+  abstract field quantifies over); `simDiag_opCommute` (the FK
+  simultaneous-diagonalization citation) reduced to: q absorbs J2(q)-elements
+  (qbq = b + q² = q ⟹ qb = bq = b), so (λq + a₀)b = λb = b(λq + a₀);
+  `aOf_scalarOn` = diagonal split-off; `block_mem_J2` = PURE RING ALGEBRA:
+  Σ_{k∉{i,j}} Peirce-annihilations give (1−q)x + x(1−q) = 0 ⟹ qx + xq = 2x,
+  then q-multiplications + idempotence give qxq = qx = xq ⟹ 2qxq = 2x. The
+  abstract `coalescence_J2q`/`coalescence_block`/`block_preserved` now hold
+  concretely. Trap notes: `Matrix.diagonal_add` is stated sum-on-LEFT (use
+  FORWARD rw to merge diagonal sums); `IsBlockElt` is Fin-hardwired (state
+  concrete lemmas over general index n via the raw relations, wrap at Fin N);
+  mixed ℝ/ℂ-smul chains — convert (1/2:ℝ)• to (2:ℂ)⁻¹• entrywise
+  (`Complex.real_smul`) BEFORE cancelling; rw rewrites ALL occurrences (use
+  nth_rewrite when combining hqx/hxq). Remaining 2.6: DiagonalHomSetup's
+  differential face (ρ, ρ_skew, coalescence_diff — the Stab-design question in
+  the memory note) + dχAdd/dχAdd_cont (ALREADY PROVED via dChi: linear ⟹
+  additive, findim ⟹ continuous).
+
   **WIRING DESIGN (banked 2026-08-05, before χ̃ part 2):** build the
   `ComparisonSetup (HermitianMat (Fin N) ℂ)` instance NEXT — the abstract
   DiagonalHom layer then supplies `chi_hom`/`chi_comm`/`chi_extend_wellDefined`

@@ -168,6 +168,13 @@ import RadicalRelativity.Necessity.ChiExtension
 -- the abstract dChiAdd fields PROVED here, not imported.
 import RadicalRelativity.Necessity.ChiContinuity
 
+-- The concrete CoalescenceSetup on H_N(C): the FK simultaneous-diagonalization
+-- import replaced by corner-projection matrix algebra (q absorbs J2(q), so
+-- scalar-on-corner elements commute), a(r) scalar on coalesced corners, and
+-- block_mem_J2 by pure ring algebra (qx + xq = 2x with q idempotent gives
+-- qxq = x). Only cited field in the combined structure: Theta_jordan (M3).
+import RadicalRelativity.Necessity.CoalescenceInstance
+
 -- Exact paper-facing S1--S7 and product-conclusion statement boundary.  This
 -- freezes the target signature; it does not claim the classification is proved.
 import RadicalRelativity.PaperA.Statement
