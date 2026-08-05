@@ -86,6 +86,12 @@ import RadicalRelativity.Hermitian.Sequential
 -- extension, and the posPart/negPart difference construction.
 import RadicalRelativity.Necessity.LeftMultiplication
 
+-- M2 necessity core, second unit (LEDGER 2.1b, paper lem:homog(ii)): first-argument
+-- homogeneity (t•a) & b = t•(a & b) for the unknown product — the rational
+-- compatibility ladder (iterated S6b, S6a orthocomplement flip), the rational value
+-- law, the SINGLE S2 limit (t•1) & b = t•b, and the S5 assembly.
+import RadicalRelativity.Necessity.FirstArgument
+
 -- Exact paper-facing S1--S7 and product-conclusion statement boundary.  This
 -- freezes the target signature; it does not claim the classification is proved.
 import RadicalRelativity.PaperA.Statement

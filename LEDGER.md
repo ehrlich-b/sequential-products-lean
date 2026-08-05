@@ -184,6 +184,19 @@ sorry-free Wigner rigidity — see 3.0.
   applies (discovered as an instance-mismatch wall at the first 2.1 build). The
   final per-type `mthm:master` statements must quantify over
   `SequentialProductOn (HermitianMat n ℂ)` + unbundled S2 for the same reason.
+  **(2.1b) DONE 2026-08-05** (`Necessity/FirstArgument.lean`, census 51, gates
+  green): `sp_smul_left` = lem:homog(ii), first-argument homogeneity for
+  `t ∈ [0,1]`, with the compat ladder `sp_comm_nat_smul` (iterated S6b),
+  `sp_comm_rat_smul_self` (1/k-piece ladder both directions),
+  `sp_comm_rat_one_smul` (orthocomplement + S6a flip + S6b assembly),
+  `sp_rat_one_smul_left` (rational value law), and `sp_smul_one_left` = the
+  SINGLE S2 use (rational sequence in the first argument, ContinuousWithinAt
+  composed with `tendsto_nhdsWithin_of_tendsto_nhds_of_eventually_within`,
+  `tendsto_nhds_unique` closes). Traps: interface fields produce `ousUnit`
+  forms — rewrite `HermitianMat.ousUnit_eq_one` before matching, and phrase
+  effect-of-1 / unit-law facts as `have h : … (1 : HermitianMat n ℂ) … := ⟨abstract⟩`
+  so unification binds `1` not `ousUnit`; pin
+  `tendsto_one_div_add_atTop_nhds_zero_nat`'s carrier by ascription before use.
   Remaining in 2.1 — **PROOF PLAN DECODED AT SOURCE 2026-08-05**
   (arXiv:1803.08453 = Wetering2018three, fetched via curl+pdftotext; §3.9, §4.17–4.22,
   §5.2–5.7 read in full). Unit ladder, in dependency order:
