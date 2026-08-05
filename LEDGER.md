@@ -304,6 +304,17 @@ sorry-free Wigner rigidity — see 3.0.
   discharged independently: Θ_jordan by M3, Θ_cocycle by this + M3).
 - **2.5 frame_opCommute + simDiag_opCommute (FK facts).** Direct block-form
   computations on matrices. LOW.
+  **Concrete kit DONE 2026-08-05** (appended to `Necessity/ThetaCocycle.lean`,
+  census unchanged 56, gates green): `symmMul_opCommute_of_commute` (matrix
+  commutation ⟹ Jordan operator commutation `a∘(b∘·) = b∘(a∘·)` — targeted
+  assoc-rewrites + `module`; this discharges BOTH opCommute fields since the
+  concrete frame/diagonal/scalar elements all matrix-commute) and
+  `conj_eq_self_of_symmMul_eq_self` (Peirce compression: `e∘x = x ⟹ e·x·e = x`,
+  the `J₂(e)`-membership normal form for `block_mem_J2`). Instantiation-time
+  predicate choices recorded: `J2 i j b := q·b·q = b`, `ScalarOn i j a :=
+  ∃ lam a₀, a = lam•q + a₀ ∧ q·a₀ = 0 ∧ a₀·q = 0` (q = pᵢ+pⱼ), under which
+  `simDiag_opCommute` reduces to a two-line matrix-commute check and
+  `aOf_scalarOn` is the diagonal split at `rᵢ = rⱼ`.
 - **2.6 THE ANALYTIC CORE: dχAdd + continuity + coalescence_diff.** Construct
   the character χ̃ from Θ on the orthant (group-level pieces `chi_hom`,
   `chi_comm`, `chi_extend_wellDefined` already proved), extend to ℝⁿ,

@@ -175,4 +175,77 @@ theorem theta_cocycle_of_preservesJordan (P : SequentialProductOn (HermitianMat 
   rw [hexch, quadRep_theta P ha hbda, quadRep_theta P hb hbdb]
   simp only [LinearMap.comp_apply]
 
+/-! ## Jordan operator commutation and Peirce compression  (campaign LEDGER 2.5)
+
+The concrete discharge kit for the `frame_opCommute` and `simDiag_opCommute`
+interface fields: matrix commutation implies commutation of the Jordan
+multiplication operators, and a Peirce-2 element is fixed by compression. -/
+
+omit [DecidableEq n] in
+/-- **Matrix commutation implies Jordan operator commutation**:
+`a∘(b∘x) = b∘(a∘x)` for the symmetrized product. -/
+theorem symmMul_opCommute_of_commute {a b : HermitianMat n ℂ}
+    (hab : Commute a.mat b.mat) (x : HermitianMat n ℂ) :
+    a.symmMul (b.symmMul x) = b.symmMul (a.symmMul x) := by
+  ext1
+  rw [HermitianMat.symmMul_toMat, HermitianMat.symmMul_toMat,
+    HermitianMat.symmMul_toMat, HermitianMat.symmMul_toMat]
+  simp only [Matrix.mul_smul, Matrix.smul_mul, smul_add, Matrix.mul_add, Matrix.add_mul,
+    smul_smul, Matrix.mul_assoc]
+  rw [show a.mat * (b.mat * x.mat) = b.mat * (a.mat * x.mat) from by
+    rw [← Matrix.mul_assoc, hab.eq, Matrix.mul_assoc]]
+  rw [show x.mat * (b.mat * a.mat) = x.mat * (a.mat * b.mat) from by rw [hab.eq]]
+  module
+
+/-- **Peirce compression**: an element with `e∘x = x` for a projection `e`
+satisfies `e·x·e = x` (the concrete `J₂(e)`-membership normal form). -/
+theorem conj_eq_self_of_symmMul_eq_self {e x : HermitianMat n ℂ}
+    (he : e.IsProjection) (hx : e.symmMul x = x) : x.conj e.mat = x := by
+  have hee : e.mat * e.mat = e.mat := HermitianMat.isProjection_iff_mat_mul_self.mp he
+  have hmat : e.mat * x.mat + x.mat * e.mat = (2 : ℂ) • x.mat := by
+    have h := congrArg HermitianMat.mat hx
+    rw [HermitianMat.symmMul_toMat] at h
+    calc e.mat * x.mat + x.mat * e.mat
+        = (2 : ℂ) • ((2 : ℂ)⁻¹ • (e.mat * x.mat + x.mat * e.mat)) := by
+          rw [smul_smul]
+          norm_num
+      _ = (2 : ℂ) • x.mat := by rw [h]
+  -- multiply the relation by e on the left and on the right
+  have hleft : e.mat * x.mat * e.mat = e.mat * x.mat := by
+    have h := congrArg (fun M => e.mat * M) hmat
+    simp only [Matrix.mul_add, Matrix.mul_smul, ← Matrix.mul_assoc, hee] at h
+    -- h : e x + e x e = 2 • (e x)
+    have h2 : e.mat * x.mat + e.mat * x.mat * e.mat
+        = e.mat * x.mat + e.mat * x.mat := by
+      calc e.mat * x.mat + e.mat * x.mat * e.mat
+          = (2 : ℂ) • (e.mat * x.mat) := h
+        _ = e.mat * x.mat + e.mat * x.mat := two_smul ℂ _
+    exact add_left_cancel h2
+  have hright : e.mat * (x.mat * e.mat) = x.mat * e.mat := by
+    have h := congrArg (fun M => M * e.mat) hmat
+    simp only [Matrix.add_mul, Matrix.smul_mul, Matrix.mul_assoc, hee] at h
+    -- h : e (x e) + x e = 2 • (x e)
+    have h2 : e.mat * (x.mat * e.mat) + x.mat * e.mat
+        = x.mat * e.mat + x.mat * e.mat := by
+      calc e.mat * (x.mat * e.mat) + x.mat * e.mat
+          = (2 : ℂ) • (x.mat * e.mat) := h
+        _ = x.mat * e.mat + x.mat * e.mat := two_smul ℂ _
+    exact add_right_cancel h2
+  -- combine: e x e = e x and e x e = x e, so e x = x e and both equal e x e
+  ext1
+  rw [HermitianMat.conj_apply_mat, e.H]
+  -- goal: e x e = x
+  have hcomm : e.mat * x.mat = x.mat * e.mat := by
+    calc e.mat * x.mat = e.mat * x.mat * e.mat := hleft.symm
+      _ = e.mat * (x.mat * e.mat) := by rw [Matrix.mul_assoc]
+      _ = x.mat * e.mat := hright
+  have h2x : e.mat * x.mat + e.mat * x.mat = (2 : ℂ) • x.mat := by
+    rw [← hmat, hcomm]
+  calc e.mat * x.mat * e.mat
+      = e.mat * x.mat := hleft
+    _ = x.mat := by
+      have h3 := h2x
+      rw [← two_smul ℂ (e.mat * x.mat)] at h3
+      exact smul_right_injective _ (two_ne_zero) h3
+
 end Necessity
