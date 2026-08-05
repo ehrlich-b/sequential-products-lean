@@ -200,6 +200,12 @@ import RadicalRelativity.Necessity.BlockInvariance
 -- coordinates for the stabilizer coupling.
 import RadicalRelativity.Necessity.BlockModel
 
+-- Theta transports blocks isometrically: blockHerm satisfies the Peirce
+-- relations, Theta preserves them (M3 + frame-fixing), and the square law on
+-- both sides of Theta(x.x) = Theta x . Theta x forces |w| = |z| -- a Euclidean
+-- isometry on every off-diagonal block with no norm imports.
+import RadicalRelativity.Necessity.BlockTransport
+
 -- Exact paper-facing S1--S7 and product-conclusion statement boundary.  This
 -- freezes the target signature; it does not claim the classification is proved.
 import RadicalRelativity.PaperA.Statement

@@ -531,6 +531,21 @@ sorry-free Wigner rigidity — see 3.0.
   skew (differentiate ‖R(t)v‖² via exp_apply_hasDerivAt), Stab := submodule of
   block-skew CLMs, DiagonalHomSetup instance, toStabilizerCoupling. Then u6.
 
+  **u2 COMPLETE 2026-08-05** (`Necessity/BlockTransport.lean`, census 68,
+  gates green): `thetaNorm_fixes_frameProj`; the three blockHerm Peirce
+  relations (per-relation four single-products by simp with ne-facts; the
+  ½-coefficient by entrywise push_cast + ring); `thetaNorm_block` (Θ maps
+  blocks to blocks — eq_blockHerm_of_peirce fed by the hjord 3-line transport
+  ×3); and the CAPSTONE `normSq_thetaNorm_block`: |w|² = |z|² by comparing the
+  square law on both sides of Θ(x∘x) = Θx∘Θx with Θ fixing pᵢ+pⱼ, read off at
+  the (i,i) entry (if_true again — the ite pre-reduces; ofReal cast via
+  exact_mod_cast). **Θ acts on every off-diagonal block by a Euclidean
+  isometry — no ouNorm, no trace, no compactness.** Remaining: u5 (V :=
+  EuclideanSpace ℝ (Fin 2), blockCoord/blockEmbed, R(t) := coord∘χ̃(t•r)∘embed
+  isometric ⟹ skew generator via exp_apply_hasDerivAt differentiation of
+  ‖R(t)v‖², Stab := block-skew submodule, DiagonalHomSetup instance,
+  toStabilizerCoupling), u6 (phase cocycle ⟹ hmodel ⟹ complex_perFrame_rho).
+
   **WIRING DESIGN (banked 2026-08-05, before χ̃ part 2):** build the
   `ComparisonSetup (HermitianMat (Fin N) ℂ)` instance NEXT — the abstract
   DiagonalHom layer then supplies `chi_hom`/`chi_comm`/`chi_extend_wellDefined`
