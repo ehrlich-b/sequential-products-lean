@@ -578,6 +578,27 @@ sorry-free Wigner rigidity — see 3.0.
   findim, coalescence_diff := blockHerm ∈ cornerJ2 + dChi_kills_corner) →
   toStabilizerCoupling. Then u6 (phase cocycle → hmodel).
 
+  **u5c DONE 2026-08-05 — 2.6 COMPLETE, THE COUPLING IS PRODUCED**
+  (`Necessity/StabilizerInstance.lean`, census 71, gates green):
+  `blockCoordLm`/`blockEmbedLm` (ℝ-linear block coordinates), `IsBlockSkew` +
+  `blockSkewSubmodule` (Stab; dχ ∈ it by prop:isotropy), `rhoField` (the
+  compression, 0 on diagonal pairs — dodges the field's unrestricted
+  quantifier), `dChiStab` (+continuity by findim), `rhoField_dChi_coalesced`
+  (through blockElt_cornerJ2 + dChi_kills_corner), the `diagonalHomSetup`
+  instance over **BlockV := WithLp 2 (ℝ × ℝ)** (bare ℝ × ℝ has NO inner
+  product — sup norm! — the L2 synonym does; `WithLp.prod_inner_apply` is
+  rfl-simp), and **`stabilizerCoupling` := `.toStabilizerCoupling` — the
+  coupling ρ_{ij}(dχ(r)) = (r_i − r_j)•T_{ij} is now a machine-checked THEOREM
+  on H_N(ℂ)**, conditional only on S2 + ThetaPreservesJordan (M3). TRAPS: the
+  setup's index type is `Fin (setup.n)` — defeq to Fin N but rw is syntactic:
+  pin every helper-lemma use with `(n := Fin N)` and open field proofs with
+  `show`-retyped goals; final skew goal closes by `exact hs` (pure defeq —
+  ofLp/toLp/linearEquiv all reduce) after prod_inner_apply + RCLike.inner_apply
+  + star_trivial; coalescence via pointwise `LinearMap.ext` + `show` + rw of
+  the vanishing map (never rewrite under the composition form). REMAINING for
+  the ℂ-lane: u6 (phase cocycle ⟹ hmodel ⟹ complex_perFrame_rho), then
+  Globalization wiring, then the per-type statement. M2 else: 2.9.
+
   **WIRING DESIGN (banked 2026-08-05, before χ̃ part 2):** build the
   `ComparisonSetup (HermitianMat (Fin N) ℂ)` instance NEXT — the abstract
   DiagonalHom layer then supplies `chi_hom`/`chi_comm`/`chi_extend_wellDefined`

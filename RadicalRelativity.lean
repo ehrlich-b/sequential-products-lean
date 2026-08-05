@@ -216,6 +216,13 @@ import RadicalRelativity.Necessity.BlockChi
 -- One-variable calculus; no compactness, no invariant measure.
 import RadicalRelativity.Necessity.BlockSkew
 
+-- The concrete DiagonalHomSetup on H_N(C) and the PRODUCED StabilizerCoupling:
+-- Stab = the block-skew submodule (dChi lands in it by prop:isotropy), rho =
+-- the L2 block compression (zero on diagonal pairs), coalescence_diff from
+-- dChi_kills_corner through the embedding; toStabilizerCoupling then proves
+-- the coupling rho_ij(dChi(r)) = (r_i - r_j) . T_ij on the concrete carrier.
+import RadicalRelativity.Necessity.StabilizerInstance
+
 -- Exact paper-facing S1--S7 and product-conclusion statement boundary.  This
 -- freezes the target signature; it does not claim the classification is proved.
 import RadicalRelativity.PaperA.Statement
