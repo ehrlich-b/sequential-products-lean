@@ -361,6 +361,22 @@ sorry-free Wigner rigidity — see 3.0.
   Then DELETE the axiom, replace with the theorem (same name/signature so the
   two call sites in NormalFormExistence.lean are untouched), drop it from the
   audit allowlist — **custom-axiom count 1 → 0; closure = pure Lean core.**
+  **CORE LEMMA DONE 2026-08-05** (`Necessity/OneParameter.lean`, census 57,
+  gates green): `oneParameter_eq_exp` — continuous one-parameter semigroups in
+  a real Banach algebra are `t ↦ exp (t•A)` with unique generator, by exactly
+  the banked plan (all five steps; the opaque-generator trick
+  `obtain ⟨A, hA0⟩ := ⟨_, hg' 0⟩` avoids `set`-folding fragility in the ODE
+  step). Lean notes: the 𝕂-free `exp` refactor puts `exp_add_of_commute` in a
+  `[NormedAlgebra ℚ 𝔸]` section with NO instance path from ℝ — route through
+  `exp_add_of_commute_of_mem_ball (𝕂 := ℝ)` + `expSeries_radius_eq_top ℝ`;
+  `Commute.exp_right` is unconditional (the no-ℚ case has `exp = 1` by
+  definition); FTC-2 = `intervalIntegral.integral_hasDerivAt_right` +
+  `Continuous.stronglyMeasurable.stronglyMeasurableAtFilter` (no explicit
+  args); constancy via `is_const_of_fderiv_eq_zero` (needs the MeanValue
+  import; no deriv-named variant exists at pin). REMAINING for 2.7: the
+  wrapper `g := h ∘ Real.exp` + the axiom→theorem swap in
+  NormalFormExistence.lean + audit-allowlist surgery (census message strings,
+  Layer-2 pins expecting the axiom in closures, README/THEOREM-MAP prose).
 - **2.8 `bgw_canonical_composite` ELIMINATION — DONE 2026-08-04.** Replaced the
   axiom (a constructible existence claim, hence not falsifiable) with the
   pattern-match definition `bgwComposite` + `rfl`-proved `bgwComposite_table`;

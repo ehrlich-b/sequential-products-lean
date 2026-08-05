@@ -126,6 +126,14 @@ import RadicalRelativity.Necessity.ThetaFix
 -- accounting for invariance).
 import RadicalRelativity.Necessity.ThetaCocycle
 
+-- M2 necessity core, eighth unit (LEDGER 2.7 core lemma): continuous one-parameter
+-- semigroups in a real Banach algebra are exponentials, with a unique generator —
+-- the classical integral-regularization argument (geometric-series unit, FTC-2
+-- differentiability upgrade, multiplicative derivative law, ODE kill) built from
+-- scratch; Mathlib has no one-parameter-group theory. This is the engine that
+-- discharges the Aczel axiom in the next unit.
+import RadicalRelativity.Necessity.OneParameter
+
 -- Exact paper-facing S1--S7 and product-conclusion statement boundary.  This
 -- freezes the target signature; it does not claim the classification is proved.
 import RadicalRelativity.PaperA.Statement
