@@ -105,10 +105,13 @@ They are copied so this project stands alone; they are **not** paper content.
 - `RadicalRelativity/Selection/SelectorEquivalence.lean`
 - `RadicalRelativity/Selection/TwistIsotropy.lean`
 
-The development carries one cited-import `axiom` declaration:
-`Selection.aczel_continuous_multiplicative` (declared in
-`RadicalRelativity/Selection/NormalFormExistence.lean`); it is outside the
-`master_chain` import tree and does not affect its axiom closure above.
+The development carries NO custom `axiom` declarations: every tracked
+declaration's axiom closure is exactly Lean's three core axioms.
+(`Selection.aczel_continuous_multiplicative` was DISCHARGED into a theorem
+2026-08-05 — the from-scratch one-parameter-semigroup classification in
+`RadicalRelativity/Necessity/OneParameter.lean` proves it; the historical name
+and signature are preserved in
+`RadicalRelativity/Selection/NormalFormExistence.lean`.)
 (A second axiom, `TwistNormalForm.bgw_canonical_composite`, was eliminated
 2026-08-04: it asserted only the existence of an operation with nine
 specified table values — constructible, hence not falsifiable — and is now

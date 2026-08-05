@@ -213,4 +213,36 @@ theorem oneParameter_eq_exp (g : ℝ → 𝔸) (hcont : Continuous g)
     simpa using h
   exact hdB.unique hA0
 
+/-- **The multiplicative Aczél classification** (paper Lemma "Multiplicative
+representation"): a continuous multiplicative unital family on `(0, ∞)` of
+operators on a finite-dimensional real space is `x ↦ exp (log x • A)` for a
+unique generator.  This DISCHARGES the campaign's last custom axiom
+(`Selection.aczel_continuous_multiplicative` aliases to this theorem). -/
+theorem aczel_multiplicative_classification
+    {W : Type*} [NormedAddCommGroup W] [NormedSpace ℝ W]
+    [FiniteDimensional ℝ W] [CompleteSpace W]
+    (h : ℝ → (W →L[ℝ] W))
+    (hcont : ContinuousOn h (Set.Ioi 0))
+    (hmul : ∀ x, 0 < x → ∀ y, 0 < y → h (x * y) = h x * h y)
+    (hone : h 1 = 1) :
+    ∃! A : W →L[ℝ] W, ∀ x, 0 < x → h x = exp (Real.log x • A) := by
+  have hgcont : Continuous fun t : ℝ => h (Real.exp t) :=
+    hcont.comp_continuous Real.continuous_exp fun t => Real.exp_pos t
+  have hgmul : ∀ s t : ℝ, h (Real.exp (s + t)) = h (Real.exp s) * h (Real.exp t) := by
+    intro s t
+    rw [Real.exp_add]
+    exact hmul _ (Real.exp_pos s) _ (Real.exp_pos t)
+  have hgone : h (Real.exp 0) = 1 := by rw [Real.exp_zero]; exact hone
+  obtain ⟨A, hA, hAuniq⟩ :=
+    oneParameter_eq_exp (fun t => h (Real.exp t)) hgcont hgmul hgone
+  refine ⟨A, ?_, ?_⟩
+  · intro x hx
+    have hlog := hA (Real.log x)
+    rwa [Real.exp_log hx] at hlog
+  · intro B hB
+    apply hAuniq
+    intro t
+    have hexp := hB (Real.exp t) (Real.exp_pos t)
+    rwa [Real.log_exp] at hexp
+
 end Necessity

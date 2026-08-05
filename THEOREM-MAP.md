@@ -174,15 +174,17 @@ intended instances is `LEDGER.md`.
 | `DiagonalHomSetup.dχAdd`, `dχAdd_cont`, differentiated coalescence | **not a rendering of one cited theorem**: these begin *after* the paper's comparison-to-differential analysis. Lean neither differentiates `Θ` nor proves `dχAdd` is its derivative | `lem:homomorphism` |
 | `IsAlbertModel.block_injective` | Yokota's triality identification of the pointwise frame stabilizer with `Spin(8)`, **plus** a standard simplicity/kernel argument (nontrivial representation of a simple Lie algebra has zero kernel). Injectivity is a composite consequence, not Yokota's literal text | `thm:albert` |
 
-One cited result is recorded as an `axiom` declaration, deliberately outside the
-Layer-2 cones. Its printed type is frozen by Layer 4; fidelity to the cited
-literature remains a human audit, and the attribution is compound:
+NO cited result remains as an `axiom` declaration (as of 2026-08-05 the
+tracked tree's every closure is exactly Lean's three core axioms):
 
-- `Selection.aczel_continuous_multiplicative` — Aczél supplies the scalar
-  functional-equation lineage; the operator-valued conclusion
-  `h(x) = exp((log x)·A)` is finite-dimensional one-parameter-group theory
-  (Engel–Nagel). Not a theorem of Aczél alone in this form. Scheduled for
-  discharge in campaign M2 (`LEDGER.md` 2.7).
+- `Selection.aczel_continuous_multiplicative` — **DISCHARGED 2026-08-05
+  (`LEDGER.md` 2.7).** Formerly the sole custom axiom (Aczél scalar lineage +
+  Engel–Nagel operator form). Now a theorem: the from-scratch continuous
+  one-parameter-semigroup classification `Necessity.oneParameter_eq_exp` +
+  the `Real.exp`-substitution wrapper
+  (`RadicalRelativity/Necessity/OneParameter.lean`); the historical name and
+  signature are preserved at the original declaration site, and the Layer-4
+  pin now freezes the THEOREM's statement.
 - `TwistNormalForm.bgw_canonical_composite` — **ELIMINATED 2026-08-04
   (`LEDGER.md` 2.8).** The former axiom asserted the existence of an operation
   with nine specified table values — a constructible statement that cannot be
@@ -192,8 +194,8 @@ literature remains a human audit, and the attribution is compound:
   `rfl` (`bgwComposite_table`); the Barnum–Graydon–Wilce 2020 citation attaches
   to the table's *interpretation* (that it is their canonical standard-embedding
   composite), as prose provenance in the module docstring — which is all
-  `#print axioms` ever certified anyway. The tracked tree now carries exactly
-  ONE custom axiom.
+  `#print axioms` ever certified anyway. The tracked tree now carries
+  ZERO custom axioms.
 
 ## 3. Not machine-checked at all
 

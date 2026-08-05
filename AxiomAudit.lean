@@ -13,12 +13,13 @@ Six layers, all enforced by elaborating this file
    `example := by sorry` persists no declaration and is not visited either) it
    enforces three things at once:
    (a) the axiom closure depends only on Lean's three core axioms
-   (`propext`, `Classical.choice`, `Quot.sound`) and the single disclosed
-   cited-literature axiom (`Selection.aczel_continuous_multiplicative`;
-   the former `TwistNormalForm.bgw_canonical_composite` was eliminated
-   2026-08-04 into the proved-table definition `bgwComposite`) — a `sorryAx`,
-   `native_decide`, or any other axiom fails elaboration; (b) that is the
-   *only* custom axiom declaration in the tracked tree — a new stray `axiom`
+   (`propext`, `Classical.choice`, `Quot.sound`) — the tree carries NO custom
+   axioms (`Selection.aczel_continuous_multiplicative` was DISCHARGED into a
+   theorem 2026-08-05 via `Necessity/OneParameter.lean`; the former
+   `TwistNormalForm.bgw_canonical_composite` was eliminated 2026-08-04 into
+   the proved-table definition `bgwComposite`) — a `sorryAx`,
+   `native_decide`, or any other axiom fails elaboration; (b) NO custom axiom
+   declaration exists in the tracked tree — any stray `axiom`
    in any tracked module fails; and
    (c) **source coverage + frozen manifest**: the set of `RadicalRelativity`
    modules on disk equals the set imported here *and* equals a pinned 57-name
@@ -81,10 +82,8 @@ def auditPathToModule (p : FilePath) : Name :=
 run_cmd do
   let env ← getEnv
   let allowed : List Name :=
-    [``propext, ``Classical.choice, ``Quot.sound,
-     ``Selection.aczel_continuous_multiplicative]
-  let citedAxioms : List Name :=
-    [``Selection.aczel_continuous_multiplicative]
+    [``propext, ``Classical.choice, ``Quot.sound]
+  let citedAxioms : List Name := []
   let isProject := fun (n : Name) =>
     match env.getModuleFor? n with
     | some m => (`RadicalRelativity).isPrefixOf m
@@ -222,7 +221,7 @@ the central decomposition, the two globalization results, the adapter
 globalizer, and the selected rank-two algebraic endpoints — which do not
 formalize the rank-two classification).  The tracked-tree census above already
 bounds every tracked persisted declaration; these sentinels additionally certify
-that the advertised endpoints do not lean on the two cited axioms. -/
+that the advertised endpoints depend on the three core axioms alone. -/
 
 /-- info: 'MasterTheorem.master_chain' depends on axioms: [propext, Classical.choice, Quot.sound] -/
 #guard_msgs (whitespace := lax) in
@@ -319,14 +318,14 @@ elaboration). -/
 #guard_msgs (whitespace := lax) in
 #check @PaperA.auditPin_uniqueTwist
 
-/-! ## Layer 4: cited-axiom type pins
+/-! ## Layer 4: statement pin for the discharged Aczél lemma
 
-The exact printed type of the disclosed custom axiom is frozen.  A silent
-statement drift under the allowlisted name changes the printed type and fails
-elaboration.  (Fidelity to Aczel remains a human citation audit, as the paper
-states.  The former Barnum-Graydon-Wilce axiom was eliminated 2026-08-04 into
-the proved-table definition `TwistNormalForm.bgwComposite`, so no pin for it
-remains.) -/
+`Selection.aczel_continuous_multiplicative` is a THEOREM since 2026-08-05
+(discharged via `Necessity/OneParameter.lean`); this pin now freezes the
+theorem's statement so the discharged lemma cannot silently drift from the
+paper's `lem:mult-rep` wording.  (The former Barnum–Graydon–Wilce axiom was
+eliminated 2026-08-04 into the proved-table definition
+`TwistNormalForm.bgwComposite`, so no pin for it remains.) -/
 
 /-- info: @Selection.aczel_continuous_multiplicative : ∀ {W : Type u_1} [inst : NormedAddCommGroup W] [inst_1 : NormedSpace ℝ W]
   [FiniteDimensional ℝ W] [CompleteSpace W] (h : ℝ → W →L[ℝ] W),

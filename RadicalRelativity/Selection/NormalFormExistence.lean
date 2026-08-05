@@ -4,6 +4,7 @@ Released under Apache 2.0 license.
 Authors: Bryan Ehrlich
 -/
 import RadicalRelativity.TwistNormalForm
+import RadicalRelativity.Necessity.OneParameter
 import Mathlib.Analysis.Calculus.Deriv.Mul
 import Mathlib.Analysis.SpecialFunctions.ExpDeriv
 
@@ -17,9 +18,12 @@ This file and its companion `RadicalRelativity/TwistNormalForm.lean` are the
 (the pair-local ansatz route). They predate the shipped manuscript and use its
 earlier internal labels (`thm:normal-form`, `lem:mult-rep`, `prop:coherence`,
 `prop:closure`, `def:canonical-composite`, `def:paths`), which are *not* section
-labels of the shipped paper.  The sole axiom of this development,
-`aczel_continuous_multiplicative` (declared in this file), lies outside the
-`master_chain` import tree and does not enter its axiom closure. (The former
+labels of the shipped paper.  The former sole axiom of this development,
+`aczel_continuous_multiplicative` (declared in this file), was DISCHARGED
+2026-08-05: it is now a theorem, an alias of
+`Necessity.aczel_multiplicative_classification`
+(`Necessity/OneParameter.lean`, the from-scratch one-parameter-semigroup
+classification).  The development carries NO custom axioms.  (The former
 companion axiom `bgw_canonical_composite` in `TwistNormalForm.lean` was
 eliminated 2026-08-04 into the proved-table definition `bgwComposite`.)
 
@@ -59,8 +63,8 @@ restates it relative to fixed ansatz data `D`: the twist is a function of `D.E`.
                  **decomposition-independence** (condition (b)) and continuity;
   - `cont_*`   = the **S2** continuity of the two one-parameter marginals.
 * `aczel_continuous_multiplicative` = the paper's Lemma "Multiplicative
-  one-parameter representation" (`lem:mult-rep`): the single imported analytic
-  fact, an **axiom** (see below).
+  one-parameter representation" (`lem:mult-rep`): formerly the single imported
+  analytic fact, now a **theorem** (discharged 2026-08-05, see below).
 * `NormalForm.E`, `NormalForm.sum_eq_one`, `NormalForm.commute` = the boxed
   conclusion eq. (normal-form): `E(x,y)=x^A y^B`, `A+B=Id`, `[A,B]=0`.
 
@@ -79,17 +83,15 @@ restates it relative to fixed ansatz data `D`: the twist is a function of `D.E`.
    harmless — the off-diagonal action `x^A y^B` is defined for every positive scalar
    and the multiplicative / coalescence identities hold verbatim — and it lets the
    coalescence generator `A+B` be read off by a two-sided derivative at the unit.
-3. **`lem:mult-rep` is axiomatized (the full lemma).**  The earlier *manuscript*
-   argument establishes `lem:mult-rep` elementarily (an integration argument turning
-   the continuous semigroup into a `C¹` one-parameter subgroup); this Lean file does
-   not formalize that analytic argument and takes the lemma as an axiom instead.  The operator form is standard one-parameter-group
-   theory (a continuous multiplicative map is `GL`-valued and `t ↦ h(e^{-t})` is
-   a continuous, hence smooth, one-parameter group); the scalar functional
-   equation is classical (Aczél 1966).  The axiom states the lemma verbatim —
+3. **`lem:mult-rep` is PROVED (discharged 2026-08-05; formerly an axiom).**
+   The manuscript's integration argument (turning the continuous semigroup into
+   a `C¹` one-parameter subgroup) is now formalized in
+   `Necessity/OneParameter.lean` (`oneParameter_eq_exp` +
+   `aczel_multiplicative_classification`), and the declaration below is an
+   alias of that theorem with the historical name and signature preserved —
    both the existence and the uniqueness of `A` (`∃!`).  The uniqueness half of
-   `thm:normal-form` is nonetheless re-derived here by differentiation rather
-   than by invoking the axiom's `∃!`, so it carries no axiom beyond the standard
-   three.
+   `thm:normal-form` is nonetheless still re-derived here by differentiation
+   rather than by invoking the `∃!`.
 4. **`W`** is the manuscript's "arbitrary real vector space" (the Peirce `1`-space),
    encoded — as in `TwistNormalForm.lean` — as a finite-dimensional real normed
    space with `End(W) = W →L[ℝ] W`.
@@ -126,23 +128,22 @@ This is the operator form of the classical multiplicative-continuity theorem:
 one-parameter group, hence has a bounded generator (standard
 one-parameter-semigroup theory; `A` is recovered by differentiating at the
 identity, whence uniqueness).  The scalar functional equation is classical
-(Aczél 1966).  We axiomatize the operator statement rather than formalize that
-analytic argument.  The statement matches the earlier development's `lem:mult-rep`
-verbatim (both the existence and the uniqueness clause of `A`), not a weakening:
-the existence half of `thm:normal-form` consumes the existence clause, the
-uniqueness half matches the uniqueness clause (and is here re-derived
-independently by differentiation, so it does not lean on the axiom's `∃!`).
+(Aczél 1966).  Formerly axiomatized; DISCHARGED 2026-08-05 by the from-scratch
+one-parameter-semigroup classification in `Necessity/OneParameter.lean`.  The
+statement matches the earlier development's `lem:mult-rep` verbatim (both the
+existence and the uniqueness clause of `A`), and the historical name and
+signature are preserved so the two call sites below are untouched.
 Faithfulness delta: stated on all of `(0,∞)` rather than the earlier `(0,1]`
-form (a harmless strengthening of the hypotheses, i.e. a weakening of the
-axiom; see the module docstring). -/
-axiom aczel_continuous_multiplicative
+form (a harmless strengthening of the hypotheses; see the module docstring). -/
+theorem aczel_continuous_multiplicative
     {W : Type*} [NormedAddCommGroup W] [NormedSpace ℝ W]
     [FiniteDimensional ℝ W] [CompleteSpace W]
     (h : ℝ → (W →L[ℝ] W))
     (hcont : ContinuousOn h (Set.Ioi 0))
     (hmul : ∀ x, 0 < x → ∀ y, 0 < y → h (x * y) = h x * h y)
     (hone : h 1 = 1) :
-    ∃! A : W →L[ℝ] W, ∀ x, 0 < x → h x = exp (Real.log x • A)
+    ∃! A : W →L[ℝ] W, ∀ x, 0 < x → h x = exp (Real.log x • A) :=
+  Necessity.aczel_multiplicative_classification h hcont hmul hone
 
 /-! ## The ansatz data (output of Step 1) -/
 
