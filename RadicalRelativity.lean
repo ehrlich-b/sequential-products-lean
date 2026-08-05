@@ -211,6 +211,11 @@ import RadicalRelativity.Necessity.BlockTransport
 -- composite by chaining the two Theta factors.
 import RadicalRelativity.Necessity.BlockChi
 
+-- prop:isotropy on H_n(C): the block generator is skew -- differentiate the
+-- constant function t -> |entry of chiTilde(t.r)(blockHerm z)|^2 at t = 0.
+-- One-variable calculus; no compactness, no invariant measure.
+import RadicalRelativity.Necessity.BlockSkew
+
 -- Exact paper-facing S1--S7 and product-conclusion statement boundary.  This
 -- freezes the target signature; it does not claim the classification is proved.
 import RadicalRelativity.PaperA.Statement

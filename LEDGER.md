@@ -562,6 +562,22 @@ sorry-free Wigner rigidity — see 3.0.
   (dχAdd := toAddMonoidHom, cont := findim, coalescence_diff := block⊆corner ∘
   dChi_kills_corner), toStabilizerCoupling fires. Then u6.
 
+  **u5b DONE 2026-08-05** (`Necessity/BlockSkew.lean`, census 70, gates
+  green): `dChi_block_skew` — **prop:isotropy machine-checked**: for
+  z₀ = v₁ + v₂i and w := entry of dχ(r)(blockHerm z₀), the Euclidean dot
+  v₁·w.re + v₂·w.im = 0. Proof: entry curve c(t) := entryCLM(exp(t•A)x) has
+  derivative w at 0 (exp_apply_hasDerivAt + const.clm_apply); re/im components
+  via Complex.reCLM/imCLM the same way; F := re·re + im·im is CONSTANT ≡
+  normSq z₀ (chiTilde_block_exists + blockHerm_entry readback); (hre.mul
+  hre).add (him.mul him) + unique-vs-const + hval0 (exp(0) = 1) ⟹
+  2(v₁w.re + v₂w.im) = 0. No compactness, no invariant measure — the square
+  law + one-variable calculus. `entryLm`/`entryCLM` + `entryCLM_apply` built
+  here. REMAINING u5c: Stab := block-skew submodule of the CLM space, ρ i j ξ
+  := blockCoord ∘ ξ ∘ blockEmbed over V := ℝ × ℝ, dχ ∈ Stab (this theorem),
+  DiagonalHomSetup instance (dχAdd := toAddMonoidHom of dChi-linear, cont by
+  findim, coalescence_diff := blockHerm ∈ cornerJ2 + dChi_kills_corner) →
+  toStabilizerCoupling. Then u6 (phase cocycle → hmodel).
+
   **WIRING DESIGN (banked 2026-08-05, before χ̃ part 2):** build the
   `ComparisonSetup (HermitianMat (Fin N) ℂ)` instance NEXT — the abstract
   DiagonalHom layer then supplies `chi_hom`/`chi_comm`/`chi_extend_wellDefined`
