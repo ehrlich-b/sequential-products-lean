@@ -333,6 +333,34 @@ sorry-free Wigner rigidity — see 3.0.
   Precedent: PR #33813 (Cauchy-log characterization) was closed unmerged
   2026-01 — build in-repo, harvest to Mathlib later (T4). ~200–350 lines
   estimate stands, lean high. Risk MED.
+  **PROOF PLAN (banked 2026-08-05, design pass done).** Substitute
+  `g t := h (Real.exp t)`: continuous everywhere (exp lands in Ioi 0),
+  `g (s+t) = g s * g t`, `g 0 = 1` — a continuous one-parameter semigroup in
+  the Banach algebra `W →L[ℝ] W`. Classify `g = exp(t • A)` by the classical
+  integral-regularization argument, ALL ingredients inventory-confirmed:
+  (i) choose δ > 0 with `‖g s − 1‖ ≤ 1/2` on `[0, δ]` (continuity at 0);
+  `J := ∫ s in 0..δ, g s` satisfies `‖J − δ•1‖ ≤ δ/2` <
+  (`intervalIntegral.norm_integral_le_of_norm_le_const`), so `δ⁻¹•J = 1 − t`
+  with `‖t‖ < 1` is a unit (`Units.oneSub`, geometric series);
+  (ii) `g t * J = ∫ s in t..(t+δ), g` (translation/`integral_comp_add_left` +
+  the semigroup law pulled through `intervalIntegral.integral_const_mul`-style
+  linearity — g t is a CONSTANT operator factor, use `ContinuousLinearMap`
+  composition under the integral or `intervalIntegral.integral_smul`-analogue
+  via `ContinuousLinearMap.integral_comp_comm`), so
+  `g t = (F (t+δ) − F t) * J⁻¹` with `F u := ∫ 0..u, g` — differentiable by
+  FTC-2 (`intervalIntegral.integral_hasDerivAt_right`), hence g is C¹;
+  (iii) `A := deriv g 0`; the difference quotient factorization
+  `g (t+h) − g t = g t * (g h − 1)` gives `HasDerivAt g (g t * A) t`;
+  (iv) `d/dt [g t * exp(−t•A)] = 0` via `hasDerivAt_exp_smul_const`, product
+  rule, and `Commute A (exp (−t•A))` (`Commute.exp_right`-style, from
+  self-commutation) ⟹ constant = `g 0 = 1` ⟹ `g t = exp (t•A)`
+  (`is_const_of_deriv_eq_zero` on ℝ, or `Constant.of_hasDerivAt_zero`);
+  (v) back-substitute `x = exp (log x)` for `x > 0`; uniqueness: from
+  `∀ x > 0, exp (log x • A) = exp (log x • B)`, take `x := exp t` ⟹
+  `exp (t•A) = exp (t•B)` ∀t, differentiate at 0 ⟹ `A = B`.
+  Then DELETE the axiom, replace with the theorem (same name/signature so the
+  two call sites in NormalFormExistence.lean are untouched), drop it from the
+  audit allowlist — **custom-axiom count 1 → 0; closure = pure Lean core.**
 - **2.8 `bgw_canonical_composite` ELIMINATION — DONE 2026-08-04.** Replaced the
   axiom (a constructible existence claim, hence not falsifiable) with the
   pattern-match definition `bgwComposite` + `rfl`-proved `bgwComposite_table`;
