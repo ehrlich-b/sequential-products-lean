@@ -546,6 +546,22 @@ sorry-free Wigner rigidity — see 3.0.
   ‖R(t)v‖², Stab := block-skew submodule, DiagonalHomSetup instance,
   toStabilizerCoupling), u6 (phase cocycle ⟹ hmodel ⟹ complex_perFrame_rho).
 
+  **u5a DONE 2026-08-05** (`Necessity/BlockChi.lean`, census 69, first-pass
+  clean): `blockHerm_entry` (coordinate readback), `thetaNorm_block_exists` /
+  `thetaNorm_symm_block_exists` (inverse via inverse-Jordan relation transport
+  + forward-isometry-at-image + Θ∘Θ⁻¹-cancel), and
+  **`chiTilde_block_exists`: χ̃(r) acts on every off-diagonal block by a
+  Euclidean isometry, for every r** (chain the two factors through the
+  canonical exponents). REMAINING u5b/c (plan in memory later-25): entryLm/
+  blockCoord/blockEmbed over V := ℝ × ℝ (avoid EuclideanSpace PiLp friction;
+  Prod has the ℝ-inner instance), the skew punchline `v.1*w.re + v.2*w.im = 0`
+  for w := entry of dχ(r)(blockEmbed v) — differentiate F(t) := normSq(entry
+  of χ̃(t•r)(blockEmbed v)) ≡ normSq z₀ at t = 0 (exp_apply_hasDerivAt ∘
+  entryCLM, re/im split, HasDerivAt.mul/add, unique vs const) — then Stab :=
+  block-skew submodule, ρ := coord∘ξ∘embed, DiagonalHomSetup instance
+  (dχAdd := toAddMonoidHom, cont := findim, coalescence_diff := block⊆corner ∘
+  dChi_kills_corner), toStabilizerCoupling fires. Then u6.
+
   **WIRING DESIGN (banked 2026-08-05, before χ̃ part 2):** build the
   `ComparisonSetup (HermitianMat (Fin N) ℂ)` instance NEXT — the abstract
   DiagonalHom layer then supplies `chi_hom`/`chi_comm`/`chi_extend_wellDefined`

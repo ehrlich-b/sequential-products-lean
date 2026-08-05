@@ -206,6 +206,11 @@ import RadicalRelativity.Necessity.BlockModel
 -- isometry on every off-diagonal block with no norm imports.
 import RadicalRelativity.Necessity.BlockTransport
 
+-- chi-tilde transports blocks isometrically at EVERY parameter: the inverse
+-- factor by inverse-Jordan transport + forward-isometry-at-image, the
+-- composite by chaining the two Theta factors.
+import RadicalRelativity.Necessity.BlockChi
+
 -- Exact paper-facing S1--S7 and product-conclusion statement boundary.  This
 -- freezes the target signature; it does not claim the classification is proved.
 import RadicalRelativity.PaperA.Statement
