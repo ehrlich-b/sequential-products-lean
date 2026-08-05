@@ -223,6 +223,12 @@ import RadicalRelativity.Necessity.BlockSkew
 -- the coupling rho_ij(dChi(r)) = (r_i - r_j) . T_ij on the concrete carrier.
 import RadicalRelativity.Necessity.StabilizerInstance
 
+-- Phase cocycle, part 1: the 2x2 skew classification (skew R-linear maps on C
+-- are multiplication by it) and the cross-block product formula
+-- blockHerm i j z . blockHerm j k v = (1/2) blockHerm i k (zv).  Inputs to the
+-- Leibniz rule for the entry maps of dChi and hence the cocycle t_ik = t_ij + t_jk.
+import RadicalRelativity.Necessity.PhaseCocycle
+
 -- Exact paper-facing S1--S7 and product-conclusion statement boundary.  This
 -- freezes the target signature; it does not claim the classification is proved.
 import RadicalRelativity.PaperA.Statement

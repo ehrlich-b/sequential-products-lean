@@ -599,6 +599,22 @@ sorry-free Wigner rigidity — see 3.0.
   the ℂ-lane: u6 (phase cocycle ⟹ hmodel ⟹ complex_perFrame_rho), then
   Globalization wiring, then the per-type statement. M2 else: 2.9.
 
+  **u6a DONE 2026-08-05** (`Necessity/PhaseCocycle.lean`, census 72, gates
+  green): (1) `skew_linear_eq_I_smul` — the 2×2 skew classification: ℝ-linear
+  `T : ℂ → ℂ` with `z.re*(Tz).re + z.im*(Tz).im = 0` everywhere equals
+  `z ↦ (T 1).im • (I*z)` (polarization at 1, I, 1+I; decompose z by
+  `z = z.re•1 + z.im•I` in a `conv_lhs`-scoped `have` — a bare `rw [hz]`
+  rewrites the RHS z too and strands mixed `(↑z.re).im` terms). (2)
+  `blockHerm_symmMul_blockHerm` — cross-block product: for pairwise distinct
+  i,j,k, `blockHerm i j z ∘ blockHerm j k v = (1/2:ℝ) • blockHerm i k (z*v)`
+  (eight single-products, only E_ij·E_jk and E_kj·E_ji survive; `star_mul`
+  aligns the z̄v̄ coefficient; ℝ-vs-ℂ ½ via entrywise push_cast+ring).
+  REMAINING u6: (6c) dχ(r) is a Jordan derivation (differentiate the
+  Jordan-preservation of χ̃(t•r) at t=0 via exp_apply_hasDerivAt + the
+  bilinear symmMul CLM), (6d) entry maps T_ij := (D(blockHerm i j ·)).mat i j,
+  Leibniz across blocks ⟹ cocycle t_ik = t_ij + t_jk, antisymmetry, anchor
+  θ_i := t_{i,i₀} ⟹ hmodel ⟹ `complex_perFrame_rho` fires on H_N(ℂ).
+
   **WIRING DESIGN (banked 2026-08-05, before χ̃ part 2):** build the
   `ComparisonSetup (HermitianMat (Fin N) ℂ)` instance NEXT — the abstract
   DiagonalHom layer then supplies `chi_hom`/`chi_comm`/`chi_extend_wellDefined`
