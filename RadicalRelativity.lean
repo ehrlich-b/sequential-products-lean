@@ -59,6 +59,12 @@ import RadicalRelativity.Vendor.HermitianMat.Proj
 import RadicalRelativity.Hermitian.OrderUnit
 import RadicalRelativity.Hermitian.ExtremeEffects
 
+-- M1 twist definition (LEDGER 1.2, pair-of-real-cfc route): `a^{1/2+it}` from two
+-- real functional-calculus components, the twist sequential product as a `conj`
+-- (S1/monotonicity/effect-closure ride the vendored conj lemmas), unit laws, and
+-- the t = 0 Lüders specialization.
+import RadicalRelativity.Hermitian.Twist
+
 -- Exact paper-facing S1--S7 and product-conclusion statement boundary.  This
 -- freezes the target signature; it does not claim the classification is proved.
 import RadicalRelativity.PaperA.Statement

@@ -95,6 +95,14 @@ Census-tracked (46-module manifest), closure = Lean core only:
   through the vendored CFC (perturbation by `± min(x, 1-x)`), and the ℂ join is
   `mem_extremePoints_iff_isProjection`.  This is M3's bridge 1 input
   (order-automorphisms preserve extreme effects, hence projections).
+- `RadicalRelativity/Hermitian/Twist.lean` — the twist definition (LEDGER 1.2,
+  pair-of-real-cfc route): `twistFactor a t` is `a^{1/2+it}` built from two real
+  functional-calculus components (the paper's `0^{1/2±it} = 0` convention holds
+  definitionally); `twistSeq t a b := b.conj (twistFactor a t)`; proved:
+  `(a^{1/2+it})ᴴ = a^{1/2-it}`, `X·Xᴴ = Xᴴ·X = a` on `0 ≤ a`, both unit laws,
+  positivity, S1-additivity and monotonicity in the second argument, effect
+  closure, and the `t = 0` Lüders specialization.  S4–S7 and the
+  `SequentialProductCore` instance are LEDGER 1.3.
 
 ## 2. Carried as cited interface hypotheses — supplied, not proved
 

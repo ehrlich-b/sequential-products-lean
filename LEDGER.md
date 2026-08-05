@@ -80,6 +80,26 @@ sorry-free Wigner rigidity — see 3.0.
   continuity hypothesis (finite spectrum), so 0-eigenvalue conventions are
   free; (b) `CStarMatrix` type copy + the ℂ-CFC over `IsStarNormal`. Pick at M1
   start. Risk MED (was LOW-MED; the gap is confirmed, the routes are clear).
+  **DECIDED 2026-08-04: route (a), pair-of-real-cfc** — the S1–S7 statements
+  live on `HermitianMat` (the 1.1 `OrderUnitSpace` instance), so route (b)
+  would add a parallel carrier plus an order/positivity transfer layer while
+  offering no cpow API to harvest (inventory-confirmed absent); and the
+  vendored `HermitianMat.conj` AddMonoidHom makes the twist product
+  `b.conj (twistFactor a t)` with S1-additivity, monotonicity, positivity, and
+  effect closure riding `map_add`/`conj_mono`/`conj_nonneg` directly. The
+  paper's `0^{1/2±it} = 0` convention is DEFINITIONAL on this route: every
+  component is `√x·(…)`, which vanishes at `x = 0` regardless of the
+  `Real.log 0 = 0` junk value. Implemented in `Hermitian/Twist.lean`:
+  `twistRe`/`twistIm`/`twistFactor` (= `a^{1/2+it}` as a plain matrix),
+  `twistSeq t a b := b.conj (twistFactor a t)`, with `Xᴴ = twistFactor a (-t)`,
+  `X·Xᴴ = Xᴴ·X = a.mat` (on `0 ≤ a`; Pythagorean cancellation through
+  `cfc_self_commute` + `cfc_congr_of_nonneg`), `twistFactor 1 t = 1`,
+  unit laws `a &ₜ 1 = a` / `1 &ₜ b = b`, positivity, right-additivity,
+  right-monotonicity, effect closure, and `twistSeq 0 a b = √a·b·√a` (Lüders).
+  **1.2 definitional layer DONE 2026-08-04** (census 47, gates green). What
+  moves to 1.3: S4 zero-symmetry, S5 compatible associativity, S6a/S6b, S7,
+  and packaging as a `SequentialProductCore (HermitianMat n ℂ)` instance
+  (plus S2 continuity from `conj` continuity in the carried norm).
 - **1.3 S1–S7 verification.** [INV✓]: cfc identity suite is rich (`cfc_mul`,
   `cfc_comp'`, `cfc_pow`, order lemmas `cfc_mono`/`cfc_le_iff`, commutation
   `Commute.cfc`, norms `norm_cfc`). The SymPy V1–V10 checks are the
