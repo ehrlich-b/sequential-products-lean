@@ -368,6 +368,22 @@ sorry-free Wigner rigidity — see 3.0.
   `dite` on PosDef needs `letI := Classical.dec`; the (r+r')-orthant proof must be
   ascribed `∀ i, (r + r') i ≤ 0` or unification pins `fun i => r i + r' i` (H7).
 
+  **χ̃ PART 2a DONE 2026-08-05** (`Necessity/ChiExtension.lean`, census 61, gates
+  green): `thetaUnit r` (comparison map as a UNIT of End(H_n(ℂ)) — total in r,
+  inverse carried by the LinearEquiv, no operator inversion), units-level
+  cocycle + abelian image, `thetaUnit_div_eq` (representative-freedom of
+  Θ_s Θ_t⁻¹ — the paper's well-definedness argument, done in the units group
+  with `group` + two Commute-swaps), and `chiTilde r := thetaUnit (r ⊓ 0) *
+  (thetaUnit (r ⊓ 0 − r))⁻¹` — case-free canonical representative — with
+  `chiTilde_add` (homomorphism on all of ℝⁿ), `chiTilde_zero`,
+  `chiTilde_of_nonpos`. All conditional on `ThetaPreservesJordan` where the
+  cocycle enters, as everywhere in this lane. Remaining for 2.6:
+  part 2b = line-continuity of `t ↦ (chiTilde (t•v)).val` (S2 for the L'-part
+  on effects; explicit diagonal cfc for the Q⁻¹-part; `Ring.inverse`-continuity
+  at units for the inverse factor; `continuous_clm_apply` findim reduction),
+  part 2c = `multiParameter_eq_exp` ⟹ linear dχ with `χ̃ r = exp (dχ r)`;
+  then ρ/coalescence_diff/Setup instantiations.
+
   **WIRING DESIGN (banked 2026-08-05, before χ̃ part 2):** build the
   `ComparisonSetup (HermitianMat (Fin N) ℂ)` instance NEXT — the abstract
   DiagonalHom layer then supplies `chi_hom`/`chi_comm`/`chi_extend_wellDefined`

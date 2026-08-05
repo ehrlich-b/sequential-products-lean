@@ -154,6 +154,13 @@ import RadicalRelativity.Necessity.Chi
 -- hypothesis is ThetaPreservesJordan (= milestone M3).
 import RadicalRelativity.Necessity.ComparisonInstance
 
+-- chi-tilde extended to all of R^n: thetaUnit (the comparison map as a unit of
+-- the endomorphism algebra, total in r), the units-level orthant cocycle and
+-- abelian image, representative-freedom of Theta_s Theta_t^{-1} (the paper's
+-- well-definedness argument), and chiTilde r := thetaUnit(r inf 0) *
+-- thetaUnit(r inf 0 - r)^{-1} with chiTilde_add/zero/of_nonpos.
+import RadicalRelativity.Necessity.ChiExtension
+
 -- Exact paper-facing S1--S7 and product-conclusion statement boundary.  This
 -- freezes the target signature; it does not claim the classification is proved.
 import RadicalRelativity.PaperA.Statement
