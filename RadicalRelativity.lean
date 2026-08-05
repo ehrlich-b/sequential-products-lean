@@ -182,6 +182,12 @@ import RadicalRelativity.Necessity.CoalescenceInstance
 -- DiagonalHomSetup.coalescence_diff field.
 import RadicalRelativity.Necessity.CoalescenceDiff
 
+-- Theta is an order-unit-norm isometry (unital order-iso transports the
+-- defining interval set verbatim), hence so are thetaUnit, its inverse, and
+-- chiTilde -- the isometry input for the skewness of dChi with no trace
+-- preservation or compactness anywhere.
+import RadicalRelativity.Necessity.ThetaIsometry
+
 -- Exact paper-facing S1--S7 and product-conclusion statement boundary.  This
 -- freezes the target signature; it does not claim the classification is proved.
 import RadicalRelativity.PaperA.Statement

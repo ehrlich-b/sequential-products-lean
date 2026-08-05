@@ -481,6 +481,16 @@ sorry-free Wigner rigidity — see 3.0.
   invariance of dχ), u5 (Stab submodule + DiagonalHomSetup instance), u6
   (phase-cocycle torus model).
 
+  **u1 (ouNorm-isometry) DONE 2026-08-05** (`Necessity/ThetaIsometry.lean`,
+  census 65, gates green): `ouNorm_thetaNorm`/`ouNorm_thetaUnit`(+inv)/
+  `ouNorm_chiTilde` — a unital order-iso transports the ouNorm defining set
+  verbatim (thetaNorm_le_iff from nonneg_iff by sub; the two interval bounds
+  via map_smul + thetaNorm_one); inverse-factor isometry by applying the
+  forward isometry at the image and cancelling with `Units.mul_inv` (rw
+  [← ContinuousLinearMap.mul_apply, Units.mul_inv]; rfl — do NOT try congrArg
+  on val_inv, simp collapses it to True). Remaining: u2 (block-Euclidean +
+  skewness), u3 (block invariance of dχ), u5, u6.
+
   **WIRING DESIGN (banked 2026-08-05, before χ̃ part 2):** build the
   `ComparisonSetup (HermitianMat (Fin N) ℂ)` instance NEXT — the abstract
   DiagonalHom layer then supplies `chi_hom`/`chi_comm`/`chi_extend_wellDefined`
