@@ -71,7 +71,30 @@ first-argument continuity in the *carried* norm. On the intended
 finite-dimensional EJA instances the two are equivalent — all norms there induce
 the same topology — but the generic interface does not literally state the paper's
 (S2), and the direction of the variable (first argument, on effects) is what the
-pin does establish.
+pin does establish.  The concrete carrier now carries the order-unit norm as an
+unbundled def (`HermitianMat.ouNorm`, `RadicalRelativity/Hermitian/OrderUnit.lean`)
+with the defining infimum attained; identifying it with the carried Frobenius norm
+on `H_n(𝕜)` is the discharge tracked as LEDGER 1.4.
+
+### M1 carrier layer (supporting infrastructure, no paper labels)
+
+Census-tracked (46-module manifest), closure = Lean core only:
+
+- `RadicalRelativity/Hermitian/OrderUnit.lean` — `OrderUnitSpace (HermitianMat n 𝕜)`
+  instance over the vendored carrier (parents = the existing vendored instances; the
+  abstract `OrderUnitSpace.IsEffect` becomes *definitionally* the Loewner unit
+  interval, so `Effect (HermitianMat n ℂ)` is the intended effect space and the
+  vendored compactness applies verbatim); order-unit boundedness with explicit
+  witness `r = ‖a‖`; the **full Archimedean property** over ℂ (strictly stronger
+  than the class's order-unit-boundedness field); the order-unit norm `ouNorm` as
+  an unbundled def with attainment, minimality, `ouNorm ≤ ‖·‖`, negation/triangle,
+  and definiteness.
+- `RadicalRelativity/Hermitian/ExtremeEffects.lean` — extreme points of the effect
+  interval are exactly the projections `p ^ 2 = p`: projections-are-extreme is
+  `RCLike`-uniform (quadratic-form kernel pinch), the converse is proved over ℂ
+  through the vendored CFC (perturbation by `± min(x, 1-x)`), and the ℂ join is
+  `mem_extremePoints_iff_isProjection`.  This is M3's bridge 1 input
+  (order-automorphisms preserve extreme effects, hence projections).
 
 ## 2. Carried as cited interface hypotheses — supplied, not proved
 

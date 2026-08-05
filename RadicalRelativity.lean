@@ -51,6 +51,14 @@ import RadicalRelativity.MasterTheorem.Witnesses
 import RadicalRelativity.Vendor.HermitianMat.Jordan
 import RadicalRelativity.Vendor.HermitianMat.Proj
 
+-- M1 order-unit layer on the concrete carrier (LEDGER 1.1): the
+-- `OrderUnitSpace (HermitianMat n 𝕜)` instance (making the abstract effect
+-- predicate definitionally the Loewner unit interval), the full Archimedean
+-- property over ℂ, the order-unit norm as an unbundled def, and
+-- extreme-points-of-the-effect-interval = projections (M3 bridge 1).
+import RadicalRelativity.Hermitian.OrderUnit
+import RadicalRelativity.Hermitian.ExtremeEffects
+
 -- Exact paper-facing S1--S7 and product-conclusion statement boundary.  This
 -- freezes the target signature; it does not claim the classification is proved.
 import RadicalRelativity.PaperA.Statement

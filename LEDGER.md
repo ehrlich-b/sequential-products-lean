@@ -51,6 +51,24 @@ sorry-free Wigner rigidity — see 3.0.
   (only `unitInterval_IsCompact` exists), extreme-points-are-projections
   (feeds M3 bridge 1), and everything Jordan-structural past the `IsCommJordan`
   mixin. Risk LOW-MED (backport residue).
+  **Order-unit layer DONE 2026-08-04** (`Hermitian/OrderUnit.lean` +
+  `Hermitian/ExtremeEffects.lean`; census green at 46 modules, one axiom): the
+  OU norm as an unbundled def with the defining infimum ATTAINED via the closed
+  PSD cone (`isClosed_nonneg` + `IsClosed.csInf_mem` — no eigenvalue
+  bookkeeping, `RCLike`-uniform) plus minimality / `ouNorm ≤ Frobenius` / neg /
+  triangle / definiteness; order-unit boundedness with witness `r = ‖a‖`
+  (`lt_smul_of_norm_lt`); the FULL Archimedean property over ℂ (eigenvalue
+  route); `instance OrderUnitSpace (HermitianMat n 𝕜)` whose parents are the
+  existing vendored instances (no second normed/order structure) and under
+  which `OrderUnitSpace.IsEffect` is DEFINITIONALLY the Loewner `[0,1]`
+  (`isEffect_iff := Iff.rfl`; `unitInterval_IsCompact` restates verbatim; the
+  abstract `Effect V` subtype now instantiates on the carrier); and
+  extreme-points-of-`[0,1]` = projections (`p^2 = p`): forward direction
+  𝕜-uniform (quadratic-form kernel pinch, `dotProduct_mulVec_zero_iff`),
+  converse over ℂ fully CFC-native (perturb by `± min(x, 1-x)` through
+  `HermitianMat.cfc`; extremeness kills the perturbation; spectrum lands in
+  `{0,1}` — zero eigenvector-basis bookkeeping). Feeds M3 bridge 1.
+  **1.1 is CLOSED**; the only norm item left anywhere is the 1.4 equivalence.
 - **1.2 Twist definition.** `a^{1/2+it} b a^{1/2-it}` via CFC. [INV✓]: matrix
   CFC instance is `Matrix.IsHermitian.instContinuousFunctionalCalculus` (over ℝ,
   predicate `IsSelfAdjoint`, real file `Analysis/Matrix/
@@ -69,6 +87,10 @@ sorry-free Wigner rigidity — see 3.0.
 - **1.4 (S2) norm caveat discharge.** Prove order-unit norm ≡ carried norm on
   the finite-dim instance (all norms equivalent, Mathlib has finite-dim
   equivalence) — closes THEOREM-MAP's S2 literal-fidelity caveat. Risk LOW.
+  Half done 2026-08-04: `ouNorm_le_norm` (OU ≤ Frobenius) is proved; remaining
+  = the reverse comparison (e.g. `‖a‖ ≤ √n · ouNorm a` via
+  `norm_eq_sum_eigenvalues_sq`, or abstract finite-dim equivalence) and smul
+  homogeneity of `ouNorm` if the S2 discharge route needs the full norm laws.
 
 ## M2 — Complex necessity core
 
@@ -236,6 +258,15 @@ sorry-free Wigner rigidity — see 3.0.
   must be kernel-`decide` scale or structured proofs.
 - **H4. Audit-your-own-corrections:** diff-audit every round; verify verifiers
   saw data (print counts; no `| head` on gate output).
+- **H6. `HermitianMat.Matrix` namespace shadow (vendor-inherited parser trap).**
+  The vendored island declares `Matrix.*` lemmas inside `namespace HermitianMat`
+  (`Vendor/HermitianMat/Inner.lean:405`, `NonSingular.lean:18`), so an
+  `open scoped Matrix` written INSIDE `namespace HermitianMat` resolves to the
+  notation-free `HermitianMat.Matrix` and silently fails to activate `*ᵥ` — the
+  parser then lexes `*ᵥ` as `*` + a subscript-term `ᵥ…`, yielding baffling
+  "`Mathlib.Tactic.subscriptTerm` has not been implemented" errors. Always
+  `open scoped Matrix` BEFORE entering the namespace (or write
+  `open scoped _root_.Matrix`). Diagnosed 2026-08-04 (order-unit layer).
 - **H5. Scoped-instance gotcha (the costliest inventory discovery).** The
   Loewner order + `StarOrderedRing` on `Matrix` require `open scoped
   MatrixOrder` (`Analysis/Matrix/Order.lean`); the matrix C*-norm requires

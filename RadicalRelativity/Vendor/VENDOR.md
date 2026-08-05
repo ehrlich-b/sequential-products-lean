@@ -84,3 +84,10 @@ Census PASS (44 modules, custom axioms exactly
 Known cosmetic wart inherited from upstream: `HermitianMat/Proj.lean` lacks a
 closing `end HermitianMat` (style-lint warning only); two docstrings end
 without trailing newline (style-lint). Left as-is to minimize diff vs upstream.
+
+Consumer-side trap inherited from upstream (campaign `LEDGER.md` H6): the island
+declares `Matrix.*` lemmas inside `namespace HermitianMat` (Inner.lean:405,
+NonSingular.lean:18), creating a `HermitianMat.Matrix` namespace that shadows
+root `Matrix` for any `open scoped Matrix` issued inside `namespace HermitianMat`
+downstream — which silently deactivates the `*ᵥ` notation. Open the scope before
+entering the namespace.
