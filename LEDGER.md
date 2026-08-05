@@ -340,7 +340,17 @@ sorry-free Wigner rigidity — see 3.0.
   fixed-subspace property (the derivative of a curve constant on V_ij has
   vanishing V_ij-component). First instantiation ingredient DONE 2026-08-05:
   `theta_base_one` (`Necessity/Theta.lean`) — `Θ_1 = id` (χ̃(0) = 1), from S3
-  and `cfc_apply_one`.
+  and `cfc_apply_one`. Second ingredient DONE 2026-08-05:
+  `Necessity/DiagonalFamily.lean` (census 58) — `frameProj` (standard frame:
+  projections, orthogonality, `∑ = 1` via `Matrix.diagonalAddMonoidHom`
+  map_sum) and `diagFamily r = diag(exp rᵢ)` (semigroup law `diagFamily_mul`,
+  PosDef everywhere, effects on the negative orthant, frame decomposition
+  `diagFamily_eq_sum_frameProj`, frame commutation) — the concrete `p`/`aOf`
+  data for ComparisonSetup. Traps: vendored `HermitianMat.diagonal 𝕜 f` takes
+  𝕜 explicitly but `diagonal_mat`/`diagonal_one` take it implicitly; no
+  `Matrix.diagonal_sum` at pin — use `map_sum diagonalAddMonoidHom`;
+  `Matrix.PosSemidef.diagonal` wants the Pi-order `0 ≤ d` (show-normalize
+  `0 i`); rw cannot rewrite under `∑`-binders — `simp only [show …]`.
 - **2.7 Aczél axiom DISCHARGE (`Selection.aczel_continuous_multiplicative`).**
   Scalar Cauchy machinery present [INV✓ area 7a]; multiplicative classification
   absent [INV✓ 7d — build it]: continuous hom (0,∞)→ℂ* via log/exp covering
