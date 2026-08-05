@@ -491,6 +491,21 @@ sorry-free Wigner rigidity — see 3.0.
   on val_inv, simp collapses it to True). Remaining: u2 (block-Euclidean +
   skewness), u3 (block invariance of dχ), u5, u6.
 
+  **u3 (block invariance) DONE 2026-08-05** (`Necessity/BlockInvariance.lean`,
+  census 66, gates green): `cornerJ2 ⟺ q∘x = x` (Jordan eigenrelation; forward
+  by absorption, backward via `cornerJ2_of_double`, which was refactored out of
+  `blockElt_cornerJ2` for reuse); `thetaNorm_preserves_cornerJ2` (+ .symm via
+  the 5-line inverse-Jordan argument `thetaNorm_symm_jordan`, injectivity +
+  apply_symm_apply — NO dimension plumbing) → `chiTilde_preserves_cornerJ2` →
+  `dChi_preserves_corner` (cornerConjCLM kernel-characterization + the same
+  exp-differentiation pattern as u4, now against the invariance curve).
+  Traps: stale .olean — after refactoring a lemma into an imported file, `lake
+  build` the import BEFORE `lake env lean` on the consumer; `hasDerivAt_const`
+  with a CLM-valued constant hits a zero-instance-path mismatch when the
+  derivative slot is ascribed `0` — drop the ascription and let simpa
+  normalize. Remaining: u2 (block-Euclidean + skewness), u5 (Stab +
+  DiagonalHomSetup), u6 (phase cocycle → hmodel).
+
   **WIRING DESIGN (banked 2026-08-05, before χ̃ part 2):** build the
   `ComparisonSetup (HermitianMat (Fin N) ℂ)` instance NEXT — the abstract
   DiagonalHom layer then supplies `chi_hom`/`chi_comm`/`chi_extend_wellDefined`

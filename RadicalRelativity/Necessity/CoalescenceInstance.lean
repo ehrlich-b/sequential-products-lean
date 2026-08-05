@@ -187,11 +187,37 @@ theorem peirce_zero_mat {p x : HermitianMat n ℂ}
     smul_zero] at h2
   exact h2
 
-/-- **`block_mem_J2`, proved by ring algebra.** The Peirce relations for
-`x ∈ V_{ij}` give `q x q = x`: summing the annihilation relations over
-`k ∉ {i,j}` yields `(1−q) x + x (1−q) = 0`, i.e. `q x + x q = 2x`, and
-multiplying by the idempotent `q` on each side gives `q x q = q x = x q`,
-whence `2 q x q = 2 x`. -/
+/-- The double-relation closes the corner: `q x + x q = 2x` with `q` idempotent
+gives `q x q = x` (multiply by `q` on each side, then add). -/
+theorem cornerJ2_of_double {i j : n} {x : HermitianMat n ℂ}
+    (h2x : cornerQ i j * x.mat + x.mat * cornerQ i j = (2 : ℂ) • x.mat) :
+    cornerJ2 i j x := by
+  set q : Matrix n n ℂ := cornerQ i j with hq
+  have hqx : q * x.mat * q = q * x.mat := by
+    have hL := congrArg (fun M => q * M) h2x
+    simp only [Matrix.mul_add, Matrix.mul_smul, ← Matrix.mul_assoc] at hL
+    rw [show q * q = q from cornerQ_idem i j] at hL
+    rw [two_smul] at hL
+    exact add_left_cancel hL
+  have hxq : q * x.mat * q = x.mat * q := by
+    have hR := congrArg (fun M => M * q) h2x
+    simp only [Matrix.add_mul, Matrix.smul_mul, Matrix.mul_assoc] at hR
+    rw [show q * q = q from cornerQ_idem i j] at hR
+    rw [two_smul, ← Matrix.mul_assoc] at hR
+    exact add_right_cancel hR
+  show q * x.mat * q = x.mat
+  have hcomb : (2 : ℂ) • (q * x.mat * q) = (2 : ℂ) • x.mat := by
+    rw [two_smul]
+    calc q * x.mat * q + q * x.mat * q
+        = q * x.mat + q * x.mat * q := by nth_rewrite 1 [hqx]; rfl
+      _ = q * x.mat + x.mat * q := by rw [hxq]
+      _ = (2 : ℂ) • x.mat := h2x
+  exact smul_right_injective (Matrix n n ℂ) (by norm_num : (2:ℂ) ≠ 0) hcomb
+
+/-- **`block_mem_J2`, proved by ring algebra.** The Peirce annihilation
+relations for `x ∈ V_{ij}` give `q x q = x`: summing over `k ∉ {i,j}` yields
+`(1−q) x + x (1−q) = 0`, i.e. `q x + x q = 2x`, and `cornerJ2_of_double`
+closes. -/
 theorem blockElt_cornerJ2 {i j : n} {x : HermitianMat n ℂ}
     (hk : ∀ k, k ≠ i → k ≠ j → jordanBilin (frameProj k) x = 0) :
     cornerJ2 i j x := by
@@ -259,28 +285,7 @@ theorem blockElt_cornerJ2 {i j : n} {x : HermitianMat n ℂ}
         = (x.mat + x.mat) - ((x.mat - q * x.mat) + (x.mat - x.mat * q)) := by abel
       _ = (x.mat + x.mat) - 0 := by rw [h']
       _ = (2 : ℂ) • x.mat := by rw [sub_zero, two_smul]
-  -- multiply by the idempotent q on each side
-  have hqx : q * x.mat * q = q * x.mat := by
-    have hL := congrArg (fun M => q * M) h2x
-    simp only [Matrix.mul_add, Matrix.mul_smul, ← Matrix.mul_assoc] at hL
-    rw [show q * q = q from cornerQ_idem i j] at hL
-    rw [two_smul] at hL
-    exact add_left_cancel hL
-  have hxq : q * x.mat * q = x.mat * q := by
-    have hR := congrArg (fun M => M * q) h2x
-    simp only [Matrix.add_mul, Matrix.smul_mul, Matrix.mul_assoc] at hR
-    rw [show q * q = q from cornerQ_idem i j] at hR
-    rw [two_smul, ← Matrix.mul_assoc] at hR
-    exact add_right_cancel hR
-  -- combine: 2 (q x q) = q x + x q = 2 x
-  show q * x.mat * q = x.mat
-  have hcomb : (2 : ℂ) • (q * x.mat * q) = (2 : ℂ) • x.mat := by
-    rw [two_smul]
-    calc q * x.mat * q + q * x.mat * q
-        = q * x.mat + q * x.mat * q := by nth_rewrite 1 [hqx]; rfl
-      _ = q * x.mat + x.mat * q := by rw [hxq]
-      _ = (2 : ℂ) • x.mat := h2x
-  exact smul_right_injective (Matrix n n ℂ) (by norm_num : (2:ℂ) ≠ 0) hcomb
+  exact cornerJ2_of_double h2x
 
 /-! ## The instance -/
 

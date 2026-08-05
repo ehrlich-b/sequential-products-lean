@@ -188,6 +188,12 @@ import RadicalRelativity.Necessity.CoalescenceDiff
 -- preservation or compactness anywhere.
 import RadicalRelativity.Necessity.ThetaIsometry
 
+-- Block invariance: corner membership = the Jordan eigenrelation q.x = x;
+-- Theta, its inverse, and chiTilde preserve every corner (fixing q + hjord);
+-- differentiating gives dChi_preserves_corner. With dChi_kills_corner this
+-- completes the differential-face geometry of dChi.
+import RadicalRelativity.Necessity.BlockInvariance
+
 -- Exact paper-facing S1--S7 and product-conclusion statement boundary.  This
 -- freezes the target signature; it does not claim the classification is proved.
 import RadicalRelativity.PaperA.Statement
