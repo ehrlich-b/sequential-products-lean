@@ -351,6 +351,23 @@ sorry-free Wigner rigidity — see 3.0.
   `Matrix.diagonal_sum` at pin — use `map_sum diagonalAddMonoidHom`;
   `Matrix.PosSemidef.diagonal` wants the Pi-order `0 ≤ d` (show-normalize
   `0 i`); rw cannot rewrite under `∑`-binders — `simp only [show …]`.
+  **WIRING DESIGN (banked 2026-08-05, before χ̃ part 2):** build the
+  `ComparisonSetup (HermitianMat (Fin N) ℂ)` instance NEXT — the abstract
+  DiagonalHom layer then supplies `chi_hom`/`chi_comm`/`chi_extend_wellDefined`
+  (the ℝⁿ-extension bookkeeping) FOR FREE. Field discharge map: jordan :=
+  symmMul-bilinear (build the bilinear map; vendored comm/one lemmas);
+  e := 1; p := frameProj; aOf := diagFamily; nonneg := (0 ≤ ·);
+  **Inv := (·.mat.PosDef)** (aOf_inv must hold for ALL r, so effects cannot
+  enter Inv); **Θ total via normalization**: `Θ a := thetaEquiv at
+  ((‖a‖+1)⁻¹ • a)` when PosDef (always an effect by `norm_smul_inv_effect`,
+  PosDef preserved), `LinearEquiv.refl` otherwise — the 2.3 law `theta_smul`
+  makes every Θ-property scale-invariantly inherited and is WHY vdW 5.4
+  exists; Θ_unital/Θ_orderIso/Θ_fix/Θ_cocycle from the 2.1f/2.2/2.4+Chi
+  theorems (cocycle threads the Θ_jordan hypothesis, which is also the
+  Θ_jordan field — take a global `hjord` parameter); frame_opCommute :=
+  `symmMul_opCommute_of_commute` + `diagFamily_commute_frameProj`; rank_ge =
+  parameter. Then χ̃ part 2 = the abstract extension applied at the instance +
+  line-continuity from S2 + `multiParameter_eq_exp`.
   Third ingredient (χ̃ part 1) DONE 2026-08-05 (`Necessity/Chi.lean`, census
   59, compiled clean first pass): `theta_congr` (base-point congruence, subst +
   proof irrelevance), `sp_diagFamily` (`a(r) ◦' a(r') = a(r+r')` — the 2.2
