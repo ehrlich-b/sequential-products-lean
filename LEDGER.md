@@ -286,6 +286,22 @@ sorry-free Wigner rigidity — see 3.0.
   So Θ extends scale-invariantly to the whole positive-definite cone.
 - **2.4 Θ_cocycle (vdW 5.7, commuting diagonal family).** Matrix-concrete
   computation in the joint eigenbasis. Risk MED.
+  **DONE 2026-08-05** (`Necessity/ThetaCocycle.lean`, census 56, gates green) —
+  with the honest hypothesis accounting made explicit: vdW's 5.7(1) exchange
+  consumes invariance of the standard product under unital order isos, which IS
+  the Kadison content the campaign carries as `Θ_jordan` (M3). So the file
+  proves unconditionally: `conj_eq_jordan` (the fundamental identity
+  `s·y·s = 2 s∘(s∘y) − (s∘s)∘y`, closed by the `module` tactic after
+  association-normalization), `sqrt_isEffect`, `sp_comm_of_commute` (commuting
+  effects are ◦'-compatible, joint family, no PosDef), `seqLeftMul_mul_of_commute`
+  (the S5 splitting `L'_{a◦'b} = L'_a∘L'_b`), `quadRepEquiv_mul_of_commute`
+  (`Q_{√(ab)} = Q_{√a}∘Q_{√b}` — DIRECT REUSE of M1's
+  `twistFactor_mul_of_commute` at `t = 0`); and conditionally on
+  `PreservesJordan Θ`: `theta_conj_exchange` (5.7(1)) and
+  `theta_cocycle_of_preservesJordan` (5.7(2), `Θ_m = Θ_a∘Θ_b`). At
+  instantiation the condition is fed by the same `Θ_jordan` field the
+  ComparisonSetup already carries — no NEW import, no circularity (both fields
+  discharged independently: Θ_jordan by M3, Θ_cocycle by this + M3).
 - **2.5 frame_opCommute + simDiag_opCommute (FK facts).** Direct block-form
   computations on matrices. LOW.
 - **2.6 THE ANALYTIC CORE: dχAdd + continuity + coalescence_diff.** Construct

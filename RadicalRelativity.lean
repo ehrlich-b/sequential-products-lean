@@ -117,6 +117,15 @@ import RadicalRelativity.Necessity.Theta
 -- representation through the defining equation.
 import RadicalRelativity.Necessity.ThetaFix
 
+-- M2 necessity core, seventh unit (LEDGER 2.4, vdW 5.7): the Theta cocycle —
+-- the fundamental identity (Lueders conjugation is a Jordan polynomial), the S5
+-- splitting of left multiplications, Q-multiplicativity riding M1's twist factor
+-- at t = 0, the 5.7(1) exchange, and the cocycle Theta_m = Theta_a Theta_b,
+-- stated conditionally on PreservesJordan (discharged by the Theta_jordan field
+-- at instantiation, i.e. by M3's Kadison content — exactly vdW's own hypothesis
+-- accounting for invariance).
+import RadicalRelativity.Necessity.ThetaCocycle
+
 -- Exact paper-facing S1--S7 and product-conclusion statement boundary.  This
 -- freezes the target signature; it does not claim the classification is proved.
 import RadicalRelativity.PaperA.Statement
