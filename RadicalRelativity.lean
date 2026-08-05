@@ -140,6 +140,13 @@ import RadicalRelativity.Necessity.OneParameter
 -- decomposition, and frame commutation; product-independent matrix bookkeeping.
 import RadicalRelativity.Necessity.DiagonalFamily
 
+-- M2 necessity core, tenth unit (LEDGER 2.6, chi part 1): the comparison character
+-- on the diagonal family — base-point congruence, the value law
+-- a(r) sp a(r') = a(r+r'), chi(0) = 1 through theta_base_one, and the orthant
+-- cocycle Theta_{a(r+r')} = Theta_{a(r)} compose Theta_{a(r')} (conditional on
+-- the M3 Jordan-preservation field, per vdW's own accounting).
+import RadicalRelativity.Necessity.Chi
+
 -- Exact paper-facing S1--S7 and product-conclusion statement boundary.  This
 -- freezes the target signature; it does not claim the classification is proved.
 import RadicalRelativity.PaperA.Statement

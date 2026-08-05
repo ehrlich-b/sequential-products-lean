@@ -351,6 +351,13 @@ sorry-free Wigner rigidity — see 3.0.
   `Matrix.diagonal_sum` at pin — use `map_sum diagonalAddMonoidHom`;
   `Matrix.PosSemidef.diagonal` wants the Pi-order `0 ≤ d` (show-normalize
   `0 i`); rw cannot rewrite under `∑`-binders — `simp only [show …]`.
+  Third ingredient (χ̃ part 1) DONE 2026-08-05 (`Necessity/Chi.lean`, census
+  59, compiled clean first pass): `theta_congr` (base-point congruence, subst +
+  proof irrelevance), `sp_diagFamily` (`a(r) ◦' a(r') = a(r+r')` — the 2.2
+  value identity + the √-collapse on the commuting diagonal), `thetaD_zero`
+  (χ̃(0) = 1 via `theta_base_one`), and `thetaD_mul` (**the orthant cocycle**,
+  conditional on the M3 Jordan field). Part 2 = the ℝⁿ-extension +
+  line-continuity from S2 + `multiParameter_eq_exp` ⟹ dχ.
 - **2.7 Aczél axiom DISCHARGE (`Selection.aczel_continuous_multiplicative`).**
   Scalar Cauchy machinery present [INV✓ area 7a]; multiplicative classification
   absent [INV✓ 7d — build it]: continuous hom (0,∞)→ℂ* via log/exp covering
