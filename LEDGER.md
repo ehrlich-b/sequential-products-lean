@@ -615,6 +615,27 @@ sorry-free Wigner rigidity — see 3.0.
   Leibniz across blocks ⟹ cocycle t_ik = t_ij + t_jk, antisymmetry, anchor
   θ_i := t_{i,i₀} ⟹ hmodel ⟹ `complex_perFrame_rho` fires on H_N(ℂ).
 
+  **u6c DONE 2026-08-05** (`Necessity/JordanDerivation.lean`, census 73, gates
+  green): `chiTilde_jordan` (χ̃(r) is a Jordan automorphism at every r —
+  forward factor by thetaNorm_jordan, inverse factor by thetaNorm_symm_jordan,
+  through the two-factor unit definition via a `show`-unfolded hval),
+  `exp_smul_dChi_symmMul` (exp(t•dχ(r)) = χ̃(t•r) via map_smul on dChi),
+  `exp_entry_hasDerivAt` (entry functions of a flow differentiate to the
+  generator's entry: entryCLM.hasFDerivAt.comp_hasDerivAt, two-step have to
+  dodge the ∘-vs-λ HO-unification), and **`dChi_jordan_derivation` — dχ(r) is
+  a Jordan derivation, D(x∘y) = Dx∘y + x∘Dy, machine-checked**. TRAP (major):
+  the curried-bilinear route `jordanCLM : E →L (E →L E)` is DEAD —
+  `ContinuousLinearMap.hasFDerivAt` at codomain `E →L E` requires unifying the
+  ambient strong-topology instance with the operator-norm topology path at
+  depth 2; the defeq check exhausts 1.6M heartbeats and then fails as a type
+  mismatch. Route around it ENTRYWISE: all calculus in ℂ (HasDerivAt.mul +
+  HasDerivAt.fun_sum — NOT .sum, which in current Mathlib is the
+  function-valued-sum form with a Finset metavariable — + const_mul with
+  (2:ℂ)⁻¹), then one funext to χ̃'s automorphism property and
+  HasDerivAt.unique; entry extraction via BlockSkew's entryCLM whose codomain
+  ℂ has a unique instance path. Import chain: JordanDerivation imports
+  BlockSkew (for entryCLM), not PhaseCocycle; the u6d file will import both.
+
   **WIRING DESIGN (banked 2026-08-05, before χ̃ part 2):** build the
   `ComparisonSetup (HermitianMat (Fin N) ℂ)` instance NEXT — the abstract
   DiagonalHom layer then supplies `chi_hom`/`chi_comm`/`chi_extend_wellDefined`

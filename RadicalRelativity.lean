@@ -229,6 +229,13 @@ import RadicalRelativity.Necessity.StabilizerInstance
 -- Leibniz rule for the entry maps of dChi and hence the cocycle t_ik = t_ij + t_jk.
 import RadicalRelativity.Necessity.PhaseCocycle
 
+-- dChi(r) is a Jordan derivation: chiTilde is a Jordan automorphism at every
+-- parameter (forward thetaNorm_jordan + inverse thetaNorm_symm_jordan through
+-- the two-factor definition), and the Leibniz rule follows by differentiating
+-- at t = 0 ENTRYWISE in C -- scalar product/sum rules only, sidestepping the
+-- operator-topology diamond on nested continuous-linear-map spaces.
+import RadicalRelativity.Necessity.JordanDerivation
+
 -- Exact paper-facing S1--S7 and product-conclusion statement boundary.  This
 -- freezes the target signature; it does not claim the classification is proved.
 import RadicalRelativity.PaperA.Statement
