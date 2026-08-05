@@ -98,6 +98,12 @@ import RadicalRelativity.Necessity.FirstArgument
 -- and orthogonal projections annihilate in both orders (S4) and are compatible.
 import RadicalRelativity.Necessity.SharpEffects
 
+-- M2 necessity core, fourth unit (LEDGER 2.1e, vdW 4.19-4.20): the normalized
+-- spectral pseudo-inverse of a positive-definite effect, the cancellation
+-- L'_nu (L'_b x) = c x through S5 and the 2.1d value law, and the payoff:
+-- the unknown product's left multiplication is order-REFLECTING and injective.
+import RadicalRelativity.Necessity.PseudoInverse
+
 -- Exact paper-facing S1--S7 and product-conclusion statement boundary.  This
 -- freezes the target signature; it does not claim the classification is proved.
 import RadicalRelativity.PaperA.Statement

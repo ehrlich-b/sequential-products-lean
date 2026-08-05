@@ -231,11 +231,17 @@ sorry-free Wigner rigidity — see 3.0.
   S2 enters only through `sp_smul_left`. The pseudo-inverse compatibility
   `b |' ν` is now an instantiation: both are diagonal in b's `specProj` family
   (2.1e wires it).
-  (2.1e) **Pseudo-inverse + order reflection** (vdW 4.19 for invertible
-  effects): with `ν◦'b = c·1` (c = normalization) and S5 via `ν |' b`:
-  `L'_ν ∘ L'_b = c·L'_1 = c·id` on effects, extended linearly (2.1a); hence
-  `L'_b` is INJECTIVE and order-REFLECTING (`b◦'x ≥ 0 → x ≥ 0` via applying the
-  positive map `L'_ν`); surjectivity from injectivity in finite dimension.
+  (2.1e) **Pseudo-inverse + order reflection — DONE 2026-08-05**
+  (`Necessity/PseudoInverse.lean`, census 53, gates green): `pseudoInv b :=
+  ∑(c/μ)•specProj b μ` with the normalization `c := ∏ μ` (0 < c ≤ μ with NO
+  nonemptiness split — the erase-product trick); `sp_pseudoInv_eq_smul_one`
+  (`ν◦'b = c•1` via the 2.1d value law after `rw [sum_smul_specProj] at hval`
+  — conv-rewriting b would loop the pattern into pseudoInv's own b);
+  `sp_pseudoInv_cancel` (S5 + first-arg homog + S3); `span_isEffect_eq_top`;
+  `seqLeftMul_pseudoInv_comp` (`L'_ν ∘ L'_b = c·id` via `LinearMap.ext_on`,
+  which at this pin takes `span = ⊤` directly); `seqLeftMul_reflectsNonneg` +
+  `seqLeftMul_injective`. Surjectivity deferred to 2.1f (finite-dim
+  injective ⟹ bijective at the LinearEquiv packaging).
   (2.1f) **Θ assembly**: `Q_{√a}` as `LinearEquiv` (vendored conj by `cfc √a`,
   inverse = conj by `cfc (√·)⁻¹`, needs `NonSingular`); `Θ_a := Q_{√a}⁻¹ ∘ L'_a`;
   `Θ_unital` = one line from `seqLeftMul_one` + `Q⁻¹(a) = 1`;
