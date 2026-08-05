@@ -338,7 +338,9 @@ sorry-free Wigner rigidity — see 3.0.
   verify line-continuity from S2, choose the concrete ρ/Stab, and derive
   `coalescence_diff` from the group-level coalescence by differentiating the
   fixed-subspace property (the derivative of a curve constant on V_ij has
-  vanishing V_ij-component).
+  vanishing V_ij-component). First instantiation ingredient DONE 2026-08-05:
+  `theta_base_one` (`Necessity/Theta.lean`) — `Θ_1 = id` (χ̃(0) = 1), from S3
+  and `cfc_apply_one`.
 - **2.7 Aczél axiom DISCHARGE (`Selection.aczel_continuous_multiplicative`).**
   Scalar Cauchy machinery present [INV✓ area 7a]; multiplicative classification
   absent [INV✓ 7d — build it]: continuous hom (0,∞)→ℂ* via log/exp covering

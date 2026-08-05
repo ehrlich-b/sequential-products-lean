@@ -221,6 +221,22 @@ theorem quadRepEquiv_smul {a : HermitianMat n ℂ} (hbd : a.mat.PosDef) {t : ℝ
   rw [show star (Real.sqrt t) = Real.sqrt t from star_trivial _]
   rw [show Real.sqrt t * Real.sqrt t = t from Real.mul_self_sqrt (le_of_lt ht)]
 
+/-- `Θ` at base point `1` is the identity — `χ̃(0) = 1` for the character of
+LEDGER 2.6: `L'_1 = id` is S3, and `Q_{√1} = id` is `cfc` at the unit. -/
+theorem theta_base_one (h1e : IsEffect (1 : HermitianMat n ℂ))
+    (h1bd : (1 : HermitianMat n ℂ).mat.PosDef) :
+    theta P h1e h1bd = LinearMap.id := by
+  apply LinearMap.ext_on (s := {x : HermitianMat n ℂ | IsEffect x}) span_isEffect_eq_top
+  intro e he
+  rw [theta]
+  simp only [LinearMap.comp_apply, LinearEquiv.coe_coe, LinearMap.id_apply]
+  have hu : P.sp (1 : HermitianMat n ℂ) e = e := P.sp_unit_left he
+  rw [seqLeftMul_apply_effect P h1e he, hu, quadRepEquiv_symm_apply]
+  rw [show ((1 : HermitianMat n ℂ).cfc fun t => (Real.sqrt t)⁻¹) = 1 from by
+    rw [HermitianMat.cfc_apply_one, Real.sqrt_one, inv_one, one_smul]]
+  rw [HermitianMat.mat_one]
+  exact conj_one_mat e
+
 /-- **The normalization law** (vdW 5.4, paper cone-ext): Θ is scale-invariant in
 its base point, `Θ_{t·a} = Θ_a` for `t ∈ (0,1]`. -/
 theorem theta_smul (hS2 : P.FirstArgContinuous) {a : HermitianMat n ℂ}
