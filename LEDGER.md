@@ -277,6 +277,13 @@ sorry-free Wigner rigidity — see 3.0.
   `show`-terms over `s` so `rw` matches syntactically (ascription checks by
   defeq, rewriting does not).
 - **2.3 cone-ext (Θ_{λq} = Θ_q normalization).** Cheap once 2.1 lands. LOW.
+  **DONE 2026-08-05** (appended to `Necessity/Theta.lean` + `Hermitian/Resolution.lean`,
+  census unchanged 55, gates green): `theta_smul : Θ_{t•a} = Θ_a` for `t ∈ (0,1]`
+  (vdW 5.4), by cancelling through `quadRepEquiv_smul` (`Q_{√(t•a)} = t•Q_{√a}`,
+  via the NEW general `HermitianMat.cfc_smul_arg : (r•a).cfc f = a.cfc (f (r·))`
+  — another resolution-lemma payoff, no sign hypothesis) and `seqLeftMul_smul`
+  (first-argument homogeneity at the linear-map level, ext_on the effect span).
+  So Θ extends scale-invariantly to the whole positive-definite cone.
 - **2.4 Θ_cocycle (vdW 5.7, commuting diagonal family).** Matrix-concrete
   computation in the joint eigenbasis. Risk MED.
 - **2.5 frame_opCommute + simDiag_opCommute (FK facts).** Direct block-form

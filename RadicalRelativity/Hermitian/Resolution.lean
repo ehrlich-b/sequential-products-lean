@@ -217,6 +217,24 @@ theorem mat_cfc_of_resolution
   exact Finset.sum_congr rfl fun i hi => by
     rw [hnode_eval (c i) (Finset.mem_union_right _ (Finset.mem_image_of_mem c hi))]
 
+/-- **Matrix-argument scaling law**: `cfc` of `r • a` is `cfc` of `a` at the
+rescaled function — an immediate payoff of the resolution lemma (present `r • a`
+by `a`'s own spectral family with scaled coefficients).  No sign hypothesis. -/
+theorem cfc_smul_arg (r : ℝ) (a : HermitianMat n ℂ) (f : ℝ → ℝ) :
+    (r • a).cfc f = a.cfc (fun x => f (r * x)) := by
+  classical
+  ext1
+  have hidem : ∀ μ ∈ a.eigFinset, (a.specProj μ).mat * (a.specProj μ).mat = (a.specProj μ).mat :=
+    fun μ _ => specProj_mul_self a μ
+  have horth : ∀ μ ∈ a.eigFinset, ∀ ν ∈ a.eigFinset, μ ≠ ν →
+      (a.specProj μ).mat * (a.specProj ν).mat = 0 :=
+    fun μ _ ν _ h => specProj_mul_orth a h
+  have hM : (r • a).mat = ∑ μ ∈ a.eigFinset, (r * μ) • (a.specProj μ).mat := by
+    rw [mat_smul, ← sum_smul_specProj_mat a, Finset.smul_sum]
+    exact Finset.sum_congr rfl fun μ _ => by rw [smul_smul]
+  rw [mat_cfc_of_resolution hidem horth (sum_specProj_mat a) hM f,
+    mat_cfc_eq_sum_specProj a]
+
 end resolution
 
 end HermitianMat

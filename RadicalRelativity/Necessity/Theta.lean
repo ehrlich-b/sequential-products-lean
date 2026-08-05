@@ -186,4 +186,54 @@ theorem theta_le_iff (hS2 : P.FirstArgContinuous) {a : HermitianMat n ℂ}
     theta P ha hbd x ≤ theta P ha hbd y ↔ x ≤ y := by
   rw [← sub_nonneg, ← map_sub, theta_nonneg_iff P hS2 ha hbd, sub_nonneg]
 
+/-! ## The normalization law `Θ_{t·a} = Θ_a`  (campaign LEDGER 2.3, vdW 5.4) -/
+
+/-- `√(t•a) = √t • √a`, through the matrix-argument scaling law. -/
+theorem sqrt_smul {t : ℝ} (ht : 0 ≤ t) (a : HermitianMat n ℂ) :
+    (t • a).cfc Real.sqrt = Real.sqrt t • a.cfc Real.sqrt := by
+  rw [HermitianMat.cfc_smul_arg]
+  rw [show (fun x => Real.sqrt (t * x)) = fun x => Real.sqrt t * Real.sqrt x from
+    funext fun x => Real.sqrt_mul ht x]
+  exact HermitianMat.cfc_const_mul a _ _
+
+/-- First-argument homogeneity at the linear-map level. -/
+theorem seqLeftMul_smul (hS2 : P.FirstArgContinuous) {a : HermitianMat n ℂ}
+    (ha : IsEffect a) {t : ℝ} (ht0 : 0 ≤ t) (ht1 : t ≤ 1)
+    (hta : IsEffect (t • a)) :
+    seqLeftMul P (t • a) hta = t • seqLeftMul P a ha := by
+  apply LinearMap.ext_on (s := {x : HermitianMat n ℂ | IsEffect x}) span_isEffect_eq_top
+  intro e he
+  simp only [LinearMap.smul_apply]
+  rw [seqLeftMul_apply_effect P hta he, seqLeftMul_apply_effect P ha he]
+  exact sp_smul_left P hS2 ha he ht0 ht1
+
+/-- The quadratic representation scales linearly with the base point. -/
+theorem quadRepEquiv_smul {a : HermitianMat n ℂ} (hbd : a.mat.PosDef) {t : ℝ}
+    (ht : 0 < t) (htbd : (t • a).mat.PosDef) (x : HermitianMat n ℂ) :
+    quadRepEquiv (t • a) htbd x = t • quadRepEquiv a hbd x := by
+  ext1
+  rw [quadRepEquiv_apply, quadRepEquiv_apply, HermitianMat.mat_smul,
+    HermitianMat.conj_apply_mat, HermitianMat.conj_apply_mat]
+  rw [show ((t • a).cfc Real.sqrt).mat = (Real.sqrt t • a.cfc Real.sqrt).mat from
+    congrArg _ (sqrt_smul (le_of_lt ht) a)]
+  rw [HermitianMat.mat_smul, Matrix.conjTranspose_smul, Matrix.smul_mul, Matrix.smul_mul,
+    Matrix.mul_smul, smul_smul]
+  rw [show star (Real.sqrt t) = Real.sqrt t from star_trivial _]
+  rw [show Real.sqrt t * Real.sqrt t = t from Real.mul_self_sqrt (le_of_lt ht)]
+
+/-- **The normalization law** (vdW 5.4, paper cone-ext): Θ is scale-invariant in
+its base point, `Θ_{t·a} = Θ_a` for `t ∈ (0,1]`. -/
+theorem theta_smul (hS2 : P.FirstArgContinuous) {a : HermitianMat n ℂ}
+    (ha : IsEffect a) (hbd : a.mat.PosDef) {t : ℝ} (ht0 : 0 < t) (ht1 : t ≤ 1)
+    (hta : IsEffect (t • a)) (htbd : (t • a).mat.PosDef) :
+    theta P hta htbd = theta P ha hbd := by
+  apply LinearMap.ext
+  intro x
+  apply (quadRepEquiv (t • a) htbd).injective
+  rw [quadRep_theta P hta htbd,
+    quadRepEquiv_smul hbd ht0 htbd (theta P ha hbd x),
+    quadRep_theta P ha hbd,
+    seqLeftMul_smul P hS2 ha (le_of_lt ht0) ht1 hta]
+  simp
+
 end Necessity
