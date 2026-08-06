@@ -285,6 +285,14 @@ import RadicalRelativity.Necessity.StrengthProbe
 -- order-automorphism satisfies PreservesJordan.
 import RadicalRelativity.Necessity.JordanWitness
 
+-- M3, final leg: RANK-ONE PROJECTIONS SPAN H_n(C) over R, so two R-linear maps
+-- agreeing on them are equal.  Proved WITHOUT the spectral theorem: the
+-- vendored trace inner product pairs y against a rank-one as the quadratic
+-- form, so a y orthogonal to every rank-one has vanishing quadratic form,
+-- whence 0 <= y and y <= 0.  This is what upgrades the Wigner output ("acts as
+-- a unitary/antiunitary on rank-ones") to an identity of maps.
+import RadicalRelativity.Necessity.RankOneSpan
+
 -- Exact paper-facing S1--S7 and product-conclusion statement boundary.  This
 -- freezes the target signature; it does not claim the classification is proved.
 import RadicalRelativity.PaperA.Statement

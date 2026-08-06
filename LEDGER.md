@@ -982,8 +982,35 @@ sorry-free Wigner rigidity — see 3.0.
      `col i = hA.eigenvectorBasis i`; nearby usable facts in the same file:
      `eigenvalues_eq` (eigenvalues as `RCLike.re (star (eigenvectorBasis i) ⬝ᵥ
      A *ᵥ eigenvectorBasis i)`) and `conjStarAlgAut_star_eigenvectorUnitary`.
-  After that span lemma, the two witnesses above finish `ThetaPreservesJordan`
-  and every M2 conditional becomes unconditional.
+  **SPAN LEMMA DONE 2026-08-05 — and the spectral theorem was NOT needed**
+  (`Necessity/RankOneSpan.lean`, census 88, gates green): the vendored trace
+  inner product (`Vendor/HermitianMat/Inner.lean` supplies a real
+  `InnerProductSpace` instance) pairs `y` against a rank-one as the quadratic
+  form — `inner_rankOne : ⟪y, ψψ*⟫ = Re (ψ* y ψ)` — so a `y` orthogonal to
+  every rank-one has identically vanishing quadratic form (rescale an arbitrary
+  vector to a unit one), whence `0 ≤ y` AND `y ≤ 0`, whence `y = 0`
+  (`eq_zero_of_quadratic_zero`, the two-sided-positivity kill via
+  `le_iff_mulVec_le_mulVec`). Then
+  `Submodule.orthogonal_eq_bot_iff` gives **`span_rankOne_eq_top`**, and
+  **`linearMap_eq_of_eq_on_rankOne`** (by `Submodule.span_induction`) is the
+  form M3 consumes: two ℝ-linear maps agreeing on rank-ones are equal.
+  So `projector_eq_sum_rankOne` and the `U D U*` bookkeeping are BOTH
+  unnecessary — do not build them. TRAPS: `y.property`/`congrFun₂` states
+  Hermiticity about `y.val`, which is defeq but NOT syntactically `y.mat`, so a
+  `rw` with it fails against a goal in `mat` form — restate through
+  `congrArg (fun M => M j i) y.H` + `simpa [Matrix.conjTranspose_apply]`;
+  the orthogonal-complement machinery on this carrier needs
+  `maxHeartbeats 1600000` (the InnerProductSpace instance chain is deep);
+  `real_inner_comm` is needed because `Submodule.mem_orthogonal` gives the
+  pairing in the opposite slot order.
+  REMAINING for M3 — pure wiring, no new mathematics: the ray map on
+  `ℙ ℂ (EuclideanSpace ℂ (Fin N))` from `exists_rankOne_map` (choice function +
+  representative independence via `rankOne_smul`), the
+  `transProbVec`-vs-`tprob` identification (`PiLp.inner_apply` makes
+  `inner ℂ ψ φ = star ψ ⬝ᵥ φ` definitional; mind `WithLp.toLp/ofLp`), then
+  `wigner_rigidity` + `linearMap_eq_of_eq_on_rankOne` + the two witnesses
+  discharge `ThetaPreservesJordan` and every M2 conditional becomes
+  unconditional.
   * Then: τ-preservation ⟹ build the ray map `ℙ ℂ (EuclideanSpace ℂ (Fin N))`
     → itself from Φ's action on atoms (bridge 1: `IsAtomProjection` is
     order-theoretic, so Φ permutes rank-ones; `exists_rankOne` extracts the
