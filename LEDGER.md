@@ -1254,7 +1254,40 @@ sorry-free Wigner rigidity — see 3.0.
   `Θ_a = Ad_{a^{it}}` — plus **`sp_eq_quadRep_torus`**, the product-level form
   `a • b = Q_{√a}(Ad_{U_t(r)} b)` with the comparison map now IDENTIFIED rather
   than merely certified.  Axioms verified first-hand on both capstones: core only.
-  **ℂ-lane status:** the identification chain is complete.  What remains to reach
+  **TORUS-FACTOR = MATRIX POWER DONE 2026-08-05 — THE ℂ LANE NOW REACHES THE
+  PAPER'S LITERAL CONCLUSION SHAPE** (`Necessity/TwistPower.lean`, census 105,
+  gates green, zero sorries, capstone axioms verified first-hand = core only):
+  `ofReal_polar` (the scalar polar identity, stated in `Complex.ofReal`) and
+  **`twistFactor_diagFamily` : `√a · U_t(r) = a^{1/2+it}`** on the diagonal
+  family — pure spectral bookkeeping, because the character parameter already IS
+  the log-spectrum (`diagFamily r = diag(e^{r_k})`, so `Real.log_exp` supplies
+  `log λ_k = r_k`); no cfc multiplicativity, no spectral theorem. Hence
+  **`sp_eq_twistSeq_diagFamily` : `a • b = a^{1/2+it} b a^{1/2−it}` = M1's
+  `twistSeq t`**, for every effect `b`, with the comparison-map hypothesis
+  discharged internally (`chiTilde_of_nonpos` + `thetaNorm_apply_eq_theta`) so
+  the only inputs are S2, the M3 Jordan property, and the rate collapse.
+  TRAPS: the carrier's diagonal coercion is `RCLike.ofReal`, the trig lemmas'
+  is `Complex.ofReal` — they DISPLAY IDENTICALLY and are defeq but NOT
+  syntactically equal, so `ring`/`rw` fail on a goal that looks like `A+B=B+A`
+  while `exact` (defeq-tolerant) closes it: state the scalar identity as its own
+  lemma in `Complex.ofReal` and discharge the matrix goal by `exact`. Also:
+  `push_cast` un-merges `Complex.cos ↑(t*x)` into `Complex.cos (↑t*↑x)` and
+  breaks the match — do the cast bookkeeping inside the scalar lemma only.
+  ★OPS TRAP (cost a restore): `Necessity/TwistIdentification.lean` was ALREADY a
+  tracked file (it holds `chiTilde_eq_adU_of_block`/`sp_eq_quadRep_adU`, which
+  BlockAngle consumes); writing a new file under that name silently overwrote it
+  and STILL compiled, because `lake env lean` on the new file read the STALE
+  .olean of the old one. `git status` (M vs ??) is the only cheap tell — check it
+  BEFORE writing any "new" file, and run a full `lake build`, not just
+  `lake env lean`, before believing a new module is green.
+  REMAINING for the ℂ lane: (i) general PosDef `a` (not just the diagonal
+  family) via `ConjTransport`'s unitary transport + the global `t` from
+  `complex_global_twist_concrete`; (ii) the uniqueness half (two twist
+  parameters agreeing on all effects are equal — `real_character_unique`'s
+  shape); (iii) 2.9's `sp_eq_on_effects_of_eq_on_posDef` to extend to singular
+  effects; then `PaperA.UniqueTwistConclusion` with M1's
+  `twistSequentialProduct` as the sufficiency witness.
+  **ℂ-lane status (historical):** the identification chain is complete.  What remains to reach
   `PaperA.UniqueTwistConclusion` is bookkeeping between the character parameter
   `r` and the spectrum of `a` (i.e. `r = log spec a`, so that `U_t(r) = a^{it}`
   literally), the uniqueness half (two twist parameters agreeing on all effects

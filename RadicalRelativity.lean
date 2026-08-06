@@ -374,6 +374,13 @@ import RadicalRelativity.Necessity.BlockRotation
 -- exactly the hypothesis shape chiTilde_eq_adU_of_block was stated modulo.
 import RadicalRelativity.Necessity.BlockAngle
 
+-- The torus factor IS the matrix power (C-lane closure): since the character
+-- parameter is the log-spectrum (diagFamily r = diag(e^{r_k})), the diagonal
+-- computation sqrt(a) * U_t(r) = a^{1/2+it} turns the identified form
+-- a.b = Q_sqrt(a)(Ad_{U_t(r)} b) into the LITERAL Liu-Wu twist
+-- a.b = a^{1/2+it} b a^{1/2-it} = M1's twistSeq, on the diagonal family.
+import RadicalRelativity.Necessity.TwistPower
+
 -- M5 (LEDGER 5.1, prop:n2-necessity): the rank-two LIFTING STEP, obtained as a
 -- corollary of M2's one-parameter engine rather than from covering spaces --
 -- a continuous character into the rotation group (the unit circle in C) is
