@@ -6,6 +6,8 @@ Authors: Bryan Ehrlich
 import RadicalRelativity.Necessity.BlockChiGen
 import RadicalRelativity.Necessity.FrameBlockSpanGen
 import RadicalRelativity.Necessity.ChiContinuityGen
+import RadicalRelativity.Necessity.ConjTransportGen
+import RadicalRelativity.Necessity.SingularExtension
 
 set_option linter.style.longLine false
 
@@ -252,5 +254,77 @@ theorem sp_eq_luders_diagFamily (hS2 : P.FirstArgContinuous)
     rw [← quadRepEquiv_apply (diagFamilyG ℝ r) hbd, quadRep_theta P ha hbd b,
       seqLeftMul_apply_effect P ha hb]
   rw [hstruct, hθ]
+
+/-! ## Every invertible effect, then every effect -/
+
+/-- The spectral theorem in the shape the real row consumes: a positive-definite
+Hermitian matrix is `Ad_U` of a diagonal family whose parameter is its log-spectrum. -/
+theorem eq_adUG_diagFamilyG {a : HermitianMat n ℝ} (hbd : a.mat.PosDef) :
+    a = adUG (a.H.eigenvectorUnitary : Matrix n n ℝ)
+        (diagFamilyG ℝ (fun i => Real.log (a.H.eigenvalues i))) := by
+  have hdiag : diagFamilyG ℝ (fun i => Real.log (a.H.eigenvalues i))
+      = HermitianMat.diagonal ℝ a.H.eigenvalues := by
+    rw [diagFamilyG]
+    congr 1
+    funext i
+    exact Real.exp_log (hbd.eigenvalues_pos i)
+  rw [hdiag]
+  exact a.eq_conj_diagonal
+
+/-- For an effect the log-spectrum is nonpositive, so the diagonal base point is
+itself an effect. -/
+theorem log_eigenvalues_nonposR {a : HermitianMat n ℝ} (ha : IsEffect a)
+    (hbd : a.mat.PosDef) (i : n) : Real.log (a.H.eigenvalues i) ≤ 0 := by
+  have hle : a ≤ (1 : ℝ) • (1 : HermitianMat n ℝ) := by
+    rw [one_smul]
+    exact le_of_le_of_eq ha.2 HermitianMat.ousUnit_eq_one
+  exact Real.log_nonpos (le_of_lt (hbd.eigenvalues_pos i))
+    (HermitianMat.le_smul_one_imp_eigenvalues_le a 1 hle i)
+
+/-- **`prop:real` at every invertible effect.**  Diagonalize the base point, apply
+the diagonal-family result to the conjugated product, and transport back: `Ad_U`
+commutes with `Q_{√·}` because the square root is a functional calculus. -/
+theorem sp_eq_luders_of_posDef (hS2 : P.FirstArgContinuous)
+    (hjordAll : ∀ (U : Matrix n n ℝ) (hU : Uᴴ * U = 1) (hU' : U * Uᴴ = 1),
+      ThetaPreservesJordanG (conjProductG P hU hU'))
+    {a : HermitianMat n ℝ} (ha : IsEffect a) (hbd : a.mat.PosDef)
+    {b : HermitianMat n ℝ} (hb : IsEffect b) :
+    P.sp a b = b.conj (a.cfc Real.sqrt).mat := by
+  set U : Matrix n n ℝ := (a.H.eigenvectorUnitary : Matrix n n ℝ) with hUdef
+  have hU : Uᴴ * U = 1 := by
+    have h := a.H.eigenvectorUnitary.property
+    rw [Matrix.mem_unitaryGroup_iff'] at h
+    rwa [Matrix.star_eq_conjTranspose] at h
+  have hU' : U * Uᴴ = 1 := by
+    have h := a.H.eigenvectorUnitary.property
+    rw [Matrix.mem_unitaryGroup_iff] at h
+    rwa [Matrix.star_eq_conjTranspose] at h
+  set r : n → ℝ := fun i => Real.log (a.H.eigenvalues i) with hr
+  have hrle : ∀ i, r i ≤ 0 := fun i => log_eigenvalues_nonposR ha hbd i
+  have hadiag : a = adUG U (diagFamilyG ℝ r) := eq_adUG_diagFamilyG hbd
+  -- the conjugated product satisfies the diagonal-family conclusion
+  have hQS2 : (conjProductG P hU hU').FirstArgContinuous :=
+    conjProduct_firstArgContinuousG P hU hU' hS2
+  have hUU : (Uᴴ)ᴴ * Uᴴ = 1 := by rw [Matrix.conjTranspose_conjTranspose]; exact hU'
+  have hUU' : Uᴴ * (Uᴴ)ᴴ = 1 := by rw [Matrix.conjTranspose_conjTranspose]; exact hU
+  have hb' : IsEffect (adUG Uᴴ b) := adU_isEffectG hUU hUU' hb
+  have hdiag := sp_eq_luders_diagFamily (conjProductG P hU hU') hQS2
+    (hjordAll U hU hU') hrle hb'
+  -- transport: `Ad_U` cancels, and `√` commutes with `Ad_U`
+  rw [conjProduct_spG, adU_cancelG' hU' b] at hdiag
+  rw [← hadiag] at hdiag
+  have hcancel : adUG U (adUG Uᴴ (P.sp a b)) = P.sp a b := adU_cancelG' hU' _
+  have hgoal := congrArg (adUG U) hdiag
+  rw [hcancel] at hgoal
+  rw [hgoal]
+  -- unitary covariance of the square root: `Ad_U ∘ Q_{√D} = Q_{√(Ad_U D)} ∘ Ad_U`
+  have hsq : (a.cfc Real.sqrt).mat
+      = U * ((diagFamilyG ℝ r).cfc Real.sqrt).mat * Uᴴ := by
+    conv_lhs => rw [hadiag]
+    show (((diagFamilyG ℝ r).conj U).cfc Real.sqrt).mat = _
+    rw [HermitianMat.cfc_conj_unitary _ _ a.H.eigenvectorUnitary,
+      HermitianMat.conj_apply_mat]
+  rw [adUG, adUG, HermitianMat.conj_conj, HermitianMat.conj_conj, hsq,
+    Matrix.mul_assoc]
 
 end Necessity

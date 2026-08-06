@@ -1928,11 +1928,24 @@ sorry-free Wigner rigidity — see 3.0.
       `chiTilde_of_nonposG` + `thetaNorm_apply_eq_thetaG`. Trap: build the structural
       identity as a separate `have` and rewrite once — a `rw … at *` on the goal fails
       to find the pattern.
-      **REMAINING for the ℝ row to be a full per-type row**: extend from the diagonal
-      family to every invertible effect (needs the ℝ analogues of
-      `eq_adU_diagFamily` + `conjProduct`, i.e. `ConjTransportGen` — 31 sites, pure
-      recipe), then `sp_eq_on_effects_of_eq_on_posDef` (already field-general) for the
-      singular effects. Both bookkeeping; the mathematics of `prop:real` is done. All three are pure recipe — the ℂ originals have zero genuinely
+      **EVERY INVERTIBLE EFFECT DONE 2026-08-06** (census 126, gates green, tree at
+      3083 jobs, custom axioms exactly `[]`; `sp_eq_luders_of_posDef` axiom-checked =
+      Lean core only): `ConjTransportGen` (the transport half of `ConjTransport` only —
+      the per-frame/globalization tail is ℂ-specific and was cut, so the twin is ~230
+      lines and compiled FIRST TRY), then `eq_adUG_diagFamilyG`,
+      `log_eigenvalues_nonposR`, and **`sp_eq_luders_of_posDef` — for EVERY
+      positive-definite effect `a` of `H_n(ℝ)`, `a • b = Q_{√a} b`.**  Route:
+      diagonalize with the vendored (already `𝕜`-general) `eq_conj_diagonal`, apply the
+      diagonal-family result to the conjugated product, and transport back through the
+      unitary covariance of the functional calculus
+      (`HermitianMat.cfc_conj_unitary`) — the same covariance the ℂ lane used for the
+      twist factor. Traps: the twin names are `adU_cancelG'` (prime AFTER the G, since
+      the source is `adU_cancel'`), and `rw [← hadiag]` must fold the base point back
+      BEFORE the cancellation rewrite or the pattern is not found.
+      **REMAINING for the ℝ row: only the singular-effect extension**, i.e. feed
+      `sp_eq_luders_of_posDef` to the already-field-general
+      `sp_eq_on_effects_of_eq_on_posDef` with the Lüders product packaged as a
+      `SequentialProductOn` (the ℝ analogue of `twistProductOn` at `t = 0`). All three are pure recipe — the ℂ originals have zero genuinely
     complex content beyond `normSq`, which becomes `‖t‖²`/`RCLike.normSq`.
     NOTE the ℝ simplification worth exploiting: over ℝ, `blockHerm i j t` has no phase,
     so `BlockTransportGen`/`BlockChiGen`/`BlockSkewGen`/`PhaseCocycleGen`/`PhaseAnchorGen`
