@@ -236,6 +236,13 @@ import RadicalRelativity.Necessity.PhaseCocycle
 -- operator-topology diamond on nested continuous-linear-map spaces.
 import RadicalRelativity.Necessity.JordanDerivation
 
+-- The phase anchor (u6d, closing LEDGER 2.6): entry maps of dChi are
+-- multiplication by i*t_ij (skew classification), the Leibniz rule across
+-- blocks gives the cocycle t_ik = t_ij + t_jk, anchoring at i0 gives the
+-- character matrix, and complex_perFrame_rho FIRES on the produced coupling:
+-- a single per-frame parameter t_F with rho_ij(dChi(r)) = t_F(r_i - r_j) J.
+import RadicalRelativity.Necessity.PhaseAnchor
+
 -- Exact paper-facing S1--S7 and product-conclusion statement boundary.  This
 -- freezes the target signature; it does not claim the classification is proved.
 import RadicalRelativity.PaperA.Statement

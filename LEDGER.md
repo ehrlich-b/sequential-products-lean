@@ -636,6 +636,35 @@ sorry-free Wigner rigidity — see 3.0.
   ℂ has a unique instance path. Import chain: JordanDerivation imports
   BlockSkew (for entryCLM), not PhaseCocycle; the u6d file will import both.
 
+  **u6d DONE 2026-08-05 — LEDGER 2.6 FULLY COMPLETE, `complex_perFrame_rho`
+  FIRES** (`Necessity/PhaseAnchor.lean`, census 74, gates green):
+  `symmMul_blockHerm_entry`/`blockHerm_symmMul_entry` (the (i,k)-entry of a
+  cross-block Jordan product — the blockHerm factor's structure does all the
+  killing, NO corner-support lemma needed), `blockHermLm` (z ↦ blockHerm z
+  ℝ-linear), `dChiEntry` (the block entry map as ℂ →ₗ[ℝ] ℂ),
+  `dChiEntry_eq` (skew classification: multiplication by i·t_{ij}(r)),
+  `tvalLm` (the phase rate, linear in r), **`tval_cocycle`
+  (t_{ik} = t_{ij} + t_{jk} — Leibniz + cross-block product at the (i,k)
+  entry)**, `tval_antisymm` (Hermiticity), `thetaAnchor`/`tval_eq_theta_sub`
+  (anchor at i₀ collapses pairs to characters), `cMatrix`/`thetaAnchor_expand`
+  (θ_i(r) = Σ_l c_{il} r_l via univ_sum_single + map_sum), `rotJ` (+ ≠ 0),
+  the `stabilizerCoupling_rho_dChi` bridge, and
+  **`complex_perFrame_concrete`: for any S1–S7 sequential product on H_N(ℂ)
+  (N ≥ 3, S2, M3-hjord) there is a single per-frame t_F with
+  ρ_{ij}(dχ(r)) = (t_F(r_i − r_j)) • J — the paper's `thm:complex` per-frame
+  half, PRODUCED on the concrete carrier.** TRAPS: `unfold A B` processes
+  sequentially — a constant B whose body mentions A must be unfolded FIRST
+  (`unfold cMatrix thetaAnchor`, not the reverse); norm_num at a hypothesis
+  re-normalizes HermitianMat entry atoms into a coe-form that no longer
+  matches the goal's mat-form (drop norm_num, use smul_eq_mul + linarith);
+  `set u := equiv v` fights simp's WithLp.fst/snd normal form — unfold via
+  `simp [hu]` at the end; Finset.sum_eq_single side goals arrive with the
+  ∧-condition pre-reduced (provide `Ne.symm hm`, not the ∧-shaped eq_false).
+  REMAINING for the ℂ-lane per-type statement: Globalization wiring (adjacent
+  frames, global t) — check `Globalization.lean` for what it consumes — then
+  assemble mthm:master (ℂ) with M1's twistSequentialProduct as sufficiency
+  witness. M2 else: 2.9 (prop:singular wiring). Then M3–M7.
+
   **WIRING DESIGN (banked 2026-08-05, before χ̃ part 2):** build the
   `ComparisonSetup (HermitianMat (Fin N) ℂ)` instance NEXT — the abstract
   DiagonalHom layer then supplies `chi_hom`/`chi_comm`/`chi_extend_wellDefined`
