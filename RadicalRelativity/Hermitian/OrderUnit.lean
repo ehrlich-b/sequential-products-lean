@@ -71,13 +71,15 @@ theorem exists_nonneg_le_smul_one (a : HermitianMat n 𝕜) :
 below every positive multiple of the unit is nonpositive.  (The `archimedean` field
 of `OrderUnitSpace` is only order-unit boundedness; this is the stronger condition,
 proved here via the eigenvalue characterization of `a ≤ ε • 1`.) -/
-theorem le_zero_of_forall_le_smul_one {a : HermitianMat n ℂ}
+theorem le_zero_of_forall_le_smul_one {a : HermitianMat n 𝕜}
     (h : ∀ ε : ℝ, 0 < ε → a ≤ ε • 1) : a ≤ 0 := by
   have hev : ∀ i, a.H.eigenvalues i ≤ 0 := by
     intro i
     refine le_of_forall_pos_le_add fun ε hε => ?_
-    simpa using le_smul_one_imp_eigenvalues_le a ε (h ε hε) i
-  simpa using eigenvalues_le_imp_le_smul_one a 0 hev
+    have hle := le_smul_one_imp_eigenvalues_le (A := a) ε (h ε hε) i
+    linarith
+  have h0 := eigenvalues_le_imp_le_smul_one (A := a) 0 hev
+  rwa [show (0 : ℝ) • (1 : HermitianMat n 𝕜) = 0 from zero_smul ℝ 1] at h0
 
 /-! ### The `OrderUnitSpace` instance
 
@@ -108,11 +110,12 @@ theorem isCompact_setOf_isEffect :
   unitInterval_IsCompact
 
 /-- Effects have eigenvalues in `[0,1]` (ℂ). -/
-theorem eigenvalues_mem_Icc_of_effect {a : HermitianMat n ℂ}
+theorem eigenvalues_mem_Icc_of_effect {a : HermitianMat n 𝕜}
     (h0 : 0 ≤ a) (h1 : a ≤ 1) (i : n) :
     a.H.eigenvalues i ∈ Set.Icc (0 : ℝ) 1 :=
   ⟨eigenvalues_nonneg h0 i,
-    le_smul_one_imp_eigenvalues_le a 1 (by simpa using h1) i⟩
+    le_smul_one_imp_eigenvalues_le (A := a) 1
+      (by rw [one_smul]; exact h1) i⟩
 
 /-! ### The order-unit norm (unbundled) -/
 

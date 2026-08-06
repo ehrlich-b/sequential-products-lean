@@ -1491,22 +1491,30 @@ sorry-free Wigner rigidity — see 3.0.
   `𝕜`-general in `Vendor/Matrix.lean`. Every existing ℂ call site still
   typechecks unchanged (a more general lemma applies at ℂ). Drift recorded in the
   file's docstrings.
-  ★**CORRECTION to the token-count estimate**: the port is NOT purely mechanical.
-  Attempting the very next step — generalizing `Hermitian/OrderUnit.lean`'s
-  `le_zero_of_forall_le_smul_one` and `eigenvalues_mem_Icc_of_effect` from ℂ to
-  `𝕜` — produced `whnf`/`isDefEq` **timeouts in the statements themselves**, not
-  in the proofs: over a generic `RCLike 𝕜` the elaborator must resolve
-  `SMul ℝ (HermitianMat n 𝕜)` and the Loewner `≤` through the RCLike/StarModule
-  tower, which is cheap at concrete ℂ and expensive generically. Also, the
-  generalized lemmas' scalar binder is AUTO-BOUND (it is not named `𝕜`), so
-  `(𝕜 := …)` is not a valid named argument at call sites — pin with `(A := a)`
-  instead. So M4.1 is a refactor whose cost is dominated by **instance-resolution
-  blowup**, not by ℂ-specific mathematics: budget per-declaration
-  `set_option maxHeartbeats` bumps and/or explicit instance arguments, and
-  generalize LEAF-FIRST with a full `lake build` after each file (the pattern that
-  just worked for the vendored pair). The 13/16 "zero genuinely-complex tokens"
-  finding stands as a statement about the MATHEMATICS; it is not a statement about
-  elaboration cost.
+  ★**DIAGNOSIS, and a correction of a correction (both recorded, 2026-08-06).**
+  First attempt at generalizing `Hermitian/OrderUnit.lean`'s
+  `le_zero_of_forall_le_smul_one` and `eigenvalues_mem_Icc_of_effect` produced
+  `whnf`/`isDefEq` timeouts, and I first wrote that up as "generic RCLike
+  instance resolution is inherently expensive here". **That was wrong.**  Retried
+  with the scalar pinned at the call sites and both generalize with NO timeout and
+  NO heartbeat bump (whole tree green, 3067 jobs, census 110, custom axioms still
+  exactly `[]`).  The real mechanism: the generalized lemmas' scalar binder is
+  AUTO-BOUND, so it cannot be named — `(𝕜 := …)` is an invalid argument name —
+  and if the scalar is left to be inferred through a postponed tactic block
+  (`by simpa using h1`), it stays a metavariable, universe defaulting picks
+  universe 0 (i.e. ℂ) while the surrounding context is at `u_2`, and the ensuing
+  instance searches over an unknown scalar flail into a whnf timeout.  **The
+  idiom that works: pin the carrier argument explicitly, `(A := a)`, and replace
+  postponed `simpa using` glue with an explicit `have` + `linarith`/`rw`.**  A
+  whnf timeout in a generalization step is therefore a signal to look for an
+  unpinned scalar metavariable FIRST, before reaching for `maxHeartbeats` (which
+  would not have helped: 1.6M failed).  With this idiom the 13/16
+  "zero genuinely-complex tokens" measurement DOES translate into effort: the port
+  is mechanical, leaf-first, one file per commit with a full `lake build` after
+  each.  Carrier layer status: `le_zero_of_forall_le_smul_one` and
+  `eigenvalues_mem_Icc_of_effect` are now `𝕜`-general (`abs_eigenvalues_le_ouNorm`
+  and `norm_le_sqrt_card_mul_ouNorm` deliberately left at ℂ — they belong to the
+  order-unit-norm comparison, not to the Θ chain's critical path).
 - **4.2 Quaternionic.** H_n(ℍ) ↪ H_{2n}(ℂ) symplectic embedding. [INV✓ area
   10]: ℍ itself is well-developed (NormedDivisionRing, CStarRing,
   InnerProductSpace ℝ) but **matrices over ℍ are total greenfield — zero
