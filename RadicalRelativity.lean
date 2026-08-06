@@ -349,6 +349,14 @@ import RadicalRelativity.RankTwo.FrameFunction
 -- of the frame rather than of the ray.
 import RadicalRelativity.RankTwo.Complementation
 
+-- M5 (LEDGER 5.3): FRAME DEPENDENCE AT THE LEVEL OF THE OPERATION.  RankTwo.lean
+-- recorded the pair (tau = 0 on the Hadamard frame gives Luders, tau = 1 on the
+-- reference frame gives the unit twist) but never showed the two products
+-- DIFFER, so the escape-from-rigidity claim rested on the dial alone.  Here they
+-- are separated: at lambda = (1,4) they disagree on the coherence matrix,
+-- because the off-diagonal phase e^{-i log 4} is nontrivial (0 < log 4 < 2 pi).
+import RadicalRelativity.RankTwo.Separation
+
 -- Exact paper-facing S1--S7 and product-conclusion statement boundary.  This
 -- freezes the target signature; it does not claim the classification is proved.
 import RadicalRelativity.PaperA.Statement

@@ -1251,6 +1251,20 @@ sorry-free Wigner rigidity — see 3.0.
   uniform finish for the four entry goals is `apply Complex.ext` then
   `simp only [re/im lemmas]` then `linarith [hsum']` with the norm condition
   pre-expanded into real components.
+  **FRAME DEPENDENCE SEPARATED AT THE OPERATION LEVEL 2026-08-05**
+  (`RankTwo/Separation.lean`, census 97, gates green, zero sorries).  Gap
+  closed: `MasterTheorem/RankTwo.lean` had `sp_tau_had_is_luders` and
+  `sp_tau_std_is_unit_twist` but NEVER showed the two products differ, so
+  "rank two escapes mthm:master's rigidity" rested on the dial alone.  Now
+  `offCoeff_sep` and **`sp_luders_ne_unit_twist`**: at λ = (1,4) the Lüders
+  member and the unit-twist member disagree on the coherence matrix `E₀₁`,
+  because the off-diagonal phase is `e^{−i log 4}` and `0 < log 4 < 2π`
+  (`log_four_pos`; `log_four_lt_two_pi` via `Real.log_le_sub_one_of_pos` giving
+  log 4 ≤ 3, then `Real.pi_gt_three`).  TRAPS: `Real.pi_gt_three` needs
+  `import Mathlib.Analysis.Real.Pi.Bounds` (not transitively present);
+  `Complex.exp_eq_one_iff` yields `z = n * (2πI)` and `field_simp` cancels the
+  `I` for you, so cast the REMAINING real equation, don't hand-cancel;
+  `Real.log_lt_self` does not exist under that name.
   REMAINING in 5.3: the BIJECTION itself — that every rank-two S1–S7 product
   arises from exactly one `tauModuli`-style element, and conversely. Forward
   direction needs the frame-indexed family of `MasterTheorem.RankTwo.sp` glued
