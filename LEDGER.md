@@ -1165,6 +1165,31 @@ sorry-free Wigner rigidity — see 3.0.
   twice; hence **`linearMap_eq_of_frame_block`**: two ℝ-linear maps agreeing on
   the frame and on every block are equal.  NOTE: the rank-one spanning lemma
   (`span_rankOne_eq_top`) does NOT substitute — different spanning set.
+  **TWIST IDENTIFICATION ASSEMBLED 2026-08-05**
+  (`Necessity/TwistIdentification.lean`, census **100**, gates green, zero
+  sorries, FIRST-PASS CLEAN): `thetaNorm_symm_fixes_frameProj` and
+  **`chiTilde_fixes_frameProj`** — the comparison character fixes every frame
+  projection UNCONDITIONALLY (both factors of χ̃ do); then
+  **`chiTilde_eq_adU_of_block`** — given χ̃'s GROUP-level block action,
+  `χ̃(r) = Ad_{U_t(r)}` as ℝ-linear maps, i.e. the paper's `Θ_a = Ad_{a^{it}}`,
+  via `linearMap_eq_of_frame_block` (frame half discharged here, torus half by
+  `torusU_fixes_frameProj`/`torusU_block`); and
+  **`sp_eq_quadRep_adU` : `a • b = Q_{√a}(Ad_{U_t(r)} b)`** — the shape of
+  mthm:master's complex case at the product level.  Axioms verified first-hand
+  on all three: core only.
+  **REMAINING for the ℂ lane: exactly ONE input** — the group-level block action
+  of χ̃, i.e. exponentiate `complex_perFrame_unconditional`'s GENERATOR statement
+  (`ρ_{ij}(dχ(r)) = (t_F(r_i−r_j))•rotJ`) to the group level.  Two viable routes:
+  (i) `chiTilde_eq_exp_dChi` + the fact that dχ(r) preserves each block
+  (`dChi_preserves_corner`) and acts there as the rotation generator, so `exp`
+  restricted to the block is the rotation — needs `exp` of a restriction to an
+  invariant 2-dim subspace; (ii) CHEAPER — `chiTilde_block_exists` already says
+  χ̃(r) acts on each block by a UNIT-MODULUS scalar, and `chiTilde_add` +
+  line-continuity make `r ↦ that scalar` a continuous character of ℝⁿ into the
+  circle, so **M5's `circleCharacter_linear_functional` applies directly** and
+  gives `exp(i·ψ_{ij}(r))` with ψ_{ij} ℝ-linear; matching ψ against the
+  generator identifies it with `t_F(r_i − r_j)`.  Route (ii) reuses the rank-two
+  lifting step and avoids all operator-exponential work — TRY IT FIRST.
   TRAPS: the subst trap AGAIN (`subst hab` with `hab : a = b` kills the ext-local
   needed later) — use `rw [if_pos hab]` and derive the index facts by hand;
   `x.H` gives `star (x_ba) = x_ab` at index `(a,b)` (NOT `(b,a)` — the

@@ -335,6 +335,14 @@ import RadicalRelativity.Necessity.TorusAction
 -- does not substitute).
 import RadicalRelativity.Necessity.FrameBlockSpan
 
+-- The TWIST IDENTIFICATION assembled: chiTilde fixes every frame projection
+-- unconditionally (both factors do), the torus unitary fixes them and rotates
+-- each block by the same angle the comparison generator produces, and the
+-- frame+block agreement principle closes the gap -- so chiTilde(r) IS Ad of the
+-- torus unitary given its group-level block action, and the product then reads
+-- a . b = Q_{sqrt a}(Ad_{U_t(r)} b), the shape of mthm:master's complex case.
+import RadicalRelativity.Necessity.TwistIdentification
+
 -- M5 (LEDGER 5.1, prop:n2-necessity): the rank-two LIFTING STEP, obtained as a
 -- corollary of M2's one-parameter engine rather than from covering spaces --
 -- a continuous character into the rotation group (the unit circle in C) is
