@@ -299,6 +299,11 @@ import RadicalRelativity.Necessity.RankOneSpan
 -- tprob_preserved this is exactly wigner_rigidity's TransProbPreserving input.
 import RadicalRelativity.Necessity.WignerBridge
 
+-- M3 (3.2c): the RAY MAP induced by an order-automorphism on CP^{N-1}, its
+-- defining property (it implements Phi on rank-one projections), and
+-- rayMap_transProbPreserving -- literally wigner_rigidity's hypothesis.
+import RadicalRelativity.Necessity.RayMap
+
 -- Exact paper-facing S1--S7 and product-conclusion statement boundary.  This
 -- freezes the target signature; it does not claim the classification is proved.
 import RadicalRelativity.PaperA.Statement
