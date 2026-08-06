@@ -1843,9 +1843,27 @@ sorry-free Wigner rigidity — see 3.0.
        family, and `sp_eq_twistSeq_transport`'s ℝ analogue (or `twistFactor … 0 = √a`)
        carries it to every invertible effect; `sp_eq_on_effects_of_eq_on_posDef`
        extends to all effects.
-    **Twins still required for it**: `BlockModelGen` (the block model + square law +
-    support characterization), the block-preservation part of `BlockInvarianceGen`, and
-    `FrameBlockSpanGen`. All three are pure recipe — the ℂ originals have zero genuinely
+    **TWINS FOR IT: TWO OF THREE DONE 2026-08-06** (census 120, gates green, tree at
+    3077 jobs, custom axioms exactly `[]`; `blockHerm_symmMul_selfG` and
+    `linearMap_eq_of_frame_blockG` axiom-checked = core only):
+    * `BlockModelGen` — `blockHermG`, the **square law** `blockHerm_symmMul_selfG`
+      (`x ∘ x = ‖z‖²(p_i+p_j)`), and the Peirce support characterization
+      `eq_blockHerm_of_peirceG`. Fixes: `Complex.normSq ⇝ RCLike.normSq`,
+      `(starRingEnd ℂ) ⇝ 𝕜`, and the square law now closes with
+      `simp [RCLike.normSq_eq_def']` because `RCLike.mul_conj` yields `‖z‖^2` where the
+      statement says `normSq`.
+    * `FrameBlockSpanGen` — the frame-and-block decomposition and the agreement
+      principle `linearMap_eq_of_frame_blockG` (step 4 of the design). Fixes:
+      `(x.mat i i).re ⇝ RCLike.re (x.mat i i)`,
+      `Complex.conj_eq_iff_re ⇝ RCLike.conj_eq_iff_re`, drop the two `omit`s (the new
+      instance binder makes those section variables referenced).
+    ★**TRAP, new and nasty**: a twin must G-suffix **every** declaration in the file, not
+      just the ones you plan to use — Lean's auto-generated `match_*` auxiliaries collide
+      otherwise, and the error surfaces at IMPORT time in an unrelated file
+      ("environment already contains 'Necessity.eq_frame_add_blocks.match_1_1'"), not at
+      compile time in the twin. Enumerate declarations with a grep before renaming.
+    * REMAINING: the block-preservation part of `BlockInvarianceGen`, then the ℝ capstone
+      file itself (steps 1–4). All three are pure recipe — the ℂ originals have zero genuinely
     complex content beyond `normSq`, which becomes `‖t‖²`/`RCLike.normSq`.
     NOTE the ℝ simplification worth exploiting: over ℝ, `blockHerm i j t` has no phase,
     so `BlockTransportGen`/`BlockChiGen`/`BlockSkewGen`/`PhaseCocycleGen`/`PhaseAnchorGen`

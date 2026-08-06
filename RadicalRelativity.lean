@@ -190,6 +190,13 @@ import RadicalRelativity.Necessity.ChiExtensionGen
 import RadicalRelativity.Necessity.ChiContinuityGen
 import RadicalRelativity.Necessity.CoalescenceInstanceGen
 
+-- Field-general block layer for the real ending: the block model with its square law
+-- and support characterization, and the frame-and-block spanning/agreement principle.
+-- Over the reals the block is one-dimensional, so this plus the already-twinned
+-- character continuity is all the real row needs -- none of the phase apparatus.
+import RadicalRelativity.Necessity.BlockModelGen
+import RadicalRelativity.Necessity.FrameBlockSpanGen
+
 -- M2 necessity core, tenth unit (LEDGER 2.6, chi part 1): the comparison character
 -- on the diagonal family — base-point congruence, the value law
 -- a(r) sp a(r') = a(r+r'), chi(0) = 1 through theta_base_one, and the orthant
