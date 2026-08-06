@@ -1705,6 +1705,32 @@ sorry-free Wigner rigidity — see 3.0.
   contains nothing complex), and continuity of `a ↦ Θ_a`. If that works it replaces
   five duplicated files with roughly one, and it never touches `dχ`. **Price both
   routes before continuing; do not start duplicating files by default.**
+
+  ★★**AND THE DECISION-CRITICAL FACT, verified at source 2026-08-06: THE ℝ ROW HAS
+  ITS OWN M3 BOULDER, so it cannot be unconditional the way the ℂ row is.** Both
+  candidate endings need Θ to preserve the Jordan product (block preservation and the
+  block isometry are what transport the Peirce relations, and both take `hjord`). For
+  ℂ that is now DERIVED — `thetaPreservesJordan_of_S2` → `orderAuto_preservesJordan`
+  → `Projectivization.wigner_rigidity` — but every one of those is stated on
+  `HermitianMat (Fin N) ℂ`, and the vendored rigidity theorem is intrinsically complex
+  (it is about `ℙ ℂ (EuclideanSpace ℂ (Fin N))` and its unitary/antiunitary
+  dichotomy). Over ℝ the corresponding statement is real Kadison/Uhlhorn — unital
+  order-automorphisms of `H_n(ℝ)` are `x ↦ O x Oᵀ` for orthogonal `O` — which is in NO
+  prover (the 08-04 landscape check covers this) and which the vendored artifact does
+  not supply.
+  **Consequences, and they are shape-level, not effort-level:**
+  * The honest ℝ deliverable is **conditional on `ThetaPreservesJordan` over ℝ carried
+    as a located hypothesis**, exactly as the ℂ row stood before M3 closed and exactly
+    how the manuscript cites van Imhoff–Roelands for it. That is a legitimate,
+    disclosed configuration — but it must be stated as such in THEOREM-MAP, never
+    described as "the real row is machine-checked" without the qualifier.
+  * Making ℝ unconditional is a NEW boulder of the same kind M3 was (a from-scratch
+    real Uhlhorn: build the orthogonal map column-by-column from orthogonality
+    preservation, with the sign casework). Not a session's work.
+  * This corrects the earlier "the real row is perhaps a session away" estimate a
+    second time: the *machinery* is nearly ported, but an unconditional ℝ row is
+    gated on real Kadison. Decide explicitly which of the two deliverables is wanted
+    before writing the ending.
     Then `Chi` (which must switch to the `…Gen` frame/family names) →
   `ComparisonInstance` → `Chi*`/`Coalescence*`; then the short ℝ ending.
 - **4.2 Quaternionic.** H_n(ℍ) ↪ H_{2n}(ℂ) symplectic embedding. [INV✓ area
