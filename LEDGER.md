@@ -1818,7 +1818,40 @@ sorry-free Wigner rigidity — see 3.0.
     wants `(2:𝕜)⁻¹ = ((1/2 : ℝ) : 𝕜)` proved FIRST (`RCLike.ofReal_div`,
     `ofReal_ofNat`) and rewritten BEFORE going entrywise — going entrywise first
     leaves an `algebraMap ℝ 𝕜 2` disjunct that `norm_num` cannot see.
-  * **M4.1 REMAINING: only the ℝ ending.** Everything the abstract `real_kill` needs
+  * ★★**THE ℝ ENDING, DESIGNED IN FULL 2026-08-06 — four steps, every ingredient
+    named, no mathematical unknowns left.** The route deliberately avoids needing
+    `dχ`/`real_kill` at all, because the continuity that kills the sign is already
+    built:
+    1. **Blocks are scalar-acted.** `χ̃(r)` fixes the frame (`chiTilde_fixes_frameProj`'s
+       twin) and, being a Jordan automorphism (the located `ThetaPreservesJordanG`),
+       preserves each Peirce block. Over ℝ the block `V_ij` is **one-dimensional**
+       (`blockHerm i j t`, `t : ℝ` — no phase), so `χ̃(r)(blockHerm i j 1) =
+       c_{ij}(r) • blockHerm i j 1` for a real scalar.
+    2. **The scalar is ±1.** The square law `blockHerm_symmMul_self` gives
+       `x ∘ x = |t|²(p_i + p_j)`; applying it on both sides of Jordan-multiplicativity
+       and using frame-fixing forces `c_{ij}(r)² = 1`.
+    3. **The sign is +1, by continuity — and this is why no differentiation is needed.**
+       `c_{ij}` is multiplicative in `r` (the `chiTilde_addG` character law) with
+       `c_{ij}(0) = 1` (`chiTilde_zeroG`), and `r ↦ χ̃(r)` is continuous along lines
+       (`continuous_chiTilde_lineG`, already twinned). A continuous character of ℝⁿ into
+       the **discrete** group `{±1}` with value 1 at 0 is identically 1.
+    4. **Hence `χ̃(r) = id`, so `Θ = id` and the product is Lüders.** Step 3 plus
+       frame-fixing means `χ̃(r)` agrees with the identity on the frame and on every
+       block, and `linearMap_eq_of_frame_block` (twin needed:
+       `FrameBlockSpanGen`) upgrades that to equality. Then
+       `sp_eq_quadRep_theta`-style unfolding gives `a • b = Q_{√a} b` on the diagonal
+       family, and `sp_eq_twistSeq_transport`'s ℝ analogue (or `twistFactor … 0 = √a`)
+       carries it to every invertible effect; `sp_eq_on_effects_of_eq_on_posDef`
+       extends to all effects.
+    **Twins still required for it**: `BlockModelGen` (the block model + square law +
+    support characterization), the block-preservation part of `BlockInvarianceGen`, and
+    `FrameBlockSpanGen`. All three are pure recipe — the ℂ originals have zero genuinely
+    complex content beyond `normSq`, which becomes `‖t‖²`/`RCLike.normSq`.
+    NOTE the ℝ simplification worth exploiting: over ℝ, `blockHerm i j t` has no phase,
+    so `BlockTransportGen`/`BlockChiGen`/`BlockSkewGen`/`PhaseCocycleGen`/`PhaseAnchorGen`
+    — the entire phase apparatus of the ℂ lane — are **NOT** needed. The ℝ ending is
+    ~3 twins plus one short file, not a re-run of LEDGER 2.6.
+  * **M4.1 REMAINING: only the ℝ ending, per the four-step design above.** Everything the abstract `real_kill` needs
     (`ρ`, `dχ`, `T`, `ρ_skew`, `coupling`) is now constructible over `𝕜`; what is left is
     the ℝ-specific block layer (1-dimensional Peirce blocks) and the
     `DiagonalHomSetup`/`StabilizerCoupling` wiring, then `real_kill` fires. The
