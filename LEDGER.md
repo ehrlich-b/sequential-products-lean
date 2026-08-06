@@ -1801,8 +1801,29 @@ sorry-free Wigner rigidity — see 3.0.
     (`jordanBilinG 𝕜`), for the same reason `diagFamilyG`/`frameProjG` do — with an
     implicit scalar the coercion-to-function cannot fire and every use reports
     "Function expected … HermitianMat ?m.5 ?m.8 →ₗ …".
-  * REMAINING twins: `ChiExtensionGen` (209), `ChiContinuityGen` (247),
-    `CoalescenceInstanceGen` (309) — all pure recipe now — then the ℝ ending.
+  * **ALL FOUR TWINS DONE 2026-08-06 — THE DIFFERENTIAL FACE EXISTS OVER ANY
+    `RCLike` FIELD** (census 118, gates green, tree at 3075 jobs, custom axioms exactly
+    `[]`; `coalescenceSetupG` and `dChiG` axiom-checked individually = core only):
+    `ChiExtensionGen` (`thetaUnitG`, the ℝⁿ-extension `chiTildeG` with `chiTilde_addG`
+    — compiled FIRST TRY), `ChiContinuityGen` (the continuity ladder,
+    `continuous_chiTilde_lineG`, the one-parameter classification `chiTilde_eq_expG`
+    and **`dChiG`**), and `CoalescenceInstanceGen` (corner geometry + **
+    `coalescenceSetupG : CoalescenceSetup (HermitianMat (Fin N) 𝕜)`**).
+    Fix list for these three, all instances of rules already banked:
+    `Complex.continuous_ofReal ⇝ RCLike.continuous_ofReal`;
+    `HermitianMat.diagonal ℂ ⇝ 𝕜`; `cornerQG` needs the scalar EXPLICIT (its scalar
+    appears only in the result type — third instance of that rule, after
+    `diagFamilyG`/`frameProjG`/`jordanBilinG`); `unfold cornerQG` takes the BARE name;
+    `(2 : ℂ)`/`(lam : ℂ)`/`diagonalAddMonoidHom n ℂ ⇝ 𝕜`; and the half-scalar identity
+    wants `(2:𝕜)⁻¹ = ((1/2 : ℝ) : 𝕜)` proved FIRST (`RCLike.ofReal_div`,
+    `ofReal_ofNat`) and rewritten BEFORE going entrywise — going entrywise first
+    leaves an `algebraMap ℝ 𝕜 2` disjunct that `norm_num` cannot see.
+  * **M4.1 REMAINING: only the ℝ ending.** Everything the abstract `real_kill` needs
+    (`ρ`, `dχ`, `T`, `ρ_skew`, `coupling`) is now constructible over `𝕜`; what is left is
+    the ℝ-specific block layer (1-dimensional Peirce blocks) and the
+    `DiagonalHomSetup`/`StabilizerCoupling` wiring, then `real_kill` fires. The
+    deliverable is conditional on `ThetaPreservesJordanG` (real Kadison being
+    unavailable — see above); state it that way in THEOREM-MAP.
     Then `Chi` (which must switch to the `…Gen` frame/family names) →
   `ComparisonInstance` → `Chi*`/`Coalescence*`; then the short ℝ ending.
 - **4.2 Quaternionic.** H_n(ℍ) ↪ H_{2n}(ℂ) symplectic embedding. [INV✓ area

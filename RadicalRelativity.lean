@@ -182,6 +182,14 @@ import RadicalRelativity.Necessity.ChiGen
 -- uniform commutant lemma instead of complex anti-Hermitian generators.
 import RadicalRelativity.Necessity.ComparisonInstanceGen
 
+-- The rest of the M4.1 twin chain over an arbitrary RCLike field: the character
+-- extension (thetaUnit/chiTilde), its continuity and one-parameter classification
+-- (dChi), and the CoalescenceSetup instance.  With these the whole differential face
+-- exists over any RCLike field; what remains for the real row is its ending.
+import RadicalRelativity.Necessity.ChiExtensionGen
+import RadicalRelativity.Necessity.ChiContinuityGen
+import RadicalRelativity.Necessity.CoalescenceInstanceGen
+
 -- M2 necessity core, tenth unit (LEDGER 2.6, chi part 1): the comparison character
 -- on the diagonal family — base-point congruence, the value law
 -- a(r) sp a(r') = a(r+r'), chi(0) = 1 through theta_base_one, and the orthant
