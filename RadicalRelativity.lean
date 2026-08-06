@@ -304,6 +304,12 @@ import RadicalRelativity.Necessity.WignerBridge
 -- rayMap_transProbPreserving -- literally wigner_rigidity's hypothesis.
 import RadicalRelativity.Necessity.RayMap
 
+-- M3 ASSEMBLY: the Wigner dichotomy fires on the induced ray map
+-- (rayMap_dichotomy), and each branch's witness is a Jordan automorphism, so
+-- agreement on rank-ones plus the spanning lemma makes Phi ITSELF preserve the
+-- Jordan product.  This is the discharge path for ThetaPreservesJordan.
+import RadicalRelativity.Necessity.KadisonDischarge
+
 -- Exact paper-facing S1--S7 and product-conclusion statement boundary.  This
 -- freezes the target signature; it does not claim the classification is proved.
 import RadicalRelativity.PaperA.Statement

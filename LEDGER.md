@@ -1016,12 +1016,46 @@ sorry-free Wigner rigidity — see 3.0.
   TRAP: `((x : ℝ) : ℂ)⁻¹`-style ascriptions parse as coe-then-inv; write the
   inverse INSIDE the real ascription or downstream `normSq` rewrites won't
   match.
-  REMAINING for M3 — the ray map itself (a choice function over
-  `exists_rankOne_map` plus representative independence, then
-  `TransProbPreserving` from `tprob_preserved` + `transProbVec_eq_tprob`),
-  then `wigner_rigidity` + `linearMap_eq_of_eq_on_rankOne` + the two witnesses
-  discharge `ThetaPreservesJordan` and every M2 conditional becomes
-  unconditional.
+  **3.2c DONE 2026-08-05** (`Necessity/RayMap.lean`, census 90): `repUnit`
+  (normalized canonical representative) + `rankOneP`; `rankOne_normalize_smul`
+  (normalizing a nonzero multiple of a UNIT vector recovers its rank-one — the
+  scalar becomes unit-modulus, which `rankOne_smul` absorbs);
+  `rankOneP_mk` (representative independence, via the vendored
+  `rep_mk_eq_smul`); **`rayMap`** (choice over `exists_rankOne_map`, nonzero
+  side from unitarity) and **`rayMap_rankOne`** — the ray map IMPLEMENTS Φ on
+  rank-one projections; `transProb_eq_tprob_repUnit`; and
+  **`rayMap_transProbPreserving`** — literally `wigner_rigidity`'s hypothesis,
+  by pure transport through `rayMap_rankOne` + `tprob_preserved`.
+  TRAPS: `rw [someDef]` fails on plain `def`s with no equation lemmas — use
+  `unfold`; to apply `mk_eq_mk_iff'` first rewrite the RHS into `mk` form with
+  `conv_rhs => rw [← Projectivization.mk_rep _]`; the residual
+  `toLp (c • ofLp v) = c • v` goals close by `rfl`, not `funext`+`simp`;
+  `unitVec`'s proof argument is UNUSED in its body (named `_hv`), which is what
+  makes rewriting the vector underneath it legal.
+  **3.2 ASSEMBLY DONE 2026-08-05** (`Necessity/KadisonDischarge.lean`,
+  census 91, gates green): **`rayMap_dichotomy`** — the vendored
+  `Projectivization.wigner_rigidity` FIRES on our induced ray map, at exactly
+  the interface the order-theoretic bridges produce; and the two branch
+  assemblies `preservesJordan_of_unitary_on_rankOne` /
+  `preservesJordan_of_antiunitary_on_rankOne`, each of which turns
+  "Φ acts as the witness on rank-ones" into `PreservesJordan Φ` via
+  `linearMap_eq_of_eq_on_rankOne` (this is where the spanning lemma earns its
+  keep: it makes the conclusion about Φ ITSELF, not about its action on
+  rank-ones).
+  **REMAINING for M3 — one computation only**: convert
+  `rayMap Φ p = projMap e p` (the dichotomy's output, an equality of RAYS) into
+  the rank-one agreement `Φ (rankOne ψ) = (rankOne ψ).conj U` (the input of the
+  branch assemblies).  Route: `rayMap_rankOne` says
+  `Φ (rankOneP p) = rankOneP (rayMap Φ p)`; substitute the dichotomy, use
+  `projMap_mk` (vendored: `projMap e (mk v) = mk (e v)`) and `rankOneP_mk`, so
+  the task reduces to the matrix identity
+  `rankOne (e ψ) = (rankOne ψ).conj U` for `U` the matrix of the isometry `e`
+  — i.e. `(Uψ)(Uψ)* = U(ψψ*)U*`, an entrywise `vecMulVec`/`mul` computation,
+  plus `Uᴴ U = 1` from `e`'s isometry property (`LinearIsometryEquiv` ⟹ the
+  matrix is in `Matrix.unitaryGroup`; the vendored `unitaryGroupOfIsometry` and
+  `projMap_eq_smul_unitary` in `WignerRigidity.lean` already do this bridging —
+  USE THEM, do not rebuild). Then `ThetaPreservesJordan` is discharged and
+  every M2 conditional becomes unconditional.
   * Then: τ-preservation ⟹ build the ray map `ℙ ℂ (EuclideanSpace ℂ (Fin N))`
     → itself from Φ's action on atoms (bridge 1: `IsAtomProjection` is
     order-theoretic, so Φ permutes rank-ones; `exists_rankOne` extracts the
