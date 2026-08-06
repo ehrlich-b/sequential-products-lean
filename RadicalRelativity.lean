@@ -310,6 +310,14 @@ import RadicalRelativity.Necessity.RayMap
 -- Jordan product.  This is the discharge path for ThetaPreservesJordan.
 import RadicalRelativity.Necessity.KadisonDischarge
 
+-- Globalization ingredient: UNITARY TRANSPORT.  Conjugating an S1-S7 product by
+-- a unitary gives another S1-S7 product with S2 (all nine fields plus S2
+-- transport, since Ad_U is a unital additive order isomorphism).  Since Ad_U
+-- carries the standard frame to U's columns, this makes the per-frame family of
+-- thm:complex's globalization CONCRETE: one t_F per unitary, each from the
+-- single unconditional per-frame theorem.
+import RadicalRelativity.Necessity.ConjTransport
+
 -- Exact paper-facing S1--S7 and product-conclusion statement boundary.  This
 -- freezes the target signature; it does not claim the classification is proved.
 import RadicalRelativity.PaperA.Statement

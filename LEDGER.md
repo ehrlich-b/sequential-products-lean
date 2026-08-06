@@ -1087,8 +1087,28 @@ sorry-free Wigner rigidity — see 3.0.
   separately axiom-audited `Projectivization.wigner_rigidity`.
   Expected final disclosed-import count for the ℂ lane: ONE (Wigner), in place
   of the paper's vIR/Kadison citation.
-  NEXT: the ℂ-lane per-type `mthm:master` statement (Globalization wiring +
-  M1's `twistSequentialProduct` as the sufficiency witness), then M4–M7.
+  **GLOBALIZATION INGREDIENT DONE 2026-08-05** (`Necessity/ConjTransport.lean`,
+  census 92, gates green, zero sorries): `adU U x := x.conj U` with the full
+  transport kit (`adU_unital`, `adU_cancel`/`adU_cancel'` — BOTH directions
+  are needed and they use DIFFERENT unitarity halves, `adU_nonneg_iff`,
+  `adU_le_iff`, `adU_isEffect`, `adU_continuous` via `conjLinear` +
+  findim); **`conjProduct` — all NINE S1–S7 fields verified** for
+  `(P ▷ U).sp a b := Ad_{U*} (P.sp (Ad_U a) (Ad_U b))`;
+  **`conjProduct_firstArgContinuous`** (S2 transports: `ContinuousOn.comp` with
+  the `MapsTo` from `adU_isEffect`, then `Continuous.comp_continuousOn`); and
+  **`conjProduct_perFrame`** — each unitary yields its own per-frame parameter
+  from `complex_perFrame_unconditional`.  Since `Ad_U` carries the standard
+  Jordan frame to `U`'s columns, this is the CONCRETE `t` field of
+  `ComplexGlobalizationData` (previously only hypothetical).
+  TRAPS: `rw [← sub_nonneg (a := ...)]` mis-binds — do the order-iso by two
+  explicit `sub_nonneg` steps instead; the compatibility hypotheses transport
+  by `congrArg (adU U)` + `adU_cancel'` (NOT `adU_cancel` — the composite runs
+  the other way).
+  NEXT for the ℂ lane: `Adj` on unitaries (frames sharing n−2 atoms) plus the
+  two disclosed fields (`connected` = lem:frame-connectivity, `overlap` =
+  cross-coherence) to instantiate `ComplexGlobalizationData` and run
+  `global_t`; then the per-type `mthm:master` statement with M1's
+  `twistSequentialProduct` as the sufficiency witness. Then M4–M7.
   * Then: τ-preservation ⟹ build the ray map `ℙ ℂ (EuclideanSpace ℂ (Fin N))`
     → itself from Φ's action on atoms (bridge 1: `IsAtomProjection` is
     order-theoretic, so Φ permutes rank-ones; `exists_rankOne` extracts the
