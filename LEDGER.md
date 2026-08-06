@@ -965,11 +965,25 @@ sorry-free Wigner rigidity — see 3.0.
   definitionally, and on unit vectors `transProbVec = tprob` since
   normSq is conjugation-invariant; mind the `WithLp.toLp/ofLp` wrapper);
   (c) apply `wigner_rigidity`; then agreement-on-rank-ones ⟹ equality needs
-  **rank-one projections to span H_N(ℂ) over ℝ** (candidate:
-  `Vendor/HermitianMat/Proj.lean`'s `projector_eq_sum_rankOne` plus the
-  spectral decomposition already in the CFC layer), after which the two
-  witnesses above finish `ThetaPreservesJordan` and every M2 conditional
-  becomes unconditional.
+  **rank-one projections to span H_N(ℂ) over ℝ**.  ENTRY POINTS LOCATED AND
+  CHECKED 2026-08-05 (do not re-search):
+   * `Vendor/HermitianMat/Proj.lean` `projector_eq_sum_rankOne` states
+     `(projector S).mat = ∑ i, vecMulVec (S.subtype (b i)) (star (S.subtype (b i)))`
+     over an `OrthonormalBasis ι 𝕜 S` — **syntactically the same shape as our
+     `rankOne`** (`rankOne v = ⟨vecMulVec v (star v), _⟩`), so it plugs in
+     directly for the projection case.
+   * The general Hermitian case: Mathlib's
+     `Matrix.IsHermitian.spectral_theorem` lives in
+     `Mathlib/Analysis/Matrix/Spectrum.lean` and is stated in the
+     **`conjStarAlgAut` form**: `A = conjStarAlgAut 𝕜 _ hA.eigenvectorUnitary
+     (diagonal (RCLike.ofReal ∘ hA.eigenvalues))`, i.e. `A = U D U*`, NOT as a
+     sum of rank-ones.  The remaining work is exactly the bookkeeping identity
+     `U · diagonal λ · U* = ∑ i, λ i • (col i)(col i)*` with
+     `col i = hA.eigenvectorBasis i`; nearby usable facts in the same file:
+     `eigenvalues_eq` (eigenvalues as `RCLike.re (star (eigenvectorBasis i) ⬝ᵥ
+     A *ᵥ eigenvectorBasis i)`) and `conjStarAlgAut_star_eigenvectorUnitary`.
+  After that span lemma, the two witnesses above finish `ThetaPreservesJordan`
+  and every M2 conditional becomes unconditional.
   * Then: τ-preservation ⟹ build the ray map `ℙ ℂ (EuclideanSpace ℂ (Fin N))`
     → itself from Φ's action on atoms (bridge 1: `IsAtomProjection` is
     order-theoretic, so Φ permutes rank-ones; `exists_rankOne` extracts the
