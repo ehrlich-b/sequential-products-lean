@@ -101,6 +101,7 @@ def transposeMap : HermitianMat n ℂ →ₗ[ℝ] HermitianMat n ℂ where
     rw [HermitianMat.mat_smul, Matrix.transpose_smul, HermitianMat.mat_smul]
     rfl
 
+omit [Fintype n] in
 @[simp]
 theorem transposeMap_mat (x : HermitianMat n ℂ) :
     (transposeMap x).mat = x.mat.transpose := rfl
@@ -127,5 +128,122 @@ theorem antiunitaryConj_preservesJordan {U : Matrix n n ℂ} (hU : Uᴴ * U = 1)
   intro x y
   rw [LinearMap.comp_apply, LinearMap.comp_apply, LinearMap.comp_apply,
     transposeMap_preservesJordan x y, unitaryConj_preservesJordan hU]
+
+/-! ## Atom transport: an order-automorphism permutes rank-one projections
+
+The bridge-1 characterization `IsAtomProjection` is stated purely in the order
+(a nonzero projection with no proper nonzero subprojection), so it transports
+along any unital linear order-isomorphism.  Composed with
+`IsAtomProjection.exists_rankOne` this says: `Φ` carries rank-one projections
+to rank-one projections — the input the ray map needs. -/
+
+/-- A unital linear order-isomorphism preserves being a projection: projections
+are exactly the extreme points of the effect interval, which is order data. -/
+theorem isProjection_map (Φ : HermitianMat n ℂ →ₗ[ℝ] HermitianMat n ℂ)
+    (hΦ : ∀ x y : HermitianMat n ℂ, x ≤ y ↔ Φ x ≤ Φ y) (hunital : Φ 1 = 1)
+    (hsurj : Function.Surjective Φ)
+    {p : HermitianMat n ℂ} (hp : p.IsProjection) :
+    (Φ p).IsProjection := by
+  rw [← HermitianMat.mem_extremePoints_iff_isProjection] at hp ⊢
+  obtain ⟨⟨hp0, hp1⟩, hext⟩ := hp
+  refine ⟨⟨?_, ?_⟩, ?_⟩
+  · have h := (hΦ 0 p).mp hp0
+    rwa [map_zero] at h
+  · have h := (hΦ p 1).mp hp1
+    rwa [hunital] at h
+  · intro b hb c hc hmem
+    obtain ⟨b', hb'⟩ := hsurj b
+    obtain ⟨c', hc'⟩ := hsurj c
+    have hinj : Function.Injective Φ := by
+      intro u v huv
+      exact le_antisymm ((hΦ u v).mpr (le_of_eq huv))
+        ((hΦ v u).mpr (le_of_eq huv.symm))
+    have hb0 : b' ∈ {x : HermitianMat n ℂ | 0 ≤ x ∧ x ≤ 1} := by
+      constructor
+      · refine (hΦ 0 b').mpr ?_
+        rw [map_zero, hb']; exact hb.1
+      · refine (hΦ b' 1).mpr ?_
+        rw [hunital, hb']; exact hb.2
+    have hc0 : c' ∈ {x : HermitianMat n ℂ | 0 ≤ x ∧ x ≤ 1} := by
+      constructor
+      · refine (hΦ 0 c').mpr ?_
+        rw [map_zero, hc']; exact hc.1
+      · refine (hΦ c' 1).mpr ?_
+        rw [hunital, hc']; exact hc.2
+    have hpmem : p ∈ openSegment ℝ b' c' := by
+      obtain ⟨a₁, a₂, ha₁, ha₂, hsum, hpt⟩ := hmem
+      refine ⟨a₁, a₂, ha₁, ha₂, hsum, hinj ?_⟩
+      rw [map_add, map_smul, map_smul, hb', hc']
+      exact hpt
+    have he1 := hext hb0 hc0 hpmem
+    rw [← hb', he1]
+
+/-- **Atom transport**: a unital linear order-automorphism carries atoms of the
+projection order to atoms.  Everything in `IsAtomProjection` is order data. -/
+theorem isAtomProjection_map (Φ : HermitianMat n ℂ →ₗ[ℝ] HermitianMat n ℂ)
+    (hΦ : ∀ x y : HermitianMat n ℂ, x ≤ y ↔ Φ x ≤ Φ y) (hunital : Φ 1 = 1)
+    (hsurj : Function.Surjective Φ)
+    {p : HermitianMat n ℂ} (hp : HermitianMat.IsAtomProjection p) :
+    HermitianMat.IsAtomProjection (Φ p) := by
+  obtain ⟨hproj, hne, hatom⟩ := hp
+  have hinj : Function.Injective Φ := by
+    intro u v huv
+    exact le_antisymm ((hΦ u v).mpr (le_of_eq huv)) ((hΦ v u).mpr (le_of_eq huv.symm))
+  refine ⟨isProjection_map Φ hΦ hunital hsurj hproj, ?_, ?_⟩
+  · intro h
+    exact hne (hinj (by rw [h, map_zero]))
+  · intro q hq hle
+    obtain ⟨q', hq'⟩ := hsurj q
+    have hqproj' : q'.IsProjection := by
+      -- pull the projection property back along the inverse order-iso
+      by_cases htriv : q' = 0
+      · rw [htriv]
+        show (0 : HermitianMat n ℂ) ^ 2 = 0
+        simp
+      · -- `Φ` is injective and order-reflecting, so the extreme-point property
+        -- transports backwards exactly as it does forwards
+        rw [← HermitianMat.mem_extremePoints_iff_isProjection]
+        have hqe : Φ q' ∈ Set.extremePoints ℝ {x : HermitianMat n ℂ | 0 ≤ x ∧ x ≤ 1} := by
+          rw [HermitianMat.mem_extremePoints_iff_isProjection, hq']
+          exact hq
+        obtain ⟨⟨h0, h1⟩, hext⟩ := hqe
+        refine ⟨⟨(hΦ 0 q').mpr (by rwa [map_zero]), (hΦ q' 1).mpr (by rwa [hunital])⟩, ?_⟩
+        intro b hb c hc hmem
+        have hbmem : Φ b ∈ {x : HermitianMat n ℂ | 0 ≤ x ∧ x ≤ 1} := by
+          constructor
+          · have := (hΦ 0 b).mp hb.1
+            rwa [map_zero] at this
+          · have := (hΦ b 1).mp hb.2
+            rwa [hunital] at this
+        have hcmem : Φ c ∈ {x : HermitianMat n ℂ | 0 ≤ x ∧ x ≤ 1} := by
+          constructor
+          · have := (hΦ 0 c).mp hc.1
+            rwa [map_zero] at this
+          · have := (hΦ c 1).mp hc.2
+            rwa [hunital] at this
+        have hmem' : Φ q' ∈ openSegment ℝ (Φ b) (Φ c) := by
+          obtain ⟨a₁, a₂, ha₁, ha₂, hsum, hpt⟩ := hmem
+          refine ⟨a₁, a₂, ha₁, ha₂, hsum, ?_⟩
+          rw [← map_smul, ← map_smul, ← map_add, hpt]
+        have := hext hbmem hcmem hmem'
+        exact hinj this
+    have hle' : q' ≤ p := (hΦ q' p).mpr (by rw [hq']; exact hle)
+    rcases hatom q' hqproj' hle' with h0 | hp'
+    · left
+      rw [← hq', h0, map_zero]
+    · right
+      rw [← hq', hp']
+
+/-- **Rank-one transport (M3 (a))**: a unital linear order-automorphism carries
+each rank-one projection to a rank-one projection, with an explicit unit vector.
+This is the input of the ray map. -/
+theorem exists_rankOne_map (Φ : HermitianMat n ℂ →ₗ[ℝ] HermitianMat n ℂ)
+    (hΦ : ∀ x y : HermitianMat n ℂ, x ≤ y ↔ Φ x ≤ Φ y) (hunital : Φ 1 = 1)
+    (hsurj : Function.Surjective Φ)
+    {ψ : n → ℂ} (hψ : star ψ ⬝ᵥ ψ = 1) :
+    ∃ ψ' : n → ℂ, star ψ' ⬝ᵥ ψ' = 1 ∧ Φ (HermitianMat.rankOne ψ)
+      = HermitianMat.rankOne ψ' :=
+  (isAtomProjection_map Φ hΦ hunital hsurj
+    (HermitianMat.rankOne_isAtom hψ)).exists_rankOne
 
 end Necessity

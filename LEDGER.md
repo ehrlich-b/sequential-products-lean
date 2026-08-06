@@ -945,10 +945,31 @@ sorry-free Wigner rigidity — see 3.0.
   it closes by `add_comm` on the two transposed terms); and
   **`antiunitaryConj_preservesJordan`** for the composite x ↦ U xᵗ U*. So BOTH
   branches of the Wigner dichotomy land on Jordan automorphisms.
-  REMAINING for M3: only the wiring (a)-(c) — the ray map's well-definedness
-  and the `transProbVec`-vs-`tprob` identification, then
-  `wigner_rigidity` + these two witnesses discharge `ThetaPreservesJordan`
-  and every M2 conditional becomes unconditional.
+  **(a) DONE 2026-08-05** (same file): `isProjection_map` — a unital linear
+  order-automorphism preserves being a projection, via
+  `mem_extremePoints_iff_isProjection` (projections ARE the extreme points, so
+  this is order data; the segment is pulled back through surjectivity +
+  injectivity-from-order-reflection); `isAtomProjection_map` — atoms go to
+  atoms (the backward direction of the subprojection clause needs the extreme
+  property transported the OTHER way, done inline); and
+  **`exists_rankOne_map` — Φ carries each rank-one projection to a rank-one
+  projection with an explicit unit vector**, i.e. bridge 1 composed with atom
+  transport. TRAP: in this Mathlib, `Set.extremePoints`'s condition concludes
+  `x₁ = x` ONLY (not the pair `x₁ = x ∧ x₂ = x`) — an `obtain ⟨he1, he2⟩`
+  against it fails with a confusing "Eq.refl has no explicit fields" error.
+  REMAINING for M3: (b) the ray map on `ℙ ℂ (EuclideanSpace ℂ (Fin N))` built
+  from `exists_rankOne_map` (needs a choice function + representative
+  independence, the latter from `rankOne_smul` since rescaling a vector does
+  not change its rank-one projection) and the `transProbVec`-vs-`tprob`
+  identification (`PiLp.inner_apply` makes `inner ℂ ψ φ = star ψ ⬝ᵥ φ`
+  definitionally, and on unit vectors `transProbVec = tprob` since
+  normSq is conjugation-invariant; mind the `WithLp.toLp/ofLp` wrapper);
+  (c) apply `wigner_rigidity`; then agreement-on-rank-ones ⟹ equality needs
+  **rank-one projections to span H_N(ℂ) over ℝ** (candidate:
+  `Vendor/HermitianMat/Proj.lean`'s `projector_eq_sum_rankOne` plus the
+  spectral decomposition already in the CFC layer), after which the two
+  witnesses above finish `ThetaPreservesJordan` and every M2 conditional
+  becomes unconditional.
   * Then: τ-preservation ⟹ build the ray map `ℙ ℂ (EuclideanSpace ℂ (Fin N))`
     → itself from Φ's action on atoms (bridge 1: `IsAtomProjection` is
     order-theoretic, so Φ permutes rank-ones; `exists_rankOne` extracts the
