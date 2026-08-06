@@ -326,6 +326,14 @@ import RadicalRelativity.Necessity.ConjTransport
 -- linearity is forced, not chosen.
 import RadicalRelativity.RankTwo.Lifting
 
+-- M5 (LEDGER 5.2): RP^2 as the rank-two parameter carrier.  The planned
+-- hand-built S^2/+- orbit quotient is UNNECESSARY: the vendored Projectivization
+-- topology island is stated for [RCLike K], which covers K = R, so
+-- RP^2 := P R (EuclideanSpace R (Fin 3)) is compact Hausdorff for free, and the
+-- antipodal identification comes from the projective quotient rather than being
+-- constructed.  QubitModuli := C(RP^2, R) is cor:qubit-classification's object.
+import RadicalRelativity.RankTwo.RealProjective
+
 -- Exact paper-facing S1--S7 and product-conclusion statement boundary.  This
 -- freezes the target signature; it does not claim the classification is proved.
 import RadicalRelativity.PaperA.Statement
