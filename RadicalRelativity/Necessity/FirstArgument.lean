@@ -11,7 +11,7 @@ set_option linter.style.longLine false
 # First-argument homogeneity of an unknown sequential product
 (campaign LEDGER 2.1b: paper `lem:homog`(ii), vdW Prop 3.9 adapted)
 
-For an arbitrary `P : SequentialProductOn (HermitianMat n ℂ)` satisfying S2
+For an arbitrary `P : SequentialProductOn (HermitianMat n 𝕜)` satisfying S2
 (`P.FirstArgContinuous`), this file proves `P.sp (t • a) b = t • P.sp a b` for
 `t ∈ [0,1]` and effects `a, b` — the paper's `lem:homog`(ii).
 
@@ -43,11 +43,12 @@ open OrderUnitSpace
 namespace Necessity
 
 variable {n : Type*} [Fintype n] [DecidableEq n]
-variable (P : SequentialProductOn (HermitianMat n ℂ))
+variable {𝕜 : Type*} [RCLike 𝕜]
+variable (P : SequentialProductOn (HermitianMat n 𝕜))
 
 /-! ## Step 1: compatibility propagates to natural multiples (iterated S6b) -/
 
-theorem sp_comm_nat_smul {x y : HermitianMat n ℂ} (hx : IsEffect x) (hy : IsEffect y)
+theorem sp_comm_nat_smul {x y : HermitianMat n 𝕜} (hx : IsEffect x) (hy : IsEffect y)
     (hcomm : P.sp y x = P.sp x y) :
     ∀ j : ℕ, (j : ℝ) • x ≤ 1 → P.sp y ((j : ℝ) • x) = P.sp ((j : ℝ) • x) y := by
   intro j
@@ -83,12 +84,12 @@ private theorem rat_decomp {q : ℚ} (hq0 : 0 ≤ q) (hq1 : (q : ℝ) ≤ 1) :
   · rw [show ((q.num.toNat : ℕ) : ℝ) = ((q.num : ℤ) : ℝ) from by
       exact_mod_cast Int.toNat_of_nonneg (Rat.num_nonneg.mpr hq0), Rat.cast_def]
 
-theorem sp_comm_rat_smul_self {a : HermitianMat n ℂ} (ha : IsEffect a)
+theorem sp_comm_rat_smul_self {a : HermitianMat n 𝕜} (ha : IsEffect a)
     {q : ℚ} (hq0 : 0 ≤ q) (hq1 : (q : ℝ) ≤ 1) :
     P.sp a ((q : ℝ) • a) = P.sp ((q : ℝ) • a) a := by
   obtain ⟨p, k, hpk, hk, hq⟩ := rat_decomp hq0 hq1
   have hk0 : (0 : ℝ) < (k : ℝ) := by exact_mod_cast hk
-  set x : HermitianMat n ℂ := ((k : ℝ))⁻¹ • a with hxdef
+  set x : HermitianMat n 𝕜 := ((k : ℝ))⁻¹ • a with hxdef
   have hx0 : 0 ≤ x := smul_nonneg (by positivity) ha.1
   have hkx : (k : ℝ) • x = a := by
     rw [hxdef, smul_smul, mul_inv_cancel₀ (ne_of_gt hk0), one_smul]
@@ -119,7 +120,7 @@ theorem sp_comm_rat_smul_self {a : HermitianMat n ℂ} (ha : IsEffect a)
 
 /-! ## Step 3: an effect is compatible with rational multiples of the unit -/
 
-theorem sp_comm_rat_one_smul {a : HermitianMat n ℂ} (ha : IsEffect a)
+theorem sp_comm_rat_one_smul {a : HermitianMat n 𝕜} (ha : IsEffect a)
     {q : ℚ} (hq0 : 0 ≤ q) (hq1 : (q : ℝ) ≤ 1) :
     P.sp a ((q : ℝ) • 1) = P.sp ((q : ℝ) • 1) a := by
   have hq0' : (0 : ℝ) ≤ (q : ℝ) := by exact_mod_cast hq0
@@ -138,13 +139,13 @@ theorem sp_comm_rat_one_smul {a : HermitianMat n ℂ} (ha : IsEffect a)
   have hqa : IsEffect ((q : ℝ) • a) :=
     ⟨smul_nonneg hq0' ha.1,
       le_trans (smul_le_smul_of_nonneg_right hq1 ha.1) (by simpa using ha.2)⟩
-  have hsum : (q : ℝ) • a + (q : ℝ) • (1 - a) = (q : ℝ) • (1 : HermitianMat n ℂ) := by
+  have hsum : (q : ℝ) • a + (q : ℝ) • (1 - a) = (q : ℝ) • (1 : HermitianMat n 𝕜) := by
     rw [← smul_add]
     congr 1
     abel
   have hle : (q : ℝ) • a + (q : ℝ) • (1 - a) ≤ 1 := by
     rw [hsum]
-    calc (q : ℝ) • (1 : HermitianMat n ℂ) ≤ (1 : ℝ) • 1 :=
+    calc (q : ℝ) • (1 : HermitianMat n 𝕜) ≤ (1 : ℝ) • 1 :=
           smul_le_smul_of_nonneg_right hq1 zero_le_one
       _ = 1 := one_smul _ _
   have h6b := P.compatible_add ha hqa hqac hle h1 h3.symm
@@ -153,12 +154,12 @@ theorem sp_comm_rat_one_smul {a : HermitianMat n ℂ} (ha : IsEffect a)
 
 /-! ## Step 4: the rational value `(q•1) ◦' a = q • a` -/
 
-theorem sp_rat_one_smul_left {a : HermitianMat n ℂ} (ha : IsEffect a)
+theorem sp_rat_one_smul_left {a : HermitianMat n 𝕜} (ha : IsEffect a)
     {q : ℚ} (hq0 : 0 ≤ q) (hq1 : (q : ℝ) ≤ 1) :
     P.sp ((q : ℝ) • 1) a = (q : ℝ) • a := by
   have hq0' : (0 : ℝ) ≤ (q : ℝ) := by exact_mod_cast hq0
-  have h1eff : IsEffect (1 : HermitianMat n ℂ) := isEffect_unit
-  have hu : P.sp a (1 : HermitianMat n ℂ) = a := P.sp_unit_right ha
+  have h1eff : IsEffect (1 : HermitianMat n 𝕜) := isEffect_unit
+  have hu : P.sp a (1 : HermitianMat n 𝕜) = a := P.sp_unit_right ha
   rw [← sp_comm_rat_one_smul P ha hq0 hq1,
     sp_smul_of_mem_unitInterval P ha h1eff hq0' hq1, hu]
 
@@ -167,7 +168,7 @@ theorem sp_rat_one_smul_left {a : HermitianMat n ℂ} (ha : IsEffect a)
 /-- **The single S2 use in `lem:homog`**: real-scalar multiples of the unit act by
 scaling in the FIRST argument, by rational approximation and first-argument norm
 continuity. -/
-theorem sp_smul_one_left (hS2 : P.FirstArgContinuous) {b : HermitianMat n ℂ}
+theorem sp_smul_one_left (hS2 : P.FirstArgContinuous) {b : HermitianMat n 𝕜}
     (hb : IsEffect b) {t : ℝ} (ht0 : 0 ≤ t) (ht1 : t ≤ 1) :
     P.sp (t • 1) b = t • b := by
   rcases eq_or_lt_of_le ht0 with h0 | h0pos
@@ -204,20 +205,20 @@ theorem sp_smul_one_left (hS2 : P.FirstArgContinuous) {b : HermitianMat n ℂ}
     · intro i
       exact le_of_lt (hqu i)
   -- membership and convergence in the effect set
-  have hmem : ∀ i : ℕ, ((q i : ℝ) • (1 : HermitianMat n ℂ)) ∈
-      {x : HermitianMat n ℂ | IsEffect x} := by
+  have hmem : ∀ i : ℕ, ((q i : ℝ) • (1 : HermitianMat n 𝕜)) ∈
+      {x : HermitianMat n 𝕜 | IsEffect x} := by
     intro i
     refine ⟨smul_nonneg (by exact_mod_cast hq0 i) zero_le_one, ?_⟩
-    calc (q i : ℝ) • (1 : HermitianMat n ℂ) ≤ (1 : ℝ) • 1 :=
+    calc (q i : ℝ) • (1 : HermitianMat n 𝕜) ≤ (1 : ℝ) • 1 :=
           smul_le_smul_of_nonneg_right (hqle1 i) zero_le_one
       _ = 1 := one_smul _ _
-  have hteff : IsEffect (t • (1 : HermitianMat n ℂ)) := by
+  have hteff : IsEffect (t • (1 : HermitianMat n 𝕜)) := by
     refine ⟨smul_nonneg ht0 zero_le_one, ?_⟩
-    calc t • (1 : HermitianMat n ℂ) ≤ (1 : ℝ) • 1 :=
+    calc t • (1 : HermitianMat n 𝕜) ≤ (1 : ℝ) • 1 :=
           smul_le_smul_of_nonneg_right ht1 zero_le_one
       _ = 1 := one_smul _ _
-  have hsmultend : Filter.Tendsto (fun i : ℕ => (q i : ℝ) • (1 : HermitianMat n ℂ))
-      Filter.atTop (nhds (t • (1 : HermitianMat n ℂ))) :=
+  have hsmultend : Filter.Tendsto (fun i : ℕ => (q i : ℝ) • (1 : HermitianMat n 𝕜))
+      Filter.atTop (nhds (t • (1 : HermitianMat n 𝕜))) :=
     Filter.Tendsto.smul htend tendsto_const_nhds
   -- limit through S2
   have hlim1 : Filter.Tendsto (fun i : ℕ => P.sp ((q i : ℝ) • 1) b) Filter.atTop
@@ -238,23 +239,23 @@ theorem sp_smul_one_left (hS2 : P.FirstArgContinuous) {b : HermitianMat n ℂ}
 /-! ## Step 6: `lem:homog`(ii) -/
 
 /-- Every effect is compatible with real multiples of the unit. -/
-theorem sp_comm_smul_one (hS2 : P.FirstArgContinuous) {a : HermitianMat n ℂ}
+theorem sp_comm_smul_one (hS2 : P.FirstArgContinuous) {a : HermitianMat n 𝕜}
     (ha : IsEffect a) {t : ℝ} (ht0 : 0 ≤ t) (ht1 : t ≤ 1) :
     P.sp a (t • 1) = P.sp (t • 1) a := by
-  have h1eff : IsEffect (1 : HermitianMat n ℂ) := isEffect_unit
-  have hu : P.sp a (1 : HermitianMat n ℂ) = a := P.sp_unit_right ha
+  have h1eff : IsEffect (1 : HermitianMat n 𝕜) := isEffect_unit
+  have hu : P.sp a (1 : HermitianMat n 𝕜) = a := P.sp_unit_right ha
   rw [sp_smul_one_left P hS2 ha ht0 ht1,
     sp_smul_of_mem_unitInterval P ha h1eff ht0 ht1, hu]
 
 /-- **First-argument homogeneity** (paper `lem:homog`(ii), vdW Prop 3.9):
 `(t•a) ◦' b = t • (a ◦' b)` for `t ∈ [0,1]` and effects `a, b`.  S5 through the
 compatibility `a |' t•1`. -/
-theorem sp_smul_left (hS2 : P.FirstArgContinuous) {a b : HermitianMat n ℂ}
+theorem sp_smul_left (hS2 : P.FirstArgContinuous) {a b : HermitianMat n 𝕜}
     (ha : IsEffect a) (hb : IsEffect b) {t : ℝ} (ht0 : 0 ≤ t) (ht1 : t ≤ 1) :
     P.sp (t • a) b = t • P.sp a b := by
-  have ht1eff : IsEffect (t • (1 : HermitianMat n ℂ)) := by
+  have ht1eff : IsEffect (t • (1 : HermitianMat n 𝕜)) := by
     refine ⟨smul_nonneg ht0 zero_le_one, ?_⟩
-    calc t • (1 : HermitianMat n ℂ) ≤ (1 : ℝ) • 1 :=
+    calc t • (1 : HermitianMat n 𝕜) ≤ (1 : ℝ) • 1 :=
           smul_le_smul_of_nonneg_right ht1 zero_le_one
       _ = 1 := one_smul _ _
   have hcomp : P.sp a (t • 1) = P.sp (t • 1) a := sp_comm_smul_one P hS2 ha ht0 ht1
@@ -263,8 +264,8 @@ theorem sp_smul_left (hS2 : P.FirstArgContinuous) {a b : HermitianMat n ℂ}
   rw [sp_smul_one_left P hS2 hb ht0 ht1,
     sp_smul_of_mem_unitInterval P ha hb ht0 ht1] at hassoc
   rw [show P.sp a (t • 1) = t • a from by
-    have h1eff : IsEffect (1 : HermitianMat n ℂ) := isEffect_unit
-    have hu : P.sp a (1 : HermitianMat n ℂ) = a := P.sp_unit_right ha
+    have h1eff : IsEffect (1 : HermitianMat n 𝕜) := isEffect_unit
+    have hu : P.sp a (1 : HermitianMat n 𝕜) = a := P.sp_unit_right ha
     rw [sp_smul_of_mem_unitInterval P ha h1eff ht0 ht1, hu]] at hassoc
   exact hassoc.symm
 

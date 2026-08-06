@@ -13,13 +13,13 @@ set_option linter.style.longLine false
 # The left multiplication of an unknown sequential product is linear
 (campaign LEDGER 2.1, first unit: paper `lem:homog`(i))
 
-Throughout, `P` is an **arbitrary** `SequentialProductOn (HermitianMat n ℂ)` — the
+Throughout, `P` is an **arbitrary** `SequentialProductOn (HermitianMat n 𝕜)` — the
 unknown product of the necessity direction over the carrier's FIXED Loewner
 order-unit structure (see the design note in `SequentialProduct.lean`: an
 instance-quantified formulation cannot see the carrier's order).  This file proves
 the paper's `lem:homog`(i) matrix-concretely: for every effect `a`, the map
 `b ↦ P.sp a b` extends uniquely from the effect interval to a positive linear map
-`seqLeftMul P a : H_n(ℂ) →ₗ[ℝ] H_n(ℂ)`.
+`seqLeftMul P a : H_n(𝕜) →ₗ[ℝ] H_n(𝕜)`.
 
 The ladder (only S1, its derived monotonicity, effect closure, and the carrier's
 full Archimedean property are used — no S2, matching the paper's hypothesis
@@ -51,11 +51,12 @@ open OrderUnitSpace
 namespace Necessity
 
 variable {n : Type*} [Fintype n] [DecidableEq n]
-variable (P : SequentialProductOn (HermitianMat n ℂ))
+variable {𝕜 : Type*} [RCLike 𝕜]
+variable (P : SequentialProductOn (HermitianMat n 𝕜))
 
 /-! ## Step 1: ℕ- and ℚ-homogeneity on effects, from finite additivity -/
 
-theorem sp_nat_smul {a c : HermitianMat n ℂ} (ha : IsEffect a) (hc : IsEffect c) :
+theorem sp_nat_smul {a c : HermitianMat n 𝕜} (ha : IsEffect a) (hc : IsEffect c) :
     ∀ j : ℕ, (j : ℝ) • c ≤ 1 →
       P.sp a ((j : ℝ) • c) = (j : ℝ) • P.sp a c := by
   intro j
@@ -76,11 +77,11 @@ theorem sp_nat_smul {a c : HermitianMat n ℂ} (ha : IsEffect a) (hc : IsEffect 
     push_cast
     rw [add_smul, one_smul]
 
-theorem sp_div_nat_smul {a b : HermitianMat n ℂ} (ha : IsEffect a) (hb : IsEffect b)
+theorem sp_div_nat_smul {a b : HermitianMat n 𝕜} (ha : IsEffect a) (hb : IsEffect b)
     {p k : ℕ} (hpk : p ≤ k) (hk : 0 < k) :
     P.sp a (((p : ℝ) / (k : ℝ)) • b) = ((p : ℝ) / (k : ℝ)) • P.sp a b := by
   have hk0 : (0 : ℝ) < (k : ℝ) := by exact_mod_cast hk
-  set c : HermitianMat n ℂ := ((k : ℝ))⁻¹ • b with hcdef
+  set c : HermitianMat n 𝕜 := ((k : ℝ))⁻¹ • b with hcdef
   have hc0 : 0 ≤ c := smul_nonneg (by positivity) hb.1
   have hkc : (k : ℝ) • c = b := by
     rw [hcdef, smul_smul, mul_inv_cancel₀ (ne_of_gt hk0), one_smul]
@@ -106,7 +107,7 @@ theorem sp_div_nat_smul {a b : HermitianMat n ℂ} (ha : IsEffect a) (hb : IsEff
   congr 1
   field_simp
 
-theorem sp_rat_smul {a b : HermitianMat n ℂ} (ha : IsEffect a) (hb : IsEffect b)
+theorem sp_rat_smul {a b : HermitianMat n 𝕜} (ha : IsEffect a) (hb : IsEffect b)
     {q : ℚ} (hq0 : 0 ≤ q) (hq1 : (q : ℝ) ≤ 1) :
     P.sp a ((q : ℝ) • b) = (q : ℝ) • P.sp a b := by
   have hnum : ((q.num.toNat : ℕ) : ℝ) = ((q.num : ℤ) : ℝ) := by
@@ -127,7 +128,7 @@ theorem sp_rat_smul {a b : HermitianMat n ℂ} (ha : IsEffect a) (hb : IsEffect 
 /-- **Real scalar homogeneity in the second argument** for `t ∈ [0,1]`
 (paper `lem:homog`, effect level).  Uses only S1-derived structure and the
 carrier's full Archimedean property. -/
-theorem sp_smul_of_mem_unitInterval {a b : HermitianMat n ℂ}
+theorem sp_smul_of_mem_unitInterval {a b : HermitianMat n 𝕜}
     (ha : IsEffect a) (hb : IsEffect b) {t : ℝ} (ht0 : 0 ≤ t) (ht1 : t ≤ 1) :
     P.sp a (t • b) = t • P.sp a b := by
   set y := P.sp a b with hy
@@ -170,7 +171,7 @@ theorem sp_smul_of_mem_unitInterval {a b : HermitianMat n ℂ}
     · rw [hz, ← ht]
       simp only [zero_smul]
       rw [P.sp_zero_right ha]
-      simpa using smul_nonneg (le_of_lt hε) (zero_le_one (α := HermitianMat n ℂ))
+      simpa using smul_nonneg (le_of_lt hε) (zero_le_one (α := HermitianMat n 𝕜))
     · obtain ⟨q, hq1, hq2⟩ := exists_rat_btwn (sub_lt_self t (lt_min htpos hε))
       have hq0 : (0 : ℚ) ≤ q := by
         have h0 : (0 : ℝ) < (q : ℝ) := by
@@ -201,22 +202,22 @@ theorem sp_smul_of_mem_unitInterval {a b : HermitianMat n ℂ}
 /-! ## Step 3: positive-cone extension in the second argument -/
 
 /-- The extension of `b ↦ P.sp a b` to the positive cone, canonically normalized. -/
-def spPos (a x : HermitianMat n ℂ) : HermitianMat n ℂ :=
+def spPos (a x : HermitianMat n 𝕜) : HermitianMat n 𝕜 :=
   (‖x‖ + 1) • P.sp a ((‖x‖ + 1)⁻¹ • x)
 
-theorem norm_smul_inv_effect {x : HermitianMat n ℂ} (hx : 0 ≤ x) {μ : ℝ}
+theorem norm_smul_inv_effect {x : HermitianMat n 𝕜} (hx : 0 ≤ x) {μ : ℝ}
     (hμ : 0 < μ) (hxμ : x ≤ μ • 1) : IsEffect (μ⁻¹ • x) := by
   refine ⟨smul_nonneg (by positivity) hx, ?_⟩
   calc μ⁻¹ • x ≤ μ⁻¹ • (μ • 1) := smul_le_smul_of_nonneg_left hxμ (by positivity)
     _ = 1 := by rw [smul_smul, inv_mul_cancel₀ (ne_of_gt hμ), one_smul]
 
-theorem le_norm_add_one_smul_one (x : HermitianMat n ℂ) : x ≤ (‖x‖ + 1) • 1 :=
+theorem le_norm_add_one_smul_one (x : HermitianMat n 𝕜) : x ≤ (‖x‖ + 1) • 1 :=
   le_trans (HermitianMat.le_norm_smul_one x)
     (smul_le_smul_of_nonneg_right (by linarith [norm_nonneg x]) zero_le_one)
 
 /-- The normalization is irrelevant: any admissible scale computes `spPos`. -/
-theorem spPos_eq_smul {a : HermitianMat n ℂ} (ha : IsEffect a)
-    {x : HermitianMat n ℂ} (hx : 0 ≤ x) {μ : ℝ} (hμ : 0 < μ) (hxμ : x ≤ μ • 1) :
+theorem spPos_eq_smul {a : HermitianMat n 𝕜} (ha : IsEffect a)
+    {x : HermitianMat n 𝕜} (hx : 0 ≤ x) {μ : ℝ} (hμ : 0 < μ) (hxμ : x ≤ μ • 1) :
     spPos P a x = μ • P.sp a (μ⁻¹ • x) := by
   have key : ∀ ν ν' : ℝ, 0 < ν → ν ≤ ν' → x ≤ ν • 1 →
       ν' • P.sp a (ν'⁻¹ • x) = ν • P.sp a (ν⁻¹ • x) := by
@@ -238,23 +239,23 @@ theorem spPos_eq_smul {a : HermitianMat n ℂ} (ha : IsEffect a)
   · rw [spPos, key μ (‖x‖ + 1) hμ h hxμ]
   · rw [spPos, key (‖x‖ + 1) μ hcan h hx_can]
 
-theorem spPos_of_effect {a b : HermitianMat n ℂ} (ha : IsEffect a) (hb : IsEffect b) :
+theorem spPos_of_effect {a b : HermitianMat n 𝕜} (ha : IsEffect a) (hb : IsEffect b) :
     spPos P a b = P.sp a b := by
   rw [spPos_eq_smul P ha hb.1 one_pos (by simpa using hb.2), inv_one, one_smul, one_smul]
 
-theorem spPos_zero {a : HermitianMat n ℂ} (ha : IsEffect a) : spPos P a 0 = 0 := by
+theorem spPos_zero {a : HermitianMat n 𝕜} (ha : IsEffect a) : spPos P a 0 = 0 := by
   rw [spPos_eq_smul P ha le_rfl one_pos (by simp), smul_zero, P.sp_zero_right ha, smul_zero]
 
-theorem spPos_nonneg {a : HermitianMat n ℂ} (ha : IsEffect a)
-    {x : HermitianMat n ℂ} (hx : 0 ≤ x) : 0 ≤ spPos P a x := by
+theorem spPos_nonneg {a : HermitianMat n 𝕜} (ha : IsEffect a)
+    {x : HermitianMat n 𝕜} (hx : 0 ≤ x) : 0 ≤ spPos P a x := by
   rw [spPos]
   have heff := norm_smul_inv_effect hx (μ := ‖x‖ + 1) (by positivity)
     (le_norm_add_one_smul_one x)
   exact smul_nonneg (by positivity) (P.sp_nonneg ha heff)
 
 /-- Positive homogeneity of the cone extension. -/
-theorem spPos_smul {a : HermitianMat n ℂ} (ha : IsEffect a)
-    {x : HermitianMat n ℂ} (hx : 0 ≤ x) {t : ℝ} (ht : 0 < t) :
+theorem spPos_smul {a : HermitianMat n 𝕜} (ha : IsEffect a)
+    {x : HermitianMat n 𝕜} (hx : 0 ≤ x) {t : ℝ} (ht : 0 < t) :
     spPos P a (t • x) = t • spPos P a x := by
   have hcan : (0 : ℝ) < ‖x‖ + 1 := by positivity
   have hxc : x ≤ (‖x‖ + 1) • 1 := le_norm_add_one_smul_one x
@@ -270,8 +271,8 @@ theorem spPos_smul {a : HermitianMat n ℂ} (ha : IsEffect a)
   rw [hcollapse, mul_smul]
 
 /-- Additivity of the cone extension. -/
-theorem spPos_add {a : HermitianMat n ℂ} (ha : IsEffect a)
-    {x y : HermitianMat n ℂ} (hx : 0 ≤ x) (hy : 0 ≤ y) :
+theorem spPos_add {a : HermitianMat n 𝕜} (ha : IsEffect a)
+    {x y : HermitianMat n 𝕜} (hx : 0 ≤ x) (hy : 0 ≤ y) :
     spPos P a (x + y) = spPos P a x + spPos P a y := by
   set μ : ℝ := ‖x‖ + ‖y‖ + 1 with hμdef
   have hμ : (0 : ℝ) < μ := by positivity
@@ -300,8 +301,8 @@ theorem spPos_add {a : HermitianMat n ℂ} (ha : IsEffect a)
 
 /-- Well-definedness over difference representations: if `u - v = u' - v'` with all
 four in the cone, the extension values agree as differences. -/
-theorem spPos_sub_congr {a : HermitianMat n ℂ} (ha : IsEffect a)
-    {u v u' v' : HermitianMat n ℂ} (hu : 0 ≤ u) (hv : 0 ≤ v) (hu' : 0 ≤ u') (hv' : 0 ≤ v')
+theorem spPos_sub_congr {a : HermitianMat n 𝕜} (ha : IsEffect a)
+    {u v u' v' : HermitianMat n 𝕜} (hu : 0 ≤ u) (hv : 0 ≤ v) (hu' : 0 ≤ u') (hv' : 0 ≤ v')
     (h : u - v = u' - v') :
     spPos P a u - spPos P a v = spPos P a u' - spPos P a v' := by
   have hsum : u + v' = u' + v := sub_eq_sub_iff_add_eq_add.mp h
@@ -311,9 +312,9 @@ theorem spPos_sub_congr {a : HermitianMat n ℂ} (ha : IsEffect a)
 
 /-- **The left multiplication of the unknown product, as a linear map**
 (paper `lem:homog`(i), matrix-concrete): the unique positive linear extension of
-`b ↦ P.sp a b` from the effect interval to all of `H_n(ℂ)`. -/
-def seqLeftMul (a : HermitianMat n ℂ) (ha : IsEffect a) :
-    HermitianMat n ℂ →ₗ[ℝ] HermitianMat n ℂ where
+`b ↦ P.sp a b` from the effect interval to all of `H_n(𝕜)`. -/
+def seqLeftMul (a : HermitianMat n 𝕜) (ha : IsEffect a) :
+    HermitianMat n 𝕜 →ₗ[ℝ] HermitianMat n 𝕜 where
   toFun x := spPos P a x⁺ - spPos P a x⁻
   map_add' x y := by
     have hrep : (x + y)⁺ - (x + y)⁻ = (x⁺ + y⁺) - (x⁻ + y⁻) := by
@@ -343,8 +344,8 @@ def seqLeftMul (a : HermitianMat n ℂ) (ha : IsEffect a) :
       abel
     · subst htzero
       simp only [zero_smul]
-      have h0 : (0 : HermitianMat n ℂ)⁺ - (0 : HermitianMat n ℂ)⁻ =
-          (0 : HermitianMat n ℂ) - 0 := by
+      have h0 : (0 : HermitianMat n 𝕜)⁺ - (0 : HermitianMat n 𝕜)⁻ =
+          (0 : HermitianMat n 𝕜) - 0 := by
         rw [HermitianMat.posPart_add_negPart]
         simp
       rw [spPos_sub_congr P ha (HermitianMat.posPart_nonneg _) (HermitianMat.negPart_nonneg _)
@@ -359,35 +360,35 @@ def seqLeftMul (a : HermitianMat n ℂ) (ha : IsEffect a) :
         spPos_smul P ha (HermitianMat.negPart_nonneg _) htpos, smul_sub]
 
 /-- `seqLeftMul` agrees with the cone extension on the positive cone. -/
-theorem seqLeftMul_apply_nonneg {a : HermitianMat n ℂ} (ha : IsEffect a)
-    {x : HermitianMat n ℂ} (hx : 0 ≤ x) : seqLeftMul P a ha x = spPos P a x := by
+theorem seqLeftMul_apply_nonneg {a : HermitianMat n 𝕜} (ha : IsEffect a)
+    {x : HermitianMat n 𝕜} (hx : 0 ≤ x) : seqLeftMul P a ha x = spPos P a x := by
   show spPos P a x⁺ - spPos P a x⁻ = spPos P a x
   have hrep : x⁺ - x⁻ = x - 0 := by rw [HermitianMat.posPart_add_negPart, sub_zero]
   rw [spPos_sub_congr P ha (HermitianMat.posPart_nonneg _) (HermitianMat.negPart_nonneg _)
     hx le_rfl hrep, spPos_zero P ha, sub_zero]
 
 /-- **Agreement on effects**: `seqLeftMul P a` restricts to `b ↦ P.sp a b`. -/
-theorem seqLeftMul_apply_effect {a b : HermitianMat n ℂ} (ha : IsEffect a)
+theorem seqLeftMul_apply_effect {a b : HermitianMat n 𝕜} (ha : IsEffect a)
     (hb : IsEffect b) : seqLeftMul P a ha b = P.sp a b := by
   rw [seqLeftMul_apply_nonneg P ha hb.1, spPos_of_effect P ha hb]
 
 /-- **Positivity** of the extension. -/
-theorem seqLeftMul_nonneg {a : HermitianMat n ℂ} (ha : IsEffect a)
-    {x : HermitianMat n ℂ} (hx : 0 ≤ x) : 0 ≤ seqLeftMul P a ha x := by
+theorem seqLeftMul_nonneg {a : HermitianMat n 𝕜} (ha : IsEffect a)
+    {x : HermitianMat n 𝕜} (hx : 0 ≤ x) : 0 ≤ seqLeftMul P a ha x := by
   rw [seqLeftMul_apply_nonneg P ha hx]
   exact spPos_nonneg P ha hx
 
 /-- **Monotonicity** of the extension. -/
-theorem seqLeftMul_mono {a : HermitianMat n ℂ} (ha : IsEffect a)
-    {x y : HermitianMat n ℂ} (h : x ≤ y) : seqLeftMul P a ha x ≤ seqLeftMul P a ha y := by
+theorem seqLeftMul_mono {a : HermitianMat n 𝕜} (ha : IsEffect a)
+    {x y : HermitianMat n 𝕜} (h : x ≤ y) : seqLeftMul P a ha x ≤ seqLeftMul P a ha y := by
   have h2 := seqLeftMul_nonneg P ha (sub_nonneg.mpr h)
   rw [map_sub] at h2
   exact sub_nonneg.mp h2
 
 /-- **The unit law**: `seqLeftMul P a 1 = a` (via the derived `a & 𝟙 = a`). -/
-theorem seqLeftMul_one {a : HermitianMat n ℂ} (ha : IsEffect a) :
+theorem seqLeftMul_one {a : HermitianMat n 𝕜} (ha : IsEffect a) :
     seqLeftMul P a ha 1 = a := by
-  have h1 : IsEffect (1 : HermitianMat n ℂ) := isEffect_unit
+  have h1 : IsEffect (1 : HermitianMat n 𝕜) := isEffect_unit
   rw [seqLeftMul_apply_effect P ha h1]
   exact P.sp_unit_right ha
 

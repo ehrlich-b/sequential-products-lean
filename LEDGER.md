@@ -1569,6 +1569,32 @@ sorry-free Wigner rigidity — see 3.0.
   Traps for the next pass: in `unfold`/`rw` argument position use the BARE name
   (`unfold diagFamilyG`), never the applied form (`unfold diagFamilyG 𝕜` is a
   syntax error).
+
+  ★★**RECIPE REFINED 2026-08-06 — two file KINDS, and only one needs a twin.**
+  `Necessity/LeftMultiplication.lean` (394 lines, the whole `seqLeftMul`
+  construction: ℕ/ℚ/ℝ-homogeneity, the cone extension `spPos`, the linear map and
+  its positivity/monotonicity/unit law) and `Necessity/FirstArgument.lean`
+  (lem:homog(ii)) are now generalized to `RCLike 𝕜` **IN PLACE**, and the whole
+  tree still builds (3068 jobs, census 111, custom axioms exactly `[]`) with
+  **zero downstream edits**. Reason: their statements are parameterized by
+  `P : SequentialProductOn (HermitianMat n 𝕜)`, so every downstream use passes a
+  concrete ℂ-typed `P` and the scalar is pinned automatically. So:
+  * **P-parameterized files ⇒ generalize IN PLACE** (cheap, no duplication).
+  * **files defining carrier CONSTANTS** (`frameProj`, `diagFamily`) ⇒ need the
+    scalar explicit and a `…Gen` twin, because downstream intermediate `have`s
+    don't pin them (witness `Chi.lean:55`).
+  Mind multi-`namespace` files: `SharpEffects.lean` has two `namespace Necessity`
+  blocks each with their own `variable` line — a single-shot insertion of the
+  scalar variable leaves the second block with an auto-bound `𝕜` and the failure
+  reads "failed to synthesize AddGroup 𝕜".
+  ★**THE NEXT BLOCKER IS NOT IN `Necessity/` AT ALL**: `SharpEffects` and
+  `PseudoInverse` do NOT generalize yet because they ride
+  `Hermitian/Resolution.lean`, whose spectral layer is ℂ-pinned
+  (`variable {ι} {R : ι → Matrix n n ℂ}` and `{M : HermitianMat n ℂ}`, so
+  `resolution_mul` and `specProj` are ℂ-only). **Generalize
+  `Hermitian/Resolution.lean` first** — it is the gate for the whole
+  sharp-effects/pseudo-inverse/Θ half of the chain. Both files were reverted to
+  their committed state; the tree is green.
 - **4.2 Quaternionic.** H_n(ℍ) ↪ H_{2n}(ℂ) symplectic embedding. [INV✓ area
   10]: ℍ itself is well-developed (NormedDivisionRing, CStarRing,
   InnerProductSpace ℝ) but **matrices over ℍ are total greenfield — zero
