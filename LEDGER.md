@@ -1225,7 +1225,31 @@ sorry-free Wigner rigidity — see 3.0.
   `z ↦ e^{ic} z`.  TRAP: `Complex.exp_eq_exp_ℂ` must be rewritten in the
   FORWARD direction here (the `NormedSpace.exp` on ℂ is the one `map_exp`
   produces), the opposite of the `RankTwo/Lifting.lean` usage.
-  **REMAINING for the ℂ lane — two sub-steps**: (1) feed
+  **BOTH SUB-STEPS DONE 2026-08-05 — THE BLOCK ACTION IS A ROTATION**
+  (`Necessity/BlockRotation.lean`, census 103, gates green, zero sorries):
+  `chiEntryCLM` + `chiEntryCLM_zero`/`chiEntryCLM_mul`;
+  **`chiEntryCLM_continuous_line`** (from `continuous_chiTilde_line` +
+  `entryCLM`, then RECONSTRUCT the map from its values at `1` and `I` through an
+  explicit ℝ-linear `ℂ × ℂ → (ℂ →L[ℝ] ℂ)` closed by
+  `continuous_of_finiteDimensional` — the `smulRightL` route gets STUCK on
+  `NormedSpace ℝ ?m` instance metavariables, do not use it);
+  `exp_apply_hasDerivAt_gen` (the general-space form of the HermitianMat
+  derivative lemma); **`chiEntry_eq_exp`/`chiEntryGen`** via
+  `multiParameter_eq_exp` in `ℂ →L[ℝ] ℂ`; **`chiEntryGen_skew`** (differentiate
+  the constant `chiEntry_normSq` at `0` — the `dChi_block_skew` pattern reused);
+  and **`chiEntry_is_rotation` : `chiEntry r i j z = e^{i c(r)} z`** with
+  `c(r) = (gen r 1).im`, via `skew_linear_eq_I_smul` + `exp_generator_is_rotation`.
+  Axioms verified first-hand: core only.
+  **REMAINING for the ℂ lane: coefficient bookkeeping only** — identify
+  `c(r) = (chiEntryGen … r 1).im` with `t_F (r_i − r_j)`.  Both are ℝ-linear in
+  `r` (the former because `chiEntryGen` is linear), both vanish on the
+  coalescence hyperplane, and `complex_perFrame_unconditional` pins the
+  proportionality; so this is `angle_factor`-style linear algebra
+  (`MasterTheorem/RankTwo.lean` has the rank-two analogue already), NOT further
+  analysis.  Then `chiTilde_eq_adU_of_block` fires and `sp_eq_quadRep_adU` gives
+  mthm:master's complex shape.
+  HISTORICAL (superseded by the above, kept for provenance) — the two sub-steps
+  were: (1) feed
   `chiEntry_isCharacter`'s laws to `multiParameter_eq_exp` in `ℂ →L[ℝ] ℂ` to get
   `chiEntry r i j = exp (E r)` for a unique ℝ-linear `E` (needs the line
   continuity of `chiEntry`, which follows from `continuous_chiTilde_line` +

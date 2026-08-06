@@ -358,6 +358,15 @@ import RadicalRelativity.Necessity.BlockCharacter
 -- chiTilde_eq_adU_of_block consumes.
 import RadicalRelativity.Necessity.MulEmbedding
 
+-- THE BLOCK ACTION IS A ROTATION: chiEntry packaged as continuous linear maps
+-- with the character laws and line continuity, hence = exp of a unique R-linear
+-- generator (multiParameter_eq_exp); the generator is SKEW by differentiating
+-- the constant block norm at 0; so by the skew classification it is
+-- multiplication by i*c(r), and exp of a multiplication is the multiplication by
+-- exp -- giving chiEntry r i j z = e^{i c(r)} z, the input
+-- chiTilde_eq_adU_of_block was stated modulo.
+import RadicalRelativity.Necessity.BlockRotation
+
 -- M5 (LEDGER 5.1, prop:n2-necessity): the rank-two LIFTING STEP, obtained as a
 -- corollary of M2's one-parameter engine rather than from covering spaces --
 -- a continuous character into the rotation group (the unit circle in C) is
