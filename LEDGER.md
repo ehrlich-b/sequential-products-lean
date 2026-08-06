@@ -1593,8 +1593,37 @@ sorry-free Wigner rigidity — see 3.0.
   (`variable {ι} {R : ι → Matrix n n ℂ}` and `{M : HermitianMat n ℂ}`, so
   `resolution_mul` and `specProj` are ℂ-only). **Generalize
   `Hermitian/Resolution.lean` first** — it is the gate for the whole
-  sharp-effects/pseudo-inverse/Θ half of the chain. Both files were reverted to
-  their committed state; the tree is green.
+  sharp-effects/pseudo-inverse/Θ half of the chain.
+
+  **GATE OPENED + TWO MORE FILES LANDED 2026-08-06** (census 111, gates green,
+  tree at 3068 jobs, custom axioms exactly `[]`):
+  * `Hermitian/Resolution.lean` generalized to `RCLike 𝕜` **in place** — 240 lines,
+    13 ℂ tokens, zero genuinely-complex constructs, and it went through on the
+    first compile with no proof edits at all. This was the gate.
+  * `Necessity/SharpEffects.lean` (the whole Gudder–Greechie sharpness layer plus
+    the vdW 5.2 orthogonal-family value law) then generalized in place, unblocked
+    by Resolution exactly as predicted.
+  Running total generalized to `RCLike 𝕜`: the two vendored eigenvalue↔order
+  lemmas, two carrier lemmas in `Hermitian/OrderUnit.lean`, `Hermitian/Resolution.lean`,
+  `Necessity/LeftMultiplication.lean`, `Necessity/FirstArgument.lean`,
+  `Necessity/SharpEffects.lean`, plus the new `Necessity/DiagonalFamilyGen.lean`.
+  ★**NEXT FILE AND ITS DIAGNOSIS — `Necessity/PseudoInverse.lean` (reverted, do
+  this one deliberately).** It is the first file whose generalization does NOT fall
+  out of a sed. Two distinct causes, both diagnosed:
+  (1) higher-order unification gives up on the projection family — the elaborator
+      shows `sum_smul_proj_isEffect (fun μ x => ?m.34) …`, i.e. `?p μ = b.specProj μ`
+      is left unsolved. Fix: pass it explicitly, `(p := fun μ => b.specProj μ)`
+      (also needed for `sp_orthFamily_value`).
+  (2) even with the family pinned, `whnf` still times out, because the goal
+      `IsEffect (pseudoInv b)` has to be made defeq to the lemma's conclusion
+      `IsEffect (∑ i ∈ s, lam i • p i)` — that unfolding of `pseudoInv` through the
+      spectral machinery is cheap at concrete ℂ and expensive generically.
+      **Fix: rewrite `pseudoInv` into its explicit sum form FIRST (`rw [pseudoInv]`
+      or a `show`), then apply the lemma — do not make the elaborator discover the
+      sum by unfolding.**  Raising `maxHeartbeats` does not help (800k tried, and it
+      only made the metavariable flail longer, which is what exposed cause (1)).
+  Then: `Theta` → `ThetaFix` → `ThetaCocycle` → `Chi` (needs the `…Gen` frame/family
+  names) → `ComparisonInstance` → `Chi*`/`Coalescence*`; then the short ℝ ending.
 - **4.2 Quaternionic.** H_n(ℍ) ↪ H_{2n}(ℂ) symplectic embedding. [INV✓ area
   10]: ℍ itself is well-developed (NormedDivisionRing, CStarRing,
   InnerProductSpace ℝ) but **matrices over ℍ are total greenfield — zero

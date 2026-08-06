@@ -44,31 +44,32 @@ open scoped Matrix
 namespace HermitianMat
 
 variable {n : Type*} [Fintype n] [DecidableEq n]
+variable {𝕜 : Type*} [RCLike 𝕜]
 
 /-! ## Value-indexed spectral projections -/
 
 /-- The spectral projection of `a` at the value `μ`, as `cfc` of the indicator
 function of `{μ}`.  For `μ` outside the spectrum this is `0`. -/
-def specProj (a : HermitianMat n ℂ) (μ : ℝ) : HermitianMat n ℂ :=
+def specProj (a : HermitianMat n 𝕜) (μ : ℝ) : HermitianMat n 𝕜 :=
   a.cfc fun x => if x = μ then 1 else 0
 
 /-- The eigenvalues of `a` as a finite set of reals. -/
-def eigFinset (a : HermitianMat n ℂ) : Finset ℝ :=
+def eigFinset (a : HermitianMat n 𝕜) : Finset ℝ :=
   Finset.univ.image a.H.eigenvalues
 
-theorem spectrum_subset_eigFinset (a : HermitianMat n ℂ) :
+theorem spectrum_subset_eigFinset (a : HermitianMat n 𝕜) :
     spectrum ℝ a.mat ⊆ ↑a.eigFinset := by
   rw [a.H.spectrum_real_eq_range_eigenvalues]
   rintro x ⟨i, rfl⟩
   exact Finset.mem_coe.mpr (Finset.mem_image_of_mem _ (Finset.mem_univ i))
 
-theorem eigFinset_nonneg {a : HermitianMat n ℂ} (ha : 0 ≤ a) :
+theorem eigFinset_nonneg {a : HermitianMat n 𝕜} (ha : 0 ≤ a) :
     ∀ μ ∈ a.eigFinset, 0 ≤ μ := by
   intro μ hμ
   obtain ⟨i, -, rfl⟩ := Finset.mem_image.mp hμ
   exact eigenvalues_nonneg ha i
 
-theorem specProj_mul_self (a : HermitianMat n ℂ) (μ : ℝ) :
+theorem specProj_mul_self (a : HermitianMat n 𝕜) (μ : ℝ) :
     (a.specProj μ).mat * (a.specProj μ).mat = (a.specProj μ).mat := by
   have h : (fun x : ℝ => (if x = μ then (1 : ℝ) else 0) * (if x = μ then 1 else 0))
       = fun x : ℝ => if x = μ then (1 : ℝ) else 0 := by
@@ -78,7 +79,7 @@ theorem specProj_mul_self (a : HermitianMat n ℂ) (μ : ℝ) :
         (mat_cfc_mul_apply a _ _).symm
     _ = (a.specProj μ).mat := by rw [h]; rfl
 
-theorem specProj_mul_orth (a : HermitianMat n ℂ) {μ ν : ℝ} (h : μ ≠ ν) :
+theorem specProj_mul_orth (a : HermitianMat n 𝕜) {μ ν : ℝ} (h : μ ≠ ν) :
     (a.specProj μ).mat * (a.specProj ν).mat = 0 := by
   have hfun : (fun x : ℝ => (if x = μ then (1 : ℝ) else 0) * (if x = ν then 1 else 0))
       = fun _ : ℝ => (0 : ℝ) := by
@@ -93,7 +94,7 @@ theorem specProj_mul_orth (a : HermitianMat n ℂ) {μ ν : ℝ} (h : μ ≠ ν)
     _ = 0 := by rw [hfun, cfc_const]; simp
 
 /-- `cfc` distributes over finite sums in the function argument. -/
-theorem cfc_finsetSum {ι : Type*} (s : Finset ι) (a : HermitianMat n ℂ) (F : ι → ℝ → ℝ) :
+theorem cfc_finsetSum {ι : Type*} (s : Finset ι) (a : HermitianMat n 𝕜) (F : ι → ℝ → ℝ) :
     a.cfc (fun x => ∑ i ∈ s, F i x) = ∑ i ∈ s, a.cfc (F i) := by
   classical
   induction s using Finset.induction_on with
@@ -103,7 +104,7 @@ theorem cfc_finsetSum {ι : Type*} (s : Finset ι) (a : HermitianMat n ℂ) (F :
     rw [cfc_add_apply, ih]
 
 /-- **Every `cfc` expands over the value-indexed spectral projections.** -/
-theorem mat_cfc_eq_sum_specProj (a : HermitianMat n ℂ) (f : ℝ → ℝ) :
+theorem mat_cfc_eq_sum_specProj (a : HermitianMat n 𝕜) (f : ℝ → ℝ) :
     (a.cfc f).mat = ∑ μ ∈ a.eigFinset, f μ • (a.specProj μ).mat := by
   have key : a.cfc f = a.cfc (fun x => ∑ μ ∈ a.eigFinset, f μ * (if x = μ then 1 else 0)) := by
     apply cfc_congr
@@ -122,7 +123,7 @@ theorem mat_cfc_eq_sum_specProj (a : HermitianMat n ℂ) (f : ℝ → ℝ) :
   exact Finset.sum_congr rfl fun μ _ => rfl
 
 /-- The spectral projections sum to the identity. -/
-theorem sum_specProj_mat (a : HermitianMat n ℂ) :
+theorem sum_specProj_mat (a : HermitianMat n 𝕜) :
     ∑ μ ∈ a.eigFinset, (a.specProj μ).mat = 1 := by
   have h := mat_cfc_eq_sum_specProj a (fun _ => 1)
   simp only [one_smul] at h
@@ -130,7 +131,7 @@ theorem sum_specProj_mat (a : HermitianMat n ℂ) :
   simp
 
 /-- The spectral resolution of `a` itself. -/
-theorem sum_smul_specProj_mat (a : HermitianMat n ℂ) :
+theorem sum_smul_specProj_mat (a : HermitianMat n 𝕜) :
     ∑ μ ∈ a.eigFinset, μ • (a.specProj μ).mat = a.mat := by
   have h := mat_cfc_eq_sum_specProj a id
   rw [cfc_id] at h
@@ -140,7 +141,7 @@ theorem sum_smul_specProj_mat (a : HermitianMat n ℂ) :
 
 section resolution
 
-variable {ι : Type*} {R : ι → Matrix n n ℂ} {s : Finset ι}
+variable {ι : Type*} {R : ι → Matrix n n 𝕜} {s : Finset ι}
 
 omit [DecidableEq n] in
 /-- Linear combinations over a pairwise-orthogonal idempotent family multiply
@@ -158,7 +159,7 @@ theorem resolution_mul
   · intro j hj hne
     rw [Matrix.smul_mul, Matrix.mul_smul, horth i hi j hj hne.symm, smul_zero, smul_zero]
 
-variable {M : HermitianMat n ℂ} {c : ι → ℝ}
+variable {M : HermitianMat n 𝕜} {c : ι → ℝ}
 
 /-- Powers of a matrix presented by a resolution. -/
 theorem pow_of_resolution
@@ -220,7 +221,7 @@ theorem mat_cfc_of_resolution
 /-- **Matrix-argument scaling law**: `cfc` of `r • a` is `cfc` of `a` at the
 rescaled function — an immediate payoff of the resolution lemma (present `r • a`
 by `a`'s own spectral family with scaled coefficients).  No sign hypothesis. -/
-theorem cfc_smul_arg (r : ℝ) (a : HermitianMat n ℂ) (f : ℝ → ℝ) :
+theorem cfc_smul_arg (r : ℝ) (a : HermitianMat n 𝕜) (f : ℝ → ℝ) :
     (r • a).cfc f = a.cfc (fun x => f (r * x)) := by
   classical
   ext1

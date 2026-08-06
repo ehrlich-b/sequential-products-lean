@@ -13,7 +13,7 @@ set_option linter.style.longLine false
 # Sharp effects under an unknown sequential product
 (campaign LEDGER 2.1c: the Gudder–Greechie sharp-effect base layer, matrix-concrete)
 
-For an arbitrary `P : SequentialProductOn (HermitianMat n ℂ)`:
+For an arbitrary `P : SequentialProductOn (HermitianMat n 𝕜)`:
 
 * `proj_pinch` — the product-independent sharpness of projections: an effect below
   both `p` and `1 - p` is zero (the matrix form of `p ∧ p⊥ = 0`), by two
@@ -43,12 +43,13 @@ open OrderUnitSpace
 namespace Necessity
 
 variable {n : Type*} [Fintype n] [DecidableEq n]
+variable {𝕜 : Type*} [RCLike 𝕜]
 
 /-! ## The product-independent pinch: `p ∧ (1-p) = 0` for projections -/
 
 /-- If a PSD `e` is killed by conjugation with a Hermitian `m` (`m·e·m = 0`),
 then `m·e = 0` — via the square root of `e` and the Frobenius trace argument. -/
-theorem mul_eq_zero_of_conj_eq_zero {e m : HermitianMat n ℂ} (he : 0 ≤ e)
+theorem mul_eq_zero_of_conj_eq_zero {e m : HermitianMat n 𝕜} (he : 0 ≤ e)
     (hme : e.conj m.mat = 0) : m.mat * e.mat = 0 := by
   have hsq : (e.cfc Real.sqrt).mat * (e.cfc Real.sqrt).mat = e.mat := by
     rw [← HermitianMat.mat_cfc_mul_apply]
@@ -75,7 +76,7 @@ theorem mul_eq_zero_of_conj_eq_zero {e m : HermitianMat n ℂ} (he : 0 ≤ e)
 
 /-- **Projections are sharp, product-independently**: an effect below both `p` and
 `1 - p` is zero. -/
-theorem proj_pinch {p e : HermitianMat n ℂ} (hp : p.IsProjection) (he : 0 ≤ e)
+theorem proj_pinch {p e : HermitianMat n 𝕜} (hp : p.IsProjection) (he : 0 ≤ e)
     (h1 : e ≤ p) (h2 : e ≤ 1 - p) : e = 0 := by
   have hpp : p.mat * p.mat = p.mat := HermitianMat.isProjection_iff_mat_mul_self.mp hp
   -- pinch by (1 - p): (1-p)·p·(1-p) = 0
@@ -109,25 +110,25 @@ theorem proj_pinch {p e : HermitianMat n ℂ} (hp : p.IsProjection) (he : 0 ≤ 
 
 /-! ## Projections under the unknown product -/
 
-variable (P : SequentialProductOn (HermitianMat n ℂ))
+variable (P : SequentialProductOn (HermitianMat n 𝕜))
 
 /-- The S1 splitting `p ◦' p + p ◦' (1-p) = p` for a projection (indeed any
 effect) `p`. -/
-theorem sp_self_add_compl {p : HermitianMat n ℂ} (hpe : IsEffect p) :
+theorem sp_self_add_compl {p : HermitianMat n 𝕜} (hpe : IsEffect p) :
     P.sp p p + P.sp p (1 - p) = p := by
   have hpc : IsEffect (1 - p) := ⟨sub_nonneg.mpr hpe.2, by simpa using sub_le_self 1 hpe.1⟩
-  have hps : p + (1 - p) = (1 : HermitianMat n ℂ) := by abel
+  have hps : p + (1 - p) = (1 : HermitianMat n 𝕜) := by abel
   have hle : p + (1 - p) ≤ ousUnit :=
     le_of_eq (hps.trans (HermitianMat.ousUnit_eq_one).symm)
   have hsplit := P.sp_add_right hpe hpe hpc hle
   rw [hps] at hsplit
-  have hu : P.sp p (1 : HermitianMat n ℂ) = p := P.sp_unit_right hpe
+  have hu : P.sp p (1 : HermitianMat n 𝕜) = p := P.sp_unit_right hpe
   rw [hu] at hsplit
   exact hsplit.symm
 
 /-- **A projection annihilates its complement under any sequential product**:
 `p ◦' (1-p) = 0`. -/
-theorem sp_proj_compl {p : HermitianMat n ℂ} (hp : p.IsProjection) :
+theorem sp_proj_compl {p : HermitianMat n 𝕜} (hp : p.IsProjection) :
     P.sp p (1 - p) = 0 := by
   have hpe : IsEffect p := ⟨hp.nonneg, hp.le_one⟩
   have hpc : IsEffect (1 - p) := ⟨sub_nonneg.mpr hpe.2, by simpa using sub_le_self 1 hpe.1⟩
@@ -151,7 +152,7 @@ theorem sp_proj_compl {p : HermitianMat n ℂ} (hp : p.IsProjection) :
 
 /-- **Projections are ◦'-idempotent**: `p ◦' p = p` (the Gudder–Greechie
 sharpness theorem, matrix-concrete). -/
-theorem sp_proj_self {p : HermitianMat n ℂ} (hp : p.IsProjection) :
+theorem sp_proj_self {p : HermitianMat n 𝕜} (hp : p.IsProjection) :
     P.sp p p = p := by
   have h := sp_self_add_compl P ⟨hp.nonneg, hp.le_one⟩
   rw [sp_proj_compl P hp, add_zero] at h
@@ -159,7 +160,7 @@ theorem sp_proj_self {p : HermitianMat n ℂ} (hp : p.IsProjection) :
 
 /-! ## Orthogonal projections -/
 
-theorem orth_compl_isProjection {p q : HermitianMat n ℂ} (hp : p.IsProjection)
+theorem orth_compl_isProjection {p q : HermitianMat n 𝕜} (hp : p.IsProjection)
     (hq : q.IsProjection) (hpq : p.mat * q.mat = 0) :
     (1 - p - q).IsProjection := by
   have hqp : q.mat * p.mat = 0 := by
@@ -175,12 +176,12 @@ theorem orth_compl_isProjection {p q : HermitianMat n ℂ} (hp : p.IsProjection)
         - (q.mat - q.mat * p.mat - q.mat * q.mat) := by noncomm_ring
     _ = 1 - p.mat - q.mat := by rw [hpp, hpq, hqp, hqq]; abel
 
-theorem proj_orth_le_one_sub {p q : HermitianMat n ℂ} (hp : p.IsProjection)
+theorem proj_orth_le_one_sub {p q : HermitianMat n 𝕜} (hp : p.IsProjection)
     (hq : q.IsProjection) (hpq : p.mat * q.mat = 0) : q ≤ 1 - p :=
   sub_nonneg.mp (orth_compl_isProjection hp hq hpq).nonneg
 
 /-- **Orthogonal projections annihilate** under any sequential product. -/
-theorem sp_proj_orth {p q : HermitianMat n ℂ} (hp : p.IsProjection)
+theorem sp_proj_orth {p q : HermitianMat n 𝕜} (hp : p.IsProjection)
     (hq : q.IsProjection) (hpq : p.mat * q.mat = 0) : P.sp p q = 0 := by
   have hpe : IsEffect p := ⟨hp.nonneg, hp.le_one⟩
   have hqe : IsEffect q := ⟨hq.nonneg, hq.le_one⟩
@@ -191,12 +192,12 @@ theorem sp_proj_orth {p q : HermitianMat n ℂ} (hp : p.IsProjection)
   exact le_antisymm hle (P.sp_nonneg hpe hqe)
 
 /-- The reversed order, by S4. -/
-theorem sp_proj_orth' {p q : HermitianMat n ℂ} (hp : p.IsProjection)
+theorem sp_proj_orth' {p q : HermitianMat n 𝕜} (hp : p.IsProjection)
     (hq : q.IsProjection) (hpq : p.mat * q.mat = 0) : P.sp q p = 0 :=
   P.sp_zero_symm ⟨hp.nonneg, hp.le_one⟩ ⟨hq.nonneg, hq.le_one⟩ (sp_proj_orth P hp hq hpq)
 
 /-- Orthogonal projections are ◦'-compatible (both products vanish). -/
-theorem sp_comm_proj_orth {p q : HermitianMat n ℂ} (hp : p.IsProjection)
+theorem sp_comm_proj_orth {p q : HermitianMat n 𝕜} (hp : p.IsProjection)
     (hq : q.IsProjection) (hpq : p.mat * q.mat = 0) : P.sp p q = P.sp q p := by
   rw [sp_proj_orth P hp hq hpq, sp_proj_orth' P hp hq hpq]
 
@@ -218,6 +219,7 @@ S2 enters only through first-argument homogeneity (`sp_smul_left`).
 namespace Necessity
 
 variable {n : Type*} [Fintype n] [DecidableEq n]
+variable {𝕜 : Type*} [RCLike 𝕜]
 
 theorem mat_finsetSum {𝕜 : Type*} [RCLike 𝕜] {ι : Type*} (s : Finset ι)
     (f : ι → HermitianMat n 𝕜) :
@@ -225,7 +227,7 @@ theorem mat_finsetSum {𝕜 : Type*} [RCLike 𝕜] {ι : Type*} (s : Finset ι)
   map_sum (AddSubmonoidClass.subtype _) _ _
 
 /-- A finite sum of pairwise-orthogonal projections is a projection. -/
-theorem sum_proj_isProjection {ι : Type*} {s : Finset ι} {p : ι → HermitianMat n ℂ}
+theorem sum_proj_isProjection {ι : Type*} {s : Finset ι} {p : ι → HermitianMat n 𝕜}
     (hproj : ∀ i ∈ s, (p i).IsProjection)
     (horth : ∀ i ∈ s, ∀ j ∈ s, i ≠ j → (p i).mat * (p j).mat = 0) :
     (∑ i ∈ s, p i).IsProjection := by
@@ -237,12 +239,12 @@ theorem sum_proj_isProjection {ι : Type*} {s : Finset ι} {p : ι → Hermitian
 
 /-- Diagonal combinations `∑ λᵢ•pᵢ` with `λᵢ ∈ [0,1]` over a pairwise-orthogonal
 projection family are effects. -/
-theorem sum_smul_proj_isEffect {ι : Type*} {s : Finset ι} {p : ι → HermitianMat n ℂ}
+theorem sum_smul_proj_isEffect {ι : Type*} {s : Finset ι} {p : ι → HermitianMat n 𝕜}
     (hproj : ∀ i ∈ s, (p i).IsProjection)
     (horth : ∀ i ∈ s, ∀ j ∈ s, i ≠ j → (p i).mat * (p j).mat = 0)
     {lam : ι → ℝ} (hlam0 : ∀ i ∈ s, 0 ≤ lam i) (hlam1 : ∀ i ∈ s, lam i ≤ 1) :
     IsEffect (∑ i ∈ s, lam i • p i) := by
-  have h1 : (0 : HermitianMat n ℂ) ≤ ∑ i ∈ s, lam i • p i :=
+  have h1 : (0 : HermitianMat n 𝕜) ≤ ∑ i ∈ s, lam i • p i :=
     Finset.sum_nonneg fun i hi => smul_nonneg (hlam0 i hi) (hproj i hi).nonneg
   have h2 : (∑ i ∈ s, lam i • p i) ≤ 1 := by
     calc ∑ i ∈ s, lam i • p i ≤ ∑ i ∈ s, p i := by
@@ -254,11 +256,11 @@ theorem sum_smul_proj_isEffect {ι : Type*} {s : Finset ι} {p : ι → Hermitia
       _ ≤ 1 := (sum_proj_isProjection hproj horth).le_one
   exact ⟨h1, h2⟩
 
-variable (P : SequentialProductOn (HermitianMat n ℂ))
+variable (P : SequentialProductOn (HermitianMat n 𝕜))
 
 /-- Second-argument additivity over finite families of effects with a dominated sum. -/
-theorem sp_sum_right {a : HermitianMat n ℂ} (ha : IsEffect a) {ι : Type*}
-    {s : Finset ι} {g : ι → HermitianMat n ℂ}
+theorem sp_sum_right {a : HermitianMat n 𝕜} (ha : IsEffect a) {ι : Type*}
+    {s : Finset ι} {g : ι → HermitianMat n 𝕜}
     (hg : ∀ i ∈ s, IsEffect (g i)) (hall : (∑ i ∈ s, g i) ≤ 1) :
     P.sp a (∑ i ∈ s, g i) = ∑ i ∈ s, P.sp a (g i) := by
   classical
@@ -281,7 +283,7 @@ theorem sp_sum_right {a : HermitianMat n ℂ} (ha : IsEffect a) {ι : Type*}
 
 /-- First-argument additivity over ◦'-compatible summands (derived from S6b + S1,
 not an axiom). -/
-theorem sp_add_left_of_comm {a b c : HermitianMat n ℂ} (ha : IsEffect a)
+theorem sp_add_left_of_comm {a b c : HermitianMat n 𝕜} (ha : IsEffect a)
     (hb : IsEffect b) (hc : IsEffect c) (hab : a + b ≤ 1)
     (hac : P.sp a c = P.sp c a) (hbc : P.sp b c = P.sp c b) :
     P.sp (a + b) c = P.sp a c + P.sp b c := by
@@ -290,8 +292,8 @@ theorem sp_add_left_of_comm {a b c : HermitianMat n ℂ} (ha : IsEffect a)
   rw [← h6b, P.sp_add_right hc ha hb hle, hac, hbc]
 
 /-- Compatibility with each summand gives compatibility with the sum. -/
-theorem sp_comm_sum {c : HermitianMat n ℂ} (hc : IsEffect c) {ι : Type*}
-    {s : Finset ι} {g : ι → HermitianMat n ℂ}
+theorem sp_comm_sum {c : HermitianMat n 𝕜} (hc : IsEffect c) {ι : Type*}
+    {s : Finset ι} {g : ι → HermitianMat n 𝕜}
     (hg : ∀ i ∈ s, IsEffect (g i)) (hall : (∑ i ∈ s, g i) ≤ 1)
     (hcomm : ∀ i ∈ s, P.sp (g i) c = P.sp c (g i)) :
     P.sp (∑ i ∈ s, g i) c = P.sp c (∑ i ∈ s, g i) := by
@@ -318,8 +320,8 @@ theorem sp_comm_sum {c : HermitianMat n ℂ} (hc : IsEffect c) {ι : Type*}
     exact h6b.symm
 
 /-- First-argument additivity over finite ◦'-compatible families. -/
-theorem sp_sum_left_of_comm {c : HermitianMat n ℂ} (hc : IsEffect c) {ι : Type*}
-    {s : Finset ι} {g : ι → HermitianMat n ℂ}
+theorem sp_sum_left_of_comm {c : HermitianMat n 𝕜} (hc : IsEffect c) {ι : Type*}
+    {s : Finset ι} {g : ι → HermitianMat n 𝕜}
     (hg : ∀ i ∈ s, IsEffect (g i)) (hall : (∑ i ∈ s, g i) ≤ 1)
     (hcomm : ∀ i ∈ s, P.sp (g i) c = P.sp c (g i)) :
     P.sp (∑ i ∈ s, g i) c = ∑ i ∈ s, P.sp (g i) c := by
@@ -331,7 +333,7 @@ theorem sp_sum_left_of_comm {c : HermitianMat n ℂ} (hc : IsEffect c) {ι : Typ
 /-- **The vdW 5.2 value law on matrices** (LEDGER 2.1d): over a pairwise-orthogonal
 projection family, any S1–S7+S2 product takes the standard diagonal value. -/
 theorem sp_orthFamily_value (hS2 : P.FirstArgContinuous) {ι : Type*}
-    {s : Finset ι} {p : ι → HermitianMat n ℂ}
+    {s : Finset ι} {p : ι → HermitianMat n 𝕜}
     (hproj : ∀ i ∈ s, (p i).IsProjection)
     (horth : ∀ i ∈ s, ∀ j ∈ s, i ≠ j → (p i).mat * (p j).mat = 0)
     {lam mu : ι → ℝ}
@@ -392,7 +394,7 @@ theorem sp_orthFamily_value (hS2 : P.FirstArgContinuous) {ι : Type*}
 /-- **The vdW 5.2 compatibility transfer on matrices**: two effects diagonal in one
 orthogonal projection family are ◦'-compatible. -/
 theorem sp_orthFamily_comm (hS2 : P.FirstArgContinuous) {ι : Type*}
-    {s : Finset ι} {p : ι → HermitianMat n ℂ}
+    {s : Finset ι} {p : ι → HermitianMat n 𝕜}
     (hproj : ∀ i ∈ s, (p i).IsProjection)
     (horth : ∀ i ∈ s, ∀ j ∈ s, i ≠ j → (p i).mat * (p j).mat = 0)
     {lam mu : ι → ℝ}
