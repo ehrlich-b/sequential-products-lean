@@ -326,6 +326,15 @@ import RadicalRelativity.Necessity.ConjTransport
 -- comparison map's block generator.
 import RadicalRelativity.Necessity.TorusAction
 
+-- The frame projections and the blocks SPAN H_n(C) over R:
+--   x = sum_i x_ii . p_i + (1/2) sum_{i != j} blockHerm i j (x_ij),
+-- the 1/2 because the ordered offDiag sum visits each unordered pair twice.
+-- Hence linearMap_eq_of_frame_block: two R-linear maps agreeing on the frame and
+-- on every block are equal.  This was the LAST gap for the Ad_{a^{it}}
+-- identification (M3's rank-one spanning lemma is a DIFFERENT spanning set and
+-- does not substitute).
+import RadicalRelativity.Necessity.FrameBlockSpan
+
 -- M5 (LEDGER 5.1, prop:n2-necessity): the rank-two LIFTING STEP, obtained as a
 -- corollary of M2's one-parameter engine rather than from covering spaces --
 -- a continuous character into the rotation group (the unit circle in C) is

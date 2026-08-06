@@ -1155,15 +1155,21 @@ sorry-free Wigner rigidity — see 3.0.
   (`chiTilde_eq_exp_dChi`) — so the remaining work is exponentiating the
   block-generator statement back to the group level and comparing with the
   twist conjugation entrywise (M1's `Hermitian/Twist.lean` supplies
-  `a^{1/2+it}`).  **The remaining gap is now precisely ONE lemma**: that the
-  frame projections together with the blocks SPAN `H_N(ℂ)` over ℝ — i.e.
-  `x = Σ_i x_ii • frameProj i + ½ Σ_{i≠j} blockHerm i j (x_ij)` (an
-  `offDiag`-Finset bookkeeping identity, ~80–150 lines) — after which
-  `Θ_{a(r)} = Ad_{U_{t_F}(r)}` follows from agreement on frame and blocks,
-  which both `thetaNorm_fixes_frameProj`/`complex_perFrame_unconditional` and
-  `torusU_fixes_frameProj`/`torusU_block` now supply.  NOTE: the rank-one
-  spanning lemma (`span_rankOne_eq_top`) does NOT substitute — it is a different
-  spanning set.  Then `PaperA.UniqueTwistConclusion` is reachable with M1's
+  `a^{1/2+it}`).
+  **SPANNING LEMMA DONE 2026-08-05** (`Necessity/FrameBlockSpan.lean`,
+  census 99, gates green, zero sorries): `sum_eq_two_of_support` (no Mathlib
+  lemma for a sum with two-element support — built from `Finset.sum_pair` +
+  `Finset.sum_subset`), `mat_sum`, `diag_eq_ofReal`, and
+  **`eq_frame_add_blocks` : `x = Σ_i x_ii • p_i + ½ Σ_{i≠j} blockHerm i j
+  (x_ij)`** — the ½ because the ordered `offDiag` sum visits each unordered pair
+  twice; hence **`linearMap_eq_of_frame_block`**: two ℝ-linear maps agreeing on
+  the frame and on every block are equal.  NOTE: the rank-one spanning lemma
+  (`span_rankOne_eq_top`) does NOT substitute — different spanning set.
+  TRAPS: the subst trap AGAIN (`subst hab` with `hab : a = b` kills the ext-local
+  needed later) — use `rw [if_pos hab]` and derive the index facts by hand;
+  `x.H` gives `star (x_ba) = x_ab` at index `(a,b)` (NOT `(b,a)` — the
+  orientation flips and costs a `star_star`); `Complex.real_smul` is needed to
+  turn `(1/2 : ℝ) • (z : ℂ)` into a product before `ring`.  Then `PaperA.UniqueTwistConclusion` is reachable with M1's
   `twistSequentialProduct` as the sufficiency witness and 2.9's
   `sp_eq_on_effects_of_eq_on_posDef` extending from invertibles.
   Then M4–M7.
