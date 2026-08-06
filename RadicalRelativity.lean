@@ -263,6 +263,13 @@ import RadicalRelativity.Necessity.SingularExtension
 -- order-automorphism transports rank-one projections to rank-one projections.
 import RadicalRelativity.Necessity.ProjectionOrder
 
+-- M3 bridge layer part 2a: the Busch-Gudder strength function
+-- Str(p, a) = sup {t | t.p <= a}, built from the ORDER and the real scalar
+-- action alone -- hence preserved by every linear order-isomorphism
+-- (strength_map).  This is the mechanism that converts order data into the
+-- metric datum Wigner rigidity consumes.
+import RadicalRelativity.Necessity.Strength
+
 -- Exact paper-facing S1--S7 and product-conclusion statement boundary.  This
 -- freezes the target signature; it does not claim the classification is proved.
 import RadicalRelativity.PaperA.Statement

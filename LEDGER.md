@@ -837,6 +837,25 @@ sorry-free Wigner rigidity — see 3.0.
   λ(p,a) = sup{t | t·p ≤ a}, order-definable, with the rank-one computation
   λ(p, q + ε(1−q)) = ε/(ε·τ + (1−τ)), τ = tr(pq) ⟹ a unital linear order-iso
   preserves transition probabilities; then feed `wigner_rigidity`.
+- **3.1b strength function DONE 2026-08-05** (`Necessity/Strength.lean`,
+  census 85, gates green): `rankOne_quadratic` (the rank-one quadratic form is
+  ⟪v,ψ⟫⟪ψ,v⟫); `rankOne_smul_le_iff` — the geometric core, `t·ψψ* ≤ a` iff
+  vectorwise `t⟪v,ψ⟫⟪ψ,v⟫ ≤ ⟪v,av⟫`, through the vendored
+  `le_iff_mulVec_le_mulVec` (the whole Loewner order reduces to quadratic
+  forms in ℂ — no a^{-1/2} machinery needed for the ORDER side);
+  `strength p a := sSup {t | t•p ≤ a}` with nonemptiness (0 ∈ S) and
+  boundedness (test `t•ψψ* ≤ 𝟙` at ψ); **`strength_map` — every ℝ-linear
+  order-isomorphism preserves the strength** (the defining set is transported
+  literally by `map_smul` + the order equivalence: THE reason the strength is
+  the right bridge); plus the `le_strength`/`strength_le` certificates.
+  FORMULA VERIFIED NUMERICALLY BEFORE CODING (numpy, N=4, random rank-ones):
+  λ(ψψ*, a) = 1/⟪ψ, a⁻¹ψ⟫, and on the probe family a_ε = q + ε(𝟙−q) with
+  τ = tr(pq) this is ε/(ετ + 1 − τ); at **ε = 1/2** it is 1/(2 − τ), so
+  **τ = 2 − 1/Str(p, a_{1/2})** — a single-ε inversion, no ε-limit needed.
+  NEXT (3.1c): evaluate `strength` on the probe (needs `⟪ψ, a⁻¹ψ⟫` only for
+  the explicit a_ε, whose inverse is (1/ε)(𝟙−q) + q — elementary, no CFC),
+  giving transProb preservation from order data; then the ray map into
+  `Projectivization` and `wigner_rigidity`; then unitary/antiunitary ⟹ Jordan.
 - **3.1** Unital order-autos of H_n(ℂ)sa are Jordan autos, matrix-concrete,
   n ≥ 3. No prover has Kadison/Uhlhorn/FTPG (landscape-confirmed 08-04:
   Magaud/Narboux Coq and AFP Projective_Geometry are incidence-axiomatic only,
