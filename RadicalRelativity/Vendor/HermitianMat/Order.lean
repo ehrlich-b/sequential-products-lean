@@ -503,34 +503,24 @@ theorem ker_le_of_le_smul {α : ℝ} [DecidableEq n] (hα : α ≠ 0) (hA : 0 �
   rw [← ker_pos_smul B hα]
   exact ker_antitone hA hAB
 
-/-- If a Hermitian matrix is bounded by `M * I`, then all its eigenvalues are at most `M`. -/
-theorem le_smul_one_imp_eigenvalues_le [DecidableEq n] (A : HermitianMat n ℂ) (M : ℝ)
-    (h : A ≤ M • (1 : HermitianMat n ℂ)) (i : n) :
-    A.H.eigenvalues i ≤ M := by
-  let v : n → ℂ := (A.H.eigenvectorBasis i).ofLp
-  have hv : star v ⬝ᵥ v = (1 : ℂ) := by
-    rw [show v = (A.H.eigenvectorBasis i).ofLp from rfl]
-    rw [dotProduct_comm, ← EuclideanSpace.inner_eq_star_dotProduct]
-    simp [A.H.eigenvectorBasis.orthonormal.1 i]
-  have hquad := (le_iff_mulVec_le_mulVec A (M • (1 : HermitianMat n ℂ))).mp h v
-  rw [show A.mat.mulVec v = (A.H.eigenvalues i : ℂ) • v from by
-    simpa [v] using A.H.mulVec_eigenvectorBasis i] at hquad
-  rw [dotProduct_smul, hv] at hquad
-  change (A.H.eigenvalues i : ℂ) • 1 ≤
-    star v ⬝ᵥ ((M : ℂ) • (1 : Matrix n n ℂ)) *ᵥ v at hquad
-  have hquadC : (A.H.eigenvalues i : ℂ) ≤ (M : ℂ) := by
-    have hright : star v ⬝ᵥ ((M : ℂ) • (1 : Matrix n n ℂ)) *ᵥ v = (M : ℂ) := by
-      simp [Matrix.smul_mulVec, hv]
-    simpa [Matrix.smul_mulVec, hv] using hquad.trans_eq hright
-  exact_mod_cast hquadC
+/-- If a Hermitian matrix is bounded by `M * I`, then all its eigenvalues are at most `M`.
 
-open MatrixOrder in
-/-- If all eigenvalues of a Hermitian matrix are at most `M`, then it is bounded by `M * I`. -/
-theorem eigenvalues_le_imp_le_smul_one [DecidableEq n] (A : HermitianMat n ℂ) (M : ℝ)
+DRIFT (2026-08-06, campaign): generalized from `ℂ` to `RCLike 𝕜` and reduced to the
+`.mpr` direction of the already-`𝕜`-general `le_smul_one_of_eigenvalues_iff`; the
+former 15-line proof went through the `ComplexOrder` quadratic form by hand. -/
+theorem le_smul_one_imp_eigenvalues_le [DecidableEq n] (A : HermitianMat n 𝕜) (M : ℝ)
+    (h : A ≤ M • (1 : HermitianMat n 𝕜)) (i : n) :
+    A.H.eigenvalues i ≤ M :=
+  (Matrix.PosSemidef.le_smul_one_of_eigenvalues_iff A.H M).mpr h i
+
+/-- If all eigenvalues of a Hermitian matrix are at most `M`, then it is bounded by `M * I`.
+
+DRIFT (2026-08-06, campaign): generalized from `ℂ` to `RCLike 𝕜` (the underlying
+`le_smul_one_of_eigenvalues_iff` was already `𝕜`-general). -/
+theorem eigenvalues_le_imp_le_smul_one [DecidableEq n] (A : HermitianMat n 𝕜) (M : ℝ)
     (h : ∀ i, A.H.eigenvalues i ≤ M) :
-    A ≤ M • (1 : HermitianMat n ℂ) := by
-  exact
-    (Matrix.PosSemidef.le_smul_one_of_eigenvalues_iff A.H M).mp h
+    A ≤ M • (1 : HermitianMat n 𝕜) :=
+  (Matrix.PosSemidef.le_smul_one_of_eigenvalues_iff A.H M).mp h
 
 --TODO: Positivity extensions for traceLeft, traceRight, rpow, nat powers, inverse function,
 -- the various `proj` function (in Proj.lean), and the inner product.

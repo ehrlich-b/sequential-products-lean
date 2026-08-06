@@ -1477,7 +1477,36 @@ sorry-free Wigner rigidity — see 3.0.
   analogue and costs a lemma, not a lane. Recommended order: generalize
   DiagonalFamily → ComparisonInstance → Theta/ThetaCocycle → Chi* →
   Coalescence* (mechanical, compiler-driven), then the 1-dimensional-block kill.
-  Risk LOW (was LOW), effort now MEASURED rather than guessed.
+  Risk LOW (was LOW), effort MEASURED rather than guessed — **but see the
+  correction below before trusting the token counts.**
+
+  **FIRST STEP TAKEN 2026-08-06 + AN HONEST CORRECTION TO THE ESTIMATE.**
+  Done and green (whole tree rebuilt, 3067 jobs, census 110, custom axioms still
+  exactly `[]`): the two vendored eigenvalue↔order lemmas
+  `HermitianMat.le_smul_one_imp_eigenvalues_le` and
+  `eigenvalues_le_imp_le_smul_one` are now stated over `RCLike 𝕜` instead of `ℂ`,
+  and the first one's 15-line by-hand `ComplexOrder` quadratic-form proof
+  collapsed to ONE line — both are just the two directions of
+  `Matrix.PosSemidef.le_smul_one_of_eigenvalues_iff`, which was **already**
+  `𝕜`-general in `Vendor/Matrix.lean`. Every existing ℂ call site still
+  typechecks unchanged (a more general lemma applies at ℂ). Drift recorded in the
+  file's docstrings.
+  ★**CORRECTION to the token-count estimate**: the port is NOT purely mechanical.
+  Attempting the very next step — generalizing `Hermitian/OrderUnit.lean`'s
+  `le_zero_of_forall_le_smul_one` and `eigenvalues_mem_Icc_of_effect` from ℂ to
+  `𝕜` — produced `whnf`/`isDefEq` **timeouts in the statements themselves**, not
+  in the proofs: over a generic `RCLike 𝕜` the elaborator must resolve
+  `SMul ℝ (HermitianMat n 𝕜)` and the Loewner `≤` through the RCLike/StarModule
+  tower, which is cheap at concrete ℂ and expensive generically. Also, the
+  generalized lemmas' scalar binder is AUTO-BOUND (it is not named `𝕜`), so
+  `(𝕜 := …)` is not a valid named argument at call sites — pin with `(A := a)`
+  instead. So M4.1 is a refactor whose cost is dominated by **instance-resolution
+  blowup**, not by ℂ-specific mathematics: budget per-declaration
+  `set_option maxHeartbeats` bumps and/or explicit instance arguments, and
+  generalize LEAF-FIRST with a full `lake build` after each file (the pattern that
+  just worked for the vendored pair). The 13/16 "zero genuinely-complex tokens"
+  finding stands as a statement about the MATHEMATICS; it is not a statement about
+  elaboration cost.
 - **4.2 Quaternionic.** H_n(ℍ) ↪ H_{2n}(ℂ) symplectic embedding. [INV✓ area
   10]: ℍ itself is well-developed (NormedDivisionRing, CStarRing,
   InnerProductSpace ℝ) but **matrices over ℍ are total greenfield — zero
