@@ -270,6 +270,13 @@ import RadicalRelativity.Necessity.ProjectionOrder
 -- metric datum Wigner rigidity consumes.
 import RadicalRelativity.Necessity.Strength
 
+-- M3 bridge layer part 2b: the probe family probe(phi) = (1/2)(1 + phi phi*),
+-- the transition probability tau = |<phi,psi>|^2 with 0 <= tau <= 1, the
+-- witness-vector collapse probe(phi) . (2 psi - <phi,psi> phi) = psi (the
+-- inverse computed without any inverse), and the FORWARD strength bound
+-- Str(psi psi*, probe phi) <= (2 - tau)^{-1}.
+import RadicalRelativity.Necessity.StrengthProbe
+
 -- Exact paper-facing S1--S7 and product-conclusion statement boundary.  This
 -- freezes the target signature; it does not claim the classification is proved.
 import RadicalRelativity.PaperA.Statement

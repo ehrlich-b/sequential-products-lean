@@ -879,6 +879,26 @@ sorry-free Wigner rigidity — see 3.0.
     and (2−τ)(‖v‖² + |α|²) = (2−τ)(2|α|² + ‖v⊥‖²) — EXACT match, no slack.
     (Plain unweighted CS is too lossy — it needs τ ≤ 0; the weight 2 on the
     α-slot is what makes it tight.  Do not "simplify" this step.)
+  **3.1c FORWARD HALF DONE 2026-08-05** (`Necessity/StrengthProbe.lean`,
+  census 86, gates green): `probe`/`tprob`; `rankOne_mulVec`;
+  **`probe_mulVec_witness`** (the collapse probe(φ)·(2ψ − ⟪φ,ψ⟫φ) = ψ — the
+  inverse's action with NO inverse constructed); `dot_witness` (⟪ψ,w⟫ = 2 − τ);
+  `tprob_le_one` (Cauchy–Schwarz for free: test φφ* ≤ 𝟙 at ψ through
+  `le_iff_mulVec_le_mulVec`) + `one_le_two_sub_tprob`; `probe_nonneg`/
+  `probe_le_one` (probe is an effect); and **`strength_probe_le` — the forward
+  bound Str ≤ (2−τ)⁻¹**, both criterion slots evaluating to 2 − τ at the
+  witness. TRAPS: `dotProduct_sub`/`dotProduct_comm` are ROOT names in v4.28
+  (not `Matrix.`-prefixed); `omit` must precede the docstring, and cannot be
+  used when the instance IS referenced (probe needs DecidableEq via `1`);
+  `Complex.normSq_eq_conj_mul_self` has the conj on the LEFT — state the cast
+  as its own `have` in the direction you need rather than rewriting in place;
+  rank-one PSD comes from `posSemidef_conjTranspose_mul_self` on
+  `replicateRow` + `vecMulVec_eq (Fin 1)`; none of `le_inv_iff_mul_le` /
+  `le_inv_iff_one_le_mul₀` / `le_inv_comm₀` exist here — close `t ≤ c⁻¹` from
+  `t·c ≤ 1` by an explicit three-step `calc` through `t·c·c⁻¹`.
+  **REMAINING in 3.1c: the BACKWARD bound** (2−τ)⁻¹ ∈ the defining set, i.e.
+  the sharp weight-2 Cauchy–Schwarz spelled out above; that upgrades
+  `strength_probe_le` to `strength_probe_eq`, after which τ is order-data.
   * Then: τ-preservation ⟹ build the ray map `ℙ ℂ (EuclideanSpace ℂ (Fin N))`
     → itself from Φ's action on atoms (bridge 1: `IsAtomProjection` is
     order-theoretic, so Φ permutes rank-ones; `exists_rankOne` extracts the
