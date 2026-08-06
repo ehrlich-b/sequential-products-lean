@@ -1060,14 +1060,25 @@ sorry-free Wigner rigidity — see 3.0.
   instead of rewriting; and after editing an imported file, `lake build
   <that module>` BEFORE `lake env lean` on the consumer or the stale .olean
   reports the new lemma as an unknown identifier.
-  **REMAINING for M3 — the antiunitary branch only**, structurally identical:
-  the same chain with `conjProj` inserted, so it needs the analogue of
-  `isometry_apply_eq_mulVec` for `conjProj` (whose vector-level action is
-  `conjVec` = entrywise `star`, and `rankOne (star ψ) = transposeMap (rankOne
-  ψ)` at the matrix level — both `vecMulVec` computations), then
-  `preservesJordan_of_antiunitary_on_rankOne` (ALREADY PROVED) fires.  After
-  that, `ThetaPreservesJordan` is discharged unconditionally and every M2
-  result becomes unconditional.
+  **★★ M3 MATHEMATICAL CONTENT COMPLETE 2026-08-05 ★★** (same file, census 91,
+  gates green, zero sorries): the antiunitary branch closed with
+  `rankOne_star_eq_transpose` ((star ψ)(star ψ)* = (ψψ*)ᵗ) and `star_unit`,
+  through the vendored `conjProj_mk`; and the capstone
+  **`orderAuto_preservesJordan : (∀ x y, x ≤ y ↔ Φ x ≤ Φ y) → Φ 1 = 1 →
+  Surjective Φ → PreservesJordan Φ`** on `H_N(ℂ)`.  VERIFIED FIRST-HAND:
+  `#print axioms Necessity.orderAuto_preservesJordan` = `[propext,
+  Classical.choice, Quot.sound]`.  This is the paper's `prop:theta` /
+  van Imhoff–Roelands import, now a THEOREM of this development (modulo the
+  vendored, separately axiom-audited `wigner_rigidity`).
+  **REMAINING for M3 — interface plumbing only, no mathematics**: connect
+  `orderAuto_preservesJordan` to the `ThetaPreservesJordan P` predicate of
+  `Necessity/ComparisonInstance.lean`, i.e. show that for an effect `a` with
+  `a.mat.PosDef` the comparison map `theta P ha hbd` satisfies the three
+  hypotheses — unital (`theta_one`, HAVE), order-iso both ways
+  (`theta_nonneg_iff` gives `0 ≤ x ↔ 0 ≤ Θx`; upgrade to `x ≤ y ↔ Θx ≤ Θy` by
+  linearity applied to `y − x`), and surjective (`thetaEquiv` is already a
+  `LinearEquiv` — take `.surjective`).  Then every M2 conditional becomes
+  unconditional and the ℂ-lane is complete but for the Globalization wiring.
   * Then: τ-preservation ⟹ build the ray map `ℙ ℂ (EuclideanSpace ℂ (Fin N))`
     → itself from Φ's action on atoms (bridge 1: `IsAtomProjection` is
     order-theoretic, so Φ permutes rank-ones; `exists_rankOne` extracts the

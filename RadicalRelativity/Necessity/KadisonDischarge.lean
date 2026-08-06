@@ -194,4 +194,119 @@ theorem preservesJordan_of_rayMap_eq_projMap
   rw [rankOneP_mk' _ hunit] at h1
   rw [h1, isometry_apply_eq_mulVec e, rankOne_mulVec_eq_conj]
 
+/-! ## The antiunitary branch, closed end to end -/
+
+/-- `(star ψ)(star ψ)* = (ψψ*)ᵗ`: the rank-one of the conjugate vector is the
+transpose of the rank-one. -/
+theorem rankOne_star_eq_transpose (ψ : Fin N → ℂ) :
+    HermitianMat.rankOne (star ψ) = transposeMap (HermitianMat.rankOne ψ) := by
+  ext1
+  rw [HermitianMat.rankOne_mat, transposeMap_mat, HermitianMat.rankOne_mat]
+  ext a b
+  simp only [Matrix.transpose_apply, Matrix.vecMulVec_apply, Pi.star_apply,
+    star_star]
+  ring
+
+/-- Conjugation of a unit vector is a unit vector. -/
+theorem star_unit {ψ : Fin N → ℂ} (hψ : star ψ ⬝ᵥ ψ = 1) :
+    star (star ψ) ⬝ᵥ (star ψ) = 1 := by
+  rw [star_star]
+  have h : ψ ⬝ᵥ star ψ = star ψ ⬝ᵥ ψ := by
+    simp only [dotProduct]
+    exact Finset.sum_congr rfl fun i _ => mul_comm _ _
+  rw [h, hψ]
+
+/-- **M3 on the antiunitary branch.**  If the induced ray map is
+`projMap e ∘ conjProj`, then `Φ` preserves the Jordan product. -/
+theorem preservesJordan_of_rayMap_eq_projMap_conj
+    (Φ : HermitianMat (Fin N) ℂ →ₗ[ℝ] HermitianMat (Fin N) ℂ)
+    (hΦ : ∀ x y : HermitianMat (Fin N) ℂ, x ≤ y ↔ Φ x ≤ Φ y)
+    (hunital : Φ 1 = 1) (hsurj : Function.Surjective Φ)
+    (e : EuclideanSpace ℂ (Fin N) ≃ₗᵢ[ℂ] EuclideanSpace ℂ (Fin N))
+    (he : ∀ p, rayMap Φ hΦ hunital hsurj p
+      = Projectivization.projMap e (Projectivization.conjProj p)) :
+    PreservesJordan Φ := by
+  refine preservesJordan_of_antiunitary_on_rankOne Φ
+    (unitaryOfIsometry_conjTranspose_mul e) ?_
+  intro ψ hψ
+  have hne : (WithLp.toLp 2 ψ : EuclideanSpace ℂ (Fin N)) ≠ 0 := by
+    intro hz
+    exact ne_zero_of_unit hψ ((WithLp.toLp_eq_zero (p := 2)).mp hz)
+  set p : ℙ ℂ (EuclideanSpace ℂ (Fin N)) :=
+    Projectivization.mk ℂ (WithLp.toLp 2 ψ) hne with hp
+  have h1 := rayMap_rankOne Φ hΦ hunital hsurj p
+  rw [rankOneP_mk hψ hne] at h1
+  rw [he p] at h1
+  -- the conjugated ray, then the isometry
+  set w : EuclideanSpace ℂ (Fin N) :=
+    Projectivization.conjVec (Projectivization.conjProj p).rep with hw
+  have hcj : Projectivization.conjProj p
+      = Projectivization.mk ℂ (Projectivization.conjVec p.rep)
+        (Projectivization.conjVec_ne_zero p.rep_nonzero) := rfl
+  -- `rankOneP` of the conjugated ray is the rank-one of `star ψ`
+  have hconjrank : rankOneP (Projectivization.conjProj p)
+      = HermitianMat.rankOne (star ψ) := by
+    have hu : star (star ψ) ⬝ᵥ (star ψ) = 1 := star_unit hψ
+    have hnez : (WithLp.toLp 2 (star ψ) : EuclideanSpace ℂ (Fin N)) ≠ 0 := by
+      intro hz
+      exact ne_zero_of_unit hu ((WithLp.toLp_eq_zero (p := 2)).mp hz)
+    have hmk : Projectivization.conjProj p
+        = Projectivization.mk ℂ (WithLp.toLp 2 (star ψ)) hnez := by
+      rw [hp, Projectivization.conjProj_mk hne]
+      congr 1
+    rw [hmk, rankOneP_mk hu hnez]
+  -- the image of the conjugated ray under `projMap e`
+  have hrep : star (WithLp.ofLp
+        (e (WithLp.toLp 2 (star ψ)))) ⬝ᵥ
+      (WithLp.ofLp (e (WithLp.toLp 2 (star ψ)))) = 1 := by
+    have hu : star (star ψ) ⬝ᵥ (star ψ) = 1 := star_unit hψ
+    have hn1 : HermitianMat.nsq (star ψ) = 1 := by
+      have h2 : star (star ψ) ⬝ᵥ (star ψ)
+          = ((HermitianMat.nsq (star ψ) : ℝ) : ℂ) :=
+        HermitianMat.dot_self_eq_nsq _
+      rw [hu] at h2
+      exact_mod_cast h2.symm
+    have hnorm : HermitianMat.nsq
+        (WithLp.ofLp (e (WithLp.toLp 2 (star ψ)))) = 1 := by
+      rw [← norm_sq_eq_nsq, e.norm_map, norm_sq_eq_nsq]
+      simpa using hn1
+    have h3 : star (WithLp.ofLp (e (WithLp.toLp 2 (star ψ))))
+        ⬝ᵥ (WithLp.ofLp (e (WithLp.toLp 2 (star ψ))))
+        = ((HermitianMat.nsq (WithLp.ofLp (e (WithLp.toLp 2 (star ψ)))) : ℝ) : ℂ) :=
+      HermitianMat.dot_self_eq_nsq _
+    rw [h3, hnorm]
+    norm_num
+  have hu : star (star ψ) ⬝ᵥ (star ψ) = 1 := star_unit hψ
+  have hnez : (WithLp.toLp 2 (star ψ) : EuclideanSpace ℂ (Fin N)) ≠ 0 := by
+    intro hz
+    exact ne_zero_of_unit hu ((WithLp.toLp_eq_zero (p := 2)).mp hz)
+  have hmk : Projectivization.conjProj p
+      = Projectivization.mk ℂ (WithLp.toLp 2 (star ψ)) hnez := by
+    rw [hp, Projectivization.conjProj_mk hne]
+    congr 1
+  rw [hmk, Projectivization.projMap_mk e _ hnez, rankOneP_mk' _ hrep] at h1
+  rw [h1, isometry_apply_eq_mulVec e, rankOne_mulVec_eq_conj,
+    rankOne_star_eq_transpose]
+
+/-! ## The capstone: Kadison rigidity on `H_N(ℂ)` -/
+
+/-- **KADISON RIGIDITY ON `H_N(ℂ)` (the M3 result).** Every unital `ℝ`-linear
+order-automorphism of `H_N(ℂ)` is a Jordan automorphism.
+
+This is the paper's `prop:theta` / van Imhoff–Roelands input, the single
+hypothesis `ThetaPreservesJordan` on which every M2 result was conditional.
+Both branches of the Wigner dichotomy are discharged: the unitary one by
+conjugation, the antiunitary one by transpose-conjugation, and in each case the
+spanning of rank-one projections upgrades agreement-on-rank-ones to equality of
+maps. The only imported ingredient is the vendored, separately axiom-audited
+`Projectivization.wigner_rigidity`. -/
+theorem orderAuto_preservesJordan
+    (Φ : HermitianMat (Fin N) ℂ →ₗ[ℝ] HermitianMat (Fin N) ℂ)
+    (hΦ : ∀ x y : HermitianMat (Fin N) ℂ, x ≤ y ↔ Φ x ≤ Φ y)
+    (hunital : Φ 1 = 1) (hsurj : Function.Surjective Φ) :
+    PreservesJordan Φ := by
+  rcases rayMap_dichotomy Φ hΦ hunital hsurj with ⟨e, he⟩ | ⟨e, he⟩
+  · exact preservesJordan_of_rayMap_eq_projMap Φ hΦ hunital hsurj e he
+  · exact preservesJordan_of_rayMap_eq_projMap_conj Φ hΦ hunital hsurj e he
+
 end Necessity
