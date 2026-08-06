@@ -209,6 +209,12 @@ import RadicalRelativity.Necessity.BlockInvarianceGen
 import RadicalRelativity.Necessity.BlockTransportGen
 import RadicalRelativity.Necessity.BlockChiGen
 
+-- prop:real, the M4.1 capstone (in progress): over the reals the Peirce block is
+-- one-dimensional, so the comparison character acts on each block by a single real
+-- scalar which the block isometry forces to square to one.  Killing the minus sign by
+-- connectedness, and hence chiTilde = id, is the remaining step.
+import RadicalRelativity.Necessity.RealRigidity
+
 -- M2 necessity core, tenth unit (LEDGER 2.6, chi part 1): the comparison character
 -- on the diagonal family — base-point congruence, the value law
 -- a(r) sp a(r') = a(r+r'), chi(0) = 1 through theta_base_one, and the orthant

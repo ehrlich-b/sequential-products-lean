@@ -1885,8 +1885,29 @@ sorry-free Wigner rigidity — see 3.0.
       continuous linear map) needed `(𝕜 : Type*) [RCLike 𝕜]` explicitly.
       Also: apply the upstream remap `\bdiagFamily_(\w+) ⇝ diagFamilyG_\1` as a
       GENERAL rule, not from a hand-maintained list — the list is what kept going stale.
-    * **M4.1 REMAINING: only the ℝ capstone file** (design steps 1–4, later banked).
-      Every ingredient it names now exists over `𝕜`. All three are pure recipe — the ℂ originals have zero genuinely
+    * **ℝ CAPSTONE OPENED 2026-08-06** (`Necessity/RealRigidity.lean`, census 125,
+      gates green, tree at 3082 jobs, custom axioms exactly `[]`) — **design steps 1
+      and 2 are machine-checked**: `blockScalar` (the single real scalar by which
+      `χ̃(r)` acts on the one-dimensional block, extracted from
+      `chiTilde_block_existsG`), **`blockScalar_sq`** (it squares to one — the block
+      isometry plus `RCLike.normSq` over ℝ being `x·x`), `blockScalar_ne_zero`,
+      `blockScalar_zero` (it is `1` at the origin, from `chiTilde_zeroG`), and
+      `blockScalar_eq_entry` (it reads off as a matrix entry, which is how continuity
+      in `r` will be obtained).
+      Traps: the upstream lemma is `blockHerm_matG` (G at the end — it is a *lemma*
+      about a renamed def, not the def itself); and `rw` on a `.choose`-valued
+      hypothesis fails with "motive is not type correct" — use
+      `simpa [blockScalar, RCLike.normSq_apply] using h` so the choice term is
+      unfolded on both sides rather than rewritten under.
+    * **REMAINING: design steps 3 and 4 only** — (3) `blockScalar_eq_one` by
+      connectedness: `t ↦ blockScalar (t • r)` is continuous (via
+      `blockScalar_eq_entry` + `continuous_chiTilde_lineG` + entry continuity), squares
+      to one, and is `1` at `t = 0`, so if it ever hit `−1` the intermediate value
+      theorem would force a zero, contradicting `blockScalar_ne_zero`; and (4)
+      `chiTilde_eq_id` from `linearMap_eq_of_frame_blockG` plus frame-fixing (prove the
+      χ̃-level frame fixing inline from `thetaNorm_fixes_frameProjG` on both factors —
+      the ℂ lane's `chiTilde_fixes_frameProj` lives in `TwistIdentification`, which is
+      NOT twinned and does not need to be). All three are pure recipe — the ℂ originals have zero genuinely
     complex content beyond `normSq`, which becomes `‖t‖²`/`RCLike.normSq`.
     NOTE the ℝ simplification worth exploiting: over ℝ, `blockHerm i j t` has no phase,
     so `BlockTransportGen`/`BlockChiGen`/`BlockSkewGen`/`PhaseCocycleGen`/`PhaseAnchorGen`
