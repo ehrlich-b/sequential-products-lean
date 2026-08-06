@@ -38,18 +38,19 @@ open OrderUnitSpace
 namespace Necessity
 
 variable {n : Type*} [Fintype n] [DecidableEq n]
+variable {𝕜 : Type*} [RCLike 𝕜]
 
 /-! ## The quadratic representation `Q_{√a}` as a linear equivalence -/
 
 /-- `Q_{√a} : x ↦ √a·x·√a`. -/
-def quadRep (a : HermitianMat n ℂ) : HermitianMat n ℂ →ₗ[ℝ] HermitianMat n ℂ :=
+def quadRep (a : HermitianMat n 𝕜) : HermitianMat n 𝕜 →ₗ[ℝ] HermitianMat n 𝕜 :=
   HermitianMat.conjLinear ℝ (a.cfc Real.sqrt).mat
 
 /-- The inverse branch `x ↦ (√a)⁻¹·x·(√a)⁻¹`, through the functional calculus. -/
-def quadRepInv (a : HermitianMat n ℂ) : HermitianMat n ℂ →ₗ[ℝ] HermitianMat n ℂ :=
+def quadRepInv (a : HermitianMat n 𝕜) : HermitianMat n 𝕜 →ₗ[ℝ] HermitianMat n 𝕜 :=
   HermitianMat.conjLinear ℝ (a.cfc fun x => (Real.sqrt x)⁻¹).mat
 
-theorem sqrt_mul_invSqrt {a : HermitianMat n ℂ} (hbd : a.mat.PosDef) :
+theorem sqrt_mul_invSqrt {a : HermitianMat n 𝕜} (hbd : a.mat.PosDef) :
     (a.cfc Real.sqrt).mat * (a.cfc fun x => (Real.sqrt x)⁻¹).mat = 1 := by
   rw [← HermitianMat.mat_cfc_mul_apply]
   have hcongr : a.cfc (fun x => Real.sqrt x * (Real.sqrt x)⁻¹) = a.cfc (fun _ => (1 : ℝ)) :=
@@ -58,7 +59,7 @@ theorem sqrt_mul_invSqrt {a : HermitianMat n ℂ} (hbd : a.mat.PosDef) :
   rw [hcongr, HermitianMat.cfc_const]
   simp
 
-theorem invSqrt_mul_sqrt {a : HermitianMat n ℂ} (hbd : a.mat.PosDef) :
+theorem invSqrt_mul_sqrt {a : HermitianMat n 𝕜} (hbd : a.mat.PosDef) :
     (a.cfc fun x => (Real.sqrt x)⁻¹).mat * (a.cfc Real.sqrt).mat = 1 := by
   rw [← HermitianMat.mat_cfc_mul_apply]
   have hcongr : a.cfc (fun x => (Real.sqrt x)⁻¹ * Real.sqrt x) = a.cfc (fun _ => (1 : ℝ)) :=
@@ -67,22 +68,23 @@ theorem invSqrt_mul_sqrt {a : HermitianMat n ℂ} (hbd : a.mat.PosDef) :
   rw [hcongr, HermitianMat.cfc_const]
   simp
 
+omit [DecidableEq n] in
 /-- Composition of conjugations: `(x.conj S).conj T = x.conj (T·S)`. -/
-theorem conj_conj_mat (x : HermitianMat n ℂ) (S T : Matrix n n ℂ) :
+theorem conj_conj_mat (x : HermitianMat n 𝕜) (S T : Matrix n n 𝕜) :
     (x.conj S).conj T = x.conj (T * S) := by
   ext1
   rw [HermitianMat.conj_apply_mat, HermitianMat.conj_apply_mat, HermitianMat.conj_apply_mat,
     Matrix.conjTranspose_mul]
   noncomm_ring
 
-theorem conj_one_mat (x : HermitianMat n ℂ) : x.conj (1 : Matrix n n ℂ) = x := by
+theorem conj_one_mat (x : HermitianMat n 𝕜) : x.conj (1 : Matrix n n 𝕜) = x := by
   ext1
   rw [HermitianMat.conj_apply_mat]
   simp
 
 /-- **`Q_{√a}` as a linear equivalence**, for positive-definite `a`. -/
-def quadRepEquiv (a : HermitianMat n ℂ) (hbd : a.mat.PosDef) :
-    HermitianMat n ℂ ≃ₗ[ℝ] HermitianMat n ℂ :=
+def quadRepEquiv (a : HermitianMat n 𝕜) (hbd : a.mat.PosDef) :
+    HermitianMat n 𝕜 ≃ₗ[ℝ] HermitianMat n 𝕜 :=
   LinearEquiv.ofLinear (quadRep a) (quadRepInv a)
     (by
       apply LinearMap.ext
@@ -97,16 +99,16 @@ def quadRepEquiv (a : HermitianMat n ℂ) (hbd : a.mat.PosDef) :
         HermitianMat.conjLinear_apply]
       rw [conj_conj_mat, invSqrt_mul_sqrt hbd, conj_one_mat])
 
-theorem quadRepEquiv_apply (a : HermitianMat n ℂ) (hbd : a.mat.PosDef)
-    (x : HermitianMat n ℂ) :
+theorem quadRepEquiv_apply (a : HermitianMat n 𝕜) (hbd : a.mat.PosDef)
+    (x : HermitianMat n 𝕜) :
     quadRepEquiv a hbd x = x.conj (a.cfc Real.sqrt).mat := rfl
 
-theorem quadRepEquiv_symm_apply (a : HermitianMat n ℂ) (hbd : a.mat.PosDef)
-    (x : HermitianMat n ℂ) :
+theorem quadRepEquiv_symm_apply (a : HermitianMat n 𝕜) (hbd : a.mat.PosDef)
+    (x : HermitianMat n 𝕜) :
     (quadRepEquiv a hbd).symm x = x.conj (a.cfc fun t => (Real.sqrt t)⁻¹).mat := rfl
 
 /-- `Q_{√a} 1 = a`. -/
-theorem quadRepEquiv_one {a : HermitianMat n ℂ} (ha0 : 0 ≤ a) (hbd : a.mat.PosDef) :
+theorem quadRepEquiv_one {a : HermitianMat n 𝕜} (ha0 : 0 ≤ a) (hbd : a.mat.PosDef) :
     quadRepEquiv a hbd 1 = a := by
   ext1
   rw [quadRepEquiv_apply, HermitianMat.conj_apply_mat, HermitianMat.mat_one, Matrix.mul_one,
@@ -117,44 +119,44 @@ theorem quadRepEquiv_one {a : HermitianMat n ℂ} (ha0 : 0 ≤ a) (hbd : a.mat.P
 
 /-! ## The comparison map Θ -/
 
-variable (P : SequentialProductOn (HermitianMat n ℂ))
+variable (P : SequentialProductOn (HermitianMat n 𝕜))
 
 /-- **The comparison map** `Θ_a := Q_{√a}⁻¹ ∘ L'_a` (vdW 5.3, matrix-concrete). -/
-def theta {a : HermitianMat n ℂ} (ha : IsEffect a) (hbd : a.mat.PosDef) :
-    HermitianMat n ℂ →ₗ[ℝ] HermitianMat n ℂ :=
+def theta {a : HermitianMat n 𝕜} (ha : IsEffect a) (hbd : a.mat.PosDef) :
+    HermitianMat n 𝕜 →ₗ[ℝ] HermitianMat n 𝕜 :=
   ((quadRepEquiv a hbd).symm.toLinearMap).comp (seqLeftMul P a ha)
 
 /-- The paper's defining equation: `L'_a = Q_{√a} ∘ Θ_a`. -/
-theorem quadRep_theta {a : HermitianMat n ℂ} (ha : IsEffect a) (hbd : a.mat.PosDef)
-    (x : HermitianMat n ℂ) :
+theorem quadRep_theta {a : HermitianMat n 𝕜} (ha : IsEffect a) (hbd : a.mat.PosDef)
+    (x : HermitianMat n 𝕜) :
     quadRepEquiv a hbd (theta P ha hbd x) = seqLeftMul P a ha x := by
   rw [theta]
   simp only [LinearMap.comp_apply, LinearEquiv.coe_coe]
   exact (quadRepEquiv a hbd).apply_symm_apply _
 
 /-- **Θ is injective** (from the 2.1e pseudo-inverse cancellation). -/
-theorem theta_injective (hS2 : P.FirstArgContinuous) {a : HermitianMat n ℂ}
+theorem theta_injective (hS2 : P.FirstArgContinuous) {a : HermitianMat n 𝕜}
     (ha : IsEffect a) (hbd : a.mat.PosDef) :
     Function.Injective (theta P ha hbd) := by
   rw [theta]
   exact ((quadRepEquiv a hbd).symm.injective).comp (seqLeftMul_injective P hS2 ha hbd)
 
 /-- **Θ as a linear equivalence** (surjectivity from finite dimension). -/
-def thetaEquiv (hS2 : P.FirstArgContinuous) {a : HermitianMat n ℂ}
+def thetaEquiv (hS2 : P.FirstArgContinuous) {a : HermitianMat n 𝕜}
     (ha : IsEffect a) (hbd : a.mat.PosDef) :
-    HermitianMat n ℂ ≃ₗ[ℝ] HermitianMat n ℂ :=
+    HermitianMat n 𝕜 ≃ₗ[ℝ] HermitianMat n 𝕜 :=
   LinearEquiv.ofBijective (theta P ha hbd)
     ⟨theta_injective P hS2 ha hbd,
       LinearMap.injective_iff_surjective.mp (theta_injective P hS2 ha hbd)⟩
 
-theorem thetaEquiv_apply (hS2 : P.FirstArgContinuous) {a : HermitianMat n ℂ}
-    (ha : IsEffect a) (hbd : a.mat.PosDef) (x : HermitianMat n ℂ) :
+theorem thetaEquiv_apply (hS2 : P.FirstArgContinuous) {a : HermitianMat n 𝕜}
+    (ha : IsEffect a) (hbd : a.mat.PosDef) (x : HermitianMat n 𝕜) :
     thetaEquiv P hS2 ha hbd x = theta P ha hbd x := rfl
 
 /-! ## Unitality and the order isomorphism property -/
 
 /-- **Θ is unital** (vdW 5.3): `Θ_a 1 = 1`. -/
-theorem theta_one {a : HermitianMat n ℂ} (ha : IsEffect a) (hbd : a.mat.PosDef) :
+theorem theta_one {a : HermitianMat n 𝕜} (ha : IsEffect a) (hbd : a.mat.PosDef) :
     theta P ha hbd 1 = 1 := by
   rw [theta]
   simp only [LinearMap.comp_apply, LinearEquiv.coe_coe]
@@ -163,8 +165,8 @@ theorem theta_one {a : HermitianMat n ℂ} (ha : IsEffect a) (hbd : a.mat.PosDef
 
 /-- **Θ is an order isomorphism** (vdW 5.3): `0 ≤ Θ_a x ↔ 0 ≤ x`.  Forward by
 2.1e's order reflection, backward by conjugation positivity. -/
-theorem theta_nonneg_iff (hS2 : P.FirstArgContinuous) {a : HermitianMat n ℂ}
-    (ha : IsEffect a) (hbd : a.mat.PosDef) (x : HermitianMat n ℂ) :
+theorem theta_nonneg_iff (hS2 : P.FirstArgContinuous) {a : HermitianMat n 𝕜}
+    (ha : IsEffect a) (hbd : a.mat.PosDef) (x : HermitianMat n 𝕜) :
     0 ≤ theta P ha hbd x ↔ 0 ≤ x := by
   constructor
   · intro h
@@ -181,15 +183,15 @@ theorem theta_nonneg_iff (hS2 : P.FirstArgContinuous) {a : HermitianMat n ℂ}
     exact HermitianMat.conj_nonneg _ hL
 
 /-- The monotone form: `Θ_a x ≤ Θ_a y ↔ x ≤ y`. -/
-theorem theta_le_iff (hS2 : P.FirstArgContinuous) {a : HermitianMat n ℂ}
-    (ha : IsEffect a) (hbd : a.mat.PosDef) (x y : HermitianMat n ℂ) :
+theorem theta_le_iff (hS2 : P.FirstArgContinuous) {a : HermitianMat n 𝕜}
+    (ha : IsEffect a) (hbd : a.mat.PosDef) (x y : HermitianMat n 𝕜) :
     theta P ha hbd x ≤ theta P ha hbd y ↔ x ≤ y := by
   rw [← sub_nonneg, ← map_sub, theta_nonneg_iff P hS2 ha hbd, sub_nonneg]
 
 /-! ## The normalization law `Θ_{t·a} = Θ_a`  (campaign LEDGER 2.3, vdW 5.4) -/
 
 /-- `√(t•a) = √t • √a`, through the matrix-argument scaling law. -/
-theorem sqrt_smul {t : ℝ} (ht : 0 ≤ t) (a : HermitianMat n ℂ) :
+theorem sqrt_smul {t : ℝ} (ht : 0 ≤ t) (a : HermitianMat n 𝕜) :
     (t • a).cfc Real.sqrt = Real.sqrt t • a.cfc Real.sqrt := by
   rw [HermitianMat.cfc_smul_arg]
   rw [show (fun x => Real.sqrt (t * x)) = fun x => Real.sqrt t * Real.sqrt x from
@@ -197,19 +199,19 @@ theorem sqrt_smul {t : ℝ} (ht : 0 ≤ t) (a : HermitianMat n ℂ) :
   exact HermitianMat.cfc_const_mul a _ _
 
 /-- First-argument homogeneity at the linear-map level. -/
-theorem seqLeftMul_smul (hS2 : P.FirstArgContinuous) {a : HermitianMat n ℂ}
+theorem seqLeftMul_smul (hS2 : P.FirstArgContinuous) {a : HermitianMat n 𝕜}
     (ha : IsEffect a) {t : ℝ} (ht0 : 0 ≤ t) (ht1 : t ≤ 1)
     (hta : IsEffect (t • a)) :
     seqLeftMul P (t • a) hta = t • seqLeftMul P a ha := by
-  apply LinearMap.ext_on (s := {x : HermitianMat n ℂ | IsEffect x}) span_isEffect_eq_top
+  apply LinearMap.ext_on (s := {x : HermitianMat n 𝕜 | IsEffect x}) span_isEffect_eq_top
   intro e he
   simp only [LinearMap.smul_apply]
   rw [seqLeftMul_apply_effect P hta he, seqLeftMul_apply_effect P ha he]
   exact sp_smul_left P hS2 ha he ht0 ht1
 
 /-- The quadratic representation scales linearly with the base point. -/
-theorem quadRepEquiv_smul {a : HermitianMat n ℂ} (hbd : a.mat.PosDef) {t : ℝ}
-    (ht : 0 < t) (htbd : (t • a).mat.PosDef) (x : HermitianMat n ℂ) :
+theorem quadRepEquiv_smul {a : HermitianMat n 𝕜} (hbd : a.mat.PosDef) {t : ℝ}
+    (ht : 0 < t) (htbd : (t • a).mat.PosDef) (x : HermitianMat n 𝕜) :
     quadRepEquiv (t • a) htbd x = t • quadRepEquiv a hbd x := by
   ext1
   rw [quadRepEquiv_apply, quadRepEquiv_apply, HermitianMat.mat_smul,
@@ -223,23 +225,23 @@ theorem quadRepEquiv_smul {a : HermitianMat n ℂ} (hbd : a.mat.PosDef) {t : ℝ
 
 /-- `Θ` at base point `1` is the identity — `χ̃(0) = 1` for the character of
 LEDGER 2.6: `L'_1 = id` is S3, and `Q_{√1} = id` is `cfc` at the unit. -/
-theorem theta_base_one (h1e : IsEffect (1 : HermitianMat n ℂ))
-    (h1bd : (1 : HermitianMat n ℂ).mat.PosDef) :
+theorem theta_base_one (h1e : IsEffect (1 : HermitianMat n 𝕜))
+    (h1bd : (1 : HermitianMat n 𝕜).mat.PosDef) :
     theta P h1e h1bd = LinearMap.id := by
-  apply LinearMap.ext_on (s := {x : HermitianMat n ℂ | IsEffect x}) span_isEffect_eq_top
+  apply LinearMap.ext_on (s := {x : HermitianMat n 𝕜 | IsEffect x}) span_isEffect_eq_top
   intro e he
   rw [theta]
   simp only [LinearMap.comp_apply, LinearEquiv.coe_coe, LinearMap.id_apply]
-  have hu : P.sp (1 : HermitianMat n ℂ) e = e := P.sp_unit_left he
+  have hu : P.sp (1 : HermitianMat n 𝕜) e = e := P.sp_unit_left he
   rw [seqLeftMul_apply_effect P h1e he, hu, quadRepEquiv_symm_apply]
-  rw [show ((1 : HermitianMat n ℂ).cfc fun t => (Real.sqrt t)⁻¹) = 1 from by
+  rw [show ((1 : HermitianMat n 𝕜).cfc fun t => (Real.sqrt t)⁻¹) = 1 from by
     rw [HermitianMat.cfc_apply_one, Real.sqrt_one, inv_one, one_smul]]
   rw [HermitianMat.mat_one]
   exact conj_one_mat e
 
 /-- **The normalization law** (vdW 5.4, paper cone-ext): Θ is scale-invariant in
 its base point, `Θ_{t·a} = Θ_a` for `t ∈ (0,1]`. -/
-theorem theta_smul (hS2 : P.FirstArgContinuous) {a : HermitianMat n ℂ}
+theorem theta_smul (hS2 : P.FirstArgContinuous) {a : HermitianMat n 𝕜}
     (ha : IsEffect a) (hbd : a.mat.PosDef) {t : ℝ} (ht0 : 0 < t) (ht1 : t ≤ 1)
     (hta : IsEffect (t • a)) (htbd : (t • a).mat.PosDef) :
     theta P hta htbd = theta P ha hbd := by

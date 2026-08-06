@@ -1628,21 +1628,31 @@ sorry-free Wigner rigidity — see 3.0.
   term mode to `by rw [pseudoInv]; exact …` so the sum form is *given* rather than
   discovered). Tree green, census 111, custom axioms exactly `[]`.
 
-  **NEXT THREE, ATTEMPTED AND REVERTED — their exact failure signatures, so the next
-  pass is targeted rather than exploratory.** All three are the same metavariable
-  family as `PseudoInverse`'s, i.e. each needs a handful of explicit pins, not new
-  mathematics (all three have ZERO genuinely-complex constructs: Theta 39/0,
-  ThetaFix 3/0, ThetaCocycle 30/0):
-  * `Theta.lean` — `seqLeftMul_injective ?m.81 ?m.82 ?m.83 ?m.84` at :141 (pin the
-    product/base-point arguments), then a `whnf` timeout at :176 (expect the same
-    "make the form explicit rather than let it be unfolded" fix as
-    `pseudoInv_isEffect`).
-  * `ThetaFix.lean` — `(quadRepEquiv ?m.38 ?m.39) ?m.41` at :141 and a `b`-typed
-    mismatch at :198 (pin `quadRepEquiv`'s base point).
-  * `ThetaCocycle.lean` — `isDefEq` timeout at :93 and
-    `span_isEffect_eq_top` mismatch at :110 (pin the carrier on the span lemma);
-    note it also still holds 10 ℂ tokens after the sed, so check those by hand.
-  Then `Chi` (which must switch to the `…Gen` frame/family names) →
+  **`Theta.lean` + `ThetaFix.lean` DONE 2026-08-06 — and the previously recorded
+  "failure signatures" for them were CASCADE ARTIFACTS.** Once `PseudoInverse` was
+  generalized and committed, both files fell out of the plain sed with **zero** pins
+  and zero proof edits (`Theta.lean` needed only an `omit [DecidableEq n] in`, and
+  note that modifier goes BEFORE the docstring — after it, Lean reports
+  "unexpected token 'omit'; expected 'lemma'"). LESSON for the remaining files:
+  **do not diagnose a file until its dependencies are generalized** — errors seen in
+  a file whose imports are still ℂ-pinned are mostly noise about the boundary, not
+  about the file.
+
+  ★**`ThetaCocycle.lean` — THE FIRST GENUINE (non-elaboration) OBSTACLE OF THE PORT,
+  reverted, with all three remaining items pinned down:**
+  (1) `sp_orthFamily_comm` at :93 needs its family pinned (`(p := …)`), the same
+      higher-order-unification fix as `PseudoInverse`;
+  (2) ten `(2 : ℂ)` scalars in the Peirce-style computation at :206–:249 survive the
+      sed and become `(2 : 𝕜)`;
+  (3) **the real content**: it routes the cocycle through
+      `HermitianMat.twistFactor_mul_of_commute … 0`, and `twistFactor` is
+      *intrinsically* complex (`twistRe + Complex.I • twistIm`).  At `t = 0` the
+      complex structure is inessential — `twistFactor a 0 = √a` — so the ℝ row wants
+      a small NEW lemma over `RCLike 𝕜`: for commuting positives with
+      `m.mat = a.mat * b.mat`, `√m = √a · √b` stated via `cfc Real.sqrt` directly
+      instead of via `twistFactor _ 0`. That is the one place in the Θ chain where
+      the port needs mathematics rather than substitution, and it is a one-lemma job.
+    Then `Chi` (which must switch to the `…Gen` frame/family names) →
   `ComparisonInstance` → `Chi*`/`Coalescence*`; then the short ℝ ending.
 - **4.2 Quaternionic.** H_n(ℍ) ↪ H_{2n}(ℂ) symplectic embedding. [INV✓ area
   10]: ℍ itself is well-developed (NormedDivisionRing, CStarRing,

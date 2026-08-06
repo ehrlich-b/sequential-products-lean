@@ -37,13 +37,14 @@ open OrderUnitSpace
 namespace Necessity
 
 variable {n : Type*} [Fintype n] [DecidableEq n]
-variable {a b : HermitianMat n ℂ}
+variable {𝕜 : Type*} [RCLike 𝕜]
+variable {a b : HermitianMat n 𝕜}
 
 /-! ## The joint spectral family of a commuting pair -/
 
 /-- The joint spectral projection `P_μ·Q_ν` at the eigenvalue pair `q = (μ, ν)`,
 Hermitian because the factors commute. -/
-def jointProj (hab : Commute a.mat b.mat) (q : ℝ × ℝ) : HermitianMat n ℂ :=
+def jointProj (hab : Commute a.mat b.mat) (q : ℝ × ℝ) : HermitianMat n 𝕜 :=
   ⟨(a.specProj q.1).mat * (b.specProj q.2).mat, by
     have hc : Commute (a.specProj q.1).mat (b.specProj q.2).mat :=
       HermitianMat.cfc_commute _ _ hab
@@ -130,7 +131,7 @@ theorem b_eq_sum_jointProj (hab : Commute a.mat b.mat) :
 
 /-! ## The value identity `a ◦' b = Q_{√a} b` -/
 
-variable (P : SequentialProductOn (HermitianMat n ℂ))
+variable (P : SequentialProductOn (HermitianMat n 𝕜))
 
 /-- For a commuting pair of effects (with `a` positive definite), the unknown
 product takes the standard Lüders value. -/
