@@ -1942,10 +1942,26 @@ sorry-free Wigner rigidity — see 3.0.
       twist factor. Traps: the twin names are `adU_cancelG'` (prime AFTER the G, since
       the source is `adU_cancel'`), and `rw [← hadiag]` must fold the base point back
       BEFORE the cancellation rewrite or the pattern is not found.
-      **REMAINING for the ℝ row: only the singular-effect extension**, i.e. feed
-      `sp_eq_luders_of_posDef` to the already-field-general
-      `sp_eq_on_effects_of_eq_on_posDef` with the Lüders product packaged as a
-      `SequentialProductOn` (the ℝ analogue of `twistProductOn` at `t = 0`). All three are pure recipe — the ℂ originals have zero genuinely
+      ★**REMAINING for the ℝ row: ONLY the singular-effect extension, and its one
+      dependency is now pinned down (probed 2026-08-06, attempt reverted, tree green).**
+      Two routes, both needing the same missing piece:
+      (a) via `prop_singular` directly — needs `a ↦ Q_{√a} b` continuous, i.e. continuity
+          of the functional calculus in the MATRIX argument;
+      (b) via `sp_eq_on_effects_of_eq_on_posDef` — needs the ℝ Lüders product packaged as
+          a `SequentialProductOn`, whose S2 field is the same continuity.
+      **The blocker is `HermitianMat.cfc_continuous` (Vendor/HermitianMat/CFC.lean:354,
+      `@[fun_prop]`-tagged): it is stated for `HermitianMat d ℂ` only.** Good news, measured:
+      the whole joint-continuity section (lines ~415–600: `norm_cfc_le_sqrt_card_mul_bound`,
+      `norm_cfc_sub_cfc_le_sqrt_card`, `norm_cfc_sub_le_of_sup_le`,
+      **`continuousOn_cfc_of_compact`**, `continuous_cfc_joint_compact`) contains **ZERO**
+      `Complex.*` uses — only 7 `ℂ` tokens, all as the scalar type — so a plain `ℂ ⇝ 𝕜`
+      substitution takes it, EXCEPT that its two `fun_prop` calls resolve through
+      `cfc_continuous`, which must be generalized FIRST. That one is the real work
+      (its proof goes through `LocallyCompactSpace.local_compact_nhds` on
+      `HermitianMat d ℂ` and `_root_.cfc` continuity); expect it to be mechanical too,
+      but it is a vendor-tree proof, so do it deliberately with `VENDOR.md` drift noted.
+      **Order: generalize `cfc_continuous` → the joint-continuity section → then either
+      route (a) or (b) closes the ℝ row.** All three are pure recipe — the ℂ originals have zero genuinely
     complex content beyond `normSq`, which becomes `‖t‖²`/`RCLike.normSq`.
     NOTE the ℝ simplification worth exploiting: over ℝ, `blockHerm i j t` has no phase,
     so `BlockTransportGen`/`BlockChiGen`/`BlockSkewGen`/`PhaseCocycleGen`/`PhaseAnchorGen`
