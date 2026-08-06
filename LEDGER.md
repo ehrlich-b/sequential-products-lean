@@ -1240,8 +1240,29 @@ sorry-free Wigner rigidity — see 3.0.
   and **`chiEntry_is_rotation` : `chiEntry r i j z = e^{i c(r)} z`** with
   `c(r) = (gen r 1).im`, via `skew_linear_eq_I_smul` + `exp_generator_is_rotation`.
   Axioms verified first-hand: core only.
-  **REMAINING for the ℂ lane: coefficient bookkeeping only** — identify
-  `c(r) = (chiEntryGen … r 1).im` with `t_F (r_i − r_j)`.  Both are ℝ-linear in
+  **COEFFICIENT BOOKKEEPING DONE + IDENTIFICATION FIRES 2026-08-05**
+  (`Necessity/BlockAngle.lean`, census 104, gates green, zero sorries):
+  **`chiEntryGen_eq_dChiEntry`** — the abstract generator of the block character
+  and the entry map of `dχ` are the derivative at `0` of the SAME real function
+  `t ↦ chiEntry (t•r) i j z`, so `HasDerivAt.unique` equates them (no new
+  analysis, and it AVOIDS the exp-restricted-to-an-invariant-subspace problem
+  entirely — that was the feared route); hence
+  **`chiEntry_rotation_tval` : `chiEntry r i j z = e^{i t_{ij}(r)} z`** in closed
+  form (via `dChiEntry_eq`'s skew classification), `chiTilde_block_rotation` at
+  the HermitianMat level, and then **`chiTilde_eq_adU`** — given the collapsed
+  rates `t_{ij}(r) = t (r_i − r_j)`, `χ̃(r) = Ad_{U_t(r)}`, i.e. the paper's
+  `Θ_a = Ad_{a^{it}}` — plus **`sp_eq_quadRep_torus`**, the product-level form
+  `a • b = Q_{√a}(Ad_{U_t(r)} b)` with the comparison map now IDENTIFIED rather
+  than merely certified.  Axioms verified first-hand on both capstones: core only.
+  **ℂ-lane status:** the identification chain is complete.  What remains to reach
+  `PaperA.UniqueTwistConclusion` is bookkeeping between the character parameter
+  `r` and the spectrum of `a` (i.e. `r = log spec a`, so that `U_t(r) = a^{it}`
+  literally), the uniqueness half (two twist parameters agreeing on all effects
+  are equal — the `t ↦ e^{it log λ}` injectivity, same shape as
+  `real_character_unique`), M1's `twistSequentialProduct` as the sufficiency
+  witness, and 2.9's `sp_eq_on_effects_of_eq_on_posDef` to extend from
+  invertibles.  HISTORICAL: identify `c(r) = (chiEntryGen … r 1).im` with
+  `t_F (r_i − r_j)`.  Both are ℝ-linear in
   `r` (the former because `chiEntryGen` is linear), both vanish on the
   coalescence hyperplane, and `complex_perFrame_unconditional` pins the
   proportionality; so this is `angle_factor`-style linear algebra

@@ -367,6 +367,13 @@ import RadicalRelativity.Necessity.MulEmbedding
 -- chiTilde_eq_adU_of_block was stated modulo.
 import RadicalRelativity.Necessity.BlockRotation
 
+-- THE BLOCK ANGLE IS THE PHASE RATE: the abstract generator of the block
+-- character and the entry map of dChi are the derivative at 0 of the SAME real
+-- function, so HasDerivAt.unique equates them -- no new analysis.  Hence the
+-- block action in closed form: chiEntry r i j z = e^{i t_ij(r)} z, which is
+-- exactly the hypothesis shape chiTilde_eq_adU_of_block was stated modulo.
+import RadicalRelativity.Necessity.BlockAngle
+
 -- M5 (LEDGER 5.1, prop:n2-necessity): the rank-two LIFTING STEP, obtained as a
 -- corollary of M2's one-parameter engine rather than from covering spaces --
 -- a continuous character into the rotation group (the unit circle in C) is
