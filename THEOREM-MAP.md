@@ -79,6 +79,38 @@ an open interval). Those two are proved in the paper and carried here, exactly a
 in its signature rather than hidden in a structure. Nothing else is assumed;
 `#print axioms Necessity.complex_classification` is Lean core only.
 
+### The real row of `mthm:master`, on the concrete carrier (2026-08-06)
+
+Same kind as the complex block above — proved on the concrete carrier about an
+arbitrary pinned `P : SequentialProductOn (HermitianMat n ℝ)`, no §2 field assumed —
+with **one difference that must not be glossed**: over ℝ the Jordan property of the
+comparison map is **carried, not derived**. M3's discharge routes through
+`Projectivization.wigner_rigidity`, which is intrinsically complex; the real analogue
+is real Kadison/Uhlhorn, which exists in no proof assistant. So `ThetaPreservesJordanG`
+appears as a located hypothesis, exactly as the manuscript cites van Imhoff–Roelands
+for it, and exactly as the ℂ row stood before M3 closed.
+
+| Paper statement | Lean declaration | File |
+| --- | --- | --- |
+| `prop:real`, **real row**: `a • b = √a·b·√a` on **all** effects, no twist parameter | `Necessity.sp_eq_luders_of_effect` | `Necessity/RealRigidity.lean` |
+| the same, invertible effects only | `Necessity.sp_eq_luders_of_posDef` | `Necessity/RealRigidity.lean` |
+| the comparison character is the identity (`Θ_a = id`) | `Necessity.chiTilde_eq_id` | `Necessity/RealRigidity.lean` |
+| `prop:singular` applied over ℝ | `Necessity.dense_posDef_effectsR` + `MasterTheorem.prop_singular` | `Necessity/RealRigidity.lean` |
+
+**Exact hypothesis accounting for `sp_eq_luders_of_effect`**: the `SequentialProductOn`
+fields (S1, S3–S7); S2; and `ThetaPreservesJordanG` in each eigenframe. Nothing else —
+`#print axioms` is Lean core only — but the row is **conditional**, and should be
+described as "machine-checked modulo the cited Jordan property", never as
+unconditional. The ℂ row above carries no such hypothesis.
+
+The supporting field-general infrastructure (of independent interest, all
+`RCLike 𝕜`): `HermitianMat.sqrt_mul_of_commute` (square roots multiply on commuting
+positives — absent from Mathlib), `HermitianMat.eq_zero_of_commute_hermitian_of_trace_zero`
+(the commutant kill), `HermitianMat.continuous_cfc_polynomial` and
+`HermitianMat.continuousOn_cfc_sqrt_effects` (continuity of the functional calculus
+with **no C⋆ machinery** — Mathlib's `CStarAlgebra` class is complex by definition, so
+its own continuity lemma cannot be generalized).
+
 `n2_necessity` is worth reading directly. It takes a **linear** `angle` on `ℝ²`
 vanishing on the diagonal and concludes the rotation factors as
 `tF * (r 0 - r 1)` for **all** `r : Fin 2 → ℝ` — quantified over both signs of
