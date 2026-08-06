@@ -395,6 +395,12 @@ import RadicalRelativity.Necessity.TwistUniqueness
 -- form at a diagonal base point transports to a general positive-definite one.
 import RadicalRelativity.Necessity.TwistGeneral
 
+-- The complex classification assembled: M1's twist product repackaged as a
+-- pinned SequentialProductOn, prop:singular extending agreement from invertible
+-- to ALL effects, and the exists-unique capstone -- a UNIQUE real t with
+-- a.b = a^{1/2+it} b a^{1/2-it} on every pair of effects.
+import RadicalRelativity.Necessity.ComplexClassification
+
 -- M5 (LEDGER 5.1, prop:n2-necessity): the rank-two LIFTING STEP, obtained as a
 -- corollary of M2's one-parameter engine rather than from covering spaces --
 -- a continuous character into the rotation group (the unit circle in C) is

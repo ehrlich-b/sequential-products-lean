@@ -1350,10 +1350,27 @@ sorry-free Wigner rigidity — see 3.0.
   inputs stay located hypotheses). NOTE: M3 is discharged, so
   `ThetaPreservesJordan` is no longer a hypothesis to carry —
   `thetaPreservesJordan_of_S2` (KadisonDischarge.lean:324) supplies it from S2.
-  **(iii)** then 2.9's `sp_eq_on_effects_of_eq_on_posDef` extends from
-  invertible to all effects, and `PaperA.UniqueTwistConclusion` fires with M1's
-  `twistSequentialProduct` as the sufficiency witness and `twist_param_unique`
-  as the `∃!` uniqueness half.
+  **(iii) singular extension + the `∃!` capstone — DONE 2026-08-06**
+  (`Necessity/ComplexClassification.lean`, census 108, gates green, zero
+  sorries, capstone axioms verified first-hand = core only): `twistProductOn`
+  (M1's twist product repackaged as a PINNED `SequentialProductOn` — its core
+  already takes `toOrderUnitSpace := inferInstance`, so
+  `.toSequentialProductOn` typechecks against the ambient instance by defeq,
+  which is exactly what the M2 design decision anticipated) with S2
+  (`twistProductOn_firstArgContinuous`), `sp_eq_twistSeq_of_effect` (2.9 applied:
+  agreement on INVERTIBLE effects extends to ALL effects), and
+  **`exists_unique_twist` — a product with S2 on `H_N(ℂ)` (N ≥ 2) agreeing with
+  some twist product on the invertibles has a UNIQUE `t` with
+  `a • b = a^{1/2+it} b a^{1/2−it}` on every pair of effects.**  That is
+  `PaperA.UniqueTwistConclusion`'s shape over the pinned interface (the
+  instance-quantified spelling is the one the M2 design decision rules out).
+  **ℂ-LANE STATUS: the necessity chain is complete end-to-end** — S1–S7 + S2 (+
+  the frame-graph located hypotheses feeding the global `t`) ⟹ the unique twist
+  form on all effects, with M1 supplying sufficiency. What remains for the ℂ
+  per-type `mthm:master` row is the *bookkeeping* assembly that threads
+  `frameTwist_spec` + `complex_global_twist_concrete` into
+  `sp_eq_twistSeq_transport`'s `hform` slot to discharge `exists_unique_twist`'s
+  `hsome` hypothesis unconditionally.
   **ℂ-lane status (historical):** the identification chain is complete.  What remains to reach
   `PaperA.UniqueTwistConclusion` is bookkeeping between the character parameter
   `r` and the spectrum of `a` (i.e. `r = log spec a`, so that `U_t(r) = a^{it}`
