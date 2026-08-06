@@ -318,6 +318,14 @@ import RadicalRelativity.Necessity.KadisonDischarge
 -- single unconditional per-frame theorem.
 import RadicalRelativity.Necessity.ConjTransport
 
+-- The TARGET of the remaining Ad_{a^{it}} identification: the diagonal torus
+-- unitary diag(e^{i t r_k}), its unitarity, the entry formula for conjugation by
+-- it (multiply entry (a,b) by e^{i t (r_a - r_b)}), that it FIXES every frame
+-- projection, and that it rotates the (i,j) block by exactly the angle
+-- t(r_i - r_j) -- the same angle complex_perFrame_unconditional produces for the
+-- comparison map's block generator.
+import RadicalRelativity.Necessity.TorusAction
+
 -- M5 (LEDGER 5.1, prop:n2-necessity): the rank-two LIFTING STEP, obtained as a
 -- corollary of M2's one-parameter engine rather than from covering spaces --
 -- a continuous character into the rotation group (the unit circle in C) is

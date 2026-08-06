@@ -1129,6 +1129,24 @@ sorry-free Wigner rigidity — see 3.0.
   **`sp_eq_quadRep_jordanAuto`** — the same with M3 attached, so the product is
   `Q_{√a}` applied to a certified **Jordan automorphism**.  Axioms verified
   first-hand: core only.
+  **TORUS TARGET DONE 2026-08-05** (`Necessity/TorusAction.lean`, census 98,
+  gates green, zero sorries): `torusU t r := diagonal (e^{i t r_k})` with
+  `torusU_conjTranspose`, `torusU_diag_cancel`, `torusU_unitary` (BOTH ᴴ-orders);
+  **`adU_torusU_entry`** — the whole conjugation in one line, because
+  `Matrix.diagonal_mul`/`mul_diagonal` give entry formulas directly (do NOT go
+  through `mul_apply` sums: the sum route was tried and is far worse);
+  **`torusU_fixes_frameProj`**; and **`torusU_block`** — `Ad_{U_t(r)}` rotates
+  the `(i,j)` block by exactly the angle `t(r_i − r_j)`, i.e. the SAME angle
+  `complex_perFrame_unconditional` produces for the comparison map's block
+  generator.  So both sides of the identification are now computed.
+  TRAPS: `Matrix.diagonal_conjTranspose` leaves a diagonal-of-star, so the
+  matrix equality needs `congr 1` BEFORE `funext` (a bare `funext k` on a
+  matrix equality leaves a function-valued goal); the subst trap recurs —
+  `subst hai` with `hai : a = i` eliminates the THEOREM PARAMETER `i`, breaking
+  every later mention, so use `rw [hai, hbj]` (safe direction) instead; and
+  exponential combining must be done in an explicit `calc` (the goal has the
+  `+ star(...) * 0` tail from the block expansion, so `rw [← Complex.exp_add]`
+  cannot find its pattern in place).
   NEXT for the ℂ lane (the genuinely remaining paper-analytic step): identify
   that Jordan automorphism with `Ad_{a^{it_F}}`.  All the pieces are in the
   tree — `Θ_a` fixes the frame (`thetaNorm_fixes_frameProj`), acts on each
@@ -1137,7 +1155,15 @@ sorry-free Wigner rigidity — see 3.0.
   (`chiTilde_eq_exp_dChi`) — so the remaining work is exponentiating the
   block-generator statement back to the group level and comparing with the
   twist conjugation entrywise (M1's `Hermitian/Twist.lean` supplies
-  `a^{1/2+it}`).  Then `PaperA.UniqueTwistConclusion` is reachable with M1's
+  `a^{1/2+it}`).  **The remaining gap is now precisely ONE lemma**: that the
+  frame projections together with the blocks SPAN `H_N(ℂ)` over ℝ — i.e.
+  `x = Σ_i x_ii • frameProj i + ½ Σ_{i≠j} blockHerm i j (x_ij)` (an
+  `offDiag`-Finset bookkeeping identity, ~80–150 lines) — after which
+  `Θ_{a(r)} = Ad_{U_{t_F}(r)}` follows from agreement on frame and blocks,
+  which both `thetaNorm_fixes_frameProj`/`complex_perFrame_unconditional` and
+  `torusU_fixes_frameProj`/`torusU_block` now supply.  NOTE: the rank-one
+  spanning lemma (`span_rankOne_eq_top`) does NOT substitute — it is a different
+  spanning set.  Then `PaperA.UniqueTwistConclusion` is reachable with M1's
   `twistSequentialProduct` as the sufficiency witness and 2.9's
   `sp_eq_on_effects_of_eq_on_posDef` extending from invertibles.
   Then M4–M7.
