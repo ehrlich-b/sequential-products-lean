@@ -1042,20 +1042,32 @@ sorry-free Wigner rigidity — see 3.0.
   `linearMap_eq_of_eq_on_rankOne` (this is where the spanning lemma earns its
   keep: it makes the conclusion about Φ ITSELF, not about its action on
   rank-ones).
-  **REMAINING for M3 — one computation only**: convert
-  `rayMap Φ p = projMap e p` (the dichotomy's output, an equality of RAYS) into
-  the rank-one agreement `Φ (rankOne ψ) = (rankOne ψ).conj U` (the input of the
-  branch assemblies).  Route: `rayMap_rankOne` says
-  `Φ (rankOneP p) = rankOneP (rayMap Φ p)`; substitute the dichotomy, use
-  `projMap_mk` (vendored: `projMap e (mk v) = mk (e v)`) and `rankOneP_mk`, so
-  the task reduces to the matrix identity
-  `rankOne (e ψ) = (rankOne ψ).conj U` for `U` the matrix of the isometry `e`
-  — i.e. `(Uψ)(Uψ)* = U(ψψ*)U*`, an entrywise `vecMulVec`/`mul` computation,
-  plus `Uᴴ U = 1` from `e`'s isometry property (`LinearIsometryEquiv` ⟹ the
-  matrix is in `Matrix.unitaryGroup`; the vendored `unitaryGroupOfIsometry` and
-  `projMap_eq_smul_unitary` in `WignerRigidity.lean` already do this bridging —
-  USE THEM, do not rebuild). Then `ThetaPreservesJordan` is discharged and
-  every M2 conditional becomes unconditional.
+  **UNITARY BRANCH CLOSED END TO END 2026-08-05** (same file, census 91,
+  gates green, zero sorries): `rankOne_mulVec_eq_conj` ((Uψ)(Uψ)* = U(ψψ*)U*,
+  entrywise);
+  `unitaryOfIsometry_conjTranspose_mul` (Uᴴ U = 1 from the vendored
+  `unitaryOfIsometry_mem` + `mem_unitaryGroup_iff'`);
+  `isometry_apply_eq_mulVec` (the isometry acts on coordinates as its matrix,
+  through `unitaryOfIsometry_toEuclideanLin`); and
+  **`preservesJordan_of_rayMap_eq_projMap` — if the induced ray map is
+  `projMap e` then Φ preserves the Jordan product**, i.e. the whole chain
+  bridge-1 → strength/probe → rayMap → wigner_rigidity → witness → spanning
+  runs to `PreservesJordan Φ` on the unitary branch.
+  TRAPS: `rw` of a `toLp/ofLp` coercion INSIDE a `Projectivization.mk` fails
+  ("motive is not type correct") because the nonzero proof depends on the
+  vector — add a wrapper lemma stated for an arbitrary Euclidean vector
+  (`rankOneP_mk'`, proved from `rankOneP_mk` by `rfl` on the round-trip)
+  instead of rewriting; and after editing an imported file, `lake build
+  <that module>` BEFORE `lake env lean` on the consumer or the stale .olean
+  reports the new lemma as an unknown identifier.
+  **REMAINING for M3 — the antiunitary branch only**, structurally identical:
+  the same chain with `conjProj` inserted, so it needs the analogue of
+  `isometry_apply_eq_mulVec` for `conjProj` (whose vector-level action is
+  `conjVec` = entrywise `star`, and `rankOne (star ψ) = transposeMap (rankOne
+  ψ)` at the matrix level — both `vecMulVec` computations), then
+  `preservesJordan_of_antiunitary_on_rankOne` (ALREADY PROVED) fires.  After
+  that, `ThetaPreservesJordan` is discharged unconditionally and every M2
+  result becomes unconditional.
   * Then: τ-preservation ⟹ build the ray map `ℙ ℂ (EuclideanSpace ℂ (Fin N))`
     → itself from Φ's action on atoms (bridge 1: `IsAtomProjection` is
     order-theoretic, so Φ permutes rank-ones; `exists_rankOne` extracts the

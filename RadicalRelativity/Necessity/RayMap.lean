@@ -134,6 +134,14 @@ theorem rankOneP_mk {ψ : Fin N → ℂ} (hψ : star ψ ⬝ᵥ ψ = 1)
   rw [hrep]
   exact rankOne_normalize_smul hns (by exact_mod_cast a.ne_zero)
 
+/-- `rankOneP_mk` for an arbitrary Euclidean vector (no `toLp` wrapper needed):
+`toLp (ofLp v) = v` holds by `rfl`, so this is the same statement. -/
+theorem rankOneP_mk' {v : EuclideanSpace ℂ (Fin N)} (hv : v ≠ 0)
+    (hu : star (WithLp.ofLp v) ⬝ᵥ (WithLp.ofLp v) = 1) :
+    rankOneP (Projectivization.mk ℂ v hv)
+      = HermitianMat.rankOne (WithLp.ofLp v) :=
+  rankOneP_mk (ψ := WithLp.ofLp v) hu hv
+
 /-! ## The induced projective map -/
 
 /-- **The ray map** induced by an order-automorphism: send a ray to the ray of
