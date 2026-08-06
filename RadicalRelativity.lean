@@ -401,6 +401,18 @@ import RadicalRelativity.Necessity.TwistGeneral
 -- a.b = a^{1/2+it} b a^{1/2-it} on every pair of effects.
 import RadicalRelativity.Necessity.ComplexClassification
 
+-- The bookkeeping bridge: the abstract branch lane's per-frame parameter IS the
+-- concrete phase rate (evaluate the coupling equation at the block vector z = 1
+-- and read the second coordinate), so frameTwist_spec discharges the rate
+-- collapse the identification lane needs.
+import RadicalRelativity.Necessity.RateFromCoupling
+
+-- mthm:master, THE COMPLEX ROW: one global twist parameter governs every
+-- invertible effect (diagonalize into the eigenframe, read the rate off the
+-- coupling, transport back), and it is exists-unique on ALL effects.  Carried
+-- hypotheses: S1-S7 + S2 + N >= 3 + the paper's two frame-graph facts.
+import RadicalRelativity.Necessity.ComplexMaster
+
 -- M5 (LEDGER 5.1, prop:n2-necessity): the rank-two LIFTING STEP, obtained as a
 -- corollary of M2's one-parameter engine rather than from covering spaces --
 -- a continuous character into the rotation group (the unit circle in C) is

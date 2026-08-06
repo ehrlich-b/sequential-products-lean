@@ -1364,7 +1364,25 @@ sorry-free Wigner rigidity — see 3.0.
   `a • b = a^{1/2+it} b a^{1/2−it}` on every pair of effects.**  That is
   `PaperA.UniqueTwistConclusion`'s shape over the pinned interface (the
   instance-quantified spelling is the one the M2 design decision rules out).
-  **ℂ-LANE STATUS: the necessity chain is complete end-to-end** — S1–S7 + S2 (+
+  **★★ THE ℂ ROW OF `mthm:master` IS MACHINE-CHECKED — 2026-08-06**
+  (`Necessity/RateFromCoupling.lean` + `Necessity/ComplexMaster.lean`, census
+  110, gates green, zero sorries, axioms verified first-hand = Lean core only).
+  `tvalLm_of_coupling` is the one missing bookkeeping link: evaluate the abstract
+  coupling equation `ρ_{ij}(dχ r) = (c(r_i−r_j))•J` at the block vector `z = 1`
+  and read the second coordinate — the left side is `(0, t_{ij}(r))` by
+  `dChiEntry_eq`, the right is `(0, c(r_i−r_j))` because `J(1,0) = (0,1)`, so the
+  abstract per-frame parameter IS the concrete phase rate.  Then
+  `sp_eq_twistSeq_of_frameGraph` (one global `t` governs every invertible
+  effect: diagonalize into the eigenframe, read the rate there via
+  `frameTwist_spec` + `hglob`, apply the diagonal theorem, transport back) and
+  **`complex_classification` : for an S1–S7 product with S2 on `H_N(ℂ)`, N ≥ 3,
+  there is a UNIQUE real `t` with `a • b = a^{1/2+it} b a^{1/2−it}` on EVERY
+  pair of effects, singular ones included.**  Carried hypotheses, exactly: the
+  `SequentialProductOn` fields (S1, S3–S7), S2, `N ≥ 3`, and the paper's two
+  frame-graph facts as located hypotheses (`connected` =
+  `lem:frame-connectivity`, `overlap` = cross-coherence).  The Jordan property
+  of the comparison map is DERIVED (M3), not assumed; zero custom axioms.
+  ℂ-lane status (historical): the necessity chain was complete end-to-end — S1–S7 + S2 (+
   the frame-graph located hypotheses feeding the global `t`) ⟹ the unique twist
   form on all effects, with M1 supplying sufficiency. What remains for the ℂ
   per-type `mthm:master` row is the *bookkeeping* assembly that threads
