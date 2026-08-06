@@ -1983,7 +1983,19 @@ sorry-free Wigner rigidity — see 3.0.
         obligation left in the whole real row.
       * Everything else in the joint-continuity section still measured clean
         (zero `Complex.*`), so once polynomial-cfc continuity exists over `𝕜` the rest
-        of that section is a substitution. All three are pure recipe — the ℂ originals have zero genuinely
+        of that section is a substitution.
+      **FIRST PIECE BANKED 2026-08-06**: the three eigenvalue/norm bounds the elementary
+      argument needs — `norm_cfc_le_sqrt_card_mul_bound`,
+      `norm_cfc_sub_cfc_le_sqrt_card` and **`norm_cfc_sub_le_of_sup_le`** (`‖A.cfc f −
+      A.cfc g‖ ≤ √card · sup_T ‖f−g‖` when `spectrum A ⊆ T`) — are now stated over
+      `RCLike 𝕜` (Vendor/HermitianMat/CFC.lean ~418–478; pure `ℂ ⇝ 𝕜`, no proof edits,
+      whole tree green at 3083 jobs, census 126, custom axioms exactly `[]`). They are
+      the C⋆-free part: they go through `norm_eq_sum_eigenvalues_sq` and the eigenvalue
+      bound, never through `CStarAlgebra`. So the remaining obligation is exactly:
+      **continuity of `a ↦ a.cfc (polynomial)` over `𝕜`** — `cfc` of a monomial is a
+      matrix power (`mat_cfc_mul` + `cfc_id`), hence visibly continuous — plus
+      Stone–Weierstrass on `[0,1]` and these bounds. No C⋆ machinery anywhere in that
+      route. All three are pure recipe — the ℂ originals have zero genuinely
     complex content beyond `normSq`, which becomes `‖t‖²`/`RCLike.normSq`.
     NOTE the ℝ simplification worth exploiting: over ℝ, `blockHerm i j t` has no phase,
     so `BlockTransportGen`/`BlockChiGen`/`BlockSkewGen`/`PhaseCocycleGen`/`PhaseAnchorGen`

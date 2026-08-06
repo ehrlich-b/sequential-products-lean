@@ -419,12 +419,12 @@ section joint_continuity
 /--
 Bound the Frobenius norm of a functional calculus application.
 -/
-lemma norm_cfc_le_sqrt_card_mul_bound {A : HermitianMat d ℂ} {f : ℝ → ℝ} {C : ℝ}
+lemma norm_cfc_le_sqrt_card_mul_bound {A : HermitianMat d 𝕜} {f : ℝ → ℝ} {C : ℝ}
     (hC : 0 ≤ C) (hf : ∀ x ∈ spectrum ℝ A.mat, ‖f x‖ ≤ C) :
     ‖A.cfc f‖ ≤ Real.sqrt (Fintype.card d) * C := by
   rw [ ← Real.sqrt_sq ( norm_nonneg _ ) ];
   -- Recall that the Frobenius norm of a Hermitian matrix is the square root of the sum of the squares of its eigenvalues.
-  have h_frobenius_eigenvalues : ∀ (M : HermitianMat d ℂ), ‖M‖ ^ 2 = ∑ i ∈ Finset.univ, (M.H.eigenvalues i) ^ 2 := by
+  have h_frobenius_eigenvalues : ∀ (M : HermitianMat d 𝕜), ‖M‖ ^ 2 = ∑ i ∈ Finset.univ, (M.H.eigenvalues i) ^ 2 := by
     exact fun M => norm_eq_sum_eigenvalues_sq M;
   -- Applying the bound on the eigenvalues to the Frobenius norm.
   have h_bound : ∑ i ∈ Finset.univ, ((A.cfc f).H.eigenvalues i) ^ 2 ≤ (Fintype.card d) * C ^ 2 := by
@@ -443,7 +443,7 @@ lemma norm_cfc_le_sqrt_card_mul_bound {A : HermitianMat d ℂ} {f : ℝ → ℝ}
 /-
 The norm of the difference of two functional calculus applications is bounded by `sqrt(d)` times the sup norm of the difference of the functions.
 -/
-lemma norm_cfc_sub_cfc_le_sqrt_card {A : HermitianMat d ℂ} {f g : ℝ → ℝ} :
+lemma norm_cfc_sub_cfc_le_sqrt_card {A : HermitianMat d 𝕜} {f g : ℝ → ℝ} :
     ‖A.cfc f - A.cfc g‖ ≤ Real.sqrt (Fintype.card d) * ⨆ x ∈ spectrum ℝ A.mat, ‖f x - g x‖ := by
   rw [ ← HermitianMat.cfc_sub ];
   refine' le_trans ( norm_cfc_le_sqrt_card_mul_bound _ _ ) _;
@@ -465,7 +465,7 @@ lemma norm_cfc_sub_cfc_le_sqrt_card {A : HermitianMat d ℂ} {f g : ℝ → ℝ}
 /-
 If f and g are close on T, and the spectrum of A is in T, then A.cfc f and A.cfc g are close.
 -/
-lemma norm_cfc_sub_le_of_sup_le {A : HermitianMat d ℂ} {f g : ℝ → ℝ} {T : Set ℝ} {ε : ℝ}
+lemma norm_cfc_sub_le_of_sup_le {A : HermitianMat d 𝕜} {f g : ℝ → ℝ} {T : Set ℝ} {ε : ℝ}
     (hT : spectrum ℝ A.mat ⊆ T) (hε : 0 ≤ ε) (h_sup : ∀ x ∈ T, ‖f x - g x‖ ≤ ε) :
     ‖A.cfc f - A.cfc g‖ ≤ Real.sqrt (Fintype.card d) * ε := by
   refine' le_trans ( norm_cfc_sub_cfc_le_sqrt_card ) _;
