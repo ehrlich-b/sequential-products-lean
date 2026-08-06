@@ -936,12 +936,19 @@ sorry-free Wigner rigidity — see 3.0.
   convention; check against `dotProduct` by `EuclideanSpace.inner_eq` or
   expand both as sums). (c) Apply `Projectivization.wigner_rigidity` to get
   e : ≃ₗᵢ[ℂ] with Φ's ray action = projMap e, or the conjProj branch.
-  (d) Push back to matrices: a unitary U gives Φ(x) = UxU*, which preserves
-  symmMul (direct computation); the antiunitary branch gives Φ(x) = U xᵗ U*
-  (transpose-conjugation), which also preserves symmMul since transpose is a
-  Jordan anti-automorphism = automorphism for the SYMMETRIZED product. Hence
-  `PreservesJordan Φ`, i.e. **ThetaPreservesJordan discharged, M3 DONE**, and
-  every conditional in M2 becomes unconditional.
+  (d) **DONE 2026-08-05** (`Necessity/JordanWitness.lean`, census 87, gates
+  green, FIRST-PASS CLEAN): `unitaryConj U` (x ↦ U x U* as an ℝ-linear map) +
+  **`unitaryConj_preservesJordan`** (only `Uᴴ*U = 1` needed — the cancellation
+  is two `calc` steps with `noncomm_ring`); `transpose_isHermitian` +
+  `transposeMap` + **`transposeMap_preservesJordan`** (transposition REVERSES
+  matrix products, and the symmetrized product is invariant under reversal, so
+  it closes by `add_comm` on the two transposed terms); and
+  **`antiunitaryConj_preservesJordan`** for the composite x ↦ U xᵗ U*. So BOTH
+  branches of the Wigner dichotomy land on Jordan automorphisms.
+  REMAINING for M3: only the wiring (a)-(c) — the ray map's well-definedness
+  and the `transProbVec`-vs-`tprob` identification, then
+  `wigner_rigidity` + these two witnesses discharge `ThetaPreservesJordan`
+  and every M2 conditional becomes unconditional.
   * Then: τ-preservation ⟹ build the ray map `ℙ ℂ (EuclideanSpace ℂ (Fin N))`
     → itself from Φ's action on atoms (bridge 1: `IsAtomProjection` is
     order-theoretic, so Φ permutes rank-ones; `exists_rankOne` extracts the

@@ -277,6 +277,14 @@ import RadicalRelativity.Necessity.Strength
 -- Str(psi psi*, probe phi) <= (2 - tau)^{-1}.
 import RadicalRelativity.Necessity.StrengthProbe
 
+-- M3, final leg (3.2d): the TWO Jordan witnesses the Wigner dichotomy returns.
+-- Unitary conjugation x -> U x U* preserves the symmetrized product (the U* U
+-- cancellation), and transposition preserves it because reversing a product
+-- leaves the SYMMETRIZED product fixed; the antiunitary branch is the
+-- composite.  So whichever branch wigner_rigidity returns, the induced
+-- order-automorphism satisfies PreservesJordan.
+import RadicalRelativity.Necessity.JordanWitness
+
 -- Exact paper-facing S1--S7 and product-conclusion statement boundary.  This
 -- freezes the target signature; it does not claim the classification is proved.
 import RadicalRelativity.PaperA.Statement
