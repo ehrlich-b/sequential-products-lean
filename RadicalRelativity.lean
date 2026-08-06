@@ -318,6 +318,14 @@ import RadicalRelativity.Necessity.KadisonDischarge
 -- single unconditional per-frame theorem.
 import RadicalRelativity.Necessity.ConjTransport
 
+-- M5 (LEDGER 5.1, prop:n2-necessity): the rank-two LIFTING STEP, obtained as a
+-- corollary of M2's one-parameter engine rather than from covering spaces --
+-- a continuous character into the rotation group (the unit circle in C) is
+-- exp(i phi) for a UNIQUE real-linear functional phi.  The modulus-one
+-- condition kills the generator's real part; no 2pi ambiguity arises because
+-- linearity is forced, not chosen.
+import RadicalRelativity.RankTwo.Lifting
+
 -- Exact paper-facing S1--S7 and product-conclusion statement boundary.  This
 -- freezes the target signature; it does not claim the classification is proved.
 import RadicalRelativity.PaperA.Statement

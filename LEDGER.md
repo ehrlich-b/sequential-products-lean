@@ -1170,12 +1170,27 @@ sorry-free Wigner rigidity — see 3.0.
 
 ## M5 — Rank-two classification (parallelizable with M2–M4)
 
-- **5.1 Lifting step (lem in prop:n2-necessity).** Continuous hom ℝ² → SO(2)
-  lifts to a linear functional. ALL ingredients present [INV✓ area 8]:
-  `Circle.isCoveringMap_exp`, `existsUnique_continuousMap_lifts` (simply
-  connected + loc path-conn domain, Hatcher 1.33), hom-normalization via
-  ker exp = 2πℤ discreteness, then `AddMonoidHom.toRealLinearMap`. Risk LOW
-  (was MED pre-inventory).
+- **5.1 Lifting step — DONE 2026-08-05, AND THE COVERING-SPACE ROUTE WAS NOT
+  NEEDED** (`RankTwo/Lifting.lean`, census 93, gates green). The planned route
+  (`Circle.isCoveringMap_exp` + `existsUnique_continuousMap_lifts` + ker-exp
+  discreteness) is SUPERSEDED: M2's own `multiParameter_eq_exp` (built from
+  scratch in 2.7 for the Aczél discharge) already says a continuous character
+  of a real vector space into ANY real Banach algebra is `exp ∘ D` for a unique
+  LINEAR `D`.  So: `character_eq_exp_linear` (the general restatement), and
+  **`circleCharacter_linear_functional`** — modelling the rotation group as the
+  unit circle in ℂ (a Banach algebra, so no matrix-norm instance friction),
+  a continuous modulus-one character is `r ↦ exp (i φ r)` for a real-LINEAR
+  functional φ: the modulus-one condition forces `(D r).re = 0` via
+  `Complex.norm_exp` + `Real.exp_injective`, and φ := `(D ·).im` is linear
+  because D is.  **No 2π ambiguity arises at all** — linearity is forced rather
+  than chosen.  Plus `circleCharacter_functional_unique` (through
+  `Globalization.real_character_unique` on the line through r).
+  TRAPS: `Complex.exp_eq_exp_ℂ` rewrites `NormedSpace.exp → Complex.exp`, so
+  the direction is the OPPOSITE of what the goal shape suggests; after
+  `refine ⟨{ toFun := … }, ?_⟩` add `LinearMap.coe_mk, AddHom.coe_mk` to the
+  simp set or the structure projection blocks `ring`; `map_smul` fires once for
+  BOTH hypotheses when they share the shape — don't repeat it.
+  Risk was LOW; realized cost ~90 lines.
 - **5.2 ℝP² + descent (lem:n2-bounded/continuity/descent).** ℝP² absent from
   Mathlib in any form [INV✓ area 9]; build S²/± via orbit-quotient machinery
   (complete: ProperlyDiscontinuous free for finite Γ, T2, open quotient,
