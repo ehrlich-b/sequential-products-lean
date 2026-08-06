@@ -1992,10 +1992,27 @@ sorry-free Wigner rigidity — see 3.0.
       whole tree green at 3083 jobs, census 126, custom axioms exactly `[]`). They are
       the C⋆-free part: they go through `norm_eq_sum_eigenvalues_sq` and the eigenvalue
       bound, never through `CStarAlgebra`. So the remaining obligation is exactly:
-      **continuity of `a ↦ a.cfc (polynomial)` over `𝕜`** — `cfc` of a monomial is a
-      matrix power (`mat_cfc_mul` + `cfc_id`), hence visibly continuous — plus
-      Stone–Weierstrass on `[0,1]` and these bounds. No C⋆ machinery anywhere in that
-      route. All three are pure recipe — the ℂ originals have zero genuinely
+      **continuity of `a ↦ a.cfc (polynomial)` over `𝕜`** — plus Stone–Weierstrass on
+      `[0,1]` and these bounds. No C⋆ machinery anywhere in that route.
+      **AND THAT PIECE IS NOW DONE 2026-08-06** (`Hermitian/CfcPoly.lean`, NEW, census
+      127, gates green, tree at 3084 jobs, custom axioms exactly `[]`;
+      `continuous_cfc_polynomial` axiom-checked = Lean core only):
+      `mat_cfc_pow` (`(A.cfc (·^k)).mat = A.mat ^ k`, by induction through
+      `mat_cfc_mul_apply` + `cfc_id'`), `continuous_cfc_pow`, and
+      **`continuous_cfc_polynomial`** — `A ↦ A.cfc (p.eval ·)` is continuous for every
+      real polynomial `p`, over ANY `RCLike 𝕜`. Proved by `Polynomial.induction_on'`,
+      with the monomial case done at the MATRIX level (`c * x^k` via
+      `mat_cfc_mul_apply` + `cfc_const`), because there is no `HermitianMat.cfc_smul`.
+      Traps: `Continuous.subtype_mk` + an explicit `show` on `.mat` is the way into the
+      subtype (`IsInducing.subtypeVal.continuous_iff` does not resolve here); and the
+      `k = 0` case wants `symm; simp`, since `rw [pow_zero]` does not fire on
+      `1 = ↑A ^ 0`.
+      **So the ℝ row's remaining work is now purely the assembly**: Stone–Weierstrass
+      on `[0,1]` (Mathlib: `Polynomial.continuousOn_...`/`exists_polynomial_near_continuousOn`,
+      already used in the ℂ section at line ~518) + `norm_cfc_sub_le_of_sup_le` +
+      `continuous_cfc_polynomial` + `TendstoUniformlyOn.continuousOn` ⟹
+      `ContinuousOn (fun A => A.cfc Real.sqrt) {A | IsEffect A}`, then `prop_singular`
+      closes the row. Every input now exists over `𝕜`. All three are pure recipe — the ℂ originals have zero genuinely
     complex content beyond `normSq`, which becomes `‖t‖²`/`RCLike.normSq`.
     NOTE the ℝ simplification worth exploiting: over ℝ, `blockHerm i j t` has no phase,
     so `BlockTransportGen`/`BlockChiGen`/`BlockSkewGen`/`PhaseCocycleGen`/`PhaseAnchorGen`

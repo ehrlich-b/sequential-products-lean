@@ -85,6 +85,13 @@ import RadicalRelativity.Hermitian.Resolution
 -- real branch (M4.1) cannot, since twistFactor is intrinsically complex.
 import RadicalRelativity.Hermitian.SqrtMul
 
+-- The functional calculus at polynomials, over ANY RCLike field: cfc at a monomial is
+-- a matrix power, hence manifestly continuous in the matrix.  This is the
+-- field-general replacement for the complex-only cfc_continuous, whose proof routes
+-- through Mathlib's CStarAlgebra class -- which is complex by definition, so real
+-- matrices are not an instance and that route cannot generalize.
+import RadicalRelativity.Hermitian.CfcPoly
+
 -- The commutant of the Hermitian matrices, over ANY RCLike field: a matrix commuting
 -- with every Hermitian matrix is a scalar, and a traceless such matrix is zero.  This
 -- is the field-uniform replacement for the complex-only step in commute_of_opCommute,
