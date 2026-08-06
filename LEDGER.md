@@ -1070,15 +1070,25 @@ sorry-free Wigner rigidity — see 3.0.
   Classical.choice, Quot.sound]`.  This is the paper's `prop:theta` /
   van Imhoff–Roelands import, now a THEOREM of this development (modulo the
   vendored, separately axiom-audited `wigner_rigidity`).
-  **REMAINING for M3 — interface plumbing only, no mathematics**: connect
-  `orderAuto_preservesJordan` to the `ThetaPreservesJordan P` predicate of
-  `Necessity/ComparisonInstance.lean`, i.e. show that for an effect `a` with
-  `a.mat.PosDef` the comparison map `theta P ha hbd` satisfies the three
-  hypotheses — unital (`theta_one`, HAVE), order-iso both ways
-  (`theta_nonneg_iff` gives `0 ≤ x ↔ 0 ≤ Θx`; upgrade to `x ≤ y ↔ Θx ≤ Θy` by
-  linearity applied to `y − x`), and surjective (`thetaEquiv` is already a
-  `LinearEquiv` — take `.surjective`).  Then every M2 conditional becomes
-  unconditional and the ℂ-lane is complete but for the Globalization wiring.
+  **★★★ M3 COMPLETE 2026-08-05 — THE BOULDER IS DOWN ★★★** (same file,
+  census 91, gates green, zero sorries).  The plumbing landed in three lines:
+  `thetaPreservesJordan_of_S2` feeds `orderAuto_preservesJordan` the existing
+  `theta_le_iff` (NOTE: it already existed with the OPPOSITE orientation —
+  `.symm` it, do not re-prove), `theta_one`, and
+  `(thetaEquiv …).surjective`.  Then
+  **`complex_perFrame_unconditional`**: for ANY S1–S7 product on `H_N(ℂ)` with
+  `N ≥ 3` and S2 there is a single per-frame `t_F` with
+  `ρ_{ij}(dχ(r)) = (t_F(r_i − r_j)) • J`.  VERIFIED FIRST-HAND: both
+  `#print axioms Necessity.thetaPreservesJordan_of_S2` and
+  `#print axioms Necessity.complex_perFrame_unconditional` =
+  `[propext, Classical.choice, Quot.sound]`, and the printed hypothesis list is
+  exactly the paper's (S1–S7 product, S2, N ≥ 3 — no Jordan hypothesis).
+  **Every M2 result is now UNCONDITIONAL**, modulo only the vendored,
+  separately axiom-audited `Projectivization.wigner_rigidity`.
+  Expected final disclosed-import count for the ℂ lane: ONE (Wigner), in place
+  of the paper's vIR/Kadison citation.
+  NEXT: the ℂ-lane per-type `mthm:master` statement (Globalization wiring +
+  M1's `twistSequentialProduct` as the sufficiency witness), then M4–M7.
   * Then: τ-preservation ⟹ build the ray map `ℙ ℂ (EuclideanSpace ℂ (Fin N))`
     → itself from Φ's action on atoms (bridge 1: `IsAtomProjection` is
     order-theoretic, so Φ permutes rank-ones; `exists_rankOne` extracts the

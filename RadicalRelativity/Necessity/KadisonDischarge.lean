@@ -5,6 +5,8 @@ Authors: Bryan Ehrlich
 -/
 import RadicalRelativity.Necessity.RayMap
 import RadicalRelativity.Necessity.JordanWitness
+import RadicalRelativity.Necessity.ComparisonInstance
+import RadicalRelativity.Necessity.PhaseAnchor
 
 set_option linter.style.longLine false
 
@@ -308,5 +310,51 @@ theorem orderAuto_preservesJordan
   rcases rayMap_dichotomy Φ hΦ hunital hsurj with ⟨e, he⟩ | ⟨e, he⟩
   · exact preservesJordan_of_rayMap_eq_projMap Φ hΦ hunital hsurj e he
   · exact preservesJordan_of_rayMap_eq_projMap_conj Φ hΦ hunital hsurj e he
+
+/-! ## Discharging `ThetaPreservesJordan` -/
+
+/-- **`ThetaPreservesJordan` DISCHARGED (M3).**  Every comparison map of an
+S1–S7 sequential product with S2 on `H_N(ℂ)` preserves the Jordan product,
+because it is a unital surjective linear order-isomorphism and
+`orderAuto_preservesJordan` applies.
+
+This makes every M2 result — up to and including the per-frame parameter
+`complex_perFrame_concrete` — **unconditional**, modulo only the vendored,
+separately axiom-audited `Projectivization.wigner_rigidity`. -/
+theorem thetaPreservesJordan_of_S2
+    (P : SequentialProductOn (HermitianMat (Fin N) ℂ))
+    (hS2 : P.FirstArgContinuous) :
+    ThetaPreservesJordan P := by
+  intro a ha hbd
+  refine orderAuto_preservesJordan (theta P ha hbd) ?_ ?_ ?_
+  · exact fun x y => (theta_le_iff P hS2 ha hbd x y).symm
+  · exact theta_one P ha hbd
+  · have hbij := (thetaEquiv P hS2 ha hbd).surjective
+    intro y
+    obtain ⟨x, hx⟩ := hbij y
+    refine ⟨x, ?_⟩
+    rw [← thetaEquiv_apply P hS2 ha hbd x]
+    exact hx
+
+/-! ## The unconditional per-frame theorem -/
+
+/-- **`thm:complex`, per frame, on `H_N(ℂ)` — UNCONDITIONAL.**
+
+For *any* S1–S7 sequential product on `H_N(ℂ)` with `N ≥ 3` satisfying the
+paper's S2 (first-argument norm continuity), the produced stabilizer coupling
+carries a **single per-frame parameter**: `ρ_{ij}(dχ(r)) = (t_F(r_i − r_j)) • J`
+on every block.
+
+This is `complex_perFrame_concrete` with its `ThetaPreservesJordan` hypothesis
+discharged by M3.  The hypothesis list is now exactly the paper's: an S1–S7
+product, S2, and `N ≥ 3`. -/
+theorem complex_perFrame_unconditional {N : ℕ} (hN : 3 ≤ N)
+    (P : SequentialProductOn (HermitianMat (Fin N) ℂ))
+    (hS2 : P.FirstArgContinuous) :
+    ∃ tF : ℝ, ∀ (i j : Fin N) (r : Fin N → ℝ),
+      (stabilizerCoupling hN P hS2 (thetaPreservesJordan_of_S2 P hS2)).ρ i j
+          ((stabilizerCoupling hN P hS2 (thetaPreservesJordan_of_S2 P hS2)).dχ r)
+        = (tF * (r i - r j)) • rotJ :=
+  complex_perFrame_concrete hN P hS2 (thetaPreservesJordan_of_S2 P hS2)
 
 end Necessity
