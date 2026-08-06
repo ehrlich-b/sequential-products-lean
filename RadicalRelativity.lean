@@ -293,6 +293,12 @@ import RadicalRelativity.Necessity.JordanWitness
 -- a unitary/antiunitary on rank-ones") to an identity of maps.
 import RadicalRelativity.Necessity.RankOneSpan
 
+-- M3 (3.2b): the bridge to the vendored rigidity theorem -- the inner product on
+-- EuclideanSpace C (Fin N) IS the star-first dot product, so on unit vectors the
+-- vendored transProbVec coincides with the order-recovered tprob.  With
+-- tprob_preserved this is exactly wigner_rigidity's TransProbPreserving input.
+import RadicalRelativity.Necessity.WignerBridge
+
 -- Exact paper-facing S1--S7 and product-conclusion statement boundary.  This
 -- freezes the target signature; it does not claim the classification is proved.
 import RadicalRelativity.PaperA.Statement

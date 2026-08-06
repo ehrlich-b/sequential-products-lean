@@ -1003,12 +1003,23 @@ sorry-free Wigner rigidity — see 3.0.
   `maxHeartbeats 1600000` (the InnerProductSpace instance chain is deep);
   `real_inner_comm` is needed because `Submodule.mem_orthogonal` gives the
   pairing in the opposite slot order.
-  REMAINING for M3 — pure wiring, no new mathematics: the ray map on
-  `ℙ ℂ (EuclideanSpace ℂ (Fin N))` from `exists_rankOne_map` (choice function +
-  representative independence via `rankOne_smul`), the
-  `transProbVec`-vs-`tprob` identification (`PiLp.inner_apply` makes
-  `inner ℂ ψ φ = star ψ ⬝ᵥ φ` definitional; mind `WithLp.toLp/ofLp`), then
-  `wigner_rigidity` + `linearMap_eq_of_eq_on_rankOne` + the two witnesses
+  **3.2b DONE 2026-08-05** (`Necessity/WignerBridge.lean`, census 89, gates
+  green): `inner_eq_dotProduct` (on `EuclideanSpace ℂ (Fin N)` the inner
+  product IS the star-first dot product of the underlying functions — via
+  `PiLp.inner_apply` + `RCLike.inner_apply`, closing with a `mul_comm` under
+  the sum, NOT `rfl`); `norm_sq_eq_nsq`; **`transProbVec_eq_tprob`** — on unit
+  vectors the vendored `Projectivization.transProbVec` equals the
+  order-recovered `HermitianMat.tprob` (the two differ by a conjugation inside
+  a norm, killed by `RCLike.norm_conj`); plus `unitVec`/`unitVec_unit` and
+  `rankOne_smul_unit` (a unit-modulus rescale leaves the rank-one projection
+  fixed — the representative-independence input for the ray map).
+  TRAP: `((x : ℝ) : ℂ)⁻¹`-style ascriptions parse as coe-then-inv; write the
+  inverse INSIDE the real ascription or downstream `normSq` rewrites won't
+  match.
+  REMAINING for M3 — the ray map itself (a choice function over
+  `exists_rankOne_map` plus representative independence, then
+  `TransProbPreserving` from `tprob_preserved` + `transProbVec_eq_tprob`),
+  then `wigner_rigidity` + `linearMap_eq_of_eq_on_rankOne` + the two witnesses
   discharge `ThetaPreservesJordan` and every M2 conditional becomes
   unconditional.
   * Then: τ-preservation ⟹ build the ray map `ℙ ℂ (EuclideanSpace ℂ (Fin N))`
