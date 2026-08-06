@@ -1299,13 +1299,34 @@ sorry-free Wigner rigidity — see 3.0.
   `star (Pi.single i 1)`; `add_dotProduct`/`single_dotProduct`/`smul_dotProduct`
   live in the ROOT namespace, not `Matrix` (same for `dotProduct` itself);
   `star` of a lambda needs `Pi.star_apply` before `ring` can see the entry.
-  REMAINING for the ℂ lane: (i) general PosDef `a` (not just the diagonal
-  family) via `ConjTransport`'s unitary transport + the global `t` from
-  `complex_global_twist_concrete`; (ii) the uniqueness half (two twist
-  parameters agreeing on all effects are equal — `real_character_unique`'s
-  shape); (iii) 2.9's `sp_eq_on_effects_of_eq_on_posDef` to extend to singular
-  effects; then `PaperA.UniqueTwistConclusion` with M1's
-  `twistSequentialProduct` as the sufficiency witness.
+  REMAINING for the ℂ lane — **(ii) uniqueness is now DONE (see above)**; two
+  items left, and the general-`a` route is DECODED AT SOURCE (all API verified
+  present 2026-08-06):
+  **(i) general PosDef `a`.** Every ingredient exists: the spectral theorem in
+  conjugation form is `HermitianMat.eq_conj_diagonal`
+  (`A = (diagonal 𝕜 A.H.eigenvalues).conj A.H.eigenvectorUnitary` —
+  Vendor/HermitianMat/Basic.lean:555), and `.conj U` IS `adU U`, so
+  `a = adU U (diagonal ℂ eigenvalues)` for free. Bridge the two diagonal
+  spellings with `diagFamily (Real.log ∘ eigenvalues) = diagonal ℂ eigenvalues`
+  (`Real.exp_log` on `Matrix.PosDef.eigenvalues_pos`). Get `r ≤ 0` from
+  effect-ness transported backwards (adU Uᴴ inverts adU U, so `diagFamily r` is
+  itself an effect, and its `(i,i)` entry gives `e^{r_i} ≤ 1`; the only name to
+  find is the PSD-diagonal-entry-nonneg lemma). Transport the product with
+  `conjProduct_sp` (`(conjProduct P hU hU').sp a b = adU Uᴴ (P.sp (adU U a)
+  (adU U b))`, an `rfl`-simp lemma) + `conjProduct_firstArgContinuous`, apply
+  `sp_eq_twistSeq_diagFamily` to the conjugated product, and push the twist
+  factor back through `HermitianMat.cfc_conj_unitary`
+  (`(A.conj U.val).cfc f = (A.cfc f).conj U` — CFC.lean:209), which is exactly
+  the unitary covariance `twistFactor (adU U D) t = U · twistFactor D t · Uᴴ`.
+  The rate-collapse hypothesis at each frame comes from `frameTwist_spec`, and
+  the SINGLE global `t` from `complex_global_twist_concrete` (its two frame-graph
+  inputs stay located hypotheses). NOTE: M3 is discharged, so
+  `ThetaPreservesJordan` is no longer a hypothesis to carry —
+  `thetaPreservesJordan_of_S2` (KadisonDischarge.lean:324) supplies it from S2.
+  **(iii)** then 2.9's `sp_eq_on_effects_of_eq_on_posDef` extends from
+  invertible to all effects, and `PaperA.UniqueTwistConclusion` fires with M1's
+  `twistSequentialProduct` as the sufficiency witness and `twist_param_unique`
+  as the `∃!` uniqueness half.
   **ℂ-lane status (historical):** the identification chain is complete.  What remains to reach
   `PaperA.UniqueTwistConclusion` is bookkeeping between the character parameter
   `r` and the spectrum of `a` (i.e. `r = log spec a`, so that `U_t(r) = a^{it}`
