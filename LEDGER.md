@@ -1280,6 +1280,25 @@ sorry-free Wigner rigidity — see 3.0.
   .olean of the old one. `git status` (M vs ??) is the only cheap tell — check it
   BEFORE writing any "new" file, and run a full `lake build`, not just
   `lake env lean`, before believing a new module is green.
+  **UNIQUENESS HALF DONE 2026-08-06** (`Necessity/TwistUniqueness.lean`, census
+  106, gates green, capstone axioms verified first-hand = core only):
+  `twistFactor_diagFamily_diagonal` (the twist factor merged into ONE diagonal
+  matrix `diag(√(e^{r_k})e^{i t r_k})`), `twistSeq_diagFamily_entry` (so the
+  twist product reads off entrywise: `g_k · b_{kl} · conj g_l`), the probe
+  effect `pairProj i j` = the rank-one projection `½(e_i+e_j)(e_i+e_j)*` with
+  `pairProj_isProjection`/`isEffect`/`entry = ½` (built on ProjectionOrder's
+  `rankOne`; idempotence from `(rankOne ψ)² = (ψ*ψ)•rankOne ψ` with `ψ*ψ = 2`),
+  and **`twist_param_unique`: agreement of `twistSeq t₁` and `twistSeq t₂` on
+  all effects forces `t₁ = t₂`** — probe at `a = diag(e^x,1,…)` for
+  `x ∈ (−1,0)`, cancel the positive factor, and `real_character_unique` (M2's
+  A3-discharge) collapses the parameters with no 2π ambiguity. Needs only
+  `2 ≤ N`, so it also serves the rank-two lane. TRAPS: a bare `= 2` on the RHS
+  of a `⬝ᵥ` equation makes the scalar type infer as ℕ and every `Pi.single`
+  argument then mis-elaborates — ascribe `(2 : ℂ)`; `Pi.single_star` is stated
+  `Pi.single i (star a) = star (Pi.single i a)` so you need `←` to simplify
+  `star (Pi.single i 1)`; `add_dotProduct`/`single_dotProduct`/`smul_dotProduct`
+  live in the ROOT namespace, not `Matrix` (same for `dotProduct` itself);
+  `star` of a lambda needs `Pi.star_apply` before `ring` can see the entry.
   REMAINING for the ℂ lane: (i) general PosDef `a` (not just the diagonal
   family) via `ConjTransport`'s unitary transport + the global `t` from
   `complex_global_twist_concrete`; (ii) the uniqueness half (two twist

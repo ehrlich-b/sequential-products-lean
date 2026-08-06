@@ -381,6 +381,13 @@ import RadicalRelativity.Necessity.BlockAngle
 -- a.b = a^{1/2+it} b a^{1/2-it} = M1's twistSeq, on the diagonal family.
 import RadicalRelativity.Necessity.TwistPower
 
+-- Uniqueness of the twist parameter (the exists-UNIQUE half of the paper's
+-- complex conclusion): the pair projection's off-diagonal entry sees the phase,
+-- so agreement of two twist products on effects forces equality of the
+-- characters x -> e^{itx} on an interval, and real_character_unique (no 2pi
+-- ambiguity) collapses the two parameters.  Needs only N >= 2.
+import RadicalRelativity.Necessity.TwistUniqueness
+
 -- M5 (LEDGER 5.1, prop:n2-necessity): the rank-two LIFTING STEP, obtained as a
 -- corollary of M2's one-parameter engine rather than from covering spaces --
 -- a continuous character into the rotation group (the unit circle in C) is
