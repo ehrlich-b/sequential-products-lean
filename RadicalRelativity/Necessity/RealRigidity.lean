@@ -8,6 +8,7 @@ import RadicalRelativity.Necessity.FrameBlockSpanGen
 import RadicalRelativity.Necessity.ChiContinuityGen
 import RadicalRelativity.Necessity.ConjTransportGen
 import RadicalRelativity.Necessity.SingularExtension
+import RadicalRelativity.Hermitian.CfcSqrtContinuous
 
 set_option linter.style.longLine false
 
@@ -326,5 +327,91 @@ theorem sp_eq_luders_of_posDef (hS2 : P.FirstArgContinuous)
       HermitianMat.conj_apply_mat]
   rw [adUG, adUG, HermitianMat.conj_conj, HermitianMat.conj_conj, hsq,
     Matrix.mul_assoc]
+
+/-! ## Every effect: `prop:real` in full -/
+
+/-- Density of the invertible effects in the effect interval of `H_n(ℝ)`
+(the boundary sequence `a + (1/(k+1))(𝟙 − a) → a`), field-general twin of
+`dense_posDef_effects`. -/
+theorem dense_posDef_effectsR :
+    Dense {x : {a : HermitianMat n ℝ // IsEffect a} | x.val.mat.PosDef} := by
+  rintro ⟨a, ha⟩
+  have hle : ∀ k : ℕ, (1 / ((k : ℝ) + 1)) ≤ 1 := by
+    intro k
+    rw [div_le_one (by positivity)]
+    linarith [Nat.cast_nonneg (α := ℝ) k]
+  have h1a : (0 : HermitianMat n ℝ) ≤ 1 - a :=
+    sub_nonneg.mpr (le_of_le_of_eq ha.2 HermitianMat.ousUnit_eq_one)
+  have hseq : ∀ k : ℕ, IsEffect (a + (1 / ((k : ℝ) + 1)) • (1 - a)) := by
+    intro k
+    constructor
+    · exact _root_.add_nonneg ha.1 (smul_nonneg (by positivity) h1a)
+    · have key : (OrderUnitSpace.ousUnit : HermitianMat n ℝ)
+          - (a + (1 / ((k : ℝ) + 1)) • (1 - a))
+          = (1 - 1 / ((k : ℝ) + 1)) • (1 - a) := by
+        rw [HermitianMat.ousUnit_eq_one, sub_smul, one_smul]
+        abel
+      exact sub_nonneg.mp (key ▸ smul_nonneg (by
+        have := hle k; linarith) h1a)
+  have hpd : ∀ k : ℕ, (a + (1 / ((k : ℝ) + 1)) • (1 - a)).mat.PosDef := by
+    intro k
+    have key : a + (1 / ((k : ℝ) + 1)) • (1 - a)
+        = (1 / ((k : ℝ) + 1)) • (1 : HermitianMat n ℝ)
+          + (1 - 1 / ((k : ℝ) + 1)) • a := by
+      rw [smul_sub, sub_smul, one_smul]
+      abel
+    rw [key, HermitianMat.mat_add]
+    have h1 : (((1 / ((k : ℝ) + 1)) • (1 : HermitianMat n ℝ)).mat).PosDef := by
+      rw [HermitianMat.mat_smul]
+      exact Matrix.PosDef.one.smul (by positivity)
+    have h2 : ((((1 - 1 / ((k : ℝ) + 1))) • a).mat).PosSemidef := by
+      rw [HermitianMat.mat_smul]
+      exact (HermitianMat.zero_le_iff.mp ha.1).smul (by have := hle k; linarith)
+    exact h1.add_posSemidef h2
+  have htend : Filter.Tendsto (fun k : ℕ => a + (1 / ((k : ℝ) + 1)) • (1 - a))
+      Filter.atTop (nhds a) := by
+    have h0 : Filter.Tendsto (fun k : ℕ => (1 / ((k : ℝ) + 1))) Filter.atTop (nhds 0) :=
+      tendsto_one_div_add_atTop_nhds_zero_nat
+    have h := tendsto_const_nhds (x := a) (f := (Filter.atTop : Filter ℕ)) |>.add
+      (h0.smul_const (1 - a))
+    simpa using h
+  apply mem_closure_of_tendsto
+    (f := fun k : ℕ => (⟨a + (1 / ((k : ℝ) + 1)) • (1 - a), hseq k⟩ :
+      {a : HermitianMat n ℝ // IsEffect a}))
+    (b := Filter.atTop)
+  · exact tendsto_subtype_rng.mpr htend
+  · filter_upwards with k
+    exact hpd k
+
+/-- **`prop:real`, THE REAL ROW: every S1–S7 sequential product with S2 on `H_n(ℝ)`
+is the Lüders product on ALL effects** — singular ones included.  The real type
+admits no twist parameter whatsoever.
+
+Conditional exactly on: S2, and the Jordan property of the comparison map in each
+eigenframe (real Kadison/Uhlhorn is available in no prover, so it is carried as a
+located hypothesis, precisely as the manuscript cites it). -/
+theorem sp_eq_luders_of_effect (hS2 : P.FirstArgContinuous)
+    (hjordAll : ∀ (U : Matrix n n ℝ) (hU : Uᴴ * U = 1) (hU' : U * Uᴴ = 1),
+      ThetaPreservesJordanG (conjProductG P hU hU'))
+    {b : HermitianMat n ℝ} (hb : IsEffect b)
+    (a : HermitianMat n ℝ) (ha : IsEffect a) :
+    P.sp a b = b.conj (a.cfc Real.sqrt).mat := by
+  have hf : Continuous fun x : {a : HermitianMat n ℝ // IsEffect a} =>
+      P.sp x.val b :=
+    continuousOn_iff_continuous_restrict.mp (hS2 hb)
+  have hg : Continuous fun x : {a : HermitianMat n ℝ // IsEffect a} =>
+      b.conj ((x.val).cfc Real.sqrt).mat := by
+    have hsqrt : Continuous fun x : {a : HermitianMat n ℝ // IsEffect a} =>
+        (x.val).cfc Real.sqrt := by
+      have := HermitianMat.continuousOn_cfc_sqrt_effects (n := n) (𝕜 := ℝ)
+      exact continuousOn_iff_continuous_restrict.mp this
+    have hsqrtmat : Continuous fun x : {a : HermitianMat n ℝ // IsEffect a} =>
+        ((x.val).cfc Real.sqrt).mat := continuous_subtype_val.comp hsqrt
+    exact (HermitianMat.continuous_conj b).comp hsqrtmat
+  have hkey := MasterTheorem.prop_singular dense_posDef_effectsR
+    (fun x : {a : HermitianMat n ℝ // IsEffect a} => P.sp x.val b)
+    (fun x => b.conj ((x.val).cfc Real.sqrt).mat) hf hg
+    (fun x hx => sp_eq_luders_of_posDef P hS2 hjordAll x.property hx hb)
+  exact congrFun hkey ⟨a, ha⟩
 
 end Necessity

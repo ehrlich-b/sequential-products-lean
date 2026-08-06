@@ -2007,12 +2007,26 @@ sorry-free Wigner rigidity — see 3.0.
       subtype (`IsInducing.subtypeVal.continuous_iff` does not resolve here); and the
       `k = 0` case wants `symm; simp`, since `rw [pow_zero]` does not fire on
       `1 = ↑A ^ 0`.
-      **So the ℝ row's remaining work is now purely the assembly**: Stone–Weierstrass
-      on `[0,1]` (Mathlib: `Polynomial.continuousOn_...`/`exists_polynomial_near_continuousOn`,
-      already used in the ℂ section at line ~518) + `norm_cfc_sub_le_of_sup_le` +
-      `continuous_cfc_polynomial` + `TendstoUniformlyOn.continuousOn` ⟹
-      `ContinuousOn (fun A => A.cfc Real.sqrt) {A | IsEffect A}`, then `prop_singular`
-      closes the row. Every input now exists over `𝕜`. All three are pure recipe — the ℂ originals have zero genuinely
+      ★★★**THE ℝ ROW IS CLOSED — 2026-08-06.**
+      `HermitianMat.continuousOn_cfc_sqrt_effects` (`Hermitian/CfcSqrtContinuous.lean`,
+      NEW): `A ↦ A.cfc √` is continuous on the effect interval over ANY `RCLike 𝕜` —
+      Weierstrass on `[0,1]` + `continuous_cfc_polynomial` + `norm_cfc_sub_le_of_sup_le`
+      + a three-ε estimate; `spectrum_subset_Icc_of_isEffect` supplies the compact
+      window. **No C⋆ machinery**, which is exactly why it goes where `cfc_continuous`
+      cannot.
+      Then in `Necessity/RealRigidity.lean`: `dense_posDef_effectsR` (the ℝ twin of the
+      boundary-sequence density) and
+      **`sp_eq_luders_of_effect` — every S1–S7 sequential product with S2 on `H_n(ℝ)`
+      is the Lüders product `a • b = √a·b·√a` on ALL effects, singular ones included.
+      The real type admits no twist parameter whatsoever.**
+      Census 128, gates green, tree at 3085 jobs, custom axioms exactly `[]`;
+      `sp_eq_luders_of_effect` and `continuousOn_cfc_sqrt_effects` axiom-checked
+      individually = Lean core only.
+      **Hypothesis accounting, exactly**: the `SequentialProductOn` fields (S1, S3–S7),
+      S2, and `ThetaPreservesJordanG` in each eigenframe — the last carried as a
+      LOCATED hypothesis because real Kadison/Uhlhorn exists in no prover, precisely as
+      the manuscript cites it (and precisely as the ℂ row stood before M3). Record it
+      that way in THEOREM-MAP; do not call the ℝ row unconditional. All three are pure recipe — the ℂ originals have zero genuinely
     complex content beyond `normSq`, which becomes `‖t‖²`/`RCLike.normSq`.
     NOTE the ℝ simplification worth exploiting: over ℝ, `blockHerm i j t` has no phase,
     so `BlockTransportGen`/`BlockChiGen`/`BlockSkewGen`/`PhaseCocycleGen`/`PhaseAnchorGen`
