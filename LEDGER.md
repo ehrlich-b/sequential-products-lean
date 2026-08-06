@@ -1214,10 +1214,37 @@ sorry-free Wigner rigidity — see 3.0.
   defined on pairs of rank-one projections and is swap-invariant
   (`tau_swap_invariant`) — that swap-invariance is exactly what makes it
   descend to the projective quotient, so the descent step should now be short.
-- **5.3 Assembly (cor:qubit-classification).** Bijection between the M₂(ℂ)
-  algebraic core (sp_blockForm etc., already proved) and the parameter space.
-  Risk MED.
-
+- **5.3 Assembly (cor:qubit-classification) — FRAME FUNCTION DONE 2026-08-05**
+  (`RankTwo/FrameFunction.lean`, census 95, gates green, zero sorries).
+  `QubitFrame := ℙ ℂ (EuclideanSpace ℂ (Fin 2))` (compact Hausdorff free from
+  the vendored topology, same harvest as 5.2); `tauVec` = the existing
+  `MasterTheorem.RankTwo.tau` read off a nonzero vector via the normalized
+  rank-one; **`tauVec_scale_invariant`** — it only sees the RAY (proof reuses
+  `Necessity.rankOne_normalize_smul` from the M3 chain: write both vectors as
+  scalar multiples of the same unit vector, then normalization absorbs the
+  scalar into a unit-modulus factor that `rankOne` kills);
+  **`tauVec_eq`** — the explicit formula `τ = (2|v₀|²/‖v‖² − 1)²`, because
+  against `Rref = diag(1,0)` the trace `tr(PR)` is just `P₀₀`; hence
+  `tauVec_continuous` is elementary; **`tauFrame`** (descended by the vendored
+  `Projectivization.continuous_lift`), `tauFrame_continuous`, and
+  **`tauModuli : C(QubitFrame, ℝ)`** — the moduli element of
+  cor:qubit-classification, now an honest continuous function on the frame
+  space rather than a prose claim.
+  TRAPS: `set` does not fold occurrences created LATER by `unfold` — re-fold
+  with `rw [← hN]`; `Real.sqrt_mul_self` vs `Real.mul_self_sqrt` differ in
+  orientation and `rw` picks the wrong one silently; a `|>.re` pipe inside a
+  `calc` step breaks parsing into a `Unit`-valued mess — write the projection
+  explicitly; `fun_prop` has no continuity lemma for `HermitianMat.rankOne`, so
+  derive an explicit coordinate formula first (this is why `tauVec_eq` exists).
+  REMAINING in 5.3: the BIJECTION itself — that every rank-two S1–S7 product
+  arises from exactly one `tauModuli`-style element, and conversely. Forward
+  direction needs the frame-indexed family of `MasterTheorem.RankTwo.sp` glued
+  over `QubitFrame`; the τ↦product direction is `sp_blockForm` +
+  `sp_maps_effects` (both proved); injectivity is `tau_std_eq_one` vs
+  `tau_had_eq_zero` separating frames (proved) plus `n2_necessity`'s
+  one-parameter-per-frame rigidity (proved).  Also still open: the
+  ℂP¹-modulo-complementation ≅ ℝP² identification (the `RP2` carrier from 5.2
+  exists; `tau_swap_invariant` is the descent input).
 ## M6 — Albert branch
 
 - **6.1 block_injective discharge.** See `ALBERT-KERNEL-MEMO.md`: unit-slot

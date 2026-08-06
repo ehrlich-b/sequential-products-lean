@@ -334,6 +334,13 @@ import RadicalRelativity.RankTwo.Lifting
 -- constructed.  QubitModuli := C(RP^2, R) is cor:qubit-classification's object.
 import RadicalRelativity.RankTwo.RealProjective
 
+-- M5 (LEDGER 5.3): the rank-two frame function as an honest CONTINUOUS moduli
+-- element.  tau descends from vectors to the projective frame space (it only
+-- sees the ray -- normalization absorbs the scalar into a unit-modulus factor
+-- that rankOne kills), the explicit formula tau = (2|v_0|^2/||v||^2 - 1)^2 makes
+-- continuity elementary, and tauModuli packages it as C(QubitFrame, R).
+import RadicalRelativity.RankTwo.FrameFunction
+
 -- Exact paper-facing S1--S7 and product-conclusion statement boundary.  This
 -- freezes the target signature; it does not claim the classification is proved.
 import RadicalRelativity.PaperA.Statement
