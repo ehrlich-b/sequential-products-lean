@@ -201,6 +201,14 @@ import RadicalRelativity.Necessity.FrameBlockSpanGen
 -- twin below the real capstone.
 import RadicalRelativity.Necessity.CoalescenceDiffGen
 
+-- The rest of the field-general block layer for the real ending: corner/block
+-- invariance of the comparison map and the character, block transport with the
+-- Euclidean isometry on blocks (which over the reals pins the block scalar to +/-1),
+-- and the character-level block statement.
+import RadicalRelativity.Necessity.BlockInvarianceGen
+import RadicalRelativity.Necessity.BlockTransportGen
+import RadicalRelativity.Necessity.BlockChiGen
+
 -- M2 necessity core, tenth unit (LEDGER 2.6, chi part 1): the comparison character
 -- on the diagonal family — base-point congruence, the value law
 -- a(r) sp a(r') = a(r+r'), chi(0) = 1 through theta_base_one, and the orthant

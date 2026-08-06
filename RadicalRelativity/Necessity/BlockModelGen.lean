@@ -3,7 +3,7 @@ Copyright (c) 2026 Bryan Ehrlich. All rights reserved.
 Released under Apache 2.0 license.
 Authors: Bryan Ehrlich
 -/
-import RadicalRelativity.Necessity.CoalescenceInstanceGen
+import RadicalRelativity.Necessity.BlockInvarianceGen
 
 set_option linter.style.longLine false
 

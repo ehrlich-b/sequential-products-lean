@@ -1870,19 +1870,23 @@ sorry-free Wigner rigidity — see 3.0.
       renamed, NOT uniformly at the end — so a blind `X ⇝ XG` pass produces
       `diagFamily_posDefG` and fails. Regex-remap `\bdiagFamily_(\w+)G ⇝
       diagFamilyG_\1` after the suffix pass, and grep the twin for its真 names.
-    * **REMAINING, and now precisely scoped**: `BlockInvarianceGen`,
-      `BlockTransportGen`, `BlockChiGen` (attempted, reverted — the tree is green), then
-      the ℝ capstone (design steps 1–4).
-      ★**The blocker is an IMPORT-CHAIN error in my own twins, not mathematics**:
-      `BlockModelGen` was pointed at `CoalescenceInstanceGen`, but the ℂ original's chain
-      is `BlockModel ← BlockInvariance ← CoalescenceDiff`. So `BlockTransportGen` cannot
-      see `thetaNorm_fix_of_commuteG`. **Fix first: repoint `BlockModelGen` to import
-      `BlockInvarianceGen`, and `BlockInvarianceGen` to `CoalescenceDiffGen`, mirroring
-      the ℂ chain exactly** — then rebuild upward. Other recorded errors from the
-      attempt: `BlockInvarianceGen` hits `RCLike 𝕜` / `Mul (Matrix n n 𝕜)` synthesis
-      failures around line 77 (expect a second `namespace`/`variable` block needing the
-      scalar declared, the SharpEffects pattern), and `BlockTransportGen` needs
-      `jordanBilin_apply ⇝ jordanBilin_applyG`. `two_smul ℂ`/`(2:ℂ)` ⇝ `𝕜` throughout. All three are pure recipe — the ℂ originals have zero genuinely
+    * **ALL THREE REMAINING BLOCK TWINS DONE 2026-08-06** (census 124, gates green, tree
+      at 3081 jobs, custom axioms exactly `[]`; `chiTilde_block_existsG` and
+      `normSq_thetaNorm_blockG` axiom-checked = core only): `BlockInvarianceGen`
+      (corner/block invariance of Θ, Θ⁻¹ and χ̃), `BlockTransportGen` (block transport
+      plus **`normSq_thetaNorm_blockG`** — Θ acts on each block by a Euclidean isometry,
+      which over ℝ is exactly design step 2's `c² = 1`), and `BlockChiGen`
+      (**`chiTilde_block_existsG`** — χ̃ acts block-isometrically at every parameter,
+      design step 1).
+      The self-inflicted blocker was the import chain, exactly as diagnosed: repointing
+      `BlockModelGen` from `CoalescenceInstanceGen` to `BlockInvarianceGen` — mirroring
+      the ℂ chain `BlockModel ← BlockInvariance ← CoalescenceDiff` — unblocked all three.
+      Fifth instance of the explicit-scalar rule: `cornerConjCLMG` (a def returning a
+      continuous linear map) needed `(𝕜 : Type*) [RCLike 𝕜]` explicitly.
+      Also: apply the upstream remap `\bdiagFamily_(\w+) ⇝ diagFamilyG_\1` as a
+      GENERAL rule, not from a hand-maintained list — the list is what kept going stale.
+    * **M4.1 REMAINING: only the ℝ capstone file** (design steps 1–4, later banked).
+      Every ingredient it names now exists over `𝕜`. All three are pure recipe — the ℂ originals have zero genuinely
     complex content beyond `normSq`, which becomes `‖t‖²`/`RCLike.normSq`.
     NOTE the ℝ simplification worth exploiting: over ℝ, `blockHerm i j t` has no phase,
     so `BlockTransportGen`/`BlockChiGen`/`BlockSkewGen`/`PhaseCocycleGen`/`PhaseAnchorGen`
