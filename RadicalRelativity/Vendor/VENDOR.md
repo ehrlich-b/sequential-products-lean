@@ -91,3 +91,55 @@ NonSingular.lean:18), creating a `HermitianMat.Matrix` namespace that shadows
 root `Matrix` for any `open scoped Matrix` issued inside `namespace HermitianMat`
 downstream — which silently deactivates the `*ᵥ` notation. Open the scope before
 entering the namespace.
+
+## csd-lean4 Wigner-rigidity island
+
+**Upstream:** `zblore/csd-lean4`, commit `2287f45` (2026-08-05), Apache 2.0
+(per-file headers retained; upstream author Zayn Blore).  The files are
+self-labeled "1-Mathlib (CSD-free Mathlib upstream candidate)" and live under
+`namespace Projectivization`; nothing from the repo's speculative layers is
+imported.
+
+**Why vendored:** upstream is written in the new module system and pins
+toolchain v4.33.0-rc1 (ours: v4.28.0), so a live dependency is impossible;
+vendoring pins the exact audited code.  Due-diligence record: campaign
+`LEDGER.md` 3.0 (2026-08-04) — the WignerRigidity closure was built from
+source and `#print axioms Projectivization.wigner_rigidity` was verified to be
+`[propext, Classical.choice, Quot.sound]` **before** any vendoring decision,
+with statement fidelity checked at the definition level (`transProbVec ψ φ =
+‖⟪ψ,φ⟫_ℂ‖²/(‖ψ‖²·‖φ‖²)`, genuine Fubini–Study; conclusion the honest
+unitary/antiunitary dichotomy; no surjectivity hypothesis; ℂ-linearity of the
+witness an OUTPUT).  Their `EffectGleason.lean` is NOT vendored and remains
+UNAUDITED.
+
+**Files** (8, the exact import closure of `WignerRigidity`; upstream paths
+`CsdLean4/Mathlib/LinearAlgebra/{Projectivization,Matrix}/…` → here
+`RadicalRelativity/Vendor/Wigner/…`): Topology, Unitary, UnitaryCompact,
+UnitaryHaar, MeasureSpace, FubiniStudy, TransitionProbability,
+WignerRigidity (≈ 4.8kL).
+
+**Edits applied at vendor time (2026-08-05), each mechanical:**
+1. Module-system strip: the `module` header line deleted, `public import X` →
+   `import X`, `@[expose] public section` → `section`.
+2. Import-path rewrite to `RadicalRelativity.Vendor.Wigner.<Module>`.
+3. v4.33 → v4.28 API drift, FOUR identifier/tactic renames total, all in two
+   files, every target grep-confirmed in our pinned mathlib before applying:
+   `Set.mem_ofPred_eq` → `Set.mem_setOf_eq`;
+   `isOpen_setOfPred_linearIndependent` → `isOpen_setOf_linearIndependent`;
+   `push Not` → `push_neg` (all three in `Topology.lean`, inside
+   `isClosed_collinearity_relation`); `PiLp.ofLp_single` →
+   `EuclideanSpace.ofLp_single` (`WignerRigidity.lean`, inside
+   `unitaryOfIsometry_apply`).
+4. **ZERO statement changes, zero deletions, zero `sorry`/`axiom`/
+   `native_decide` added.**
+
+**Post-vendor verification (first-hand, in this tree):** full `lake build`
+green; `#print axioms Projectivization.wigner_rigidity` and
+`…wigner_rigidity_unitaryGroup` both `[propext, Classical.choice, Quot.sound]`;
+`#check` shows the dichotomy statement unchanged from the audited original.
+
+**Audit-surface note:** these modules are deliberately NOT in the
+`AxiomAudit.lean` frozen manifest, which tracks first-party
+`RadicalRelativity.*` development.  They are a disclosed vendored import,
+audited by the `#print axioms` check recorded above and re-checkable at any
+time.
