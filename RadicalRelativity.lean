@@ -388,6 +388,13 @@ import RadicalRelativity.Necessity.TwistPower
 -- ambiguity) collapses the two parameters.  Needs only N >= 2.
 import RadicalRelativity.Necessity.TwistUniqueness
 
+-- From the diagonal family to EVERY invertible effect: the vendored spectral
+-- theorem in conjugation form diagonalizes the base point, the product
+-- transports into that eigenframe (conjProduct_sp), and the twist factor is
+-- carried back by unitary covariance of the functional calculus, so the twist
+-- form at a diagonal base point transports to a general positive-definite one.
+import RadicalRelativity.Necessity.TwistGeneral
+
 -- M5 (LEDGER 5.1, prop:n2-necessity): the rank-two LIFTING STEP, obtained as a
 -- corollary of M2's one-parameter engine rather than from covering spaces --
 -- a continuous character into the rotation group (the unit circle in C) is

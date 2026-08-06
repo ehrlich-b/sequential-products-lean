@@ -1302,7 +1302,34 @@ sorry-free Wigner rigidity — see 3.0.
   REMAINING for the ℂ lane — **(ii) uniqueness is now DONE (see above)**; two
   items left, and the general-`a` route is DECODED AT SOURCE (all API verified
   present 2026-08-06):
-  **(i) general PosDef `a`.** Every ingredient exists: the spectral theorem in
+  **(i) general PosDef `a` — DONE 2026-08-06** (`Necessity/TwistGeneral.lean`,
+  census 107, gates green, zero sorries, NO heartbeat bumps, capstone axioms
+  verified first-hand = core only): `diagFamily_log_eigenvalues` (the two
+  diagonal spellings agree, `Real.exp_log` on `PosDef.eigenvalues_pos`),
+  `eq_adU_diagFamily` (the spectral theorem in the shape the lane consumes:
+  `a = Ad_U (diagFamily (log ∘ eigenvalues))`), `log_eigenvalues_nonpos` (an
+  effect's eigenvalues are ≤ 1 by the vendored
+  `le_smul_one_imp_eigenvalues_le`, so the diagonal base point is itself an
+  effect), **`twistFactor_adU`** (unitary covariance
+  `(Ad_U a)^{1/2+it} = U a^{1/2+it} Uᴴ`, both real cfc legs by
+  `cfc_conj_unitary`) plus its matrix-form corollary `twistFactor_adU_mat`, and
+  **`sp_eq_twistSeq_transport` — the twist form transports from a diagonal base
+  point to any positive-definite one** (conjugations cancel via `conjProduct_sp`
+  + `conj_conj`; the unitary is a PARAMETER so the statement stays cheap).
+  ★★TRAPS (three whnf timeouts, none fixed by raising heartbeats — raising the
+  budget is the WRONG move for all three): (1) a `show` whose term has
+  `HermitianMat.conj`'s arguments in the wrong order sends elaboration flailing
+  into a 1.6M-heartbeat timeout instead of erroring — prefer syntactic
+  `rw [adU, HermitianMat.twistSeq, conj_conj, …]` over any `show` on conj/cfc
+  terms; (2) `rw [show U = ↑(⟨U, hmem⟩ : unitaryGroup) from rfl]` rewrites a
+  variable by a term CONTAINING that variable — self-referential motive, blows
+  up; state a matrix-form corollary instead; (3) closing a unitaryGroup-form
+  lemma against a matrix-form goal by `exact` forces the defeq check THROUGH
+  `cfc` (spectral machinery) and explodes — get the coercion out of the way
+  first with `have hco : ↑⟨U, hmem⟩ = U := rfl; rw [hco] at h`. Also: pinning a
+  `conjProduct` at `a.H.eigenvectorUnitary` inside a hypothesis makes the
+  STATEMENT itself time out; generalize the unitary to a parameter.
+  HISTORICAL decode (superseded by the above, all confirmed at source): the spectral theorem in
   conjugation form is `HermitianMat.eq_conj_diagonal`
   (`A = (diagonal 𝕜 A.H.eigenvalues).conj A.H.eigenvectorUnitary` —
   Vendor/HermitianMat/Basic.lean:555), and `.conj U` IS `adU U`, so
