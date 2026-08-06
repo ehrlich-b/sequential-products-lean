@@ -896,9 +896,52 @@ sorry-free Wigner rigidity — see 3.0.
   `replicateRow` + `vecMulVec_eq (Fin 1)`; none of `le_inv_iff_mul_le` /
   `le_inv_iff_one_le_mul₀` / `le_inv_comm₀` exist here — close `t ≤ c⁻¹` from
   `t·c ≤ 1` by an explicit three-step `calc` through `t·c·c⁻¹`.
-  **REMAINING in 3.1c: the BACKWARD bound** (2−τ)⁻¹ ∈ the defining set, i.e.
-  the sharp weight-2 Cauchy–Schwarz spelled out above; that upgrades
-  `strength_probe_le` to `strength_probe_eq`, after which τ is order-data.
+  **3.1c COMPLETE 2026-08-05 — τ IS ORDER DATA** (same file, census 86, gates
+  green, zero sorries): `weighted_cs_sharp` (slack is exactly
+  (√τ·y − 2√(1−τ)·x)², so ONE nlinarith hint closes it and no sign hypotheses
+  are needed); `nsq` + `dot_self_eq_nsq`/`nsq_smul`; `rankOne_smul` (quadratic
+  homogeneity); `rankOne_le_nsq_smul_one`; **`cs_dot` — Cauchy–Schwarz on
+  n → ℂ derived from `rankOne ψ ≤ ‖ψ‖²•𝟙` tested at the second vector**, i.e.
+  from the unit case plus homogeneity, with NO inner-product-space bridging;
+  `probe_quadratic`; **`probe_ge_inv_smul_rankOne` — the backward bound**
+  (decompose ψ = cφ + χ and v = αφ + w, both orthogonality facts by direct
+  dotProduct expansion, then `cs_dot` on the χ-w pairing feeds
+  `weighted_cs_sharp` whose (2,1) weights match the probe form exactly);
+  **`strength_probe_eq` : Str(ψψ*, probe φ) = (2−τ)⁻¹**;
+  `tprob_eq_of_strength` (τ = 2 − Str⁻¹); and the payoff
+  **`tprob_preserved`: a unital ℝ-linear order-automorphism carrying rank-ones
+  to rank-ones PRESERVES the transition probability** — pure transport through
+  `strength_map`, since the probe is built from the unit and a rank-one. That
+  is precisely the `TransProbPreserving` input of the vendored
+  `Projectivization.wigner_rigidity`. TRAPS: left-argument dotProduct lemmas
+  are `sub_dotProduct`/`add_dotProduct` (the `dotProduct_sub` family only
+  matches the RIGHT slot) — prefer a `simp only` with all four over ordered
+  `rw`; `star_sub`/`star_add` are root, NOT `Pi.`-prefixed; ℂ-order casts need
+  `Complex.real_le_real` (`exact_mod_cast` cannot see the ComplexOrder cast);
+  `Complex.normSq_eq_norm_sq` is the normSq↔‖·‖² bridge; `pow_le_pow_left` is
+  `pow_le_pow_left₀` here; keep `nsq w` SYMBOLIC through the nlinarith chain
+  (rewriting it to `nsq v − normSq α` in only one hypothesis desynchronizes
+  linarith's atoms).
+  **NEXT (3.2, the last M3 leg): the ray map + wigner_rigidity + Jordan.**
+  (a) From a unital ℝ-linear order-auto Φ on H_N(ℂ): bridge 1 says Φ permutes
+  atoms (`IsAtomProjection` is order-theoretic — needs Φ's order-iso property
+  both ways, which the `hΦ` iff already gives), and `exists_rankOne` extracts a
+  unit vector, so define `rayMap : ℙ ℂ (EuclideanSpace ℂ (Fin N)) → ℙ ℂ (...)`
+  by p ↦ mk (the vector of Φ (rankOne p.rep-normalized)); well-definedness =
+  independence of the representative, which follows because rankOne of a
+  rescaled vector is the same projection (`rankOne_smul` + normalization).
+  (b) `TransProbPreserving rayMap` = `tprob_preserved` transported through
+  `transProbVec ψ φ = ‖⟪ψ,φ⟫‖²/(‖ψ‖²‖φ‖²)`, which on unit vectors is exactly
+  `tprob` (careful: their inner is `inner ℂ ψ φ` on EuclideanSpace = star-first
+  convention; check against `dotProduct` by `EuclideanSpace.inner_eq` or
+  expand both as sums). (c) Apply `Projectivization.wigner_rigidity` to get
+  e : ≃ₗᵢ[ℂ] with Φ's ray action = projMap e, or the conjProj branch.
+  (d) Push back to matrices: a unitary U gives Φ(x) = UxU*, which preserves
+  symmMul (direct computation); the antiunitary branch gives Φ(x) = U xᵗ U*
+  (transpose-conjugation), which also preserves symmMul since transpose is a
+  Jordan anti-automorphism = automorphism for the SYMMETRIZED product. Hence
+  `PreservesJordan Φ`, i.e. **ThetaPreservesJordan discharged, M3 DONE**, and
+  every conditional in M2 becomes unconditional.
   * Then: τ-preservation ⟹ build the ray map `ℙ ℂ (EuclideanSpace ℂ (Fin N))`
     → itself from Φ's action on atoms (bridge 1: `IsAtomProjection` is
     order-theoretic, so Φ permutes rank-ones; `exists_rankOne` extracts the
