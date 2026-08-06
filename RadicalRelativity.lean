@@ -148,6 +148,13 @@ import RadicalRelativity.Necessity.OneParameter
 -- decomposition, and frame commutation; product-independent matrix bookkeeping.
 import RadicalRelativity.Necessity.DiagonalFamily
 
+-- M4.1 foundation: the same frame/family layer over an ARBITRARY RCLike field,
+-- with the scalar explicit (frameProjG k i, diagFamilyG k r) because the entry
+-- lemmas mention it only inside the definition.  Added ALONGSIDE the C-specialized
+-- names rather than generalizing them in place, so every complex-row proof keeps
+-- compiling untouched; the real branch consumes these.
+import RadicalRelativity.Necessity.DiagonalFamilyGen
+
 -- M2 necessity core, tenth unit (LEDGER 2.6, chi part 1): the comparison character
 -- on the diagonal family — base-point congruence, the value law
 -- a(r) sp a(r') = a(r+r'), chi(0) = 1 through theta_base_one, and the orthant

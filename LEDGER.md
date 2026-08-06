@@ -1537,8 +1537,38 @@ sorry-free Wigner rigidity — see 3.0.
       so the ℂ row keeps compiling untouched at every step and the ℝ row consumes
       the `K` versions.  This also keeps every ℂ-row proof as a live regression
       test on each generalization.
-  Either way the work is mechanical; route (B) is the one to take at the start of a
-  fresh context, since route (A)'s sed touches files the ℂ capstones depend on.
+  Either way the work is mechanical; route (B) is the one to take, and route (A)
+  was TESTED AND REJECTED with evidence (below).
+
+  **ROUTE (A) TESTED AND REJECTED, ROUTE (B) STARTED — 2026-08-06.**
+  Generalizing `DiagonalFamily.lean` in place (implicit scalar + pinning the ten
+  ambiguous statements) *does* compile the file itself, but the full build then
+  fails downstream at `Necessity/Chi.lean:55` — an intermediate `have` inside a
+  ℂ-lane proof (`((diagFamily r).cfc Real.sqrt).mat * … = (diagFamily r).mat`)
+  has nothing to pin the scalar, so it goes stuck. That is the general shape of
+  the leak: every unconstrained intermediate statement in a downstream proof
+  needs a pin, an unbounded scatter across the ℂ lane. Route (A) is therefore
+  rejected, with `Chi.lean:55` as the recorded witness.
+  **DONE instead (census 111, gates green, whole tree rebuilt at 3068 jobs):**
+  * `Necessity/SharpEffects.lean`'s `mat_finsetSum` generalized ℂ → `RCLike 𝕜`
+    (backward-compatible; note its `omit [Fintype n] in` had to go — with the new
+    instance binder the section variable becomes referenced).
+  * **`Necessity/DiagonalFamilyGen.lean` (NEW)**: the whole frame/family layer over
+    an arbitrary `RCLike 𝕜` with the scalar EXPLICIT — `frameProjG 𝕜 i`,
+    `diagFamilyG 𝕜 r` — carrying every lemma the ℂ file has (mat, zero, mul,
+    commute, posDef, isEffect, frame projections, orthogonality, `sum_frameProjG`,
+    the frame decomposition, commutation with the frame). Proofs are the ℂ ones with
+    `Complex.ofReal_mul ⇝ RCLike.ofReal_mul` and
+    `Complex.real_smul ⇝ RCLike.real_smul_eq_coe_mul`; nothing else changed, which
+    is the concrete confirmation that this layer's content was never complex.
+  The ℂ-specialized `DiagonalFamily.lean` is untouched, so the complex row still
+  compiles exactly as before. **Next file for the same treatment: the Θ layer
+  (`ComparisonInstance.lean` → `…Gen`), then `Theta`/`ThetaCocycle`, `Chi*`,
+  `Coalescence*`; then the ℝ-specific ending, which is short — over ℝ the Peirce
+  block is 1-dimensional so the skew generator vanishes and `χ̃ = id`.**
+  Traps for the next pass: in `unfold`/`rw` argument position use the BARE name
+  (`unfold diagFamilyG`), never the applied form (`unfold diagFamilyG 𝕜` is a
+  syntax error).
 - **4.2 Quaternionic.** H_n(ℍ) ↪ H_{2n}(ℂ) symplectic embedding. [INV✓ area
   10]: ℍ itself is well-developed (NormedDivisionRing, CStarRing,
   InnerProductSpace ℝ) but **matrices over ℍ are total greenfield — zero

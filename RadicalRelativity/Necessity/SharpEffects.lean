@@ -219,8 +219,8 @@ namespace Necessity
 
 variable {n : Type*} [Fintype n] [DecidableEq n]
 
-omit [Fintype n] in
-theorem mat_finsetSum {ι : Type*} (s : Finset ι) (f : ι → HermitianMat n ℂ) :
+theorem mat_finsetSum {𝕜 : Type*} [RCLike 𝕜] {ι : Type*} (s : Finset ι)
+    (f : ι → HermitianMat n 𝕜) :
     (∑ i ∈ s, f i).mat = ∑ i ∈ s, (f i).mat :=
   map_sum (AddSubmonoidClass.subtype _) _ _
 
