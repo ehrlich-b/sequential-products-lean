@@ -350,6 +350,14 @@ import RadicalRelativity.Necessity.TwistIdentification
 -- argument consumes to close chiTilde_eq_adU_of_block's remaining input.
 import RadicalRelativity.Necessity.BlockCharacter
 
+-- C embedded in its own R-linear endomorphisms, and exp along that embedding:
+-- exp (mulBy w) = mulBy (exp w), so the exponential of the skew generator
+-- z -> (c i) z is the rotation z -> e^{ic} z.  Combined with
+-- skew_linear_eq_I_smul this is what converts the GENERATOR statement of
+-- complex_perFrame_unconditional into the group-level block action that
+-- chiTilde_eq_adU_of_block consumes.
+import RadicalRelativity.Necessity.MulEmbedding
+
 -- M5 (LEDGER 5.1, prop:n2-necessity): the rank-two LIFTING STEP, obtained as a
 -- corollary of M2's one-parameter engine rather than from covering spaces --
 -- a continuous character into the rotation group (the unit circle in C) is

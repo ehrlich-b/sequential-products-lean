@@ -1213,6 +1213,28 @@ sorry-free Wigner rigidity — see 3.0.
   connectedness to `id` at `r = 0`), then M5's
   `circleCharacter_linear_functional` applies verbatim.  (α) has no topological
   side conditions and reuses `dChiEntry_eq`; prefer it.
+  **EXP-TRANSFER SUB-STEP DONE 2026-08-05** (`Necessity/MulEmbedding.lean`,
+  census 102, gates green, zero sorries): `mulByCLM`/`mulBy : ℂ →+* (ℂ →L[ℝ] ℂ)`
+  (the embedding of ℂ in its own ℝ-linear endomorphisms), `mulBy_continuous`
+  (ℝ-linear between finite-dimensional spaces), and
+  **`exp_mulBy` : `exp (mulBy w) = mulBy (exp w)`** via Mathlib's
+  `NormedSpace.map_exp` (which DOES exist, for any continuous ring hom — no need
+  to hand-roll a power-series argument), plus `exp_mulBy_I` /
+  `exp_generator_is_rotation` for the case the identification uses: the
+  exponential of the skew generator `z ↦ (c·i) z` is the rotation
+  `z ↦ e^{ic} z`.  TRAP: `Complex.exp_eq_exp_ℂ` must be rewritten in the
+  FORWARD direction here (the `NormedSpace.exp` on ℂ is the one `map_exp`
+  produces), the opposite of the `RankTwo/Lifting.lean` usage.
+  **REMAINING for the ℂ lane — two sub-steps**: (1) feed
+  `chiEntry_isCharacter`'s laws to `multiParameter_eq_exp` in `ℂ →L[ℝ] ℂ` to get
+  `chiEntry r i j = exp (E r)` for a unique ℝ-linear `E` (needs the line
+  continuity of `chiEntry`, which follows from `continuous_chiTilde_line` +
+  `entryLm`/`blockHermLm` continuity); (2) show `E r` is skew — the SAME
+  differentiate-the-constant-norm pattern already used for `dChi_block_skew`,
+  since `chiEntry_normSq` gives the constant — and then
+  `skew_linear_eq_I_smul` writes `E r = mulBy (i·c(r))` with `c` ℝ-linear
+  (linearity of `c` from linearity of `E`), so `exp_generator_is_rotation`
+  finishes and `chiTilde_eq_adU_of_block` fires.
   TRAPS: the subst trap AGAIN (`subst hab` with `hab : a = b` kills the ext-local
   needed later) — use `rw [if_pos hab]` and derive the index facts by hand;
   `x.H` gives `star (x_ba) = x_ab` at index `(a,b)` (NOT `(b,a)` — the
