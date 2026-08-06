@@ -2156,6 +2156,27 @@ sorry-free Wigner rigidity — see 3.0.
   one-parameter-per-frame rigidity (proved).  Also still open: the
   ℂP¹-modulo-complementation ≅ ℝP² identification (the `RP2` carrier from 5.2
   exists; `tau_swap_invariant` is the descent input).
+  ★**RE-SCOPED AT SOURCE 2026-08-06** (after the ℝ row closed). What exists in
+  `RankTwo/`: `QubitFrame`, `Vec`/`Frame` with their continuity (`Vec_continuous`,
+  `Frame_continuous`), `Moduli`, the carrier `RP2 := ℙ ℝ (EuclideanSpace ℝ (Fin 3))`
+  and **`QubitModuli := C(RP2, ℝ)`** with its ring structure and
+  `QubitModuli_nontrivial`, the complementation kit (`Vec_orthogonal`,
+  `orthoVec_eq`, `Vec_real_smul`), the lifting/character layer, and the separation
+  (`Coeff_sep`, `sp_luders_ne_unit_twist`). On the abstract side
+  `MasterTheorem.RankTwo.sp`/`sp_apply`/`sp_maps_effects`/`sp_blockForm` are proved.
+  **The two genuinely missing pieces are both structural, not bookkeeping:**
+  (i) **the descent** `ℂP¹ / complementation ≅ ℝP²` — a quotient-topology
+      homeomorphism, with `tau_swap_invariant` as the descent datum; this is the
+      real work of 5.3 and is a topology unit, not an algebra one;
+  (ii) **the frame-indexed gluing** — assembling the per-frame family of
+      `RankTwo.sp` into a single product over `QubitFrame`, which is what makes the
+      map `product ↦ τ ∈ C(ℝP², ℝ)` well defined; `Frame_continuous` is the input
+      that makes the glued τ continuous.
+  Injectivity is then free (`tau_std_eq_one` vs `tau_had_eq_zero` +
+  `n2_necessity`'s one-parameter-per-frame rigidity, all proved).
+  NOTE the ℝ row's new field-general tools are available here and may shorten (ii):
+  `continuousOn_cfc_sqrt_effects` is exactly the continuity a frame-function argument
+  wants, and it holds at `N = 2` like everything else in that file.
 ## M6 — Albert branch
 
 - **6.1 block_injective discharge.** See `ALBERT-KERNEL-MEMO.md`: unit-slot
