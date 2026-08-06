@@ -189,4 +189,19 @@ theorem strength_probe_le {ψ φ : n → ℂ} (hψ : star ψ ⬝ᵥ ψ = 1)
     _ ≤ 1 * (2 - τ)⁻¹ := mul_le_mul_of_nonneg_right h1 hinv.le
     _ = (2 - τ)⁻¹ := one_mul _
 
+/-! ## The backward bound: the sharp weighted Cauchy–Schwarz -/
+
+/-- The scalar inequality at the heart of the backward bound, with the **sharp
+weights `(2,1)`**: for `0 ≤ τ ≤ 1` and `x, y ≥ 0`,
+`2(√τ x + √(1−τ) y)² ≤ (2−τ)(2x² + y²)`.  Plain unweighted Cauchy–Schwarz is
+too lossy here (it would need `τ ≤ 0`); the weight `2` on the `x`-slot is what
+makes this tight — the slack is exactly `(√τ·y − 2√(1−τ)·x)²`, so the
+inequality holds for all real `x, y`. -/
+theorem weighted_cs_sharp {τ x y : ℝ} (hτ0 : 0 ≤ τ) (hτ1 : τ ≤ 1) :
+    2 * (Real.sqrt τ * x + Real.sqrt (1 - τ) * y) ^ 2 ≤ (2 - τ) * (2 * x ^ 2 + y ^ 2) := by
+  have hs : Real.sqrt τ ^ 2 = τ := Real.sq_sqrt hτ0
+  have ht : Real.sqrt (1 - τ) ^ 2 = 1 - τ := Real.sq_sqrt (by linarith)
+  -- expand: the difference is exactly `(√τ·y − 2√(1−τ)·x)²`
+  nlinarith [_root_.sq_nonneg (Real.sqrt τ * y - 2 * Real.sqrt (1 - τ) * x), hs, ht]
+
 end HermitianMat
