@@ -1454,8 +1454,30 @@ sorry-free Wigner rigidity — see 3.0.
 
 ## M4 — Real + quaternionic branches
 
-- **4.1 Real.** Rides M2 machinery over ℝ; discreteness kill (characters into
-  O(1) trivial — `real_character_unique` pattern already proved). Risk LOW.
+- **4.1 Real — SCOPED AT SOURCE 2026-08-06: it is a GENERALIZATION REFACTOR of
+  the M2 chain, not a fresh development.** Measured ℂ-dependence of the 16
+  `Necessity/` files the ℝ row needs (count of `ℂ` tokens vs count of genuinely
+  complex constructs `Complex.I`/`Complex.exp`/`normSq`/`star_def`/`starRingEnd`):
+  DiagonalFamily 26/0, Theta 39/0, ThetaCocycle 30/0, ChiExtension 14/0,
+  ChiContinuity 34/0, CoalescenceInstance 40/0, CoalescenceDiff 10/0,
+  BlockInvariance 17/0, LeftMultiplication 38/0, PseudoInverse 21/0,
+  SharpEffects 28/0, FirstArgument 27/0, OneParameter 0/0 — **thirteen files use
+  ℂ only as "the scalar field"**; only ComparisonInstance (68/13, the quarter
+  identity + field-transfer star bookkeeping), BlockModel (25/6) and
+  BlockTransport (18/6, both the square law's `normSq`) carry real complex
+  content, and all three generalize to `‖z‖²`/`RCLike.normSq`. The vendored
+  substrate is ALREADY RCLike-general (Basic/Order/CFC are stated over
+  `[RCLike 𝕜]`, e.g. `zero_le_iff : 0 ≤ A ↔ A.mat.PosSemidef`), so the port is
+  `ℂ ⇝ 𝕜` with `[RCLike 𝕜]` plus three square-law rewrites. **The ℝ row needs
+  NONE of the phase machinery** (BlockSkew, PhaseCocycle, PhaseAnchor,
+  BlockAngle, BlockRotation, TorusAction, TwistPower, TwistUniqueness,
+  TwistGeneral, RateFromCoupling): over ℝ the Peirce block is
+  ONE-dimensional, so the skew block generator is 0 outright, `χ̃ = id`, and the
+  product is Lüders `a • b = Q_{√a} b` — the kill is `real_luders`'s concrete
+  analogue and costs a lemma, not a lane. Recommended order: generalize
+  DiagonalFamily → ComparisonInstance → Theta/ThetaCocycle → Chi* →
+  Coalescence* (mechanical, compiler-driven), then the 1-dimensional-block kill.
+  Risk LOW (was LOW), effort now MEASURED rather than guessed.
 - **4.2 Quaternionic.** H_n(ℍ) ↪ H_{2n}(ℂ) symplectic embedding. [INV✓ area
   10]: ℍ itself is well-developed (NormedDivisionRing, CStarRing,
   InnerProductSpace ℝ) but **matrices over ℍ are total greenfield — zero
