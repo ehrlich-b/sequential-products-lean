@@ -161,6 +161,13 @@ import RadicalRelativity.Necessity.DiagonalFamily
 -- compiling untouched; the real branch consumes these.
 import RadicalRelativity.Necessity.DiagonalFamilyGen
 
+-- Field-general twin of the character layer (M4.1): same statements over an
+-- arbitrary RCLike field, consuming the scalar-explicit frame/family layer.  A twin
+-- rather than an in-place generalization because these statements mention the family
+-- constant, and rewriting that in the finished complex lane would touch 234 sites
+-- across 19 files including the submission capstones.
+import RadicalRelativity.Necessity.ChiGen
+
 -- M2 necessity core, tenth unit (LEDGER 2.6, chi part 1): the comparison character
 -- on the diagonal family — base-point congruence, the value law
 -- a(r) sp a(r') = a(r+r'), chi(0) = 1 through theta_base_one, and the orthant

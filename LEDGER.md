@@ -1731,6 +1731,29 @@ sorry-free Wigner rigidity — see 3.0.
     second time: the *machinery* is nearly ported, but an unconditional ℝ row is
     gated on real Kadison. Decide explicitly which of the two deliverables is wanted
     before writing the ending.
+
+  **ROUTE DECIDED AND STARTED 2026-08-06 — TWINS, NOT A SED, AND HERE IS WHY.** The
+  in-place alternative was measured exactly: `diagFamily`/`frameProj` occur at **234
+  standalone sites across 19 files** (regex `\bdiagFamily\b` verified not to touch
+  `sp_diagFamily`/`diagFamily_mat`), and those 19 files include the FINISHED complex
+  capstones (`TwistPower`, `TwistUniqueness`, `TwistGeneral`, `TwistIdentification`,
+  `BlockChi`, `BlockInvariance`, …). Judgment call, recorded deliberately: **the ℂ row
+  is the submission artifact, so it does not get refactored to serve an in-progress
+  row.** "The build still passes after touching 19 files of a finished proof" is a
+  weaker guarantee than "the finished proof was never touched". The duplication is
+  ~4 files and can be collapsed after the ℝ row closes.
+  * **`Necessity/ChiGen.lean` DONE** (census 113, gates green, tree at 3070 jobs,
+    custom axioms exactly `[]`): field-general twin of `Chi.lean` —
+    `theta_congrG`, `sp_diagFamilyG` (the product on the diagonal family is the
+    family), `thetaD_zeroG`, `thetaD_mulG` (the χ̃ cocycle) — **compiled first try**,
+    consuming `DiagonalFamilyGen`. Recipe for the twins: copy, add
+    `variable {𝕜} [RCLike 𝕜]`, `HermitianMat n ℂ ⇝ 𝕜`, `\bdiagFamily\b ⇝
+    diagFamilyG 𝕜`, `diagFamily_ ⇝ diagFamilyG_`, suffix every declaration name with
+    `G`, and repoint the import at `DiagonalFamilyGen`.
+  * REMAINING twins: `ComparisonInstanceGen` (386 lines, the Θ/`thetaNorm` layer —
+    the big one), `ChiExtensionGen` (209), `ChiContinuityGen` (247),
+    `CoalescenceInstanceGen` (309). Then the ℝ ending, conditional on the real
+    Jordan property as a located hypothesis.
     Then `Chi` (which must switch to the `…Gen` frame/family names) →
   `ComparisonInstance` → `Chi*`/`Coalescence*`; then the short ℝ ending.
 - **4.2 Quaternionic.** H_n(ℍ) ↪ H_{2n}(ℂ) symplectic embedding. [INV✓ area
