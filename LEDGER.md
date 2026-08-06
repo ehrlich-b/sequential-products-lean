@@ -852,10 +852,41 @@ sorry-free Wigner rigidity — see 3.0.
   λ(ψψ*, a) = 1/⟪ψ, a⁻¹ψ⟫, and on the probe family a_ε = q + ε(𝟙−q) with
   τ = tr(pq) this is ε/(ετ + 1 − τ); at **ε = 1/2** it is 1/(2 − τ), so
   **τ = 2 − 1/Str(p, a_{1/2})** — a single-ε inversion, no ε-limit needed.
-  NEXT (3.1c): evaluate `strength` on the probe (needs `⟪ψ, a⁻¹ψ⟫` only for
-  the explicit a_ε, whose inverse is (1/ε)(𝟙−q) + q — elementary, no CFC),
-  giving transProb preservation from order data; then the ray map into
-  `Projectivization` and `wigner_rigidity`; then unitary/antiunitary ⟹ Jordan.
+  **NEXT UNIT 3.1c — FULLY DECODED, PROOF COMPLETE ON PAPER, VERIFIED
+  NUMERICALLY (numpy N=4, random rank-ones; all four identities below checked
+  to 1e-16).** Target: `strength (rankOne ψ) (probe φ) = (2 − τ)⁻¹` with
+  `probe φ := (1/2 : ℝ) • (1 + rankOne φ)` and
+  `τ := Complex.normSq (star φ ⬝ᵥ ψ)`, for unit ψ, φ.  Then order-invariance
+  (`strength_map`) transfers τ, i.e. gives `TransProbPreserving`.
+  * Probe facts: a_{1/2} = (1/2)(𝟙+q) so **a⁻¹ = 2·𝟙 − q** (because q² = q:
+    (𝟙+q)(𝟙 − q/2) = 𝟙); probe is an effect (0 ≤ ·, and ≤ 𝟙 since q ≤ 𝟙).
+  * `(rankOne φ) *ᵥ ψ = (star φ ⬝ᵥ ψ) • φ` — the one mulVec identity needed
+    (vecMulVec_mulVec + op_smul_eq_smul, as in `rankOne_quadratic`).
+  * **Forward bound (Str ≤ (2−τ)⁻¹)**: feed `rankOne_smul_le_iff` the single
+    test vector **v := 2•ψ − (star φ ⬝ᵥ ψ) • φ = a⁻¹ψ**.  Then
+    `star ψ ⬝ᵥ v = 2 − τ` (unit ψ + c·conj c = normSq c) and **a v = ψ**
+    (the (1/2)(𝟙+q)(2−q) = 𝟙 collapse), so `star v ⬝ᵥ a *ᵥ v = 2 − τ` too;
+    the criterion reads t(2−τ)² ≤ (2−τ) ⟹ t ≤ (2−τ)⁻¹ (note 1 ≤ 2−τ ≤ 2
+    since 0 ≤ τ ≤ 1 by Cauchy–Schwarz, so no division-by-zero case).
+  * **Backward bound ((2−τ)⁻¹ ∈ the set)**: show
+    `M := (2−τ)•(𝟙 + q) − 2•p ⪰ 0` vectorwise, i.e. for all v with
+    α := star φ ⬝ᵥ v: `2|star ψ ⬝ᵥ v|² ≤ (2−τ)(‖v‖² + |α|²)`.  Decompose
+    ψ = c•φ + χ (c := star φ ⬝ᵥ ψ, χ := ψ − c•φ, ‖χ‖² = 1 − τ, χ ⊥ φ) and
+    v = α•φ + v⊥ (‖v⊥‖² = ‖v‖² − |α|²); then
+    |star ψ ⬝ᵥ v| ≤ √τ·|α| + √(1−τ)·‖v⊥‖ and the SHARP weighted
+    Cauchy–Schwarz with weights (2, 1) closes it:
+    (√τ x + √(1−τ) y)² ≤ (τ/2 + (1−τ))(2x² + y²) = ((2−τ)/2)(2x² + y²),
+    and (2−τ)(‖v‖² + |α|²) = (2−τ)(2|α|² + ‖v⊥‖²) — EXACT match, no slack.
+    (Plain unweighted CS is too lossy — it needs τ ≤ 0; the weight 2 on the
+    α-slot is what makes it tight.  Do not "simplify" this step.)
+  * Then: τ-preservation ⟹ build the ray map `ℙ ℂ (EuclideanSpace ℂ (Fin N))`
+    → itself from Φ's action on atoms (bridge 1: `IsAtomProjection` is
+    order-theoretic, so Φ permutes rank-ones; `exists_rankOne` extracts the
+    vector), check `TransProbPreserving` against
+    `transProbVec ψ φ = ‖⟪ψ,φ⟫‖²/(‖ψ‖²‖φ‖²)` (for unit vectors = τ), apply
+    the vendored `Projectivization.wigner_rigidity`, and finish
+    unitary/antiunitary ⟹ Jordan automorphism (both branches: conjugation and
+    transpose-conjugation preserve the symmetrized product).
 - **3.1** Unital order-autos of H_n(ℂ)sa are Jordan autos, matrix-concrete,
   n ≥ 3. No prover has Kadison/Uhlhorn/FTPG (landscape-confirmed 08-04:
   Magaud/Narboux Coq and AFP Projective_Geometry are incidence-axiomatic only,
