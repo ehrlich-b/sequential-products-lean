@@ -176,6 +176,12 @@ import RadicalRelativity.Necessity.DiagonalFamilyGen
 -- across 19 files including the submission capstones.
 import RadicalRelativity.Necessity.ChiGen
 
+-- Field-general twin of the comparison-setup layer (M4.1): Theta/thetaNorm and the
+-- ComparisonSetup instance over an arbitrary RCLike field.  Its one field-dependent
+-- step (operator commutation implies matrix commutation) now routes through the
+-- uniform commutant lemma instead of complex anti-Hermitian generators.
+import RadicalRelativity.Necessity.ComparisonInstanceGen
+
 -- M2 necessity core, tenth unit (LEDGER 2.6, chi part 1): the comparison character
 -- on the diagonal family — base-point congruence, the value law
 -- a(r) sp a(r') = a(r+r'), chi(0) = 1 through theta_base_one, and the orthant

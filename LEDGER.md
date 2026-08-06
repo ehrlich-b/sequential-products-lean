@@ -1786,6 +1786,23 @@ sorry-free Wigner rigidity — see 3.0.
     not hand-rolled `Finset.sum_eq_single` bashes; and pin the matrix type at the entry
     (`(… : Matrix n n 𝕜) i j`) or elaboration reports "function expected".
     With this the remaining `ComparisonInstanceGen` work is pure recipe.
+  * **`Necessity/ComparisonInstanceGen.lean` DONE 2026-08-06 — THE GATE TWIN IS IN**
+    (census 115, gates green, tree at 3072 jobs, custom axioms exactly `[]`): all 25
+    declarations of the Θ/`thetaNorm` layer over an arbitrary `RCLike 𝕜`, including
+    `jordanBilinG`, the quarter-identity bridge `commute_of_opCommuteG` /
+    `opCommute_iff_commuteG`, `theta_fix_generalG`, the totalized `thetaNormG` with its
+    laws, `ThetaPreservesJordanG` (the ℝ row's located hypothesis), `thetaNorm_jordanG`,
+    `thetaNorm_cocycleG`, and **`comparisonSetupG : ComparisonSetup (HermitianMat (Fin N) 𝕜)`**.
+    The field-dependent step is gone: `commute_of_opCommuteG` now reads
+    quarter-identity → `Matrix.trace_mul_comm` for tracelessness →
+    `HermitianMat.eq_zero_of_commute_hermitian_of_trace_zero`, and is SHORTER than the ℂ
+    original (77 lines of `Complex.I` generator bookkeeping deleted).
+    TRAP worth repeating: a `def` returning a *bilinear map* needs the scalar EXPLICIT
+    (`jordanBilinG 𝕜`), for the same reason `diagFamilyG`/`frameProjG` do — with an
+    implicit scalar the coercion-to-function cannot fire and every use reports
+    "Function expected … HermitianMat ?m.5 ?m.8 →ₗ …".
+  * REMAINING twins: `ChiExtensionGen` (209), `ChiContinuityGen` (247),
+    `CoalescenceInstanceGen` (309) — all pure recipe now — then the ℝ ending.
     Then `Chi` (which must switch to the `…Gen` frame/family names) →
   `ComparisonInstance` → `Chi*`/`Coalescence*`; then the short ℝ ending.
 - **4.2 Quaternionic.** H_n(ℍ) ↪ H_{2n}(ℂ) symplectic embedding. [INV✓ area
