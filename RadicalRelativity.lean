@@ -243,6 +243,12 @@ import RadicalRelativity.Necessity.JordanDerivation
 -- a single per-frame parameter t_F with rho_ij(dChi(r)) = t_F(r_i - r_j) J.
 import RadicalRelativity.Necessity.PhaseAnchor
 
+-- prop:singular WIRED (LEDGER 2.9, closing M2): the positive-definite effects
+-- are dense in the effect interval (boundary sequence a + (1/(k+1))(1-a) -> a),
+-- and prop_singular extends any agreement of two S1-S7+S2 products on
+-- positive-definite effects to ALL effects.
+import RadicalRelativity.Necessity.SingularExtension
+
 -- Exact paper-facing S1--S7 and product-conclusion statement boundary.  This
 -- freezes the target signature; it does not claim the classification is proved.
 import RadicalRelativity.PaperA.Statement

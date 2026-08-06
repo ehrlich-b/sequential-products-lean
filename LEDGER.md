@@ -756,8 +756,19 @@ sorry-free Wigner rigidity — see 3.0.
   updated (allowlist + citedAxioms to one, Layer-4 bgw pin removed, docstrings);
   README / THEOREM-MAP §2 / NormalFormExistence / Interface docstrings updated.
   **Custom-axiom count: 2 → 1** (Aczél alone); → 0 after 2.7.
-- **2.9 prop:singular (singular-effect extension).** Boundary continuity
-  argument; standalone lemma exists but is unwired. Risk MED, tail item.
+- **2.9 prop:singular (singular-effect extension) — DONE 2026-08-05, M2
+  COMPLETE** (`Necessity/SingularExtension.lean`, census 75, gates green):
+  `isEffect_interp`/`posDef_interp` (the boundary sequence a + t(𝟙−a) is an
+  effect for t ∈ [0,1] and PosDef for t ∈ (0,1] — split as t•𝟙 + (1−t)•a,
+  PosDef.one.smul + zero_le_iff/PosSemidef.smul + add_posSemidef),
+  `dense_posDef_effects` (density in the effect SUBTYPE via
+  mem_closure_of_tendsto + tendsto_subtype_rng; sequence 1/(k+1)),
+  `sp_eq_on_effects_of_eq_on_posDef` — **prop_singular is now INVOKED**: two
+  S1–S7 products with S2 agreeing on PosDef effects agree on ALL effects
+  (continuousOn_iff_continuous_restrict turns S2 into subtype-continuity).
+  TRAP: Matrix.PosDef over ℂ needs `open ComplexOrder` (scoped PartialOrder ℂ)
+  — without it the statements themselves fail to elaborate; and
+  OrderUnitSpace shadows `add_nonneg` (qualify `_root_.add_nonneg`).
 
 ## M3 — THE BOULDER: Θ_jordan (Kadison/vIR rigidity)
 
