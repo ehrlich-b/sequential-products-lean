@@ -357,4 +357,34 @@ theorem complex_perFrame_unconditional {N : ℕ} (hN : 3 ≤ N)
         = (tF * (r i - r j)) • rotJ :=
   complex_perFrame_concrete hN P hS2 (thetaPreservesJordan_of_S2 P hS2)
 
+/-! ## The product-level structural theorem -/
+
+/-- **`a • b = Q_{√a}(Θ_a b)` — the paper's structural identity, at the level of
+the PRODUCT.**  For an invertible effect `a` and any effect `b`, the unknown
+sequential product is the Lüders conjugation applied to the comparison map's
+value.  This is `quadRep_theta` (the defining equation of `Θ`) read through
+`seqLeftMul_apply_effect` (which identifies the linear extension with the
+product on effects), so it speaks about `P.sp` rather than about an extension. -/
+theorem sp_eq_quadRep_theta (P : SequentialProductOn (HermitianMat (Fin N) ℂ))
+    {a b : HermitianMat (Fin N) ℂ} (ha : OrderUnitSpace.IsEffect a)
+    (hbd : a.mat.PosDef) (hb : OrderUnitSpace.IsEffect b) :
+    P.sp a b = (theta P ha hbd b).conj (a.cfc Real.sqrt).mat := by
+  rw [← quadRepEquiv_apply a hbd, quadRep_theta P ha hbd b,
+    seqLeftMul_apply_effect P ha hb]
+
+/-- **The structural theorem with the comparison map certified.**  Combining
+`sp_eq_quadRep_theta` with M3: for any S1–S7 product with S2 on `H_N(ℂ)`, the
+product is `Q_{√a}` applied to a **Jordan automorphism** of the algebra.  The
+remaining paper step is the identification of that Jordan automorphism with
+`Ad_{a^{it}}`, which is what turns this into the twist normal form. -/
+theorem sp_eq_quadRep_jordanAuto (P : SequentialProductOn (HermitianMat (Fin N) ℂ))
+    (hS2 : P.FirstArgContinuous)
+    {a : HermitianMat (Fin N) ℂ} (ha : OrderUnitSpace.IsEffect a)
+    (hbd : a.mat.PosDef) :
+    PreservesJordan (theta P ha hbd) ∧
+      ∀ b : HermitianMat (Fin N) ℂ, OrderUnitSpace.IsEffect b →
+        P.sp a b = (theta P ha hbd b).conj (a.cfc Real.sqrt).mat :=
+  ⟨thetaPreservesJordan_of_S2 P hS2 ha hbd,
+    fun b hb => sp_eq_quadRep_theta P ha hbd hb⟩
+
 end Necessity

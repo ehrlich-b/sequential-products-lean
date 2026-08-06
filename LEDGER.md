@@ -1118,12 +1118,28 @@ sorry-free Wigner rigidity — see 3.0.
   lem:frame-connectivity (paper-proved, located, never an axiom) and `overlap`
   = cross-coherence.  Axioms verified first-hand: `[propext,
   Classical.choice, Quot.sound]`.
-  NEXT for the ℂ lane: the per-type `mthm:master` *product-level* statement —
-  this is where `PaperA.UniqueTwistConclusion` has to be met, and it needs the
-  remaining paper-analytic step L_a = Q_{√a}∘Θ_a with Θ_a = Ad_{a^{it}}
-  (i.e. reconstructing the PRODUCT from the twist parameter, not just the
-  block action); M1's `twistSequentialProduct` is the sufficiency witness and
-  `sp_eq_on_effects_of_eq_on_posDef` (2.9) extends from invertibles.
+  **PRODUCT-LEVEL STRUCTURAL THEOREM DONE 2026-08-05**
+  (`Necessity/KadisonDischarge.lean`, census 97, gates green): note that
+  `L_a = Q_{√a}∘Θ_a` was ALREADY definitional here — `Necessity/Theta.lean`
+  defines `theta := Q_{√a}⁻¹ ∘ seqLeftMul` and `quadRep_theta` states the
+  factorization — so the only missing piece was reading it at the PRODUCT level
+  rather than through the linear extension.  Now
+  **`sp_eq_quadRep_theta` : `P.sp a b = Q_{√a}(Θ_a b)`** for an invertible
+  effect `a` and any effect `b` (via `seqLeftMul_apply_effect`), and
+  **`sp_eq_quadRep_jordanAuto`** — the same with M3 attached, so the product is
+  `Q_{√a}` applied to a certified **Jordan automorphism**.  Axioms verified
+  first-hand: core only.
+  NEXT for the ℂ lane (the genuinely remaining paper-analytic step): identify
+  that Jordan automorphism with `Ad_{a^{it_F}}`.  All the pieces are in the
+  tree — `Θ_a` fixes the frame (`thetaNorm_fixes_frameProj`), acts on each
+  block by a rotation whose angle is `t_F(r_i − r_j)`
+  (`complex_perFrame_unconditional`), and `χ̃(r) = exp(dχ(r))`
+  (`chiTilde_eq_exp_dChi`) — so the remaining work is exponentiating the
+  block-generator statement back to the group level and comparing with the
+  twist conjugation entrywise (M1's `Hermitian/Twist.lean` supplies
+  `a^{1/2+it}`).  Then `PaperA.UniqueTwistConclusion` is reachable with M1's
+  `twistSequentialProduct` as the sufficiency witness and 2.9's
+  `sp_eq_on_effects_of_eq_on_posDef` extending from invertibles.
   Then M4–M7.
   * Then: τ-preservation ⟹ build the ray map `ℙ ℂ (EuclideanSpace ℂ (Fin N))`
     → itself from Φ's action on atoms (bridge 1: `IsAtomProjection` is
