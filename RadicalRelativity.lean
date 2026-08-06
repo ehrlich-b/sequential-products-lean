@@ -92,6 +92,12 @@ import RadicalRelativity.Hermitian.SqrtMul
 -- matrices are not an instance and that route cannot generalize.
 import RadicalRelativity.Hermitian.CfcPoly
 
+-- The square root is continuous on the effect interval, over ANY RCLike field:
+-- Weierstrass on [0,1] + polynomial continuity + the eigenvalue-norm bound.  No C*
+-- machinery, so it goes where the complex-only cfc_continuous cannot.  This is the
+-- last input the real branch needed for its singular-effect extension.
+import RadicalRelativity.Hermitian.CfcSqrtContinuous
+
 -- The commutant of the Hermitian matrices, over ANY RCLike field: a matrix commuting
 -- with every Hermitian matrix is a scalar, and a traceless such matrix is zero.  This
 -- is the field-uniform replacement for the complex-only step in commute_of_opCommute,
