@@ -4,6 +4,7 @@ Released under Apache 2.0 license.
 Authors: Bryan Ehrlich
 -/
 import RadicalRelativity.Necessity.KadisonDischarge
+import RadicalRelativity.MasterTheorem.Adapter
 
 set_option linter.style.longLine false
 
@@ -267,5 +268,76 @@ theorem conjProduct_perFrame {N : ℕ} (hN : 3 ≤ N)
       = (tF * (r i - r j)) • rotJ :=
   complex_perFrame_unconditional hN (conjProduct P hU hU')
     (conjProduct_firstArgContinuous P hU hU' hS2)
+
+/-! ## The frame family and the single global parameter -/
+
+/-- The unitarity halves of a member of the unitary group, in `ᴴ` form. -/
+theorem unitaryGroup_conjTranspose_mul {N : ℕ}
+    (U : Matrix.unitaryGroup (Fin N) ℂ) : (U.val)ᴴ * U.val = 1 := by
+  have h := U.property
+  rw [Matrix.mem_unitaryGroup_iff'] at h
+  rwa [Matrix.star_eq_conjTranspose] at h
+
+theorem unitaryGroup_mul_conjTranspose {N : ℕ}
+    (U : Matrix.unitaryGroup (Fin N) ℂ) : U.val * (U.val)ᴴ = 1 := by
+  have h := U.property
+  rw [Matrix.mem_unitaryGroup_iff] at h
+  rwa [Matrix.star_eq_conjTranspose] at h
+
+/-- **The per-frame twist parameter as a function of the frame.**  A frame of
+`H_N(ℂ)` is the image of the standard frame under a unitary, so the unitary
+group indexes the frames; `frameTwist` is the parameter the unconditional
+per-frame theorem produces at each one. -/
+def frameTwist {N : ℕ} (hN : 3 ≤ N)
+    (P : SequentialProductOn (HermitianMat (Fin N) ℂ))
+    (hS2 : P.FirstArgContinuous) (U : Matrix.unitaryGroup (Fin N) ℂ) : ℝ :=
+  (conjProduct_perFrame hN P hS2 (unitaryGroup_conjTranspose_mul U)
+    (unitaryGroup_mul_conjTranspose U)).choose
+
+/-- The defining property of `frameTwist` at each frame. -/
+theorem frameTwist_spec {N : ℕ} (hN : 3 ≤ N)
+    (P : SequentialProductOn (HermitianMat (Fin N) ℂ))
+    (hS2 : P.FirstArgContinuous) (U : Matrix.unitaryGroup (Fin N) ℂ) :
+    ∀ (i j : Fin N) (r : Fin N → ℝ),
+      (stabilizerCoupling hN
+          (conjProduct P (unitaryGroup_conjTranspose_mul U)
+            (unitaryGroup_mul_conjTranspose U))
+          (conjProduct_firstArgContinuous P _ _ hS2)
+          (thetaPreservesJordan_of_S2 _
+            (conjProduct_firstArgContinuous P _ _ hS2))).ρ i j
+        ((stabilizerCoupling hN
+          (conjProduct P (unitaryGroup_conjTranspose_mul U)
+            (unitaryGroup_mul_conjTranspose U))
+          (conjProduct_firstArgContinuous P _ _ hS2)
+          (thetaPreservesJordan_of_S2 _
+            (conjProduct_firstArgContinuous P _ _ hS2))).dχ r)
+      = (frameTwist hN P hS2 U * (r i - r j)) • rotJ :=
+  (conjProduct_perFrame hN P hS2 (unitaryGroup_conjTranspose_mul U)
+    (unitaryGroup_mul_conjTranspose U)).choose_spec
+
+/-- **`thm:complex`, the global step, on `H_N(ℂ)`.**
+
+For any S1–S7 product with S2 on `H_N(ℂ)` (`N ≥ 3`), the per-frame parameters
+`frameTwist` collapse to a **single global** `t`, given the paper's two
+frame-graph inputs as explicit hypotheses:
+
+* `connected` — `lem:frame-connectivity` (paper-proved; carried as a located
+  hypothesis, never an axiom);
+* `overlap` — the cross-coherence agreement of adjacent frames' `U(1)`
+  characters on an open interval.
+
+The collapse itself — including the `2π`-ambiguity-free character uniqueness —
+is the machine-checked `Globalization.global_t`. -/
+theorem complex_global_twist_concrete {N : ℕ} (hN : 3 ≤ N)
+    (P : SequentialProductOn (HermitianMat (Fin N) ℂ))
+    (hS2 : P.FirstArgContinuous)
+    (Adj : Matrix.unitaryGroup (Fin N) ℂ → Matrix.unitaryGroup (Fin N) ℂ → Prop)
+    (connected : ∀ F G, Relation.ReflTransGen
+      (MasterTheorem.Globalization.SymmStep Adj) F G)
+    (overlap : ∀ F G, Adj F G → ∃ a b : ℝ, a < b ∧ ∀ x ∈ Set.Ioo a b,
+      Complex.exp ((frameTwist hN P hS2 F : ℂ) * x * Complex.I)
+        = Complex.exp ((frameTwist hN P hS2 G : ℂ) * x * Complex.I)) :
+    ∃ t : ℝ, ∀ U, frameTwist hN P hS2 U = t :=
+  MasterTheorem.global_twist_of_perFrame (frameTwist hN P hS2) Adj connected overlap
 
 end Necessity

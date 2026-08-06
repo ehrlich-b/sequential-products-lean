@@ -1104,11 +1104,27 @@ sorry-free Wigner rigidity — see 3.0.
   explicit `sub_nonneg` steps instead; the compatibility hypotheses transport
   by `congrArg (adU U)` + `adU_cancel'` (NOT `adU_cancel` — the composite runs
   the other way).
-  NEXT for the ℂ lane: `Adj` on unitaries (frames sharing n−2 atoms) plus the
-  two disclosed fields (`connected` = lem:frame-connectivity, `overlap` =
-  cross-coherence) to instantiate `ComplexGlobalizationData` and run
-  `global_t`; then the per-type `mthm:master` statement with M1's
-  `twistSequentialProduct` as the sufficiency witness. Then M4–M7.
+  **GLOBALIZATION INSTANTIATED 2026-08-05** (same file): the unitary group
+  indexes the frames, `unitaryGroup_conjTranspose_mul`/`_mul_conjTranspose`
+  extract both unitarity halves in `ᴴ` form from membership (via
+  `mem_unitaryGroup_iff'`/`iff` + `Matrix.star_eq_conjTranspose`),
+  **`frameTwist`** is the per-frame parameter as an honest FUNCTION of the
+  frame (choose over `conjProduct_perFrame`) with `frameTwist_spec`, and
+  **`complex_global_twist_concrete`** collapses them to a SINGLE global `t`
+  through the machine-checked `global_twist_of_perFrame` (hence
+  `Globalization.global_t`, hence the 2π-ambiguity-free
+  `real_character_unique`).  The two frame-graph inputs are explicit
+  hypotheses, matching the paper's own accounting: `connected` =
+  lem:frame-connectivity (paper-proved, located, never an axiom) and `overlap`
+  = cross-coherence.  Axioms verified first-hand: `[propext,
+  Classical.choice, Quot.sound]`.
+  NEXT for the ℂ lane: the per-type `mthm:master` *product-level* statement —
+  this is where `PaperA.UniqueTwistConclusion` has to be met, and it needs the
+  remaining paper-analytic step L_a = Q_{√a}∘Θ_a with Θ_a = Ad_{a^{it}}
+  (i.e. reconstructing the PRODUCT from the twist parameter, not just the
+  block action); M1's `twistSequentialProduct` is the sufficiency witness and
+  `sp_eq_on_effects_of_eq_on_posDef` (2.9) extends from invertibles.
+  Then M4–M7.
   * Then: τ-preservation ⟹ build the ray map `ℙ ℂ (EuclideanSpace ℂ (Fin N))`
     → itself from Φ's action on atoms (bridge 1: `IsAtomProjection` is
     order-theoretic, so Φ permutes rank-ones; `exists_rankOne` extracts the
