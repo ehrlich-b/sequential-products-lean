@@ -1236,6 +1236,21 @@ sorry-free Wigner rigidity — see 3.0.
   `calc` step breaks parsing into a `Unit`-valued mess — write the projection
   explicitly; `fun_prop` has no continuity lemma for `HermitianMat.rankOne`, so
   derive an explicit coordinate formula first (this is why `tauVec_eq` exists).
+  **COMPLEMENTATION INVARIANCE DONE 2026-08-05**
+  (`RankTwo/Complementation.lean`, census 96, gates green, zero sorries):
+  `orthoVec (a,b) := (−b̄, ā)` with `orthoVec_orthogonal`, `nsq_orthoVec`,
+  `orthoVec_real_smul`; **`rankOne_orthoVec`** — the geometric identity that
+  passing to the complement ray IS the complementation `P ↦ 𝟙 − P` (for a unit
+  vector, `(orthoVec ψ)(orthoVec ψ)* = 𝟙 − ψψ*`); and **`tau_orthoVec_eq`** —
+  composing it with the already-proved `tau_swap_invariant` shows τ does not
+  distinguish a ray from its complement, i.e. **τ is a function of the FRAME**,
+  not of the ray.  TRAP: after `fin_cases i` the index appears as `⟨0, ⋯⟩`,
+  which the literal-indexed `@[simp]` lemmas do NOT match — use
+  `refine funext ?_; rw [Fin.forall_fin_two]` (and `Matrix.ext` +
+  nested `Fin.forall_fin_two` for matrices) instead of `fin_cases`; the cleanest
+  uniform finish for the four entry goals is `apply Complex.ext` then
+  `simp only [re/im lemmas]` then `linarith [hsum']` with the norm condition
+  pre-expanded into real components.
   REMAINING in 5.3: the BIJECTION itself — that every rank-two S1–S7 product
   arises from exactly one `tauModuli`-style element, and conversely. Forward
   direction needs the frame-indexed family of `MasterTheorem.RankTwo.sp` glued

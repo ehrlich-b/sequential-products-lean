@@ -341,6 +341,14 @@ import RadicalRelativity.RankTwo.RealProjective
 -- continuity elementary, and tauModuli packages it as C(QubitFrame, R).
 import RadicalRelativity.RankTwo.FrameFunction
 
+-- M5 (LEDGER 5.3): COMPLEMENTATION INVARIANCE.  A rank-two frame is an
+-- unordered complementary pair, so the frame function must not distinguish a
+-- ray from its orthogonal complement.  orthoVec (a,b) = (-conj b, conj a)
+-- realizes the complement, rankOne_orthoVec shows passing to it IS the
+-- complementation P -> 1 - P, and tau_swap_invariant then makes tau a function
+-- of the frame rather than of the ray.
+import RadicalRelativity.RankTwo.Complementation
+
 -- Exact paper-facing S1--S7 and product-conclusion statement boundary.  This
 -- freezes the target signature; it does not claim the classification is proved.
 import RadicalRelativity.PaperA.Statement
