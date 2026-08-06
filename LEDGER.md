@@ -1960,8 +1960,30 @@ sorry-free Wigner rigidity — see 3.0.
       (its proof goes through `LocallyCompactSpace.local_compact_nhds` on
       `HermitianMat d ℂ` and `_root_.cfc` continuity); expect it to be mechanical too,
       but it is a vendor-tree proof, so do it deliberately with `VENDOR.md` drift noted.
-      **Order: generalize `cfc_continuous` → the joint-continuity section → then either
-      route (a) or (b) closes the ℝ row.** All three are pure recipe — the ℂ originals have zero genuinely
+      ★★**AND THE OBSTACLE IS STRUCTURAL, NOT MECHANICAL — verified at source
+      2026-08-06 (attempt reverted, tree green).**  `cfc_continuous`'s proof routes
+      through `ContinuousOn.cfc` at `(A := CStarMatrix d d ℂ)`, i.e. through Mathlib's
+      `CStarAlgebra` instance on matrices. But **Mathlib's `CStarAlgebra` class is
+      COMPLEX BY DEFINITION** — `class CStarAlgebra (A) extends … NormedAlgebra ℂ A,
+      StarModule ℂ A` (Analysis/CStarAlgebra/Classes.lean:36) — so `CStarMatrix d d ℝ`
+      is not an instance and this route simply does not exist over ℝ. Note the
+      DEFINITION `HermitianMat.cfc` is already `𝕜`-general (that is why every twin
+      works); it is only this CONTINUITY proof that is complex-routed.
+      **Consequences for closing the ℝ row:**
+      * Do NOT attempt a `ℂ ⇝ 𝕜` pass on `cfc_continuous` — it cannot work.
+      * Route (b) is now the better bet: prove S2 for the ℝ Lüders product directly,
+        i.e. continuity of `a ↦ a.cfc Real.sqrt` on the effect interval, by an
+        elementary argument that avoids the C⋆ machinery — e.g. via the vendored
+        `norm_cfc_sub_le_of_sup_le`-style bound plus Stone–Weierstrass on `[0,1]`
+        (polynomials in `a` are manifestly continuous in `a`, and the spectrum of an
+        effect lies in the compact `[0,1]` by `eigenvalues_mem_Icc_of_effect`, which IS
+        already `𝕜`-general). That is the same skeleton as
+        `continuousOn_cfc_of_compact`, but with `fun_prop`'s appeal to `cfc_continuous`
+        replaced by hand-rolled polynomial continuity — the one genuinely new proof
+        obligation left in the whole real row.
+      * Everything else in the joint-continuity section still measured clean
+        (zero `Complex.*`), so once polynomial-cfc continuity exists over `𝕜` the rest
+        of that section is a substitution. All three are pure recipe — the ℂ originals have zero genuinely
     complex content beyond `normSq`, which becomes `‖t‖²`/`RCLike.normSq`.
     NOTE the ℝ simplification worth exploiting: over ℝ, `blockHerm i j t` has no phase,
     so `BlockTransportGen`/`BlockChiGen`/`BlockSkewGen`/`PhaseCocycleGen`/`PhaseAnchorGen`
