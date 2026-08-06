@@ -1899,15 +1899,30 @@ sorry-free Wigner rigidity — see 3.0.
       hypothesis fails with "motive is not type correct" — use
       `simpa [blockScalar, RCLike.normSq_apply] using h` so the choice term is
       unfolded on both sides rather than rewritten under.
-    * **REMAINING: design steps 3 and 4 only** — (3) `blockScalar_eq_one` by
-      connectedness: `t ↦ blockScalar (t • r)` is continuous (via
-      `blockScalar_eq_entry` + `continuous_chiTilde_lineG` + entry continuity), squares
-      to one, and is `1` at `t = 0`, so if it ever hit `−1` the intermediate value
-      theorem would force a zero, contradicting `blockScalar_ne_zero`; and (4)
-      `chiTilde_eq_id` from `linearMap_eq_of_frame_blockG` plus frame-fixing (prove the
-      χ̃-level frame fixing inline from `thetaNorm_fixes_frameProjG` on both factors —
-      the ℂ lane's `chiTilde_fixes_frameProj` lives in `TwistIdentification`, which is
-      NOT twinned and does not need to be). All three are pure recipe — the ℂ originals have zero genuinely
+    * ★★**STEPS 3 AND 4 DONE 2026-08-06 — `prop:real`'s CHARACTER STATEMENT IS
+      MACHINE-CHECKED: `Necessity.chiTilde_eq_id`, the comparison character on
+      `H_n(ℝ)` IS THE IDENTITY** (census 125, gates green, tree at 3082 jobs, custom
+      axioms exactly `[]`; `chiTilde_eq_id` and `blockScalar_eq_one` axiom-checked =
+      Lean core only). Both steps compiled FIRST TRY.
+      - `eq_one_of_sq_eq_one_of_continuous` — the connectedness kernel: a continuous
+        real function squaring to one and equal to `1` at the origin is identically
+        `1` (if it reached `−1`, `intermediate_value_Icc`/`Icc'` forces a zero, which a
+        square-root-of-one cannot be). Pure real analysis; no Jordan input.
+      - **`blockScalar_eq_one`** (step 3) via `blockScalar_eq_entry` +
+        `continuous_chiTilde_lineG.clm_apply` + `continuous_matG` + two
+        `continuous_apply` compositions for the entry.
+      - `chiTilde_fixes_frameProjG` (inline from `thetaNorm_fixes_frameProjG` on both
+        factors, as planned — `TwistIdentification` never needed twinning) and
+        `blockHermG_real_smul` (over ℝ the block is one-dimensional,
+        `blockHerm i j z = z • blockHerm i j 1`, by `star_trivial`).
+      - **`chiTilde_eq_id`** (step 4) by `linearMap_eq_of_frame_blockG`.
+      **Consequence: `Θ_a = id` on `H_n(ℝ)`** — the product is Lüders and the real type
+      admits no twist, i.e. the manuscript's `prop:real` on the concrete carrier,
+      conditional only on S2 and the located `ThetaPreservesJordanG`.
+      REMAINING to dress it as a per-type `mthm:master` row: unfold `Θ = id` to
+      `a • b = Q_{√a} b` at the product level, transport off the diagonal family, and
+      extend by `sp_eq_on_effects_of_eq_on_posDef`. Bookkeeping only; no new
+      mathematics. All three are pure recipe — the ℂ originals have zero genuinely
     complex content beyond `normSq`, which becomes `‖t‖²`/`RCLike.normSq`.
     NOTE the ℝ simplification worth exploiting: over ℝ, `blockHerm i j t` has no phase,
     so `BlockTransportGen`/`BlockChiGen`/`BlockSkewGen`/`PhaseCocycleGen`/`PhaseAnchorGen`
