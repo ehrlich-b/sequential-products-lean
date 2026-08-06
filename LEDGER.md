@@ -1191,17 +1191,29 @@ sorry-free Wigner rigidity — see 3.0.
   simp set or the structure projection blocks `ring`; `map_smul` fires once for
   BOTH hypotheses when they share the shape — don't repeat it.
   Risk was LOW; realized cost ~90 lines.
-- **5.2 ℝP² + descent (lem:n2-bounded/continuity/descent).** ℝP² absent from
-  Mathlib in any form [INV✓ area 9]; build S²/± via orbit-quotient machinery
-  (complete: ProperlyDiscontinuous free for finite Γ, T2, open quotient,
-  compactness inherit [INV✓]). Two small genuine gaps to write: MulAction of a
-  2-element group packaging `InvolutiveNeg`/`ContinuousNeg` on the sphere, and
-  the `Function.Even → Function.FactorsThrough` bridge; then
-  `IsQuotientMap.liftEquiv` gives C(ℝP²,ℝ) ↔ even C(S²,ℝ) [INV✓]. HARVEST
-  option (08-04): csd-lean4's `Projectivization/Topology.lean` (466L, general
-  `[DivisionRing K]`, Mathlib-staged, inside the audited 3.0 vendor closure)
-  gives `ℙ ℝ ℝ³` a quotient topology directly — evaluate using it as the ℝP²
-  carrier instead of a bespoke sphere quotient. Risk MED (volume), no unknowns.
+- **5.2 ℝP² carrier — DONE 2026-08-05, AND THE HAND-BUILT QUOTIENT WAS NOT
+  NEEDED** (`RankTwo/RealProjective.lean`, census 94, gates green). The planned
+  route (S²/± via orbit-quotient machinery + a
+  `Function.Even → FactorsThrough` bridge + `IsQuotientMap.liftEquiv`) is
+  SUPERSEDED by the 08-04 HARVEST option, now executed: the vendored
+  `Vendor/Wigner/Topology.lean` — already in the tree, inside the audited
+  Wigner closure — is stated for `[RCLike K]`, which covers **K = ℝ**.  So
+  `RP2 := ℙ ℝ (EuclideanSpace ℝ (Fin 3))` is **compact Hausdorff for free**
+  (`instT2Space`, `instCompactSpace` both by `inferInstance`), with the
+  quotient topology built in.  `RP2.mk_eq_mk_iff` gives the antipodal
+  identification from the projective quotient (`RP2.mk_neg`: v and −v agree)
+  rather than constructing it, and `QubitModuli := C(ℝP², ℝ)` is
+  cor:qubit-classification's object, with its `CommRing` inherited and
+  `QubitModuli_nontrivial` recorded.  TRAP: `mk_eq_mk_iff'` is stated with a
+  BARE scalar `∃ a : K, a • w = v`, not `a : Kˣ` — don't ascribe units.
+  REMAINING in M5: only 5.3, the assembly — connect
+  `MasterTheorem/RankTwo.lean`'s existing algebraic core (`sp_blockForm`,
+  `n2_necessity`, `angle_factor`, `sp_maps_effects`, the τ invariant
+  `tau`/`tau_std_eq_one`/`tau_had_eq_zero`) to `QubitModuli`, i.e. exhibit the
+  frame ↦ τ(F) assignment as an element of `C(ℝP², ℝ)`.  Note `tau` is ALREADY
+  defined on pairs of rank-one projections and is swap-invariant
+  (`tau_swap_invariant`) — that swap-invariance is exactly what makes it
+  descend to the projective quotient, so the descent step should now be short.
 - **5.3 Assembly (cor:qubit-classification).** Bijection between the M₂(ℂ)
   algebraic core (sp_blockForm etc., already proved) and the parameter space.
   Risk MED.
