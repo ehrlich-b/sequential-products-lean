@@ -1750,10 +1750,26 @@ sorry-free Wigner rigidity — see 3.0.
     `variable {𝕜} [RCLike 𝕜]`, `HermitianMat n ℂ ⇝ 𝕜`, `\bdiagFamily\b ⇝
     diagFamilyG 𝕜`, `diagFamily_ ⇝ diagFamilyG_`, suffix every declaration name with
     `G`, and repoint the import at `DiagonalFamilyGen`.
-  * REMAINING twins: `ComparisonInstanceGen` (386 lines, the Θ/`thetaNorm` layer —
-    the big one), `ChiExtensionGen` (209), `ChiContinuityGen` (247),
-    `CoalescenceInstanceGen` (309). Then the ℝ ending, conditional on the real
-    Jordan property as a located hypothesis.
+  * REMAINING twins, in dependency order: **`ComparisonInstanceGen` (386 lines, the
+    Θ/`thetaNorm` layer — the gate for the other three)**, then `ChiExtensionGen`
+    (209), `ChiContinuityGen` (247), `CoalescenceInstanceGen` (309). Then the ℝ
+    ending, conditional on the real Jordan property as a located hypothesis.
+  ★**`ComparisonInstanceGen`'s ONE genuine obstacle, scoped 2026-08-06 (the port's
+    second, after `sqrt_mul_of_commute`) — and it has a UNIFORM fix.**  Of that file's
+    25 declarations only `commute_of_opCommute` (Jordan-operator commutation ⟺ matrix
+    commutation) is field-dependent, and the dependence is in the *generator set*, not
+    the mathematics: the existing proof forms `C := [a,b]`, shows `[C, y] = 0` for
+    every Hermitian `y` via the quarter identity, and then kills `C` using the
+    **anti-Hermitian generators `I·E_ij − I·E_ji`** (lines 139–160: `Complex.I`,
+    `Complex.conj_I`, `Complex.I_mul_I`). Those do not exist over ℝ.
+    **Uniform replacement, valid over any `RCLike 𝕜`**: use only generators that are
+    Hermitian over *every* field — the real diagonals and the symmetric off-diagonals
+    `E_ij + E_ji`. Commuting with diagonals carrying distinct entries forces `C`
+    diagonal; commuting with `E_ij + E_ji` then equates all diagonal entries, so
+    `C = λ·1`; and `C = [a,b]` with `a, b` Hermitian is anti-Hermitian, while `λ·1` is
+    Hermitian, so `C = 0`. That argument never mentions `I` and replaces the
+    ℂ-specific step in ~40 lines. Do this FIRST, as a standalone field-general lemma,
+    then the rest of `ComparisonInstanceGen` should be pure recipe.
     Then `Chi` (which must switch to the `…Gen` frame/family names) →
   `ComparisonInstance` → `Chi*`/`Coalescence*`; then the short ℝ ending.
 - **4.2 Quaternionic.** H_n(ℍ) ↪ H_{2n}(ℂ) symplectic embedding. [INV✓ area
