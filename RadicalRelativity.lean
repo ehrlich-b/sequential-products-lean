@@ -197,6 +197,10 @@ import RadicalRelativity.Necessity.CoalescenceInstanceGen
 import RadicalRelativity.Necessity.BlockModelGen
 import RadicalRelativity.Necessity.FrameBlockSpanGen
 
+-- Field-general differentiated-coalescence layer (dChi kills the corners), the last
+-- twin below the real capstone.
+import RadicalRelativity.Necessity.CoalescenceDiffGen
+
 -- M2 necessity core, tenth unit (LEDGER 2.6, chi part 1): the comparison character
 -- on the diagonal family — base-point congruence, the value law
 -- a(r) sp a(r') = a(r+r'), chi(0) = 1 through theta_base_one, and the orthant

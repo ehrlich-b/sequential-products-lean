@@ -1862,8 +1862,27 @@ sorry-free Wigner rigidity — see 3.0.
       otherwise, and the error surfaces at IMPORT time in an unrelated file
       ("environment already contains 'Necessity.eq_frame_add_blocks.match_1_1'"), not at
       compile time in the twin. Enumerate declarations with a grep before renaming.
-    * REMAINING: the block-preservation part of `BlockInvarianceGen`, then the ℝ capstone
-      file itself (steps 1–4). All three are pure recipe — the ℂ originals have zero genuinely
+    * `CoalescenceDiffGen` DONE too (census 121, gates green, tree at 3078 jobs) — the
+      differentiated coalescence layer (`thetaNorm_fix_of_commuteG`,
+      `dChi_kills_cornerG`). Name-mapping note that cost a round: the upstream twins
+      name their lemmas `diagFamilyG_posDef`, `frameProjG_mat`,
+      `frameProj_mat_eq_singleG` — i.e. the `G` sits where the *definition* was
+      renamed, NOT uniformly at the end — so a blind `X ⇝ XG` pass produces
+      `diagFamily_posDefG` and fails. Regex-remap `\bdiagFamily_(\w+)G ⇝
+      diagFamilyG_\1` after the suffix pass, and grep the twin for its真 names.
+    * **REMAINING, and now precisely scoped**: `BlockInvarianceGen`,
+      `BlockTransportGen`, `BlockChiGen` (attempted, reverted — the tree is green), then
+      the ℝ capstone (design steps 1–4).
+      ★**The blocker is an IMPORT-CHAIN error in my own twins, not mathematics**:
+      `BlockModelGen` was pointed at `CoalescenceInstanceGen`, but the ℂ original's chain
+      is `BlockModel ← BlockInvariance ← CoalescenceDiff`. So `BlockTransportGen` cannot
+      see `thetaNorm_fix_of_commuteG`. **Fix first: repoint `BlockModelGen` to import
+      `BlockInvarianceGen`, and `BlockInvarianceGen` to `CoalescenceDiffGen`, mirroring
+      the ℂ chain exactly** — then rebuild upward. Other recorded errors from the
+      attempt: `BlockInvarianceGen` hits `RCLike 𝕜` / `Mul (Matrix n n 𝕜)` synthesis
+      failures around line 77 (expect a second `namespace`/`variable` block needing the
+      scalar declared, the SharpEffects pattern), and `BlockTransportGen` needs
+      `jordanBilin_apply ⇝ jordanBilin_applyG`. `two_smul ℂ`/`(2:ℂ)` ⇝ `𝕜` throughout. All three are pure recipe — the ℂ originals have zero genuinely
     complex content beyond `normSq`, which becomes `‖t‖²`/`RCLike.normSq`.
     NOTE the ℝ simplification worth exploiting: over ℝ, `blockHerm i j t` has no phase,
     so `BlockTransportGen`/`BlockChiGen`/`BlockSkewGen`/`PhaseCocycleGen`/`PhaseAnchorGen`
