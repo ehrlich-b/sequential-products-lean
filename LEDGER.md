@@ -1768,8 +1768,24 @@ sorry-free Wigner rigidity — see 3.0.
     diagonal; commuting with `E_ij + E_ji` then equates all diagonal entries, so
     `C = λ·1`; and `C = [a,b]` with `a, b` Hermitian is anti-Hermitian, while `λ·1` is
     Hermitian, so `C = 0`. That argument never mentions `I` and replaces the
-    ℂ-specific step in ~40 lines. Do this FIRST, as a standalone field-general lemma,
-    then the rest of `ComparisonInstanceGen` should be pure recipe.
+    ℂ-specific step in ~40 lines.
+    **DONE 2026-08-06** (`Hermitian/CommutantHermitian.lean`, NEW, census 114, gates
+    green, axioms core only): `indexDiag` (a real diagonal with distinct entries, via
+    `Fintype.equivFin`), `symGen` (the `E_ij + E_ji` generator, Hermitian over every
+    field), `eq_diagonal_of_commute_hermitian`, `diag_eq_of_commute_hermitian`, and the
+    capstone **`eq_zero_of_commute_hermitian_of_trace_zero`** — a traceless matrix
+    commuting with every Hermitian matrix is zero, over any `RCLike 𝕜`.
+    ★**A CORRECTION to the sketch above, found while writing it**: anti-Hermitian-ness
+    does NOT close the argument (`i • 1` is anti-Hermitian and nonzero over ℂ), so the
+    uniform statement must take **tracelessness** instead — which is exactly what the
+    caller has, since `C = [a,b]` is a commutator. The `C = λ•1` step is the shared
+    part; the kill is `card • λ = 0` in characteristic zero. Traps: `single_conjTranspose`
+    is a ℂ-only repo lemma — use Mathlib's `Matrix.conjTranspose_single`; entry
+    computations want `Matrix.mul_single_apply_same`/`single_mul_apply_of_ne` with
+    **explicitly pinned index arguments** (`(c := (1 : 𝕜)) j i i j (Ne.symm hij) C`),
+    not hand-rolled `Finset.sum_eq_single` bashes; and pin the matrix type at the entry
+    (`(… : Matrix n n 𝕜) i j`) or elaboration reports "function expected".
+    With this the remaining `ComparisonInstanceGen` work is pure recipe.
     Then `Chi` (which must switch to the `…Gen` frame/family names) →
   `ComparisonInstance` → `Chi*`/`Coalescence*`; then the short ℝ ending.
 - **4.2 Quaternionic.** H_n(ℍ) ↪ H_{2n}(ℂ) symplectic embedding. [INV✓ area

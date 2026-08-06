@@ -85,6 +85,14 @@ import RadicalRelativity.Hermitian.Resolution
 -- real branch (M4.1) cannot, since twistFactor is intrinsically complex.
 import RadicalRelativity.Hermitian.SqrtMul
 
+-- The commutant of the Hermitian matrices, over ANY RCLike field: a matrix commuting
+-- with every Hermitian matrix is a scalar, and a traceless such matrix is zero.  This
+-- is the field-uniform replacement for the complex-only step in commute_of_opCommute,
+-- which kills the commutator using anti-Hermitian generators built from i; here the
+-- generators (real diagonals, symmetric off-diagonals) are Hermitian over every field
+-- and the trace closes the argument.
+import RadicalRelativity.Hermitian.CommutantHermitian
+
 -- M1 S1–S7 verification (LEDGER 1.3, paper `lem:twist-sufficiency`): S4 by the
 -- trace route, compatibility ⟺ commutation (Frobenius certificate / Gudder–Nagy
 -- at general twist), the two-variable law `(ab)^{1/2+it} = a^{1/2+it}·b^{1/2+it}`
