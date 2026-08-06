@@ -1662,8 +1662,24 @@ sorry-free Wigner rigidity — see 3.0.
       `Hermitian/Resolution.lean` is generalized — drops the complex structure, and
       needs exactly one scalar input, `Real.sqrt_mul`. Note the proof turns out to
       need only `a`'s positivity (`b`'s is kept in the signature to mirror the twist
-      lemma and document scope). With this in hand `ThetaCocycle`'s item (3) is
-      discharged and only its two mechanical items remain.
+      lemma and document scope).
+  **`ThetaCocycle.lean` DONE 2026-08-06 — THE WHOLE Θ LAYER IS NOW FIELD-GENERAL**
+  (census 112, gates green, tree at 3069 jobs, custom axioms exactly `[]`): all three
+  items discharged exactly as recorded — the joint family pinned
+  (`(p := fun q => jointProj hab q)`), the ten `(2 : ℂ)` scalars and `two_smul ℂ`
+  turned into `𝕜`, and the cocycle's square-root step rerouted from
+  `twistFactor_mul_of_commute … 0` (plus its three `twistFactor_zero` rewrites)
+  straight to the new `HermitianMat.sqrt_mul_of_commute` — which also SHORTENED the
+  proof, since the twist route needed the `t = 0` rewrites and the direct route does
+  not. (One extra import needed: `Hermitian.SqrtMul`.)
+  **Θ-chain status: `LeftMultiplication`, `FirstArgument`, `SharpEffects`,
+  `PseudoInverse`, `Theta`, `ThetaFix`, `ThetaCocycle`, `Resolution`, `SqrtMul`, the
+  two vendored eigenvalue↔order lemmas and the two carrier lemmas are all
+  `RCLike 𝕜`-general; `DiagonalFamilyGen` supplies the frame/family layer.
+  REMAINING for M4.1: `Chi` (must switch to the `…Gen` frame/family names),
+  `ComparisonInstance`, `ChiExtension`, `ChiContinuity`, `CoalescenceInstance` — then
+  the ℝ ending (1-dimensional Peirce block ⟹ skew generator vanishes ⟹ χ̃ = id ⟹
+  Lüders), which is short.**
     Then `Chi` (which must switch to the `…Gen` frame/family names) →
   `ComparisonInstance` → `Chi*`/`Coalescence*`; then the short ℝ ending.
 - **4.2 Quaternionic.** H_n(ℍ) ↪ H_{2n}(ℂ) symplectic embedding. [INV✓ area
