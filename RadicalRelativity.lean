@@ -79,6 +79,12 @@ import RadicalRelativity.Hermitian.Twist
 -- Lagrange interpolation) — the two-variable engine behind the S5 verification.
 import RadicalRelativity.Hermitian.Resolution
 
+-- Square roots multiply on commuting positives, over ANY RCLike field: the joint
+-- spectral family of two commuting Hermitians, with the complex structure of the
+-- twist factor dropped.  The complex lane gets this from twistFactor at t = 0; the
+-- real branch (M4.1) cannot, since twistFactor is intrinsically complex.
+import RadicalRelativity.Hermitian.SqrtMul
+
 -- M1 S1–S7 verification (LEDGER 1.3, paper `lem:twist-sufficiency`): S4 by the
 -- trace route, compatibility ⟺ commutation (Frobenius certificate / Gudder–Nagy
 -- at general twist), the two-variable law `(ab)^{1/2+it} = a^{1/2+it}·b^{1/2+it}`

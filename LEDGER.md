@@ -1652,6 +1652,18 @@ sorry-free Wigner rigidity — see 3.0.
       `m.mat = a.mat * b.mat`, `√m = √a · √b` stated via `cfc Real.sqrt` directly
       instead of via `twistFactor _ 0`. That is the one place in the Θ chain where
       the port needs mathematics rather than substitution, and it is a one-lemma job.
+      **THAT LEMMA IS NOW WRITTEN AND GREEN 2026-08-06**
+      (`Hermitian/SqrtMul.lean`, NEW, census 112, gates green, axioms core only):
+      `HermitianMat.sqrt_mul_of_commute` — `√(ab) = √a·√b` for commuting positives
+      over any `RCLike 𝕜`, compiled FIRST TRY. Mathlib has no square-root
+      multiplicativity for commuting positive matrices (checked), so it is from
+      scratch; the proof keeps `twistFactor_mul_of_commute`'s joint-spectral
+      scaffolding — which is entirely field-generic now that
+      `Hermitian/Resolution.lean` is generalized — drops the complex structure, and
+      needs exactly one scalar input, `Real.sqrt_mul`. Note the proof turns out to
+      need only `a`'s positivity (`b`'s is kept in the signature to mirror the twist
+      lemma and document scope). With this in hand `ThetaCocycle`'s item (3) is
+      discharged and only its two mechanical items remain.
     Then `Chi` (which must switch to the `…Gen` frame/family names) →
   `ComparisonInstance` → `Chi*`/`Coalescence*`; then the short ℝ ending.
 - **4.2 Quaternionic.** H_n(ℍ) ↪ H_{2n}(ℂ) symplectic embedding. [INV✓ area
