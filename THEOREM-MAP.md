@@ -36,7 +36,7 @@ three kinds, and only the first is conditional on §2:
 
 | Paper statement | Lean declaration | File |
 | --- | --- | --- |
-| `mthm:master` — **dependency skeleton only**, see §3 | `MasterTheorem.master_chain` | `MasterTheorem/Master.lean` |
+| `mthm:master` — **dependency skeleton only**, see §3; the complex row is now proved concretely, see the subsection below | `MasterTheorem.master_chain` | `MasterTheorem/Master.lean` |
 | `prop:central`, **componentwise identity only** — the summand inheritance of S1–S7 and the converse assembly remain paper proofs | `MasterTheorem.Central.central_decomposition` | `MasterTheorem/Central.lean` |
 | `prop:real` (real type rigid) | `MasterTheorem.luders_real_produced` | `MasterTheorem/Master.lean` |
 | `thm:quaternionic` (quaternionic rigid) | `MasterTheorem.luders_quaternionic_produced` | `MasterTheorem/Master.lean` |
@@ -49,6 +49,35 @@ three kinds, and only the first is conditional on §2:
 | `thm:qubit-boundary`(i), block form (V1) | `MasterTheorem.RankTwo.sp_blockForm` | `MasterTheorem/RankTwo.lean` |
 | `thm:qubit-boundary`(iii), frame-dependence pair (V9) | `RankTwo.sp_tau_had_is_luders`, `RankTwo.sp_tau_std_is_unit_twist` | `MasterTheorem/RankTwo.lean` |
 | `lem:twist-sufficiency` — every twist product satisfies S1–S7 on `H_n(ℂ)`, packaged per `t`; S2 holds in the carried norm AND (ε–δ, `twistSeq_continuousAt_ouNorm`) in the order-unit norm — the norm caveat is discharged for this row | `HermitianMat.twistSequentialProductCore`, `HermitianMat.twistSequentialProduct` | `Hermitian/Sequential.lean` |
+
+### The complex row of `mthm:master`, on the concrete carrier (2026-08-06)
+
+Everything above quantifies over the §2 *interface structures*. The rows below
+are different in kind: they are proved **on the concrete carrier**
+`HermitianMat (Fin N) ℂ` about an arbitrary pinned product
+`P : SequentialProductOn (HermitianMat (Fin N) ℂ)`, so no §2 field is assumed.
+The comparison map's Jordan property — the manuscript's `prop:theta`, formerly
+the `ComparisonSetup.Θ_jordan` field of §2 — is **derived** here
+(`Necessity.thetaPreservesJordan_of_S2`, M3, Kadison rigidity through the
+vendored `Projectivization.wigner_rigidity`).
+
+| Paper statement | Lean declaration | File |
+| --- | --- | --- |
+| `mthm:master`, **complex row**: `∃! t`, `a • b = a^{1/2+it} b a^{1/2−it}` on **all** effects | `Necessity.complex_classification` | `Necessity/ComplexMaster.lean` |
+| the same, invertible effects only, one global `t` | `Necessity.sp_eq_twistSeq_of_frameGraph` | `Necessity/ComplexMaster.lean` |
+| `prop:singular` **applied** (invertible ⟹ all effects) | `Necessity.sp_eq_twistSeq_of_effect` | `Necessity/ComplexClassification.lean` |
+| uniqueness of the twist parameter | `Necessity.twist_param_unique` | `Necessity/TwistUniqueness.lean` |
+| `prop:theta` (`Θ` is a Jordan automorphism) — **derived, no longer assumed** | `Necessity.thetaPreservesJordan_of_S2` | `Necessity/KadisonDischarge.lean` |
+
+**Exact hypothesis accounting for `complex_classification`** — read this as the
+row's fine print. It takes: the `SequentialProductOn` fields (S1, S3–S7); S2
+(`P.FirstArgContinuous`); `3 ≤ N`; and the manuscript's two frame-graph facts as
+**located hypotheses**, namely `connected` (`lem:frame-connectivity`) and
+`overlap` (the cross-coherence agreement of adjacent frames' `U(1)` characters on
+an open interval). Those two are proved in the paper and carried here, exactly as
+§2's fields were — they are the honest residue of this row, and they are visible
+in its signature rather than hidden in a structure. Nothing else is assumed;
+`#print axioms Necessity.complex_classification` is Lean core only.
 
 `n2_necessity` is worth reading directly. It takes a **linear** `angle` on `ℝ²`
 vanishing on the diagonal and concludes the rotation factors as
