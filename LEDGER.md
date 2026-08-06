@@ -1919,10 +1919,20 @@ sorry-free Wigner rigidity — see 3.0.
       **Consequence: `Θ_a = id` on `H_n(ℝ)`** — the product is Lüders and the real type
       admits no twist, i.e. the manuscript's `prop:real` on the concrete carrier,
       conditional only on S2 and the located `ThetaPreservesJordanG`.
-      REMAINING to dress it as a per-type `mthm:master` row: unfold `Θ = id` to
-      `a • b = Q_{√a} b` at the product level, transport off the diagonal family, and
-      extend by `sp_eq_on_effects_of_eq_on_posDef`. Bookkeeping only; no new
-      mathematics. All three are pure recipe — the ℂ originals have zero genuinely
+      **PRODUCT LEVEL DONE TOO 2026-08-06**: `sp_eq_luders_diagFamily` — on the
+      diagonal family of `H_n(ℝ)`, `a • b = Q_{√a} b = √a·b·√a`, i.e. **the real
+      product IS the Lüders product, with no twist parameter** (axiom-checked = Lean
+      core only). Route: `quadRepEquiv_apply` + `quadRep_theta` +
+      `seqLeftMul_apply_effect` for the structural identity (all three already
+      generalized in place), then collapse `Θ` with `chiTilde_eq_id` via
+      `chiTilde_of_nonposG` + `thetaNorm_apply_eq_thetaG`. Trap: build the structural
+      identity as a separate `have` and rewrite once — a `rw … at *` on the goal fails
+      to find the pattern.
+      **REMAINING for the ℝ row to be a full per-type row**: extend from the diagonal
+      family to every invertible effect (needs the ℝ analogues of
+      `eq_adU_diagFamily` + `conjProduct`, i.e. `ConjTransportGen` — 31 sites, pure
+      recipe), then `sp_eq_on_effects_of_eq_on_posDef` (already field-general) for the
+      singular effects. Both bookkeeping; the mathematics of `prop:real` is done. All three are pure recipe — the ℂ originals have zero genuinely
     complex content beyond `normSq`, which becomes `‖t‖²`/`RCLike.normSq`.
     NOTE the ℝ simplification worth exploiting: over ℝ, `blockHerm i j t` has no phase,
     so `BlockTransportGen`/`BlockChiGen`/`BlockSkewGen`/`PhaseCocycleGen`/`PhaseAnchorGen`

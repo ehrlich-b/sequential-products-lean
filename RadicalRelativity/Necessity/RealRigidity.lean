@@ -217,4 +217,40 @@ theorem chiTilde_eq_id (hS2 : P.FirstArgContinuous)
     rw [← blockHermG_real_smul i j z]
     rfl
 
+/-! ## The product level: the real product IS the Lüders product -/
+
+/-- **`prop:real` at the product level.**  On the diagonal family of `H_n(ℝ)`, an
+S1–S7 sequential product with S2 (and the located Jordan property) is exactly the
+Lüders product `a • b = Q_{√a} b = √a · b · √a`.  There is no twist parameter: the
+comparison map is the identity by `chiTilde_eq_id`, so the structural identity
+`a • b = Q_{√a}(Θ_a b)` collapses. -/
+theorem sp_eq_luders_diagFamily (hS2 : P.FirstArgContinuous)
+    (hjord : ThetaPreservesJordanG P) {r : n → ℝ} (hr : ∀ i, r i ≤ 0)
+    {b : HermitianMat n ℝ} (hb : IsEffect b) :
+    P.sp (diagFamilyG ℝ r) b
+      = b.conj ((diagFamilyG ℝ r).cfc Real.sqrt).mat := by
+  have ha : IsEffect (diagFamilyG ℝ r) := diagFamilyG_isEffect hr
+  have hbd : (diagFamilyG ℝ r).mat.PosDef := diagFamilyG_posDef r
+  -- the comparison map at this base point is the character, which is the identity
+  have hθ : theta P ha hbd b = b := by
+    have hcoe : ((theta P ha hbd : HermitianMat n ℝ →ₗ[ℝ] HermitianMat n ℝ))
+        = ((chiTildeG P hS2 r).val :
+          HermitianMat n ℝ →ₗ[ℝ] HermitianMat n ℝ) := by
+      rw [chiTilde_of_nonposG P hS2 hr]
+      apply LinearMap.ext
+      intro x
+      show theta P ha hbd x = _
+      rw [← thetaNorm_apply_eq_thetaG P hS2 ha hbd x]
+      rfl
+    have hid := chiTilde_eq_id P hS2 hjord r
+    have h := congrFun (congrArg (fun L : HermitianMat n ℝ →ₗ[ℝ] HermitianMat n ℝ =>
+      (L : HermitianMat n ℝ → HermitianMat n ℝ)) (hcoe.trans hid)) b
+    simpa using h
+  -- the structural identity, with `Θ` collapsed
+  have hstruct : P.sp (diagFamilyG ℝ r) b
+      = (theta P ha hbd b).conj ((diagFamilyG ℝ r).cfc Real.sqrt).mat := by
+    rw [← quadRepEquiv_apply (diagFamilyG ℝ r) hbd, quadRep_theta P ha hbd b,
+      seqLeftMul_apply_effect P ha hb]
+  rw [hstruct, hθ]
+
 end Necessity
