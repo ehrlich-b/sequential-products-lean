@@ -51,6 +51,14 @@ import RadicalRelativity.MasterTheorem.Witnesses
 import RadicalRelativity.Vendor.HermitianMat.Jordan
 import RadicalRelativity.Vendor.HermitianMat.Proj
 
+-- Vendored csd-lean4 Wigner-rigidity island (Apache 2.0, pinned; see
+-- RadicalRelativity/Vendor/VENDOR.md): the exact import closure of
+-- `Projectivization.wigner_rigidity` -- every transition-probability-preserving
+-- self-map of CP^{N-1} is induced by a unitary or an antiunitary.  This is the
+-- M3 rigidity input; it is TRACKED (in the census and the frozen manifest), so
+-- its axiom closure is audited alongside first-party development.
+import RadicalRelativity.Vendor.Wigner.WignerRigidity
+
 -- M1 order-unit layer on the concrete carrier (LEDGER 1.1): the
 -- `OrderUnitSpace (HermitianMat n 𝕜)` instance (making the abstract effect
 -- predicate definitionally the Loewner unit interval), the full Archimedean
@@ -248,6 +256,12 @@ import RadicalRelativity.Necessity.PhaseAnchor
 -- and prop_singular extends any agreement of two S1-S7+S2 products on
 -- positive-definite effects to ALL effects.
 import RadicalRelativity.Necessity.SingularExtension
+
+-- M3 bridge layer part 1: the projection order (absorption q <= p iff qp = q),
+-- rank-one projections, and the equivalence "atom of the projection order =
+-- rank-one projection".  Atomicity is purely order-theoretic, so any unital
+-- order-automorphism transports rank-one projections to rank-one projections.
+import RadicalRelativity.Necessity.ProjectionOrder
 
 -- Exact paper-facing S1--S7 and product-conclusion statement boundary.  This
 -- freezes the target signature; it does not claim the classification is proved.

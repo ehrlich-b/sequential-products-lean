@@ -794,6 +794,49 @@ sorry-free Wigner rigidity — see 3.0.
   absorb Mathlib API drift). Decide at M3 start. Their `EffectGleason.lean`
   (Busch, de-axiomatized per their AXIOMS.md) remains UNAUDITED — same audit
   procedure before ever citing it.
+- **3.0b VENDOR EXECUTED 2026-08-05 (research f22dbd3).** Route decided:
+  **mechanical backport, NOT a toolchain bump** (bumping to v4.33 would force
+  whole-tree re-elaboration of 3000+ jobs for one theorem). The exact
+  8-file import closure of `WignerRigidity` is vendored at
+  `RadicalRelativity/Vendor/Wigner/` (≈4.8kL from `zblore/csd-lean4` @
+  `2287f45`, Apache 2.0, headers retained). Module-system strip (`module`,
+  `public import`, `@[expose] public section`) + **only FOUR API-drift renames
+  in the whole 4.8kL**: `Set.mem_ofPred_eq` → `Set.mem_setOf_eq`,
+  `isOpen_setOfPred_linearIndependent` → `isOpen_setOf_linearIndependent`,
+  `push Not` → `push_neg` (all three in Topology.lean's
+  `isClosed_collinearity_relation`), `PiLp.ofLp_single` →
+  `EuclideanSpace.ofLp_single` (WignerRigidity.lean's
+  `unitaryOfIsometry_apply`). ZERO statement changes, zero deletions, zero
+  sorry/axiom added. Verified first-hand after vendoring: full build green;
+  `#print axioms Projectivization.wigner_rigidity` and
+  `…wigner_rigidity_unitaryGroup` both `[propext, Classical.choice,
+  Quot.sound]`; `#check` confirms the dichotomy statement is unchanged (no
+  surjectivity hypothesis, antiunitary branch present, the `≃ₗᵢ[ℂ]` witness an
+  OUTPUT). The island is **TRACKED** (root-imported + in the frozen manifest,
+  now 84 names), so the census runs over every declaration in it — vendoring
+  did not shrink the audited surface. Provenance in `Vendor/VENDOR.md`.
+- **3.1a bridge 1 (atoms) DONE 2026-08-05** (`Necessity/ProjectionOrder.lean`,
+  census 76 pre-Wigner): `IsProjection.le_iff_mul_eq` — the **absorption
+  order** `q ≤ p ↔ q·p = q` (forward: conjugate by 1−p, `hpz` kills p, order
+  squeeze gives `q.conj (1−p) = 0`, then `XᴴX = 0 ⟹ X = 0` via
+  `conjTranspose_mul_self_eq_zero`; backward: p−q is a projection hence ≥ 0);
+  `rankOne ψ` = `vecMulVec ψ (star ψ)` (+ isProjection, ≠ 0);
+  `IsAtomProjection` (order-theoretic: nonzero projection with no proper
+  nonzero subprojection); `rankOne_isAtom` (a subprojection is `wψ*` by
+  absorption, idempotence pins `ψ*⬝w = 1` by entrywise cancellation at a
+  nonzero coordinate, Hermiticity gives `w = (w*⬝ψ)•ψ`, the two scalars agree
+  ⟹ `w = ψ`); `IsAtomProjection.exists_rankOne` (normalize a range vector,
+  `rankOne ψ ≤ p` by absorption via `star_mulVec`, squeeze with atomicity).
+  TRAPS: `vecMulVec_mulVec` lands in `MulOpposite.op c • u` — need
+  `MulOpposite.op_one`/`op_smul_eq_smul` (root, NOT `MulOpposite.`-prefixed);
+  `dotProduct`/`smul_dotProduct`/`dotProduct_smul` are ROOT names, not
+  `Matrix.`-prefixed in v4.28; the normalization identity is cleanest as a
+  standalone real `have c * (c * R) = 1` closed by `mul_self_sqrt` + field_simp,
+  then `exact_mod_cast` (letting field_simp loose on the ℂ-side goal generates
+  nested-sqrt garbage). NEXT (3.1b): the Busch–Gudder strength function
+  λ(p,a) = sup{t | t·p ≤ a}, order-definable, with the rank-one computation
+  λ(p, q + ε(1−q)) = ε/(ε·τ + (1−τ)), τ = tr(pq) ⟹ a unital linear order-iso
+  preserves transition probabilities; then feed `wigner_rigidity`.
 - **3.1** Unital order-autos of H_n(ℂ)sa are Jordan autos, matrix-concrete,
   n ≥ 3. No prover has Kadison/Uhlhorn/FTPG (landscape-confirmed 08-04:
   Magaud/Narboux Coq and AFP Projective_Geometry are incidence-axiomatic only,

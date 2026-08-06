@@ -138,8 +138,8 @@ green; `#print axioms Projectivization.wigner_rigidity` and
 `…wigner_rigidity_unitaryGroup` both `[propext, Classical.choice, Quot.sound]`;
 `#check` shows the dichotomy statement unchanged from the audited original.
 
-**Audit-surface note:** these modules are deliberately NOT in the
-`AxiomAudit.lean` frozen manifest, which tracks first-party
-`RadicalRelativity.*` development.  They are a disclosed vendored import,
-audited by the `#print axioms` check recorded above and re-checkable at any
-time.
+**Audit-surface note:** like the physlib island, these modules are TRACKED —
+imported from the package root and listed in the `AxiomAudit.lean` frozen
+manifest (84 names as of this entry) — so the census's closure allowlist and
+custom-axiom check run over every declaration in them, not just over the two
+headline theorems.  Vendoring therefore does not shrink the audited surface.
