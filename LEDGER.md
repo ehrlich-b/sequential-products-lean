@@ -1676,10 +1676,35 @@ sorry-free Wigner rigidity — see 3.0.
   `PseudoInverse`, `Theta`, `ThetaFix`, `ThetaCocycle`, `Resolution`, `SqrtMul`, the
   two vendored eigenvalue↔order lemmas and the two carrier lemmas are all
   `RCLike 𝕜`-general; `DiagonalFamilyGen` supplies the frame/family layer.
-  REMAINING for M4.1: `Chi` (must switch to the `…Gen` frame/family names),
-  `ComparisonInstance`, `ChiExtension`, `ChiContinuity`, `CoalescenceInstance` — then
-  the ℝ ending (1-dimensional Peirce block ⟹ skew generator vanishes ⟹ χ̃ = id ⟹
-  Lüders), which is short.**
+  REMAINING for M4.1: `Chi`, `ComparisonInstance`, `ChiExtension`, `ChiContinuity`,
+  `CoalescenceInstance` — and there is a ROUTE DECISION to make first (below).**
+
+  ★**THE M4.1 ENDGAME DECISION (analyzed at source 2026-08-06, decide before writing
+  code).** Two facts, both checked:
+  (1) **The abstract lane gives no shortcut.** `Branches/Real.real_kill` takes
+      `ρ`, `dχ`, `T`, `ρ_skew` and `coupling` *directly as arguments* (that is how it
+      avoids `rank_ge` and covers `n = 2`). So instantiating it concretely needs the
+      whole differential face — χ̃, `dχ`, coalescence, the stabilizer coupling — i.e.
+      the ℝ analogue of all of LEDGER 2.6. There is no way to reach `prop:real`
+      concretely through the existing abstract kill without that machinery.
+  (2) **The five remaining files are exactly the ones that CANNOT be generalized in
+      place**, because unlike the Θ layer they mention the frame/family CONSTANTS in
+      their statements (`diagFamily r`, `frameProj i`). Generalizing them forces
+      either the rejected 281-site sed (`diagFamily ⇝ diagFamilyG ℂ` across ~20 ℂ-lane
+      files) or five parallel `…Gen` files. The Θ layer was cheap precisely because it
+      is parameterized by `P`; this layer is not.
+  **Hence a third option worth pricing before paying for either: a GROUP-LEVEL ℝ
+  ending that skips χ̃/dχ/coalescence entirely.** Over ℝ the Peirce block `V_ij` is
+  ONE-dimensional, so a Θ that fixes the frame and preserves each block
+  isometrically acts on each block as `±1` — no differentiation needed to see this.
+  Ruling out `−1` is then a connectedness/continuity argument from `Θ_1 = id` (S2
+  gives continuity in the base point; the positive-definite cone is connected).
+  Ingredients that argument needs: the ℝ block model (`blockHerm i j (t : ℝ)`,
+  markedly simpler than the ℂ one — no phase), the block-isometry statement (the
+  `normSq_thetaNorm_block` analogue, whose proof is the square law + frame fixing and
+  contains nothing complex), and continuity of `a ↦ Θ_a`. If that works it replaces
+  five duplicated files with roughly one, and it never touches `dχ`. **Price both
+  routes before continuing; do not start duplicating files by default.**
     Then `Chi` (which must switch to the `…Gen` frame/family names) →
   `ComparisonInstance` → `Chi*`/`Coalescence*`; then the short ℝ ending.
 - **4.2 Quaternionic.** H_n(ℍ) ↪ H_{2n}(ℂ) symplectic embedding. [INV✓ area
