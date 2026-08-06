@@ -1515,6 +1515,30 @@ sorry-free Wigner rigidity — see 3.0.
   `eigenvalues_mem_Icc_of_effect` are now `𝕜`-general (`abs_eigenvalues_le_ouNorm`
   and `norm_le_sqrt_card_mul_ouNorm` deliberately left at ℂ — they belong to the
   order-unit-norm comparison, not to the Θ chain's critical path).
+
+  ★**DESIGN CONSTRAINT discovered by attempting `Necessity/DiagonalFamily.lean`
+  (2026-08-06, attempt reverted, tree left green).**  Generalizing the frame/family
+  DEFINITIONS is not a token substitution, for a structural reason: lemmas like
+  `frameProj_mat (i : n) : (frameProj i).mat = Matrix.diagonal …` mention the
+  scalar ONLY inside `frameProj`, so with an implicit scalar nothing determines it
+  and every such lemma fails with "typeclass instance problem is stuck, it is often
+  due to metavariables" (ten of them in that one file).  The vendored layer already
+  solved this: `HermitianMat.diagonal 𝕜 f` takes the scalar **explicitly**, and the
+  generalized `frameProj`/`diagFamily` must do the same.  Two routes, pick before
+  starting:
+  (A) make the scalar explicit in place — `frameProj 𝕜 i`, `diagFamily 𝕜 r` — and
+      mechanically rewrite every ℂ call site (`frameProj i` ⇝ `frameProj ℂ i`)
+      across the ~20 `Necessity/` files that use them.  Wide but shallow; one sed
+      plus compiler-driven cleanup.
+  (B) **RECOMMENDED — zero blast radius**: add scalar-explicit general versions
+      alongside (`frameProjK 𝕜 i`, `diagFamilyK 𝕜 r`) and redefine the existing ℂ
+      names as abbreviations of them; each existing ℂ lemma then becomes its
+      general counterpart instantiated at ℂ (proof bodies move, statements don't),
+      so the ℂ row keeps compiling untouched at every step and the ℝ row consumes
+      the `K` versions.  This also keeps every ℂ-row proof as a live regression
+      test on each generalization.
+  Either way the work is mechanical; route (B) is the one to take at the start of a
+  fresh context, since route (A)'s sed touches files the ℂ capstones depend on.
 - **4.2 Quaternionic.** H_n(ℍ) ↪ H_{2n}(ℂ) symplectic embedding. [INV✓ area
   10]: ℍ itself is well-developed (NormedDivisionRing, CStarRing,
   InnerProductSpace ℝ) but **matrices over ℍ are total greenfield — zero
