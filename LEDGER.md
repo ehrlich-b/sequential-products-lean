@@ -1190,6 +1190,29 @@ sorry-free Wigner rigidity — see 3.0.
   gives `exp(i·ψ_{ij}(r))` with ψ_{ij} ℝ-linear; matching ψ against the
   generator identifies it with `t_F(r_i − r_j)`.  Route (ii) reuses the rank-two
   lifting step and avoids all operator-exponential work — TRY IT FIRST.
+  **BLOCK CHARACTER PACKAGED 2026-08-05** (`Necessity/BlockCharacter.lean`,
+  census 101, gates green, zero sorries, FIRST-PASS CLEAN):
+  `chiEntry r i j : ℂ →ₗ[ℝ] ℂ` (the block action as a map);
+  **`chiTilde_block_eq`** — upgrades the EXISTENCE statement
+  `chiTilde_block_exists` to a COMPUTED value (the block's `(i,j)` entry reads
+  the parameter back by `blockHerm_entry`), which is what makes the action
+  usable rather than merely existent; `chiEntry_normSq` (isometry);
+  `chiEntry_zero` (identity at `r = 0`); **`chiEntry_add`** (multiplicativity in
+  `r`, from `chiTilde_add` + block invariance); and `chiEntry_isCharacter`
+  bundling the three laws.
+  **REMAINING to close the ℂ lane — one step, and it is now purely algebraic**:
+  `r ↦ chiEntry r i j` is a continuous one-parameter family of ℝ-linear
+  ISOMETRIES of ℂ with `chiEntry 0 = id`.  Two ways to finish: (α) feed it to
+  `multiParameter_eq_exp` in the real Banach algebra `ℂ →L[ℝ] ℂ`, then note the
+  generator is the entry map of `dχ` which `dChiEntry_eq` already shows is
+  multiplication by `i·t_{ij}(r)`, and `exp` of a ℂ-multiplication is the
+  ℂ-multiplication of `exp` (needs `NormedSpace.map_exp` along the algebra
+  embedding `ℂ → (ℂ →L[ℝ] ℂ)`); (β) show each `chiEntry r i j` is
+  ℂ-multiplication directly (an ℝ-linear isometry of ℂ fixing orientation is
+  multiplication by a unit-modulus scalar — orientation follows from
+  connectedness to `id` at `r = 0`), then M5's
+  `circleCharacter_linear_functional` applies verbatim.  (α) has no topological
+  side conditions and reuses `dChiEntry_eq`; prefer it.
   TRAPS: the subst trap AGAIN (`subst hab` with `hab : a = b` kills the ext-local
   needed later) — use `rw [if_pos hab]` and derive the index facts by hand;
   `x.H` gives `star (x_ba) = x_ab` at index `(a,b)` (NOT `(b,a)` — the

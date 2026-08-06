@@ -343,6 +343,13 @@ import RadicalRelativity.Necessity.FrameBlockSpan
 -- a . b = Q_{sqrt a}(Ad_{U_t(r)} b), the shape of mthm:master's complex case.
 import RadicalRelativity.Necessity.TwistIdentification
 
+-- The BLOCK CHARACTER of chiTilde: chiEntry r i j is the (i,j)-block action as an
+-- R-linear map of C, chiTilde_block_eq upgrades the existence statement to a
+-- computed value, and the three character laws hold -- identity at r = 0,
+-- multiplicativity in r, and isometry.  This is the data a one-parameter
+-- argument consumes to close chiTilde_eq_adU_of_block's remaining input.
+import RadicalRelativity.Necessity.BlockCharacter
+
 -- M5 (LEDGER 5.1, prop:n2-necessity): the rank-two LIFTING STEP, obtained as a
 -- corollary of M2's one-parameter engine rather than from covering spaces --
 -- a continuous character into the rotation group (the unit circle in C) is
