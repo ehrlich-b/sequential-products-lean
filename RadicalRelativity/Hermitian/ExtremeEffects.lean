@@ -23,10 +23,10 @@ from-scratch join.
   algebra (`p = p²` and `1 - p = (1-p)²` are squares), uniform in `RCLike 𝕜`.
 * `IsProjection.mem_extremePoints` — projections are extreme, uniform in `𝕜`: the
   kernel/range pinch needs only quadratic-form positivity, no spectral theory.
-* `isProjection_of_mem_extremePoints` — extreme effects are projections, over ℂ:
+* `isProjection_of_mem_extremePoints` — extreme effects are projections, over any `RCLike` field:
   fully CFC-native — perturb `a` by `± min(x, 1-x)` applied through the functional
   calculus; extremeness kills the perturbation, forcing the spectrum into `{0,1}`.
-* `mem_extremePoints_iff_isProjection`, `extremePoints_unitInterval` — the ℂ join.
+* `mem_extremePoints_iff_isProjection`, `extremePoints_unitInterval` — the join.
 
 Downstream (M3, LEDGER 3.1 Route A bridge 1): a unital linear order-automorphism
 preserves the effect interval and convex structure, hence maps extreme effects to
@@ -160,12 +160,12 @@ theorem IsProjection.mem_extremePoints {p : HermitianMat n 𝕜} (hp : p.IsProje
   rw [add_comm]
   exact habc
 
-/-- **Extreme effects are projections** (ℂ): perturb `a` through the functional
+/-- **Extreme effects are projections** (𝕜): perturb `a` through the functional
 calculus by `± min(x, 1-x)`; both perturbations stay effects and average back to
 `a`, so extremeness forces `min(λᵢ, 1-λᵢ) = 0` for every eigenvalue, i.e. the
 spectrum lies in `{0,1}`, i.e. `a² = a`. -/
-theorem isProjection_of_mem_extremePoints {a : HermitianMat n ℂ}
-    (ha : a ∈ Set.extremePoints ℝ {x : HermitianMat n ℂ | 0 ≤ x ∧ x ≤ 1}) :
+theorem isProjection_of_mem_extremePoints {a : HermitianMat n 𝕜}
+    (ha : a ∈ Set.extremePoints ℝ {x : HermitianMat n 𝕜 | 0 ≤ x ∧ x ≤ 1}) :
     a.IsProjection := by
   rw [_root_.mem_extremePoints] at ha
   obtain ⟨⟨ha0, ha1⟩, hext⟩ := ha
@@ -174,7 +174,7 @@ theorem isProjection_of_mem_extremePoints {a : HermitianMat n ℂ}
     le_smul_one_imp_eigenvalues_le a 1 (by simpa using ha1) i
   -- the two perturbations are effects
   have hb_eff : a.cfc (fun x => x + min x (1 - x)) ∈
-      {x : HermitianMat n ℂ | 0 ≤ x ∧ x ≤ 1} := by
+      {x : HermitianMat n 𝕜 | 0 ≤ x ∧ x ≤ 1} := by
     constructor
     · rw [cfc_nonneg_iff]
       intro i
@@ -182,7 +182,7 @@ theorem isProjection_of_mem_extremePoints {a : HermitianMat n ℂ}
       · rw [min_eq_left hle]; linarith [hev0 i]
       · rw [min_eq_right hle]; linarith [hev0 i]
     · rw [← sub_nonneg]
-      have h1 : (1 : HermitianMat n ℂ) - a.cfc (fun x => x + min x (1 - x)) =
+      have h1 : (1 : HermitianMat n 𝕜) - a.cfc (fun x => x + min x (1 - x)) =
           a.cfc (fun x => 1 - (x + min x (1 - x))) := by
         rw [cfc_sub_apply, cfc_const, one_smul]
       rw [h1, cfc_nonneg_iff]
@@ -191,14 +191,14 @@ theorem isProjection_of_mem_extremePoints {a : HermitianMat n ℂ}
       · rw [min_eq_left hle]; linarith [hev1 i]
       · rw [min_eq_right hle]; linarith [hev1 i]
   have hc_eff : a.cfc (fun x => x - min x (1 - x)) ∈
-      {x : HermitianMat n ℂ | 0 ≤ x ∧ x ≤ 1} := by
+      {x : HermitianMat n 𝕜 | 0 ≤ x ∧ x ≤ 1} := by
     constructor
     · rw [cfc_nonneg_iff]
       intro i
       have := min_le_left (a.H.eigenvalues i) (1 - a.H.eigenvalues i)
       linarith
     · rw [← sub_nonneg]
-      have h1 : (1 : HermitianMat n ℂ) - a.cfc (fun x => x - min x (1 - x)) =
+      have h1 : (1 : HermitianMat n 𝕜) - a.cfc (fun x => x - min x (1 - x)) =
           a.cfc (fun x => 1 - (x - min x (1 - x))) := by
         conv_rhs => rw [cfc_sub_apply, cfc_const, one_smul]
       rw [h1, cfc_nonneg_iff]
@@ -229,9 +229,9 @@ theorem isProjection_of_mem_extremePoints {a : HermitianMat n ℂ}
   -- eigenvalues sit in {0,1}
   have hminzero : ∀ i, min (a.H.eigenvalues i) (1 - a.H.eigenvalues i) = 0 := by
     intro i
-    have hup : (0 : HermitianMat n ℂ) ≤ a.cfc (fun x => min x (1 - x)) :=
+    have hup : (0 : HermitianMat n 𝕜) ≤ a.cfc (fun x => min x (1 - x)) :=
       hcfcmin ▸ le_rfl
-    have hdn : (0 : HermitianMat n ℂ) ≤ a.cfc (fun x => -(min x (1 - x))) := by
+    have hdn : (0 : HermitianMat n 𝕜) ≤ a.cfc (fun x => -(min x (1 - x))) := by
       rw [cfc_neg_apply, hcfcmin, neg_zero]
     rw [cfc_nonneg_iff] at hup hdn
     have h1 := hup i
@@ -247,10 +247,10 @@ theorem isProjection_of_mem_extremePoints {a : HermitianMat n ℂ}
     intro i
     rcases hev01 i with h | h <;> rw [h] <;> norm_num
   have hzero : a.cfc (fun x => x ^ 2 - x) = 0 := by
-    have hdown : (0 : HermitianMat n ℂ) ≤ a.cfc (fun x => x ^ 2 - x) := by
+    have hdown : (0 : HermitianMat n 𝕜) ≤ a.cfc (fun x => x ^ 2 - x) := by
       rw [cfc_nonneg_iff]; intro i; rw [hsq i]
     have hupp : a.cfc (fun x => x ^ 2 - x) ≤ 0 := by
-      have : (0 : HermitianMat n ℂ) ≤ a.cfc (fun x => -(x ^ 2 - x)) := by
+      have : (0 : HermitianMat n 𝕜) ≤ a.cfc (fun x => -(x ^ 2 - x)) := by
         rw [cfc_nonneg_iff]; intro i; rw [hsq i]; norm_num
       rw [cfc_neg_apply] at this
       exact neg_nonneg.mp this
@@ -260,16 +260,16 @@ theorem isProjection_of_mem_extremePoints {a : HermitianMat n ℂ}
   unfold IsProjection
   rw [← sub_eq_zero, hdiff, hzero]
 
-/-- **The join** (ℂ): extreme points of the effect interval = projections. -/
-theorem mem_extremePoints_iff_isProjection {a : HermitianMat n ℂ} :
-    a ∈ Set.extremePoints ℝ {x : HermitianMat n ℂ | 0 ≤ x ∧ x ≤ 1} ↔
+/-- **The join** (𝕜): extreme points of the effect interval = projections. -/
+theorem mem_extremePoints_iff_isProjection {a : HermitianMat n 𝕜} :
+    a ∈ Set.extremePoints ℝ {x : HermitianMat n 𝕜 | 0 ≤ x ∧ x ≤ 1} ↔
       a.IsProjection :=
   ⟨isProjection_of_mem_extremePoints, IsProjection.mem_extremePoints⟩
 
 /-- Set form of the join. -/
 theorem extremePoints_unitInterval :
-    Set.extremePoints ℝ {x : HermitianMat n ℂ | 0 ≤ x ∧ x ≤ 1} =
-      {p : HermitianMat n ℂ | p.IsProjection} :=
+    Set.extremePoints ℝ {x : HermitianMat n 𝕜 | 0 ≤ x ∧ x ≤ 1} =
+      {p : HermitianMat n 𝕜 | p.IsProjection} :=
   Set.ext fun _ => mem_extremePoints_iff_isProjection
 
 end HermitianMat

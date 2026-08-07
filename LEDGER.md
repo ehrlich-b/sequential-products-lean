@@ -2265,7 +2265,33 @@ sorry-free Wigner rigidity — see 3.0.
     `x ⬝ᵥ (p *ᵥ y)` otherwise matches the `(p*ᵥv) ⬝ᵥ (p*ᵥv)` sitting inside `√(…)` and rewrites
     there too — the same class of failure as the self-reference trap, and the same fix
     (make the thing you do not want rewritten opaque).
-    **REMAINING FOR THE ℝ ROW:** (ii)
+    **★★ ℝ BRIDGE UNIT 5d DONE (same day) — RANK-ONE TRANSPORT AT ℝ IS COMPLETE.**
+    `isProjection_mapR`, `isAtomProjection_mapR`, **`exists_rankOneR_map`**: a unital ℝ-linear
+    order automorphism carries each rank-one projection to a rank-one projection with an explicit
+    unit vector. Both transport lemmas are DIRECT ports of the ℂ arguments with `ℂ → 𝕜`; nothing
+    about the scalar field enters, exactly as predicted.
+    **★ AND A GENERALIZATION THAT PAID OFF, recorded because it contradicts this campaign's own
+    default.** The ports were blocked on `HermitianMat.mem_extremePoints_iff_isProjection`, which
+    was stated at **ℂ only** (its docstring even said "(ℂ)") — the single ℂ holdout in an
+    otherwise 𝕜-generic file that already had `variable {𝕜} [RCLike 𝕜]` in scope. Inspection
+    showed its 99-line proof uses `ℂ` ONLY as a type annotation: no `Complex.*`, no `normSq`,
+    everything through `a.cfc` and the order. So it was generalized IN PLACE — 16 lines touched,
+    the proof went through at `𝕜` unchanged, and **the full build stayed green at 3095 jobs with
+    every downstream ℂ consumer untouched.** Contrast with `StrengthProbe` (60 `Complex.normSq`
+    uses, 11 consumers), where in-place generalization was correctly rejected. **The rule is not
+    "never generalize in place" but "measure the ℂ-specific surface first":** one type annotation
+    is free, sixty normSq uses are not.
+    **REMAINING FOR THE ℝ ROW — the assembly only.** All five inputs are banked
+    (`exists_rankOneR_map`, `tprobR_preserved`, `exists_isometry_of_transProbPreservingR`,
+    `linearMap_eq_of_eq_on_rankOneR`, `orthConj_preservesJordan` + `orthConj_rankOneR`). What the
+    assembly still needs is plumbing, not mathematics: (1) the `EuclideanSpace ℝ (Fin N)` ↔
+    `dotProduct` bridge (ℝ analogue of `WignerBridge`, ~100 lines at ℂ, shorter at ℝ since
+    `star = id`); (2) the ray map built from `exists_rankOneR_map` via choice, shown
+    `TransProbPreservingR` by `tprobR_preserved` (ℝ analogue of `RayMap`); (3) extracting the
+    orthogonal MATRIX from the `LinearIsometryEquiv` real Wigner returns, so that
+    `Φ (rankOneR ψ) = rankOneR (U *ᵥ ψ) = orthConj U (rankOneR ψ)`; then
+    `linearMap_eq_of_eq_on_rankOneR` gives `Φ = orthConj U` and `orthConj_preservesJordan`
+    finishes. (ii-old)
     `isProjection_map` / `isAtomProjection_map` at ℝ (**purely order-theoretic — port by changing
     ℂ to ℝ**); (iii) unit 5's assembly, whose five inputs are ALL banked (`rankOneR_isAtom`,
     `tprobR_preserved`, `exists_isometry_of_transProbPreservingR`,
