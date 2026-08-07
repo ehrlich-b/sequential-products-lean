@@ -2061,7 +2061,13 @@ sorry-free Wigner rigidity — see 3.0.
     `image_two_slot` produced. So all three hypotheses of the common-sign lemma are now
     machine-checked facts about `f`: `|x| = |p|` and `|y| = |q|` from `abs_inner_imgBasis`,
     and `|x + y| = |p + q|` from this. Axiom-checked = Lean core only.
-    **What remains of the rigidity: 4d ONLY — define the pattern from the pairs `(i₀, i)`
+    **STEP 4d part 1 DONE (same day)**: `basisIsometry` (`b.repr.trans c.repr.symm`),
+    `basisIsometry_apply` and `projMapR_basisIsometry` — the candidate isometry matching two
+    orthonormal bases slot for slot, and the fact that its induced projective map matches
+    them as RAYS. Pure plumbing, which is the point: the rigidity's content was never
+    *building* the isometry, it is showing `f` agrees with the induced map, and that is
+    exactly where the sign pattern gets consumed. Axiom-checked = Lean core only.
+    **What remains of the rigidity: 4d part 2 — define the pattern from the pairs `(i₀, i)`
     (the coordinates are inner products, so no choice is needed), prove pair-consistency for
     arbitrary `(i,j)` via a THREE-slot vector, and assemble the isometry. The inputs are now
     all in place: `image_two_slot` supplies the moduli, `sign_pair_of_abs` the common sign,

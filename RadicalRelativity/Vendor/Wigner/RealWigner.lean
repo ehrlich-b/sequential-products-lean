@@ -556,6 +556,36 @@ theorem TransProbPreservingR.abs_inner_two_slot {f : ℙ ℝ E → ℙ ℝ E}
   rw [h, real_inner_smul_right, abs_mul, abs_of_nonneg (inv_nonneg.mpr (norm_nonneg _)),
     inner_add_right]
 
+/-! ## Step 4d, part 1: the candidate isometry
+
+Two orthonormal bases on the same index type are related by a unique isometry matching them
+slot for slot -- this is the object the rigidity produces, and it is pure Mathlib plumbing.
+The classification's remaining content is not *building* it but showing that `f` agrees with
+the induced projective map, which is where the sign pattern is consumed.
+-/
+
+/-- The isometry carrying one orthonormal basis to another, slot for slot. -/
+noncomputable def basisIsometry (b c : OrthonormalBasis ι ℝ E) : E ≃ₗᵢ[ℝ] E :=
+  b.repr.trans c.repr.symm
+
+omit [Nonempty ι] [FiniteDimensional ℝ E] in
+@[simp]
+theorem basisIsometry_apply (b c : OrthonormalBasis ι ℝ E) (i : ι) :
+    basisIsometry b c (b i) = c i := by
+  classical
+  simp only [basisIsometry, LinearIsometryEquiv.trans_apply, OrthonormalBasis.repr_self,
+    OrthonormalBasis.repr_symm_single]
+
+omit [Nonempty ι] [FiniteDimensional ℝ E] in
+/-- The induced projective map matches the bases as RAYS — the form the classification
+statement needs. -/
+theorem projMapR_basisIsometry (b c : OrthonormalBasis ι ℝ E) (i : ι) :
+    projMapR (basisIsometry b c) (Projectivization.mk ℝ (b i) (basis_ne_zero b i))
+      = Projectivization.mk ℝ (c i) (basis_ne_zero c i) := by
+  rw [projMapR_mk]
+  exact (Projectivization.mk_eq_mk_iff ℝ _ _ _ _).mpr
+    ⟨1, by simp⟩
+
 end ImageBasis
 
 /-! ## Step 4c, part 2: the arithmetic that forces a COMMON sign
