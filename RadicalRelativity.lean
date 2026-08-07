@@ -530,6 +530,13 @@ import RadicalRelativity.RankTwo.Complementation
 -- cor:qubit-classification's moduli object C(RP^2, R).
 import RadicalRelativity.RankTwo.Descent
 
+-- M5.3 part 2: the Bloch map's vector layer.  B(v) = (2Re(conj v0 * v1),
+-- 2Im(conj v0 * v1), |v0|^2 - |v1|^2) has ||B(v)||^2 = ||v||^4 (so it is nonzero on
+-- nonzero rays), complementation NEGATES it (and RP2 identifies x with -x), and
+-- rescaling v by t scales B by the POSITIVE real |t|^2 -- the three facts that make
+-- the Bloch point a function of the unordered frame.
+import RadicalRelativity.RankTwo.Bloch
+
 -- M5 (LEDGER 5.3): FRAME DEPENDENCE AT THE LEVEL OF THE OPERATION.  RankTwo.lean
 -- recorded the pair (tau = 0 on the Hadamard frame gives Luders, tau = 1 on the
 -- reference frame gives the unit twist) but never showed the two products

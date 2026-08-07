@@ -2178,6 +2178,22 @@ sorry-free Wigner rigidity — see 3.0.
   `tau_swap_invariant`: complementation swaps `|v₀|²` and `|v₁|²`, which negates
   `2|v₀|²/‖v‖² − 1`, and that bracket is squared. Much shorter than routing through
   the Jordan-level swap lemma.
+  **PART 2 DONE 2026-08-06** (`RankTwo/Bloch.lean`, NEW, census 130, gates green, tree
+  at 3087 jobs, custom axioms exactly `[]`; `blochVec_orthoVec` and `blochVec_ne_zero`
+  axiom-checked = Lean core only): the Bloch map's vector layer,
+  `blochVec v = (2 Re(v̄₀v₁), 2 Im(v̄₀v₁), |v₀|² − |v₁|²)`, with the three facts that
+  make it the right bridge to `ℝP²`:
+  * **`blochVec_normSq` : `‖B(v)‖² = ‖v‖⁴`** — hence `blochVec_ne_zero` on nonzero rays;
+  * **`blochVec_orthoVec` : complementation NEGATES `B`** — and `ℝP²` identifies `x`
+    with `−x` (`RP2.mk_neg`, already present), so the Bloch POINT is constant on
+    complementation classes;
+  * **`blochVec_smul` : `B(t•v) = |t|² • B(v)`** — the scaling is a POSITIVE real, so
+    the Bloch point is a function of the ray.
+  Proof note: `fin_cases i` on `Fin 3` produces goals indexed by `⟨0, _⟩` rather than the
+  literal `0`, so `@[simp]` apply-lemmas stated at `0`/`1`/`2` do NOT fire — unfold
+  `blochVec` (and `orthoVec`) directly in the `simp` set and close with `ring`.
+  So `τ` and the Bloch map are now a COMPATIBLE PAIR of descents: both see only the
+  unordered frame (this part 2 + part 1's `tauFrame_orthoFrame`).
   **The remaining pieces:**
   (i) **the descent** `ℂP¹ / complementation ≅ ℝP²` — a quotient-topology
       homeomorphism, with `tau_swap_invariant` as the descent datum; this is the
