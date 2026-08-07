@@ -143,8 +143,20 @@ NORM on the objects being estimated, and:
   (`LinearMap.toContinuousLinearMap` + `le_opNorm`). **Do not attempt the entrywise
   Frobenius-invariance computation** recommended a moment ago — it is unnecessary once the
   statement moves to the Hermitian level.
-**So the next pass is: define `quatConjH`, port the handful of lemmas to it (mechanical),
-then the ε-argument is a copy of `continuousOn_cfc_sqrt_effects`.**
+**AND THAT FIX IS NOW IN, 2026-08-06** (axiom-checked = Lean core only):
+`quatConj_isHermitian` (`Φ` preserves Hermitian-ness — for Hermitian `A` it is the
+congruence `J₀AᵀJ₀ᴴ` and `Aᵀ` is Hermitian too), **`quatConjH`** (the involution as a
+self-map of `H_{2n}(ℂ)`) with `quatConjH_mat`/`_add`/`_smul`, the ℝ-linear packaging
+**`quatConjHLm`**, and **`quatConjH_bound` : `∃ K > 0, ∀ A, ‖Φ A‖ ≤ K‖A‖`** — obtained
+exactly as predicted, for free from `LinearMap.toContinuousLinearMap` + `le_opNorm` on a
+finite-dimensional space, with no Frobenius computation anywhere.
+Note on file order: `quatConj_isHermitian` needs `map_conj_eq_transpose` and
+`symplecticJ_transpose_eq_conjTranspose`, so the Hermitian-level section must sit AFTER
+the positivity section (a first placement before it failed on unknown identifiers).
+**So all the ingredients for the closure now exist. The remaining step is only the
+ε-argument itself**: `quatConjH_bound` + `mat_cfc_polynomial` + `quatConj_aeval` +
+`norm_cfc_sub_le_of_sup_le` + Weierstrass, assembled exactly as
+`continuousOn_cfc_sqrt_effects` is (that proof is in the tree to copy line-for-line).
 ★**Superseded note (kept for provenance), the earlier framing of this gap**: the transfer needs
 `Φ` to be norm-BOUNDED, not merely continuous, and neither a Frobenius-invariance lemma
 nor a linear-map-bound route is cheaply available here (`Φ` is conjugate-linear, so the

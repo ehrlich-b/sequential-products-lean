@@ -312,6 +312,69 @@ theorem quatConj_posSemidef {A : HermitianMat (n ⊕ n) ℂ} (hA : A.mat.PosSemi
   rw [map_conj_eq_transpose, symplecticJ_transpose_eq_conjTranspose]
   exact hA.transpose.mul_mul_conjTranspose_same _
 
+/-! ## `Φ` at the Hermitian level -/
+
+/-- **`Φ` preserves Hermitian-ness.**  For Hermitian `A` it is the congruence
+`J₀ Aᵀ J₀ᴴ`, and `Aᵀ` is Hermitian whenever `A` is, so the congruence is too.  This is
+what lets the involution — and hence the whole ε-argument for the functional calculus —
+live at the `HermitianMat` level, where the norm is. -/
+theorem quatConj_isHermitian (A : HermitianMat (n ⊕ n) ℂ) :
+    (quatConj A.mat).IsHermitian := by
+  unfold quatConj
+  rw [map_conj_eq_transpose, symplecticJ_transpose_eq_conjTranspose]
+  have hT : (A.matᵀ).IsHermitian := by
+    show (A.matᵀ)ᴴ = A.matᵀ
+    rw [show (A.matᵀ)ᴴ = A.mat.map (starRingEnd ℂ) from by
+      ext i j
+      simp [Matrix.conjTranspose_apply, Matrix.transpose_apply, Matrix.map_apply]]
+    exact map_conj_eq_transpose A
+  show (symplecticJ * A.matᵀ * symplecticJᴴ)ᴴ = _
+  rw [Matrix.conjTranspose_mul, Matrix.conjTranspose_mul,
+    Matrix.conjTranspose_conjTranspose, hT]
+  noncomm_ring
+
+/-- **`Φ` as a self-map of `H_{2n}(ℂ)`** — the form in which the functional-calculus
+closure should be stated and proved, because this carrier has a norm (bare `Matrix` does
+not). -/
+def quatConjH (A : HermitianMat (n ⊕ n) ℂ) : HermitianMat (n ⊕ n) ℂ :=
+  ⟨quatConj A.mat, quatConj_isHermitian A⟩
+
+@[simp]
+theorem quatConjH_mat (A : HermitianMat (n ⊕ n) ℂ) :
+    (quatConjH A).mat = quatConj A.mat := rfl
+
+theorem quatConjH_add (A B : HermitianMat (n ⊕ n) ℂ) :
+    quatConjH (A + B) = quatConjH A + quatConjH B := by
+  ext1
+  rw [quatConjH_mat, HermitianMat.mat_add, quatConj_add]
+  rfl
+
+theorem quatConjH_smul (r : ℝ) (A : HermitianMat (n ⊕ n) ℂ) :
+    quatConjH (r • A) = r • quatConjH A := by
+  ext1
+  rw [quatConjH_mat, HermitianMat.mat_smul, quatConj_real_smul]
+  rfl
+
+/-- `Φ` at the Hermitian level, as an **ℝ-linear map** — so that finite-dimensionality
+gives continuity and a norm bound for free, with no Frobenius computation. -/
+def quatConjHLm : HermitianMat (n ⊕ n) ℂ →ₗ[ℝ] HermitianMat (n ⊕ n) ℂ where
+  toFun := quatConjH
+  map_add' := quatConjH_add
+  map_smul' := quatConjH_smul
+
+/-- **`Φ` is norm-bounded on `H_{2n}(ℂ)`**: an ℝ-linear map on a finite-dimensional
+normed space is automatically continuous, hence bounded. -/
+theorem quatConjH_bound :
+    ∃ K : ℝ, 0 < K ∧ ∀ A : HermitianMat (n ⊕ n) ℂ, ‖quatConjH A‖ ≤ K * ‖A‖ := by
+  set L := LinearMap.toContinuousLinearMap (quatConjHLm (n := n)) with hL
+  refine ⟨‖L‖ + 1, by positivity, fun A => ?_⟩
+  have hval : quatConjH A = L A := rfl
+  rw [hval]
+  calc ‖L A‖ ≤ ‖L‖ * ‖A‖ := L.le_opNorm A
+    _ ≤ (‖L‖ + 1) * ‖A‖ := by
+        have h1 := norm_nonneg A
+        nlinarith [norm_nonneg L]
+
 /-! ## The quaternionic carrier as an order-unit space -/
 
 section Carrier
