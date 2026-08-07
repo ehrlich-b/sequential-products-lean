@@ -229,4 +229,44 @@ order-unit space with the inherited order — the carrier the `H_n(ℍ)` row nee
 theorem one_mem_quatSubmodule : (1 : HermitianMat (n ⊕ n) ℂ) ∈ quatSubmodule (n := n) :=
   isQuaternionic_one
 
+/-! ## The quaternionic carrier as an order-unit space -/
+
+section Carrier
+
+variable {n : Type*} [Fintype n] [DecidableEq n]
+
+/-- The quaternionic carrier: `H_n(ℍ)` realized as the symplectic-fixed subspace of
+`H_{2n}(ℂ)`.  Its normed structure is inherited from the submodule and its order is the
+restricted Loewner order — so nothing is built over a noncommutative ring. -/
+abbrev QuatCarrier (n : Type*) [Fintype n] [DecidableEq n] : Type _ :=
+  quatSubmodule (n := n)
+
+/-- **The quaternionic carrier is an order-unit space.**  Every field is inherited from
+`H_{2n}(ℂ)`: the order is the restriction, the unit is `1` (which is quaternionic), and
+order-unit boundedness is the ambient bound intersected with the subspace.  This is the
+carrier the `H_n(ℍ)` row's `SequentialProductOn` will live on. -/
+instance : OrderUnitSpace (QuatCarrier n) where
+  add_le_add_left := fun a b h c => by
+    show (c : HermitianMat (n ⊕ n) ℂ) + a ≤ (c : HermitianMat (n ⊕ n) ℂ) + b
+    exact add_le_add le_rfl h
+  ousUnit := ⟨1, one_mem_quatSubmodule⟩
+  smul_nonneg_mono := fun r hr {a b} h => by
+    show r • (a : HermitianMat (n ⊕ n) ℂ) ≤ r • (b : HermitianMat (n ⊕ n) ℂ)
+    exact OrderUnitSpace.smul_nonneg_mono r hr h
+  ousUnit_nonneg := by
+    show (0 : HermitianMat (n ⊕ n) ℂ) ≤ (1 : HermitianMat (n ⊕ n) ℂ)
+    rw [← HermitianMat.ousUnit_eq_one]
+    exact OrderUnitSpace.ousUnit_nonneg
+  archimedean := fun a => by
+    obtain ⟨r, hr0, hr⟩ := OrderUnitSpace.archimedean (a : HermitianMat (n ⊕ n) ℂ)
+    refine ⟨r, hr0, ?_⟩
+    show (a : HermitianMat (n ⊕ n) ℂ) ≤ r • (1 : HermitianMat (n ⊕ n) ℂ)
+    rwa [HermitianMat.ousUnit_eq_one] at hr
+
+@[simp]
+theorem quatCarrier_ousUnit_coe :
+    ((OrderUnitSpace.ousUnit : QuatCarrier n) : HermitianMat (n ⊕ n) ℂ) = 1 := rfl
+
+end Carrier
+
 end HermitianMat

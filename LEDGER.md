@@ -24,7 +24,7 @@ pushing is Bryan-gated).
 | --- | --- | --- |
 | `H_N(ℂ)`, N ≥ 3 | **MACHINE-CHECKED, UNCONDITIONAL** — `∃!` real `t` with `a•b = a^{1/2+it} b a^{1/2−it}` on ALL effects | `Necessity.complex_classification` |
 | `H_n(ℝ)` | **MACHINE-CHECKED modulo the cited Jordan property** — `a•b = √a·b·√a` on ALL effects, no twist | `Necessity.sp_eq_luders_of_effect` |
-| `H_n(ℍ)` | **RE-SCOPED AND STARTED** — sits inside `H_{2n}(ℂ)` as a Jordan subalgebra; foundation machine-checked | `HermitianMat.IsQuaternionic.symmMul` |
+| `H_n(ℍ)` | **RE-SCOPED AND STARTED** — carrier EXISTS as an order-unit space inside `H_{2n}(ℂ)`; `SequentialProductOn` on it typechecks | `HermitianMat.QuatCarrier`, `IsQuaternionic.symmMul` |
 | `H₃(𝕆)` | **BLOCKED** — octonions exist in no prover (verified: zero files) | — |
 | `cor:qubit-classification` | moduli space + one nonconstant element + certified `ℂP¹→ℝP²` descent + separation; **classification map `product ↦ moduli` ABSENT** | `RankTwo.tauModuliRP2`, `RankTwo.tauRP2_blochFrame` |
 | `mthm:omnibus` | untouched; sits behind the rows | — |
@@ -88,14 +88,17 @@ Also landed: `isQuaternionic_zero`, **`quatSubmodule : Submodule ℝ (HermitianM
 (the fixed set as a real subspace — this is what lets the quaternionic carrier INHERIT its
 normed and order structure instead of being built from scratch over a noncommutative ring),
 `mem_quatSubmodule`, and `one_mem_quatSubmodule`. Axiom-checked = Lean core only.
-**Next for the ℍ row, in order**: (a) the `OrderUnitSpace` instance on
-`quatSubmodule` — normed structure comes free from the submodule (finite dimension ⟹
-closed), the order is the restricted Loewner order, `ousUnit := 1` is
-`one_mem_quatSubmodule`, and the unit-interval compactness is inherited from the ambient;
-(b) transport a `SequentialProductOn` from the quaternionic carrier and run the ℝ-shaped
-argument — the quaternionic Peirce block is `ℍ`, whose CENTRE is `ℝ`, so the same
-"no continuous character into a discrete sign group" kill that closed the ℝ row should
-apply, with `eq_one_of_sq_eq_one_of_continuous` reusable verbatim.
+★★**THE QUATERNIONIC CARRIER IS AN ORDER-UNIT SPACE — 2026-08-06** (compiled FIRST
+TRY): `QuatCarrier n := quatSubmodule` with **`instance : OrderUnitSpace (QuatCarrier n)`**
+— every field inherited from `H_{2n}(ℂ)` (order = the restriction, `ousUnit := ⟨1, _⟩`,
+`archimedean` = the ambient bound relativized), plus `quatCarrier_ousUnit_coe`. Verified
+by probe: **`SequentialProductOn (HermitianMat.QuatCarrier n)` TYPECHECKS.** So the ℍ
+row's statement is now expressible in the tree, on a carrier built entirely from complex
+Hermitian matrices — no algebra over a noncommutative ring anywhere.
+**Next for the ℍ row**: transport a `SequentialProductOn` on the carrier and run the
+ℝ-shaped argument — the quaternionic Peirce block is `ℍ`, whose CENTRE is `ℝ`, so the
+same "no continuous character into a discrete sign group" kill applies and
+**`eq_one_of_sq_eq_one_of_continuous` (from `RealRigidity`) is reusable VERBATIM.**
 
 **If the deliverable needs scoping**: the two finished rows are a defensible artifact —
 an unconditional complex classification plus a real row resting on one published
