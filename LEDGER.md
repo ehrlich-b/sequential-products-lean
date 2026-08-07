@@ -2171,6 +2171,19 @@ sorry-free Wigner rigidity — see 3.0.
     lemma with conjugate-swapping; over ℝ rescaling just multiplies the form by `c²` and both
     disappear. Gates green at 3092 jobs, custom axioms exactly []. Name trap:
     `dotProduct_self_eq_zero` is ROOT namespace, not `Matrix.`.
+    **ℝ BRIDGE UNIT 3 DONE (same day)** — `Necessity/RealJordanWitness.lean` (NEW, census 135
+    → **136**): `orthConj` (conjugation `x ↦ U x Uᵀ` as an ℝ-linear map),
+    **`orthConj_preservesJordan`** (`UᵀU = 1` cancels in the middle of each product) and
+    **`orthConj_rankOneR`** (`U(ψψᵀ)Uᵀ = (Uψ)(Uψ)ᵀ` — the compatibility that lets unit 2's span
+    argument be applied to a conjugation). Gates green at 3093 jobs, custom axioms exactly [].
+    **This unit is where the native route's structural saving shows up most.** The ℂ lane's
+    `JordanWitness` needs a SECOND branch here — `transposeMap` plus the antiunitary case —
+    because complex Wigner permits a conjugate-linear alternative. Real Wigner yields an
+    ORTHOGONAL map, so that branch has no ℝ counterpart and this one file is the whole step.
+    Recorded honestly: the ℂ `unitaryConj` and its Jordan lemma have no ℂ-specific content and
+    could have been generalized in place, but they sit in a file that is ℂ-bound elsewhere
+    (`rankOne`) and is finished and banked — thirty re-derived lines beat reopening a completed
+    row.
     **★ ROUTE DECISION FOR THE ℝ BRIDGE — NATIVE, NOT A PORT, and here is the measurement.**
     The ℂ chain is phrased via `rankOne`/`tprob`/`nsq`, defined at ℂ in `ProjectionOrder` and
     `StrengthProbe`. Those primitives' scalars ARE inferable from their arguments, so in-place
