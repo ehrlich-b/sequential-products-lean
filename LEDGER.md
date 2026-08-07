@@ -2019,7 +2019,23 @@ sorry-free Wigner rigidity — see 3.0.
     coordinates too; chain with `.trans` instead of rewriting. `OrthonormalBasis.coe_mk`
     exists, so the bridge from `imageOrthonormalBasis` back to the explicit normalized
     family is available for the next unit. Axiom-checked = Lean core only.
-    **What remains of the rigidity: step 4b part 2 - 4d — the sign-fixing proper.** Use a
+    **STEP 4b part 2 DONE (same day)**: `imgBasis` (the image of an orthonormal basis as
+    an orthonormal basis on the SAME index type), `imgBasis_apply` (the bridge back to the
+    explicit normalized family — `OrthonormalBasis.coe_mk`, with `hon` supplied EXPLICITLY
+    or the family metavariable cannot be solved), `abs_inner_imgBasis` (step 4a against
+    the basis: every image coordinate is ± the source's), and **`image_two_slot`**: the
+    normalized image of `b i + b j` equals `a • b' i + d • b' j` with
+    `|a| = |d| = ‖b i + b j‖⁻¹`. **No `√2` is ever computed** — the modulus *is* the
+    inverse norm, which is why this is short. So the two-slot image ray is pinned except
+    for the RELATIVE SIGN of `a` and `d`, and comparing relative signs across pairs is all
+    that is left. TRAPS: `set x := e with h` did not orient usably here (use
+    `obtain ⟨u, hu⟩ : ∃ u, u = e := ⟨_, rfl⟩` and `rw [← hu]`); the two-slot `if` guards
+    are `i = k` / `j = k`, so branch 1 needs `if_neg (Ne.symm hij)` and branch 2 `if_neg
+    hij` — I had them swapped; and `omit ... in` must precede the DOCSTRING, so dropping
+    `[DecidableEq ι]` from the section and using `classical` in the one proof that needs
+    it is cleaner. Axiom-checked = Lean core only.
+    **What remains of the rigidity: 4c-4d — pick the global sign pattern from a reference
+    vector and assemble the isometry.** Use a
     reference vector (e.g. `Σ eᵢ`, or successively the vectors `eᵢ + eⱼ`) to pin the
     relative signs, and check consistency via the transition probabilities with those
     mixed vectors; then assemble the isometry and conclude

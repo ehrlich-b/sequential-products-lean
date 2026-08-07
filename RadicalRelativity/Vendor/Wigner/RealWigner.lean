@@ -388,4 +388,88 @@ theorem eq_pair_expansion {ι : Type*} [Fintype ι] [DecidableEq ι]
     exact h k hk.1 hk.2)
   rwa [Finset.sum_insert (by simpa using hij), Finset.sum_singleton] at this
 
+/-! ## Step 4b, part 2: the image of a two-slot vector is a two-slot vector
+
+This is where "only signs remain" becomes concrete.  Take `w = b i + b j`.  Step 4a says
+the image's coordinate modulus against `b' k` equals the source's against `b k`, which is
+`0` for `k ∉ {i, j}` and `‖w‖⁻¹` for `k ∈ {i, j}` (no `√2` needs computing -- the value
+*is* `‖w‖⁻¹`).  So by `eq_pair_expansion` the normalized image is `a • b' i + d • b' j`
+with `|a| = |d| = ‖w‖⁻¹`: the ray is pinned except for the RELATIVE SIGN of `a` and `d`,
+and comparing those relative signs across pairs is the whole remaining argument.
+-/
+
+section ImageBasis
+
+variable {ι : Type*} [Fintype ι] [Nonempty ι] [FiniteDimensional ℝ E]
+
+omit [Nonempty ι] [FiniteDimensional ℝ E] in
+theorem basis_ne_zero (b : OrthonormalBasis ι ℝ E) (i : ι) : b i ≠ 0 :=
+  norm_ne_zero_iff.mp (by rw [b.orthonormal.1 i]; exact one_ne_zero)
+
+/-- The image of an orthonormal basis, as an orthonormal basis on the same index type. -/
+noncomputable def TransProbPreservingR.imgBasis {f : ℙ ℝ E → ℙ ℝ E}
+    (hf : TransProbPreservingR f) (b : OrthonormalBasis ι ℝ E) : OrthonormalBasis ι ℝ E :=
+  hf.imageOrthonormalBasis (basis_ne_zero b) (fun _ _ hij => b.orthonormal.2 hij)
+    (Module.finrank_eq_card_basis b.toBasis).symm
+
+/-- The bridge back to the explicit normalized family, which is the form step 4a speaks
+about. -/
+theorem TransProbPreservingR.imgBasis_apply {f : ℙ ℝ E → ℙ ℝ E}
+    (hf : TransProbPreservingR f) (b : OrthonormalBasis ι ℝ E) (i : ι) :
+    hf.imgBasis b i = ‖(f (Projectivization.mk ℝ (b i) (basis_ne_zero b i))).rep‖⁻¹ •
+      (f (Projectivization.mk ℝ (b i) (basis_ne_zero b i))).rep :=
+  congrFun (OrthonormalBasis.coe_mk
+    (hf.image_orthonormal (basis_ne_zero b) (fun _ _ hij => b.orthonormal.2 hij)) _) i
+
+/-- Step 4a, phrased against the image basis: **every coordinate of the image is `±` the
+corresponding coordinate of the source.** -/
+theorem TransProbPreservingR.abs_inner_imgBasis {f : ℙ ℝ E → ℙ ℝ E}
+    (hf : TransProbPreservingR f) (b : OrthonormalBasis ι ℝ E) {ψ : E} (hψ : ψ ≠ 0) (k : ι) :
+    |(inner ℝ (‖(f (Projectivization.mk ℝ ψ hψ)).rep‖⁻¹ •
+        (f (Projectivization.mk ℝ ψ hψ)).rep) (hf.imgBasis b k) : ℝ)|
+      = |(inner ℝ (‖ψ‖⁻¹ • ψ) (b k) : ℝ)| := by
+  rw [hf.imgBasis_apply b k]
+  exact hf.abs_inner_image hψ (basis_ne_zero b k) (b.orthonormal.1 k)
+
+/-- **Step 4b.**  The normalized image of `b i + b j` is supported on the two image slots
+`i, j`, with both coordinate moduli equal to `‖b i + b j‖⁻¹`.  Only the relative sign of
+the two coordinates is unpinned. -/
+theorem TransProbPreservingR.image_two_slot {f : ℙ ℝ E → ℙ ℝ E}
+    (hf : TransProbPreservingR f) (b : OrthonormalBasis ι ℝ E) {i j : ι} (hij : i ≠ j)
+    (hw : b i + b j ≠ 0) :
+    ∃ a d : ℝ, |a| = ‖b i + b j‖⁻¹ ∧ |d| = ‖b i + b j‖⁻¹ ∧
+      ‖(f (Projectivization.mk ℝ (b i + b j) hw)).rep‖⁻¹ •
+          (f (Projectivization.mk ℝ (b i + b j) hw)).rep
+        = a • hf.imgBasis b i + d • hf.imgBasis b j := by
+  classical
+  have hnw : ‖b i + b j‖ ≠ 0 := norm_ne_zero_iff.mpr hw
+  have hinv : (0:ℝ) ≤ ‖b i + b j‖⁻¹ := inv_nonneg.mpr (norm_nonneg _)
+  -- the basis's own inner products
+  have hb : ∀ p q : ι, (inner ℝ (b p) (b q) : ℝ) = if p = q then 1 else 0 := by
+    intro p q
+    rcases eq_or_ne p q with h | h
+    · rw [if_pos h, h, real_inner_self_eq_norm_sq, b.orthonormal.1 q]; norm_num
+    · rw [if_neg h, b.orthonormal.2 h]
+  -- the source coordinates of the normalized two-slot vector
+  have hsrc : ∀ k : ι, (inner ℝ (‖b i + b j‖⁻¹ • (b i + b j)) (b k) : ℝ)
+      = ‖b i + b j‖⁻¹ * ((if i = k then 1 else 0) + (if j = k then 1 else 0)) := by
+    intro k
+    rw [real_inner_smul_left, inner_add_left, hb i k, hb j k]
+  obtain ⟨u, hu⟩ : ∃ u : E, u = ‖(f (Projectivization.mk ℝ (b i + b j) hw)).rep‖⁻¹ •
+      (f (Projectivization.mk ℝ (b i + b j) hw)).rep := ⟨_, rfl⟩
+  rw [← hu]
+  refine ⟨(inner ℝ u (hf.imgBasis b i) : ℝ), (inner ℝ u (hf.imgBasis b j) : ℝ), ?_, ?_, ?_⟩
+  · rw [hu, hf.abs_inner_imgBasis b hw i, hsrc i, if_pos rfl, if_neg (Ne.symm hij), add_zero,
+      mul_one, abs_of_nonneg hinv]
+  · rw [hu, hf.abs_inner_imgBasis b hw j, hsrc j, if_neg hij, if_pos rfl, zero_add,
+      mul_one, abs_of_nonneg hinv]
+  · refine eq_pair_expansion (hf.imgBasis b) u hij ?_
+    intro k hki hkj
+    have habs := hf.abs_inner_imgBasis b hw k
+    rw [hsrc k, if_neg (Ne.symm hki), if_neg (Ne.symm hkj), add_zero, mul_zero, abs_zero,
+      ← hu] at habs
+    exact abs_eq_zero.mp habs
+
+end ImageBasis
+
 end Projectivization
