@@ -2152,7 +2152,25 @@ sorry-free Wigner rigidity — see 3.0.
     `norm_inner_eq_norm_iff` is stated with `‖·‖` on the scalar, so `Real.norm_eq_abs` is
     needed to meet `|·|`.
 
-    **WHAT THIS DOES AND DOES NOT DISCHARGE — read before claiming the ℝ row.** The ℝ row's
+    **ℝ BRIDGE UNIT 1 DONE (same day)** — `Necessity/RealRayMap.lean` (NEW, census 133 →
+    **134**): `rankOneR` (the projection `ψψᵀ`), `vecMulVec_mul_vecMulVec`,
+    `rankOneR_isProjection`, **`trace_rankOneR_mul`** (the trace pairing against `ψψᵀ` IS the
+    quadratic form `ψᵀyψ` — this is what makes rank-ones a separating family, hence the span
+    argument) and **`trace_rankOneR_mul_rankOneR`** (`= (ψ ⬝ᵥ φ)²`, exactly the real
+    transition probability, with no modulus to take). Gates green at 3091 jobs, custom axioms
+    exactly [].
+    **★ ROUTE DECISION FOR THE ℝ BRIDGE — NATIVE, NOT A PORT, and here is the measurement.**
+    The ℂ chain is phrased via `rankOne`/`tprob`/`nsq`, defined at ℂ in `ProjectionOrder` and
+    `StrengthProbe`. Those primitives' scalars ARE inferable from their arguments, so in-place
+    generalization is *possible* — but `StrengthProbe` alone has **60 `Complex.normSq` uses**
+    and there are **eleven downstream consumers, several finished and banked** (`RankTwo/*`,
+    `TwistUniqueness`). Generalizing would destabilize completed rows. So the ℝ bridge is
+    written natively. Two reasons this is genuinely CHEAPER and not merely safer: over ℝ
+    `star = id`, so the conjugation bookkeeping vanishes; and **there is no antiunitary
+    branch** — real Wigner yields an orthogonal map and conjugation by it is already a Jordan
+    automorphism, so the ℂ lane's `transposeMap` half of `JordanWitness` has NO ℝ counterpart.
+    Expect well under ℂ's 1150 lines.
+    **WHAT THE RIGIDITY DOES AND DOES NOT DISCHARGE — read before claiming the ℝ row.** The ℝ row's
     carried hypothesis is `hjordAll : ∀ U unitary, ThetaPreservesJordanG (conjProductG P …)` —
     the JORDAN property of the comparison map (real Kadison), not the Wigner statement. Real
     Wigner is the classical INPUT to it, not the same theorem. The ℂ lane bridges the gap

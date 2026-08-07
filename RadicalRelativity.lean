@@ -248,6 +248,7 @@ import RadicalRelativity.Necessity.BlockChiGen
 -- scalar which the block isometry forces to square to one.  Killing the minus sign by
 -- connectedness, and hence chiTilde = id, is the remaining step.
 import RadicalRelativity.Necessity.ConjTransportGen
+import RadicalRelativity.Necessity.RealRayMap
 import RadicalRelativity.Necessity.RealRigidity
 
 -- M2 necessity core, tenth unit (LEDGER 2.6, chi part 1): the comparison character
