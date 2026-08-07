@@ -15,14 +15,14 @@ interface structure instantiated on the intended algebras.
 
 ## ★ STATE OF THE SIX TARGETS — as of 2026-08-07 (read this first)
 
-Tree: `lake build` green at 3100 jobs; `AxiomAudit.lean` PASS at 143 tracked modules;
+Tree: `lake build` green at 3101 jobs; `AxiomAudit.lean` PASS at 144 tracked modules;
 **custom axioms exactly `[]`**, every tracked declaration's closure ⊆
 {`propext`, `Classical.choice`, `Quot.sound`}. All commits LOCAL (repo is public;
 pushing is Bryan-gated).
 
 | Row | Status | Capstone |
 | --- | --- | --- |
-| `H_N(ℂ)`, N ≥ 3 | **MACHINE-CHECKED, carries TWO located frame-graph hypotheses** (`connected` = lem:frame-connectivity, `overlap` = cross-coherence) — `∃!` real `t` with `a•b = a^{1/2+it} b a^{1/2−it}` on ALL effects. **NOT hypothesis-free — see the label correction below** | `Necessity.complex_classification` |
+| `H_N(ℂ)`, N ≥ 3 | **MACHINE-CHECKED, residue is now ONE internal statement** — `FrameTwistConst` (`frameTwist` is constant). The caller-supplied `Adj` and both frame-graph citations are GONE. **Still not hypothesis-free** | `Necessity.complex_classification_of_frameTwistConst` |
 | `H_n(ℝ)` | **MACHINE-CHECKED, HYPOTHESIS-FREE (2026-08-07)** — `a•b = √a·b·√a` on ALL effects, no twist; Jordan hypothesis DISCHARGED by real Kadison proved in-tree. **The only row carrying nothing beyond S1-S7 + S2** | `Necessity.real_classification` |
 | `H_n(ℍ)` | **FOUNDATION COMPLETE + `Q_{√a}` restricts** (carrier, order-unit, unital Jordan subalgebra, positivity, cfc-closure, `quatQuadRepEquiv`); **NOT a short lane — see the carrier-genericity finding below** | `QuatCarrier`, `quatQuadRepEquiv` |
 | `H₃(𝕆)` | **BLOCKED** — octonions exist in no prover (verified: zero files) | — |
@@ -80,6 +80,24 @@ accurate. Distinguish the two axes explicitly whenever either row is described.
 To make ℂ genuinely hypothesis-free, `connected` and `overlap` must be discharged: connectivity
 of the unitary frame graph, and cross-coherence of adjacent frames' `U(1)` characters. Neither
 is started; neither is blocked by anything absent from Mathlib.
+
+★**ℂ RESIDUE SHARPENED 2026-08-07** (`Necessity/ComplexResidue.lean`, census 144, gates green
+3101 jobs, axioms Lean core). `complex_classification` let the CALLER pick `Adj`. Taking
+`Adj := fun _ _ => True` makes `connected` free (`ReflTransGen.single (Or.inl trivial)`) and
+turns `overlap` into exactly "any two frames' characters agree on an interval" = `frameTwist F
+= frameTwist G`. So `complex_classification_of_frameTwistConst` carries ONE hypothesis,
+`FrameTwistConst`, a statement about THIS development's own `frameTwist` — no caller-supplied
+relation, no citation to two manuscript lemmas. Two reasons this is worth having: a
+caller-chosen `Adj` could always be instantiated to make the row look stronger than it is, and
+the residue is now internal rather than a citation.
+**SCOPE — do not overstate.** This is SUFFICIENT, packaged from the existing capstone. The
+converse (row ⟹ `frameTwist` constant) is surely true and would make the reduction lossless,
+but is NOT proved: it needs per-frame uniqueness at each frame. Say "suffices for", never
+"equivalent to", until that is done. (I first wrote a `True`-valued stub for the converse and
+deleted it — same junk-stub failure mode as `prod_sp_inj`; never ship a vacuous theorem to make
+a docstring read better.)
+**So the ℂ row's remaining work is exactly one theorem, and it is ORDINARY work** — nothing it
+needs is missing from Mathlib, unlike the octonion wall or the ℍ carrier decision.
 
 **Field-general infrastructure now standing** (none of it in Mathlib):
 `HermitianMat.sqrt_mul_of_commute`, `eq_zero_of_commute_hermitian_of_trace_zero`,

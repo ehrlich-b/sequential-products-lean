@@ -64,6 +64,7 @@ vendored `Projectivization.wigner_rigidity`).
 | Paper statement | Lean declaration | File |
 | --- | --- | --- |
 | `mthm:master`, **complex row**: `∃! t`, `a • b = a^{1/2+it} b a^{1/2−it}` on **all** effects | `Necessity.complex_classification` | `Necessity/ComplexMaster.lean` |
+| the same, with the frame-graph apparatus replaced by one internal hypothesis (`frameTwist` constant) | `Necessity.complex_classification_of_frameTwistConst` | `Necessity/ComplexResidue.lean` |
 | the same, invertible effects only, one global `t` | `Necessity.sp_eq_twistSeq_of_frameGraph` | `Necessity/ComplexMaster.lean` |
 | `prop:singular` **applied** (invertible ⟹ all effects) | `Necessity.sp_eq_twistSeq_of_effect` | `Necessity/ComplexClassification.lean` |
 | uniqueness of the twist parameter | `Necessity.twist_param_unique` | `Necessity/TwistUniqueness.lean` |
@@ -78,6 +79,14 @@ an open interval). Those two are proved in the paper and carried here, exactly a
 §2's fields were — they are the honest residue of this row, and they are visible
 in its signature rather than hidden in a structure. Nothing else is assumed;
 `#print axioms Necessity.complex_classification` is Lean core only.
+
+**Sharpened form (2026-08-07).** Because `Adj` is caller-supplied, the whole apparatus
+collapses: `complex_classification_of_frameTwistConst` takes `Adj := True`, which makes
+connectivity free and turns cross-coherence into `FrameTwistConst` — `frameTwist F =
+frameTwist G` for all frames. Prefer that form when citing the row's residue: it carries
+one hypothesis about an object defined here, rather than two citations plus a relation the
+caller chooses. It is **sufficient, not proved equivalent** — the converse needs per-frame
+uniqueness and is not done, so write "suffices for", not "equivalent to".
 
 ### The real row of `mthm:master`, on the concrete carrier (2026-08-06)
 
