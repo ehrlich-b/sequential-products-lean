@@ -65,6 +65,7 @@ vendored `Projectivization.wigner_rigidity`).
 | --- | --- | --- |
 | `mthm:master`, **complex row**: `∃! t`, `a • b = a^{1/2+it} b a^{1/2−it}` on **all** effects | `Necessity.complex_classification` | `Necessity/ComplexMaster.lean` |
 | the same, with the frame-graph apparatus replaced by one internal hypothesis (`frameTwist` constant) | `Necessity.complex_classification_of_frameTwistConst` | `Necessity/ComplexResidue.lean` |
+| the per-frame parameter is unique, so `frameTwist` is an invariant of the frame | `Necessity.frameTwist_unique` | `Necessity/ComplexResidue.lean` |
 | the same, invertible effects only, one global `t` | `Necessity.sp_eq_twistSeq_of_frameGraph` | `Necessity/ComplexMaster.lean` |
 | `prop:singular` **applied** (invertible ⟹ all effects) | `Necessity.sp_eq_twistSeq_of_effect` | `Necessity/ComplexClassification.lean` |
 | uniqueness of the twist parameter | `Necessity.twist_param_unique` | `Necessity/TwistUniqueness.lean` |
@@ -85,8 +86,10 @@ collapses: `complex_classification_of_frameTwistConst` takes `Adj := True`, whic
 connectivity free and turns cross-coherence into `FrameTwistConst` — `frameTwist F =
 frameTwist G` for all frames. Prefer that form when citing the row's residue: it carries
 one hypothesis about an object defined here, rather than two citations plus a relation the
-caller chooses. It is **sufficient, not proved equivalent** — the converse needs per-frame
-uniqueness and is not done, so write "suffices for", not "equivalent to".
+caller chooses. It is **sufficient, not proved equivalent** — so write "suffices for", not
+"equivalent to". Per-frame uniqueness IS now proved (`Necessity.frameTwist_unique`), which
+makes `frameTwist` an invariant rather than a `choose` artefact; the converse additionally
+needs the twist product's own per-frame parameter to be computed, which is not done.
 
 ### The real row of `mthm:master`, on the concrete carrier (2026-08-06)
 

@@ -90,10 +90,15 @@ turns `overlap` into exactly "any two frames' characters agree on an interval" =
 relation, no citation to two manuscript lemmas. Two reasons this is worth having: a
 caller-chosen `Adj` could always be instantiated to make the row look stronger than it is, and
 the residue is now internal rather than a citation.
-**SCOPE — do not overstate.** This is SUFFICIENT, packaged from the existing capstone. The
-converse (row ⟹ `frameTwist` constant) is surely true and would make the reduction lossless,
-but is NOT proved: it needs per-frame uniqueness at each frame. Say "suffices for", never
-"equivalent to", until that is done. (I first wrote a `True`-valued stub for the converse and
+**SCOPE — do not overstate.** This is SUFFICIENT, packaged from the existing capstone. Still
+say "suffices for", never "equivalent to".
+**PER-FRAME UNIQUENESS NOW PROVED (same day):** `frameTwist_unique` — two parameters satisfying
+the coupling identity at one frame are equal (evaluate at `i ≠ j` and the indicator of `i`, so
+`r i − r j = 1`, then cancel via `smul_left_injective ℝ rotJ_ne_zero`). This makes `frameTwist`
+a genuine INVARIANT of the frame rather than an artefact of `choose`, and it is the key input to
+the converse. **What the converse still needs beyond it:** that the twist product's OWN
+per-frame parameter is `t` (i.e. compute `stabilizerCoupling` for `twistProductOn t`). Until
+that is done the reduction is not lossless. (I first wrote a `True`-valued stub for the converse and
 deleted it — same junk-stub failure mode as `prod_sp_inj`; never ship a vacuous theorem to make
 a docstring read better.)
 **So the ℂ row's remaining work is exactly one theorem, and it is ORDINARY work** — nothing it
