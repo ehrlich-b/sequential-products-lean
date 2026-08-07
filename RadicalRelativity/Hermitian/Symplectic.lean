@@ -5,6 +5,7 @@ Authors: Bryan Ehrlich
 -/
 import RadicalRelativity.Hermitian.OrderUnit
 import RadicalRelativity.Vendor.HermitianMat.Jordan
+import RadicalRelativity.Hermitian.CfcSqrtContinuous
 
 set_option linter.style.longLine false
 
@@ -374,6 +375,73 @@ theorem quatConjH_bound :
     _ ≤ (‖L‖ + 1) * ‖A‖ := by
         have h1 := norm_nonneg A
         nlinarith [norm_nonneg L]
+
+/-! ## Closure under the functional calculus -/
+
+/-- **The quaternionic set is closed under the functional calculus.**  `Φ` fixes every
+real matrix polynomial in `A` (`quatConj_aeval`, transported by the bridge
+`mat_cfc_polynomial`), it is norm-bounded (`quatConjH_bound`), and Weierstrass makes
+polynomials uniformly near `f` on the effect window `[0,1]` — so a three-ε estimate
+against `norm_cfc_sub_le_of_sup_le` forces `Φ (A.cfc f) = A.cfc f`.
+
+This is the last structural fact the `H_n(ℍ)` row needs: it is what lets the quaternionic
+carrier carry `√a`, hence `Q_{√a}`, hence the whole Θ construction. -/
+theorem IsQuaternionic.cfc_of_effect {A : HermitianMat (n ⊕ n) ℂ}
+    (hA : IsQuaternionic A) (hAe : OrderUnitSpace.IsEffect A)
+    {f : ℝ → ℝ} (hf : ContinuousOn f (Set.Icc (0 : ℝ) 1)) :
+    quatConjH (A.cfc f) = A.cfc f := by
+  obtain ⟨K, hK0, hK⟩ := quatConjH_bound (n := n)
+  set c : ℝ := Real.sqrt (Fintype.card (n ⊕ n)) with hc
+  have hcnn : 0 ≤ c := Real.sqrt_nonneg _
+  have hall : ∀ ε : ℝ, 0 < ε → ‖quatConjH (A.cfc f) - A.cfc f‖ ≤ 0 + ε := by
+    intro ε hε
+    set δ : ℝ := ε / (2 * (K + 1) * (c + 1)) with hδ
+    have hδpos : 0 < δ := by
+      apply div_pos hε
+      have h1 : (0 : ℝ) < K + 1 := by linarith
+      have h2 : (0 : ℝ) < c + 1 := by linarith
+      positivity
+    obtain ⟨p, hp⟩ := exists_polynomial_near_of_continuousOn 0 1 f hf δ hδpos
+    -- the approximant is uniformly close in the matrix norm
+    have hclose : ‖A.cfc (fun x => p.eval x) - A.cfc f‖ ≤ c * δ :=
+      HermitianMat.norm_cfc_sub_le_of_sup_le
+        (HermitianMat.spectrum_subset_Icc_of_isEffect hAe) (le_of_lt hδpos)
+        (fun x hx => le_of_lt (by simpa using hp x hx))
+    -- and it is fixed by `Φ`
+    have hfix : quatConjH (A.cfc (fun x => p.eval x)) = A.cfc (fun x => p.eval x) := by
+      ext1
+      rw [quatConjH_mat, HermitianMat.mat_cfc_polynomial]
+      exact quatConj_aeval hA p
+    -- `Φ` is ℝ-linear, so it commutes with the difference
+    have hsub : quatConjH (A.cfc f) - quatConjH (A.cfc (fun x => p.eval x))
+        = quatConjH (A.cfc f - A.cfc (fun x => p.eval x)) := by
+      show quatConjHLm (A.cfc f) - quatConjHLm (A.cfc (fun x => p.eval x)) = _
+      rw [← map_sub]
+      rfl
+    have hKd : ‖quatConjH (A.cfc f - A.cfc (fun x => p.eval x))‖ ≤ K * (c * δ) := by
+      refine le_trans (hK _) ?_
+      have hnorm : ‖A.cfc f - A.cfc (fun x => p.eval x)‖ ≤ c * δ := by
+        rw [← norm_neg, neg_sub]
+        exact hclose
+      exact mul_le_mul_of_nonneg_left hnorm (le_of_lt hK0)
+    calc ‖quatConjH (A.cfc f) - A.cfc f‖
+        ≤ ‖quatConjH (A.cfc f) - quatConjH (A.cfc (fun x => p.eval x))‖
+            + ‖quatConjH (A.cfc (fun x => p.eval x)) - A.cfc f‖ := by
+          exact norm_sub_le_norm_sub_add_norm_sub _ _ _
+      _ ≤ K * (c * δ) + c * δ := by
+          rw [hsub]
+          rw [hfix]
+          exact add_le_add hKd hclose
+      _ ≤ 0 + ε := by
+          have hd : (K + 1) * (c + 1) * δ = ε / 2 := by
+            rw [hδ]
+            have h1 : (0 : ℝ) < K + 1 := by linarith
+            have h2 : (0 : ℝ) < c + 1 := by linarith
+            field_simp
+          nlinarith [mul_nonneg hcnn (le_of_lt hδpos), le_of_lt hδpos, le_of_lt hK0]
+  have h0 : ‖quatConjH (A.cfc f) - A.cfc f‖ ≤ 0 := le_of_forall_pos_le_add hall
+  have := norm_le_zero_iff.mp h0
+  rwa [sub_eq_zero] at this
 
 /-! ## The quaternionic carrier as an order-unit space -/
 

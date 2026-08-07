@@ -153,10 +153,23 @@ finite-dimensional space, with no Frobenius computation anywhere.
 Note on file order: `quatConj_isHermitian` needs `map_conj_eq_transpose` and
 `symplecticJ_transpose_eq_conjTranspose`, so the Hermitian-level section must sit AFTER
 the positivity section (a first placement before it failed on unknown identifiers).
-**So all the ingredients for the closure now exist. The remaining step is only the
-ε-argument itself**: `quatConjH_bound` + `mat_cfc_polynomial` + `quatConj_aeval` +
-`norm_cfc_sub_le_of_sup_le` + Weierstrass, assembled exactly as
-`continuousOn_cfc_sqrt_effects` is (that proof is in the tree to copy line-for-line).
+★★**AND THE CLOSURE IS DONE — 2026-08-06.**
+**`HermitianMat.IsQuaternionic.cfc_of_effect` : for a quaternionic effect `A` and `f`
+continuous on `[0,1]`, `Φ (A.cfc f) = A.cfc f`** (axiom-checked = Lean core only).
+Assembled exactly as forecast: `quatConjH_bound` + `mat_cfc_polynomial` +
+`quatConj_aeval` + `norm_cfc_sub_le_of_sup_le` + `exists_polynomial_near_of_continuousOn`,
+in the shape of `continuousOn_cfc_sqrt_effects`, closed by `le_of_forall_pos_le_add` and
+`norm_le_zero_iff`.
+**So `√a` and hence `Q_{√a}` stay inside the quaternionic carrier — the last STRUCTURAL
+fact the `H_n(ℍ)` row needed. That row's foundation is now complete**: carrier +
+order-unit structure + unital Jordan subalgebra + positivity + functional-calculus
+closure, all machine-checked, all inside complex Hermitian matrices.
+File-order lesson (hit twice): this file's sections have real dependencies —
+`quatConj_isHermitian` needs the positivity section's lemmas, and the closure needs the
+Hermitian-level section. Append new sections at the END and move them up only if needed.
+**What remains for the ℍ row is no longer structural**: transport a `SequentialProductOn`
+onto `QuatCarrier` and run the ℝ-shaped argument (the quaternionic Peirce block is `ℍ`,
+centre `ℝ`, so `eq_one_of_sq_eq_one_of_continuous` from `RealRigidity` applies verbatim).
 ★**Superseded note (kept for provenance), the earlier framing of this gap**: the transfer needs
 `Φ` to be norm-BOUNDED, not merely continuous, and neither a Frobenius-invariance lemma
 nor a linear-map-bound route is cheaply available here (`Φ` is conjugate-linear, so the
