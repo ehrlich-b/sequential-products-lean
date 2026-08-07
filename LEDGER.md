@@ -1756,6 +1756,22 @@ sorry-free Wigner rigidity — see 3.0.
     that basis, and over ℝ the only residual freedom is a global sign (no circle, no
     conjugation branch). Estimate: a few hundred lines, self-contained, no dependence on
     the vendored artifact.
+    **STARTED 2026-08-06** (`Vendor/Wigner/RealWigner.lean`, NEW, census 131, gates
+    green, tree at 3088 jobs, custom axioms exactly `[]`;
+    `projMapR_transProbPreservingR` axiom-checked = Lean core only): the setup and the
+    EASY inclusion — `transProbVecR` (`|⟨ψ,φ⟩|²/(‖ψ‖²‖φ‖²)` over ℝ) with scale
+    invariance in each slot, `transProbR` on `ℝP(E)`, `transProbVecR_isometry`,
+    `projMapR` (+ `projMapR_mk`), `TransProbPreservingR`, and
+    **`projMapR_transProbPreservingR` : every orthogonal map preserves transition
+    probabilities**. Stated over a general real inner-product space, not just
+    `EuclideanSpace ℝ (Fin n)`.
+    Trap: the representative bookkeeping produces an `ℝˣ`-action, and the scale-invariance
+    lemmas take a plain `ℝ` — normalize with `simp only [Units.smul_def]` before
+    rewriting, or the pattern will not match.
+    **What remains is exactly the rigidity (the converse)**: a transition-probability
+    preserving bijection of `ℝP(E)` is `projMapR e` for some orthogonal `e`. Route:
+    an orthonormal basis maps to an orthonormal basis, the preserved inner products pin
+    the candidate map there, and the only residual freedom is a global sign.
     Net: the ℝ row is ONE self-contained classical theorem from unconditional — this
     supersedes both the earlier "new boulder of M3's kind" estimate and any reading that
     the vendored artifact could be reused.

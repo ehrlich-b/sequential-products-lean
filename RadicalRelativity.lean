@@ -59,6 +59,13 @@ import RadicalRelativity.Vendor.HermitianMat.Proj
 -- its axiom closure is audited alongside first-party development.
 import RadicalRelativity.Vendor.Wigner.WignerRigidity
 
+-- Real Wigner/Uhlhorn, setup + easy direction: the transition probability over R, the
+-- map induced by a real linear isometry, and the inclusion O(E) -> TransProbPreserving.
+-- This begins the ONE theorem standing between the real row and unconditionality; the
+-- complex development cannot be ported because its bulk is phase and antiunitary
+-- structure, none of which exists over R.
+import RadicalRelativity.Vendor.Wigner.RealWigner
+
 -- M1 order-unit layer on the concrete carrier (LEDGER 1.1): the
 -- `OrderUnitSpace (HermitianMat n 𝕜)` instance (making the abstract effect
 -- predicate definitionally the Loewner unit interval), the full Archimedean
