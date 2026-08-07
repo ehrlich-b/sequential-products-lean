@@ -239,4 +239,94 @@ theorem probe_ge_inv_smul_rankOneR {ψ φ : n → ℝ} (hψ : ψ ⬝ᵥ ψ = 1) 
   rw [quadForm_probeR]
   linarith [h2]
 
+/-! ## The strength of the probe, exactly
+
+The `≤` half needs a test vector where the bound is attained.  Maximizing
+`(ψ ⬝ᵥ v)² / (½(v ⬝ᵥ v + (φ ⬝ᵥ v)²))` in the plane spanned by `φ` and `ψ − (ψ⬝φ)φ` gives the
+optimum at **`v* = 2ψ − (ψ ⬝ᵥ φ)φ`**, where `ψ ⬝ᵥ v* = 2 − τ`, `φ ⬝ᵥ v* = ψ ⬝ᵥ φ` and
+`v* ⬝ᵥ v* = 4 − 3τ`, so the test reads `t(2 − τ)² ≤ 2 − τ`.  Recording the vector explicitly
+is the whole trick; with it the proof is arithmetic.
+-/
+
+omit [DecidableEq n] in
+/-- The quadratic form of a rank-one is a square, hence nonnegative. -/
+theorem quadForm_rankOneR (ψ v : n → ℝ) :
+    v ⬝ᵥ ((rankOneR ψ).mat *ᵥ v) = (ψ ⬝ᵥ v) ^ 2 := by
+  have := quadForm_smul_rankOneR_apply 1 ψ v
+  rwa [one_smul, one_mul] at this
+
+theorem probeR_nonneg (φ : n → ℝ) : (0 : HermitianMat n ℝ) ≤ probeR φ := by
+  rw [HermitianMat.le_iff_mulVec_le_mulVec]
+  intro v
+  rw [star_trivial, HermitianMat.mat_zero, Matrix.zero_mulVec, dotProduct_zero, quadForm_probeR]
+  nlinarith [sq_nonneg (φ ⬝ᵥ v), dotProduct_self_nonnegR v]
+
+theorem probeR_le_one {φ : n → ℝ} (hφ : φ ⬝ᵥ φ = 1) : probeR φ ≤ 1 := by
+  rw [HermitianMat.le_iff_mulVec_le_mulVec]
+  intro v
+  rw [star_trivial, quadForm_probeR, HermitianMat.mat_one, Matrix.one_mulVec]
+  have h := dotProduct_sq_le φ v
+  rw [hφ, one_mul] at h
+  linarith
+
+/-- **The strength of the probe is at most `(2 − τ)⁻¹`**, by testing at `v* = 2ψ − (ψ⬝φ)φ`. -/
+theorem strengthR_probe_le {ψ φ : n → ℝ} (hψ : ψ ⬝ᵥ ψ = 1) (hφ : φ ⬝ᵥ φ = 1) :
+    strengthR (rankOneR ψ) (probeR φ) ≤ (2 - (ψ ⬝ᵥ φ) ^ 2)⁻¹ := by
+  have hτ1 : (ψ ⬝ᵥ φ) ^ 2 ≤ 1 := by
+    have := dotProduct_sq_le ψ φ
+    rwa [hψ, hφ, mul_one] at this
+  have hpos : (0 : ℝ) < 2 - (ψ ⬝ᵥ φ) ^ 2 := by linarith
+  refine csSup_le (strengthR_set_nonempty (probeR_nonneg φ)) fun t ht => ?_
+  rw [Set.mem_setOf_eq, rankOneR_smul_le_iff] at ht
+  -- the optimal test vector
+  have hψv : ψ ⬝ᵥ ((2 : ℝ) • ψ - (ψ ⬝ᵥ φ) • φ) = 2 - (ψ ⬝ᵥ φ) ^ 2 := by
+    rw [dotProduct_sub, dotProduct_smul, dotProduct_smul, smul_eq_mul, smul_eq_mul, hψ]
+    ring
+  have hφv : φ ⬝ᵥ ((2 : ℝ) • ψ - (ψ ⬝ᵥ φ) • φ) = ψ ⬝ᵥ φ := by
+    rw [dotProduct_sub, dotProduct_smul, dotProduct_smul, smul_eq_mul, smul_eq_mul, hφ,
+      dotProduct_comm φ ψ]
+    ring
+  have hvv : ((2 : ℝ) • ψ - (ψ ⬝ᵥ φ) • φ) ⬝ᵥ ((2 : ℝ) • ψ - (ψ ⬝ᵥ φ) • φ)
+      = 4 - 3 * (ψ ⬝ᵥ φ) ^ 2 := by
+    simp only [sub_dotProduct, dotProduct_sub, smul_dotProduct, dotProduct_smul, smul_eq_mul]
+    rw [hψ, hφ, dotProduct_comm φ ψ]
+    ring
+  have h := ht ((2 : ℝ) • ψ - (ψ ⬝ᵥ φ) • φ)
+  rw [hψv, quadForm_probeR, hvv, hφv] at h
+  rw [inv_eq_one_div, le_div_iff₀ hpos]
+  nlinarith [h, hpos]
+
+/-- **The strength of the probe, exactly.** -/
+theorem strengthR_probe_eq {ψ φ : n → ℝ} (hψ : ψ ⬝ᵥ ψ = 1) (hφ : φ ⬝ᵥ φ = 1) :
+    strengthR (rankOneR ψ) (probeR φ) = (2 - (ψ ⬝ᵥ φ) ^ 2)⁻¹ :=
+  le_antisymm (strengthR_probe_le hψ hφ)
+    (le_csSup (strengthR_set_bddAbove hψ (probeR_le_one hφ))
+      (probe_ge_inv_smul_rankOneR hψ hφ))
+
+/-- **The transition probability is order data**: `τ = 2 − Str⁻¹`.  Combined with
+`strengthR_map`, this is what feeds real Wigner. -/
+theorem tprobR_eq_of_strength {ψ φ : n → ℝ} (hψ : ψ ⬝ᵥ ψ = 1) (hφ : φ ⬝ᵥ φ = 1) :
+    (ψ ⬝ᵥ φ) ^ 2 = 2 - (strengthR (rankOneR ψ) (probeR φ))⁻¹ := by
+  rw [strengthR_probe_eq hψ hφ, inv_inv]
+  ring
+
+/-! ## The payoff: order automorphisms preserve the transition probability -/
+
+/-- **The ℝ bridge's second half, complete.**  A unital ℝ-linear order automorphism that
+carries the rank-one of `ψ` to that of `ψ'` and of `φ` to that of `φ'` preserves the transition
+probability.  The proof is pure transport: the strength is order data (`strengthR_map`), the
+probe is built from the unit and a rank-one (both carried by the hypotheses), and
+`tprobR_eq_of_strength` inverts the strength.  **This is exactly the `TransProbPreservingR`
+input that `exists_isometry_of_transProbPreservingR` consumes.** -/
+theorem tprobR_preserved (Φ : HermitianMat n ℝ →ₗ[ℝ] HermitianMat n ℝ)
+    (hΦ : ∀ x y : HermitianMat n ℝ, x ≤ y ↔ Φ x ≤ Φ y) (hunital : Φ 1 = 1)
+    {ψ φ ψ' φ' : n → ℝ} (hψ : ψ ⬝ᵥ ψ = 1) (hφ : φ ⬝ᵥ φ = 1)
+    (hψ' : ψ' ⬝ᵥ ψ' = 1) (hφ' : φ' ⬝ᵥ φ' = 1)
+    (hmapψ : Φ (rankOneR ψ) = rankOneR ψ') (hmapφ : Φ (rankOneR φ) = rankOneR φ') :
+    (ψ ⬝ᵥ φ) ^ 2 = (ψ' ⬝ᵥ φ') ^ 2 := by
+  have hprobe : Φ (probeR φ) = probeR φ' := by
+    rw [probeR, map_smul, map_add, hunital, hmapφ, probeR]
+  rw [tprobR_eq_of_strength hψ hφ, tprobR_eq_of_strength hψ' hφ', ← hmapψ, ← hprobe,
+    strengthR_map Φ hΦ]
+
 end Necessity

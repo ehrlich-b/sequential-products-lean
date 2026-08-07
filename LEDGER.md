@@ -2215,6 +2215,20 @@ sorry-free Wigner rigidity — see 3.0.
     expand `v`). Same fix as `hvec` in the main case and `eq_sum_over_support`. Rule of thumb
     now recorded: **orient every expansion so the rewritten symbol does not appear on the
     right-hand side.**
+    **★ ℝ BRIDGE UNIT 4 COMPLETE (same day)** — appended to `RealStrength.lean`:
+    `quadForm_rankOneR`, `probeR_nonneg`, `probeR_le_one`, **`strengthR_probe_le`**,
+    **`strengthR_probe_eq`** (`Str(ψψᵀ, Pr(φ)) = (2 − τ)⁻¹` EXACTLY),
+    **`tprobR_eq_of_strength`** (`τ = 2 − Str⁻¹`, i.e. the transition probability IS order data)
+    and **`tprobR_preserved`** — a unital ℝ-linear order automorphism carrying rank-ones to
+    rank-ones preserves the transition probability. **That last one is exactly the
+    `TransProbPreservingR` input that `exists_isometry_of_transProbPreservingR` consumes**, so
+    the ℝ chain now runs from an order automorphism all the way to real Wigner. Everything after
+    the test vector compiled first try. Gates green at 3094 jobs, custom axioms exactly [].
+    **The `≤` half's trick, recorded so it is never re-derived:** maximizing
+    `(ψ⬝v)²/(½(v⬝v + (φ⬝v)²))` over the plane spanned by `φ` and `ψ − (ψ⬝φ)φ` puts the optimum
+    at **`v* = 2ψ − (ψ⬝φ)φ`**, where `ψ⬝v* = 2 − τ`, `φ⬝v* = ψ⬝φ`, `v*⬝v* = 4 − 3τ`, so the test
+    reads `t(2 − τ)² ≤ 2 − τ`. With that vector written down the proof is arithmetic; without it
+    there is nothing to do.
     **Why this is the load-bearing unit for what remains.** Real Wigner needs a
     transition-probability preserving ray map, so the transition probability has to be ORDER
     DATA. The strength is the device: it is defined from the order and the real scalar action
