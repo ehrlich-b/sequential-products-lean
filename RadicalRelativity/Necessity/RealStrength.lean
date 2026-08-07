@@ -96,4 +96,46 @@ theorem strengthR_map (Φ : HermitianMat n ℝ →ₗ[ℝ] HermitianMat n ℝ)
   rw [← map_smul]
   exact (hΦ _ _).symm
 
+
+/-! ## The probe, and the inequality at its heart
+
+The transition probability is recovered from the strength via the **probe**
+`Pr(φ) = ½(𝟙 + φφᵀ)`, for which `Str(ψψᵀ, Pr(φ)) = (2 − τ)⁻¹` with `τ = (ψ ⬝ᵥ φ)²`.  The `≥`
+half of that is a tight inequality, and `probe_key_ineqR` below is its entire content,
+isolated as pure arithmetic — the same tactic that worked for `sign_pair_of_abs`.
+
+Decompose `v = αφ + w` and `ψ = sφ + χ` with `w, χ ⊥ φ`, `s = ψ ⬝ᵥ φ`, `d = χ ⬝ᵥ w`.  Then
+`ψ ⬝ᵥ v = sα + d`, `v ⬝ᵥ v = α² + W` with `W = w ⬝ᵥ w`, and Cauchy-Schwarz gives
+`d² ≤ (1 − τ)W`.  The required bound is then exactly two-term Cauchy-Schwarz with weights
+`1` and `½`, and it is TIGHT — which is why the strength equals `(2 − τ)⁻¹` on the nose
+rather than merely being bounded by it.
+
+The certificate, found by hand and worth recording because `nlinarith` will not find it
+unaided: after clearing `4(1−τ)`, the gap is exactly `2(2(1−τ)α − sd)²`, using `s² = τ` to
+turn `2τd²` into `2s²d²`.
+-/
+
+/-- **The tight inequality behind the probe's strength.**  Pure arithmetic in the five
+scalars the geometric decomposition produces. -/
+theorem probe_key_ineqR {τ s α d W : ℝ} (hτ1 : τ ≤ 1) (hs : s ^ 2 = τ)
+    (hW : 0 ≤ W) (hd : d ^ 2 ≤ (1 - τ) * W) :
+    (s * α + d) ^ 2 ≤ (2 - τ) * (α ^ 2 + W / 2) := by
+  -- `0 ≤ τ` is not a hypothesis: `s² = τ` already forces it
+  have hτ0 : 0 ≤ τ := hs ▸ sq_nonneg s
+  rcases eq_or_lt_of_le hτ1 with hτ | hτ
+  · -- `τ = 1` forces `χ = 0`, i.e. `d = 0`
+    have hd0 : d = 0 := by
+      have : d ^ 2 ≤ 0 := by rw [← hτ] at hd; simpa using hd
+      exact pow_eq_zero_iff (n := 2) (by norm_num) |>.mp (le_antisymm this (sq_nonneg d))
+    rw [hd0, add_zero]
+    have hs1 : s ^ 2 = 1 := by rw [hs, hτ]
+    nlinarith [hs1, hW, hτ]
+  · -- the generic case: clear `4(1 − τ)` and the gap is a square
+    have h1 : 0 < 1 - τ := by linarith
+    nlinarith [sq_nonneg (2 * (1 - τ) * α - s * d), hd, hs, hW, h1,
+      mul_nonneg hτ0 (sub_nonneg.mpr hd), sq_nonneg (s * α + d), sq_nonneg d]
+
+/-- The **probe** effect `Pr(φ) = ½(𝟙 + φφᵀ)`. -/
+def probeR (φ : n → ℝ) : HermitianMat n ℝ := (1 / 2 : ℝ) • (1 + rankOneR φ)
+
 end Necessity

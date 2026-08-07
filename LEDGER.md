@@ -2190,6 +2190,16 @@ sorry-free Wigner rigidity — see 3.0.
     `strengthR_set_nonempty`, `strengthR_set_bddAbove` (`t·ψψᵀ ≤ a ≤ 𝟙` forces `t ≤ 1`, by
     testing the form at `ψ`) and **`strengthR_map` — order isomorphisms preserve the
     strength.** Gates green at 3094 jobs, custom axioms exactly [].
+    **ℝ BRIDGE UNIT 4b DONE (same day)** — appended to `RealStrength.lean`: `probeR`
+    (`½(𝟙 + φφᵀ)`) and **`probe_key_ineqR`**, the tight inequality that IS the `≥` half of
+    `Str(ψψᵀ, Pr(φ)) = (2 − τ)⁻¹`, isolated as pure arithmetic in the five scalars the geometric
+    decomposition produces (`v = αφ + w`, `ψ = sφ + χ`, `d = χ ⬝ᵥ w`, `W = w ⬝ᵥ w`). Same tactic
+    as `sign_pair_of_abs`: get the content out of the API. **The certificate, recorded because
+    `nlinarith` will NOT find it unaided:** after clearing `4(1−τ)` the gap is exactly
+    `2(2(1−τ)α − sd)²`, using `s² = τ` to turn `2τd²` into `2s²d²`; the bound is two-term
+    Cauchy-Schwarz with weights `1` and `½` and it is TIGHT, which is why the strength equals
+    `(2 − τ)⁻¹` on the nose. Also noted: `0 ≤ τ` is NOT needed as a hypothesis — `s² = τ`
+    forces it, and the linter caught the redundancy. Gates green at 3094 jobs, axioms Lean core.
     **Why this is the load-bearing unit for what remains.** Real Wigner needs a
     transition-probability preserving ray map, so the transition probability has to be ORDER
     DATA. The strength is the device: it is defined from the order and the real scalar action
