@@ -2200,6 +2200,21 @@ sorry-free Wigner rigidity — see 3.0.
     Cauchy-Schwarz with weights `1` and `½` and it is TIGHT, which is why the strength equals
     `(2 − τ)⁻¹` on the nose. Also noted: `0 ≤ τ` is NOT needed as a hypothesis — `s² = τ`
     forces it, and the linter caught the redundancy. Gates green at 3094 jobs, axioms Lean core.
+    **ℝ BRIDGE UNIT 4c DONE (same day)** — appended to `RealStrength.lean`:
+    `quadForm_smul_rankOneR_apply`, **`rankOneR_smul_le_iff`** (`t·ψψᵀ ≤ a` is exactly a
+    statement about quadratic forms), `quadForm_probeR`, `dotProduct_sq_le` (Cauchy-Schwarz for
+    the real dot product, proved DIVISION-FREE from
+    `(‖y‖²x − ⟨x,y⟩y)·(same) = ‖y‖²(‖y‖²‖x‖² − ⟨x,y⟩²)` — cheaper than transporting `n → ℝ` to
+    `EuclideanSpace` to quote the abstract version), and **`probe_ge_inv_smul_rankOneR`**:
+    `(2 − τ)⁻¹·ψψᵀ ≤ Pr(φ)`. That is the ADMISSIBILITY half of
+    `Str(ψψᵀ, Pr(φ)) = (2 − τ)⁻¹`. Gates green at 3094 jobs, custom axioms exactly [].
+    **TRAP, fourth occurrence, now with a stated rule.** The bilinear expansions must rewrite
+    only the DEFINED vectors (`w = v − (φ⬝v)φ`, `χ = ψ − (ψ⬝φ)φ`) and never `v` or `ψ`, because
+    those occur inside the coefficients and `rw` hits them there too. Concretely: prove
+    `w ⬝ᵥ w = v ⬝ᵥ v − (φ⬝v)²` (expanding `w`), NOT `v ⬝ᵥ v = (φ⬝v)² + w ⬝ᵥ w` (which would
+    expand `v`). Same fix as `hvec` in the main case and `eq_sum_over_support`. Rule of thumb
+    now recorded: **orient every expansion so the rewritten symbol does not appear on the
+    right-hand side.**
     **Why this is the load-bearing unit for what remains.** Real Wigner needs a
     transition-probability preserving ray map, so the transition probability has to be ORDER
     DATA. The strength is the device: it is defined from the order and the real scalar action
