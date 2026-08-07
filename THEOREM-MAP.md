@@ -92,16 +92,29 @@ for it, and exactly as the ℂ row stood before M3 closed.
 
 | Paper statement | Lean declaration | File |
 | --- | --- | --- |
-| `prop:real`, **real row**: `a • b = √a·b·√a` on **all** effects, no twist parameter | `Necessity.sp_eq_luders_of_effect` | `Necessity/RealRigidity.lean` |
+| `prop:real`, **real row**: `a • b = √a·b·√a` on **all** effects, no twist parameter — **UNCONDITIONAL** | `Necessity.real_classification` | `Necessity/RealRowUnconditional.lean` |
+| the same, with the eigenframe Jordan property as a hypothesis | `Necessity.sp_eq_luders_of_effect` | `Necessity/RealRigidity.lean` |
+| real Kadison rigidity: a unital order-automorphism of `H_N(ℝ)` is orthogonal conjugation | `Necessity.orderAutoR_preservesJordan` | `Necessity/RealKadison.lean` |
+| real Wigner rigidity: a transition-probability preserving ray map is induced by an isometry | `Projectivization.exists_isometry_of_transProbPreservingR` | `Vendor/Wigner/RealWigner.lean` |
 | the same, invertible effects only | `Necessity.sp_eq_luders_of_posDef` | `Necessity/RealRigidity.lean` |
 | the comparison character is the identity (`Θ_a = id`) | `Necessity.chiTilde_eq_id` | `Necessity/RealRigidity.lean` |
 | `prop:singular` applied over ℝ | `Necessity.dense_posDef_effectsR` + `MasterTheorem.prop_singular` | `Necessity/RealRigidity.lean` |
 
-**Exact hypothesis accounting for `sp_eq_luders_of_effect`**: the `SequentialProductOn`
-fields (S1, S3–S7); S2; and `ThetaPreservesJordanG` in each eigenframe. Nothing else —
-`#print axioms` is Lean core only — but the row is **conditional**, and should be
-described as "machine-checked modulo the cited Jordan property", never as
-unconditional. The ℂ row above carries no such hypothesis.
+**Exact hypothesis accounting for `real_classification` (2026-08-07)**: the
+`SequentialProductOn` fields (S1, S3–S7); S2; and `0 < N`. That is the paper's own list —
+the row is **UNCONDITIONAL** and may be described as such. `#print axioms` is Lean core
+only (`propext`, `Classical.choice`, `Quot.sound`).
+
+`sp_eq_luders_of_effect` remains as stated, carrying `ThetaPreservesJordanG` in each
+eigenframe; `real_classification` is that theorem with the hypothesis discharged by
+`thetaPreservesJordanR_of_S2`, which applies real Kadison to the comparison map. Prefer
+`real_classification` when citing the row.
+
+Two accuracy notes. (i) The ℂ row's Wigner input is a vendored **proof**, not an axiom, so
+"ℝ avoids an import that ℂ needs" is FALSE — both rows close over Lean core. What ℝ lacked
+was a theorem that existed in no library, and it is now proved here. (ii) The
+unconditional statement is at `n := Fin N`; `sp_eq_luders_of_effect` is stated at generic
+`n`, and the Kadison bridge is `Fin N`-bound because it needs `Matrix.toEuclideanLin`.
 
 The supporting field-general infrastructure (of independent interest, all
 `RCLike 𝕜`): `HermitianMat.sqrt_mul_of_commute` (square roots multiply on commuting

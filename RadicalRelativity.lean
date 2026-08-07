@@ -254,7 +254,10 @@ import RadicalRelativity.Necessity.RealJordanWitness
 import RadicalRelativity.Necessity.RealStrength
 import RadicalRelativity.Necessity.RealProjectionOrder
 import RadicalRelativity.Necessity.RealWignerBridge
+import RadicalRelativity.Necessity.RealInducedMap
+import RadicalRelativity.Necessity.RealKadison
 import RadicalRelativity.Necessity.RealRigidity
+import RadicalRelativity.Necessity.RealRowUnconditional
 
 -- M2 necessity core, tenth unit (LEDGER 2.6, chi part 1): the comparison character
 -- on the diagonal family — base-point congruence, the value law

@@ -13,9 +13,9 @@ interface structure instantiated on the intended algebras.
 
 ---
 
-## ★ STATE OF THE SIX TARGETS — as of 2026-08-06 (read this first)
+## ★ STATE OF THE SIX TARGETS — as of 2026-08-07 (read this first)
 
-Tree: `lake build` green at 3088 jobs; `AxiomAudit.lean` PASS at 131 tracked modules;
+Tree: `lake build` green at 3099 jobs; `AxiomAudit.lean` PASS at 142 tracked modules;
 **custom axioms exactly `[]`**, every tracked declaration's closure ⊆
 {`propext`, `Classical.choice`, `Quot.sound`}. All commits LOCAL (repo is public;
 pushing is Bryan-gated).
@@ -23,18 +23,40 @@ pushing is Bryan-gated).
 | Row | Status | Capstone |
 | --- | --- | --- |
 | `H_N(ℂ)`, N ≥ 3 | **MACHINE-CHECKED, UNCONDITIONAL** — `∃!` real `t` with `a•b = a^{1/2+it} b a^{1/2−it}` on ALL effects | `Necessity.complex_classification` |
-| `H_n(ℝ)` | **MACHINE-CHECKED modulo the cited Jordan property** — `a•b = √a·b·√a` on ALL effects, no twist | `Necessity.sp_eq_luders_of_effect` |
+| `H_n(ℝ)` | **MACHINE-CHECKED, UNCONDITIONAL (2026-08-07)** — `a•b = √a·b·√a` on ALL effects, no twist; the Jordan hypothesis is DISCHARGED by real Kadison proved in-tree | `Necessity.real_classification` |
 | `H_n(ℍ)` | **FOUNDATION COMPLETE** (carrier, order-unit, unital Jordan subalgebra, positivity, cfc-closure); **argument is a lane** — the Θ chain is not yet available on this carrier | `QuatCarrier`, `IsQuaternionic.cfc_of_effect` |
 | `H₃(𝕆)` | **BLOCKED** — octonions exist in no prover (verified: zero files) | — |
 | `cor:qubit-classification` | moduli space + one nonconstant element + certified `ℂP¹→ℝP²` descent + separation; **classification map `product ↦ moduli` ABSENT** | `RankTwo.tauModuliRP2`, `RankTwo.tauRP2_blochFrame` |
 | `mthm:omnibus` | **carrier + BOTH assembly halves** (sufficiency `prod`, determination `sp_eq_of_prod_eq`); conditional on the SPLITTING (`prop:central`, paper proof) | `SequentialProductOn.prod` |
 
-**The ℝ row's single condition** is `ThetaPreservesJordanG` in each eigenframe, carried
-as a located hypothesis exactly as the manuscript cites vIR. Removing it needs ONE
-theorem — real Wigner rigidity — whose file is under way
-(`Vendor/Wigner/RealWigner.lean`): setup, the easy inclusion, orthogonality preservation,
-the orthonormal image, its packaging as a basis, and the squared-coordinate transfer are
-all landed and gated. **Only the sign-fixing step remains in that theorem.**
+★★**THE ℝ ROW'S CONDITION IS GONE (2026-08-07).** `Necessity.real_classification`
+(`Necessity/RealRowUnconditional.lean`) proves: for any S1-S7 product with S2 on
+`H_N(ℝ)`, `N > 0`, `P.sp a b = b.conj (a.cfc sqrt).mat` on ALL effects. Hypothesis list
+is exactly the paper's; `#print axioms` = `[propext, Classical.choice, Quot.sound]`.
+The discharge chain, all in-tree:
+  * `Vendor/Wigner/RealWigner.exists_isometry_of_transProbPreservingR` — real Wigner
+    rigidity, PROVED (the theorem that existed in no library);
+  * `Necessity/RealInducedMap.lean` — `rayMapR` (order automorphism ⟹ ray self-map via
+    choice) + `rayMapR_transProbPreservingR` (it preserves transition probability, by
+    `tprobR_preserved`) + `isometryMatrixR` (the orthogonal MATRIX of the isometry, with
+    `isometryMatrixR_orthogonal`) + `rankOneR_eq_of_mk_eq` (ray equality ⟹ rank-one
+    equality: the sign cancels because `rankOneR` is quadratic — this is the step that
+    has no ℂ analogue and is why ℝ needs no dichotomy);
+  * `Necessity/RealKadison.orderAutoR_preservesJordan` — REAL KADISON RIGIDITY: every
+    unital ℝ-linear order-automorphism of `H_N(ℝ)` is conjugation by an orthogonal matrix,
+    hence Jordan;
+  * `Necessity/RealRowUnconditional.thetaPreservesJordanR_of_S2` — `theta` is a unital
+    surjective linear order-iso (`theta_le_iff`/`theta_one`/`thetaEquiv`, all already
+    field-general), so real Kadison applies in every eigenframe.
+**CORRECTION to an earlier framing in this ledger and in the new files' first drafts:**
+the ℂ row's Wigner step is a vendored *proof* (`Vendor/Wigner/WignerRigidity.lean`), NOT
+an axiom — `#print axioms Necessity.complex_classification` is Lean core too. The ℝ row's
+gap was never a cited axiom that ℂ also had; it was a MISSING THEOREM. Do not write "ℝ is
+better founded than ℂ" anywhere: both rows now close over Lean core alone.
+Scope note: the unconditional statement is at `n := Fin N` (the paper's `H_N(ℝ)`);
+`sp_eq_luders_of_effect` remains stated at generic `[Fintype n] [DecidableEq n]` and the
+Kadison bridge is `Fin N`-bound because it needs `Matrix.toEuclideanLin`. Generalizing the
+bridge to arbitrary `n` is mechanical (nothing uses `Fin`'s order) but was not done.
 
 **Field-general infrastructure now standing** (none of it in Mathlib):
 `HermitianMat.sqrt_mul_of_commute`, `eq_zero_of_commute_hermitian_of_trace_zero`,
