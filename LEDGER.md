@@ -24,7 +24,7 @@ pushing is Bryan-gated).
 | --- | --- | --- |
 | `H_N(ℂ)`, N ≥ 3 | **MACHINE-CHECKED, UNCONDITIONAL** — `∃!` real `t` with `a•b = a^{1/2+it} b a^{1/2−it}` on ALL effects | `Necessity.complex_classification` |
 | `H_n(ℝ)` | **MACHINE-CHECKED modulo the cited Jordan property** — `a•b = √a·b·√a` on ALL effects, no twist | `Necessity.sp_eq_luders_of_effect` |
-| `H_n(ℍ)` | **RE-SCOPED AND STARTED** — carrier EXISTS as an order-unit space inside `H_{2n}(ℂ)`; `SequentialProductOn` on it typechecks | `HermitianMat.QuatCarrier`, `IsQuaternionic.symmMul` |
+| `H_n(ℍ)` | **FOUNDATION COMPLETE** (carrier, order-unit, unital Jordan subalgebra, positivity, cfc-closure); **argument is a lane** — the Θ chain is not yet available on this carrier | `QuatCarrier`, `IsQuaternionic.cfc_of_effect` |
 | `H₃(𝕆)` | **BLOCKED** — octonions exist in no prover (verified: zero files) | — |
 | `cor:qubit-classification` | moduli space + one nonconstant element + certified `ℂP¹→ℝP²` descent + separation; **classification map `product ↦ moduli` ABSENT** | `RankTwo.tauModuliRP2`, `RankTwo.tauRP2_blochFrame` |
 | `mthm:omnibus` | untouched; sits behind the rows | — |
@@ -167,9 +167,25 @@ closure, all machine-checked, all inside complex Hermitian matrices.
 File-order lesson (hit twice): this file's sections have real dependencies —
 `quatConj_isHermitian` needs the positivity section's lemmas, and the closure needs the
 Hermitian-level section. Append new sections at the END and move them up only if needed.
-**What remains for the ℍ row is no longer structural**: transport a `SequentialProductOn`
-onto `QuatCarrier` and run the ℝ-shaped argument (the quaternionic Peirce block is `ℍ`,
-centre `ℝ`, so `eq_one_of_sq_eq_one_of_continuous` from `RealRigidity` applies verbatim).
+★**CORRECTION to the sentence that stood here (my own, one commit earlier): "what remains
+is no longer structural" was TOO OPTIMISTIC.** Verified at source: every file in
+`Necessity/` states its results over `HermitianMat n 𝕜` — `grep` for an abstract
+`[OrderUnitSpace V]` carrier in `Necessity/*.lean` returns **nothing**. So **the Θ chain is
+not available on `QuatCarrier`**, and the ℍ row's remaining work is a GENERALIZATION job of
+the same kind as the ℝ port, not a short argument.
+**What the ℍ row actually needs now, honestly scoped:**
+* the Θ construction re-derived over the quaternionic carrier. Two architectures:
+  (i) generalize the `Necessity/` chain from `HermitianMat n 𝕜` to an abstract
+  "Jordan-subalgebra carrier" (clean, reusable, but touches the ℂ lane — apply the
+  submission-artifact rule and use `…Gen` twins, per the 234-site decision); or
+  (ii) restrict the existing complex operators to the carrier one at a time —
+  `Q_{√a}` DOES restrict (Φ is multiplicative and the carrier is cfc-closed, both now
+  proved), so this is viable and touches nothing finished.
+* Architecture (ii) is the recommended start: it needs `seqLeftMul` and `quadRepEquiv`
+  restricted, which the completed foundation already justifies.
+* THEN the ℝ-shaped ending applies, and `eq_one_of_sq_eq_one_of_continuous` from
+  `RealRigidity` is reusable verbatim (quaternionic Peirce block is `ℍ`, centre `ℝ`).
+**Net: the ℍ row's FOUNDATION is complete and machine-checked; its ARGUMENT is a lane.**
 ★**Superseded note (kept for provenance), the earlier framing of this gap**: the transfer needs
 `Φ` to be norm-BOUNDED, not merely continuous, and neither a Frobenius-invariance lemma
 nor a linear-map-bound route is cheaply available here (`Φ` is conjugate-linear, so the
