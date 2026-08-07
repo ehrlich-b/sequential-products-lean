@@ -22,8 +22,8 @@ pushing is Bryan-gated).
 
 | Row | Status | Capstone |
 | --- | --- | --- |
-| `H_N(ℂ)`, N ≥ 3 | **MACHINE-CHECKED, UNCONDITIONAL** — `∃!` real `t` with `a•b = a^{1/2+it} b a^{1/2−it}` on ALL effects | `Necessity.complex_classification` |
-| `H_n(ℝ)` | **MACHINE-CHECKED, UNCONDITIONAL (2026-08-07)** — `a•b = √a·b·√a` on ALL effects, no twist; the Jordan hypothesis is DISCHARGED by real Kadison proved in-tree | `Necessity.real_classification` |
+| `H_N(ℂ)`, N ≥ 3 | **MACHINE-CHECKED, carries TWO located frame-graph hypotheses** (`connected` = lem:frame-connectivity, `overlap` = cross-coherence) — `∃!` real `t` with `a•b = a^{1/2+it} b a^{1/2−it}` on ALL effects. **NOT hypothesis-free — see the label correction below** | `Necessity.complex_classification` |
+| `H_n(ℝ)` | **MACHINE-CHECKED, HYPOTHESIS-FREE (2026-08-07)** — `a•b = √a·b·√a` on ALL effects, no twist; Jordan hypothesis DISCHARGED by real Kadison proved in-tree. **The only row carrying nothing beyond S1-S7 + S2** | `Necessity.real_classification` |
 | `H_n(ℍ)` | **FOUNDATION COMPLETE + `Q_{√a}` restricts** (carrier, order-unit, unital Jordan subalgebra, positivity, cfc-closure, `quatQuadRepEquiv`); **NOT a short lane — see the carrier-genericity finding below** | `QuatCarrier`, `quatQuadRepEquiv` |
 | `H₃(𝕆)` | **BLOCKED** — octonions exist in no prover (verified: zero files) | — |
 | `cor:qubit-classification` | moduli space + one nonconstant element + certified `ℂP¹→ℝP²` descent + separation; **classification map `product ↦ moduli` ABSENT** | `RankTwo.tauModuliRP2`, `RankTwo.tauRP2_blochFrame` |
@@ -57,6 +57,29 @@ Scope note: the unconditional statement is at `n := Fin N` (the paper's `H_N(ℝ
 `sp_eq_luders_of_effect` remains stated at generic `[Fintype n] [DecidableEq n]` and the
 Kadison bridge is `Fin N`-bound because it needs `Matrix.toEuclideanLin`. Generalizing the
 bridge to arbitrary `n` is mechanical (nothing uses `Fin`'s order) but was not done.
+
+★★**LABEL CORRECTION 2026-08-07 — the ℂ row was mislabelled in THIS TABLE, and the mislabel
+was repeated in session reports. Verified by `#check`, not by reading prose.**
+```
+@Necessity.real_classification    : ∀ {N}, 0 < N → ∀ P, P.FirstArgContinuous → … (nothing else)
+@Necessity.complex_classification : ∀ {N}, 3 ≤ N → ∀ P, P.FirstArgContinuous →
+                                      ∀ (Adj), (connected …) → (overlap …) → ∃! t, …
+```
+The ℂ row takes `Adj` plus `connected` plus `overlap` as CALLER-SUPPLIED arguments. Those are
+paper-proved and located, never axioms — but a theorem with located hypotheses is **not
+unconditional**, which is exactly the standard this ledger applied to the ℝ row when it read
+"modulo the cited Jordan property". Applying one standard to ℝ and another to ℂ is the error.
+`THEOREM-MAP.md` was RIGHT throughout (it calls the two "the honest residue of this row");
+only this summary table and the session reports drifted. THEOREM-MAP remains the governing
+honesty ledger — **when the two disagree, THEOREM-MAP wins.**
+**Net standing after 08-07:** `H_n(ℝ)` is the ONLY row that carries nothing beyond the paper's
+own S1-S7 + S2. It is therefore the strongest row in the development, and the earlier
+instruction "never write 'ℝ is better founded than ℂ'" is correct ONLY about axiom closure
+(both are Lean core). On CARRIED HYPOTHESES ℝ is now strictly cleaner, and saying so is
+accurate. Distinguish the two axes explicitly whenever either row is described.
+To make ℂ genuinely hypothesis-free, `connected` and `overlap` must be discharged: connectivity
+of the unitary frame graph, and cross-coherence of adjacent frames' `U(1)` characters. Neither
+is started; neither is blocked by anything absent from Mathlib.
 
 **Field-general infrastructure now standing** (none of it in Mathlib):
 `HermitianMat.sqrt_mul_of_commute`, `eq_zero_of_commute_hermitian_of_trace_zero`,
