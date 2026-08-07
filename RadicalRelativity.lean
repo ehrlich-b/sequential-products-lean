@@ -92,6 +92,14 @@ import RadicalRelativity.Hermitian.Resolution
 -- real branch (M4.1) cannot, since twistFactor is intrinsically complex.
 import RadicalRelativity.Hermitian.SqrtMul
 
+-- The quaternionic type inside the complex one (M4.2 foundation): the symplectic
+-- involution Phi A = J0 * conj(A) * J0^T on complex 2n x 2n matrices, multiplicative
+-- because J0^T J0 = 1, whose FIXED POINTS are the quaternion-linear maps -- so H_n(H)
+-- sits inside H_2n(C) as a Jordan subalgebra, and the row needs no carrier over a
+-- noncommutative ring.  (Quaternions ARE in Mathlib; the real blocker was that H is not
+-- RCLike, which this route sidesteps entirely.)
+import RadicalRelativity.Hermitian.Symplectic
+
 -- The functional calculus at polynomials, over ANY RCLike field: cfc at a monomial is
 -- a matrix power, hence manifestly continuous in the matrix.  This is the
 -- field-general replacement for the complex-only cfc_continuous, whose proof routes

@@ -24,7 +24,7 @@ pushing is Bryan-gated).
 | --- | --- | --- |
 | `H_N(ℂ)`, N ≥ 3 | **MACHINE-CHECKED, UNCONDITIONAL** — `∃!` real `t` with `a•b = a^{1/2+it} b a^{1/2−it}` on ALL effects | `Necessity.complex_classification` |
 | `H_n(ℝ)` | **MACHINE-CHECKED modulo the cited Jordan property** — `a•b = √a·b·√a` on ALL effects, no twist | `Necessity.sp_eq_luders_of_effect` |
-| `H_n(ℍ)` | **NOT blocked the way earlier notes said — see the correction below** | — |
+| `H_n(ℍ)` | **RE-SCOPED AND STARTED** — sits inside `H_{2n}(ℂ)` as a Jordan subalgebra; foundation machine-checked | `HermitianMat.IsQuaternionic.symmMul` |
 | `H₃(𝕆)` | **BLOCKED** — octonions exist in no prover (verified: zero files) | — |
 | `cor:qubit-classification` | moduli space + one nonconstant element + certified `ℂP¹→ℝP²` descent + separation; **classification map `product ↦ moduli` ABSENT** | `RankTwo.tauModuliRP2`, `RankTwo.tauRP2_blochFrame` |
 | `mthm:omnibus` | untouched; sits behind the rows | — |
@@ -60,6 +60,24 @@ the machinery this campaign already has field-general and, at ℂ, fully develop
 never needs a `HermitianMat` layer over a noncommutative ring. So the ℍ row is plausibly
 a LANE (like the ℝ row turned out to be), not a foundational program. It should be
 re-scoped before anyone budgets months for it.
+**STARTED 2026-08-06** (`Hermitian/Symplectic.lean`, NEW, census 132, gates green, tree
+at 3089 jobs, custom axioms exactly `[]`; `quatConj_mul` and `IsQuaternionic.symmMul`
+axiom-checked = Lean core only): `symplecticJ` (`J₀ = [[0,−1],[1,0]]` via
+`Matrix.fromBlocks`) with `symplecticJ_transpose_mul`/`_mul_transpose` (`J₀ᵀJ₀ = 1`),
+the involution **`quatConj A = J₀ Ā J₀ᵀ`** with **`quatConj_mul` (MULTIPLICATIVE — this
+is where `J₀ᵀJ₀ = 1` is used)**, `quatConj_add`, `quatConj_real_smul`,
+`quatConj_smul_of_conj_eq` (homogeneity for any self-conjugate scalar, which is what
+covers the Jordan product's `2⁻¹`), the predicate `IsQuaternionic` and its closure
+lemmas — culminating in **`IsQuaternionic.symmMul`: the fixed set is closed under the
+JORDAN PRODUCT, i.e. `H_n(ℍ)` is a Jordan subalgebra of `H_{2n}(ℂ)`**.
+Traps: `symmMul` lives in `Vendor/HermitianMat/Jordan.lean` (import it, `OrderUnit`
+alone is not enough); `Matrix.add_mul`/`smul_mul` rewrites do not fire on the
+`J₀ * _ * J₀ᵀ` sandwich — use `noncomm_ring`; and `(starRingEnd ℂ) 2 = 2` wants routing
+through `Complex.conj_ofReal` after `show (2:ℂ) = ((2:ℝ):ℂ)`.
+**Next for the ℍ row**: the order structure on the fixed set (an effect of `H_n(ℍ)` is a
+quaternionic effect of `H_{2n}(ℂ)`), then transport a product and run the ℝ-shaped
+argument — the quaternionic Peirce block is `ℍ`, whose centre is `ℝ`, so the same
+"no continuous character into a discrete sign group" kill should apply.
 
 **If the deliverable needs scoping**: the two finished rows are a defensible artifact —
 an unconditional complex classification plus a real row resting on one published
