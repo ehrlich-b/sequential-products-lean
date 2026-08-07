@@ -105,6 +105,7 @@ import RadicalRelativity.Hermitian.SqrtMul
 -- noncommutative ring.  (Quaternions ARE in Mathlib; the real blocker was that H is not
 -- RCLike, which this route sidesteps entirely.)
 import RadicalRelativity.Hermitian.Symplectic
+import RadicalRelativity.Hermitian.QuatQuadRep
 
 -- The functional calculus at polynomials, over ANY RCLike field: cfc at a monomial is
 -- a matrix power, hence manifestly continuous in the matrix.  This is the

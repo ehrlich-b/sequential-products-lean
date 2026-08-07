@@ -15,7 +15,7 @@ interface structure instantiated on the intended algebras.
 
 ## ★ STATE OF THE SIX TARGETS — as of 2026-08-07 (read this first)
 
-Tree: `lake build` green at 3099 jobs; `AxiomAudit.lean` PASS at 142 tracked modules;
+Tree: `lake build` green at 3100 jobs; `AxiomAudit.lean` PASS at 143 tracked modules;
 **custom axioms exactly `[]`**, every tracked declaration's closure ⊆
 {`propext`, `Classical.choice`, `Quot.sound`}. All commits LOCAL (repo is public;
 pushing is Bryan-gated).
@@ -24,7 +24,7 @@ pushing is Bryan-gated).
 | --- | --- | --- |
 | `H_N(ℂ)`, N ≥ 3 | **MACHINE-CHECKED, UNCONDITIONAL** — `∃!` real `t` with `a•b = a^{1/2+it} b a^{1/2−it}` on ALL effects | `Necessity.complex_classification` |
 | `H_n(ℝ)` | **MACHINE-CHECKED, UNCONDITIONAL (2026-08-07)** — `a•b = √a·b·√a` on ALL effects, no twist; the Jordan hypothesis is DISCHARGED by real Kadison proved in-tree | `Necessity.real_classification` |
-| `H_n(ℍ)` | **FOUNDATION COMPLETE** (carrier, order-unit, unital Jordan subalgebra, positivity, cfc-closure); **argument is a lane** — the Θ chain is not yet available on this carrier | `QuatCarrier`, `IsQuaternionic.cfc_of_effect` |
+| `H_n(ℍ)` | **FOUNDATION COMPLETE + `Q_{√a}` restricts** (carrier, order-unit, unital Jordan subalgebra, positivity, cfc-closure, `quatQuadRepEquiv`); **NOT a short lane — see the carrier-genericity finding below** | `QuatCarrier`, `quatQuadRepEquiv` |
 | `H₃(𝕆)` | **BLOCKED** — octonions exist in no prover (verified: zero files) | — |
 | `cor:qubit-classification` | moduli space + one nonconstant element + certified `ℂP¹→ℝP²` descent + separation; **classification map `product ↦ moduli` ABSENT** | `RankTwo.tauModuliRP2`, `RankTwo.tauRP2_blochFrame` |
 | `mthm:omnibus` | **carrier + BOTH assembly halves** (sufficiency `prod`, determination `sp_eq_of_prod_eq`); conditional on the SPLITTING (`prop:central`, paper proof) | `SequentialProductOn.prod` |
@@ -62,6 +62,45 @@ bridge to arbitrary `n` is mechanical (nothing uses `Fin`'s order) but was not d
 `HermitianMat.sqrt_mul_of_commute`, `eq_zero_of_commute_hermitian_of_trace_zero`,
 `continuous_cfc_polynomial`, `continuousOn_cfc_sqrt_effects`, plus the whole Θ chain,
 spectral resolution, and character/coalescence layers over arbitrary `RCLike 𝕜`.
+
+★★**SECOND CORRECTION TO THE ℍ ESTIMATE — verified at source 2026-08-07. READ BEFORE
+BUDGETING THE ℍ ROW.** The 08-06 note below concluded the ℍ row is "plausibly a LANE, not a
+foundational program" because the symplectic embedding puts the CARRIER inside complex
+Hermitian matrices. The carrier claim is right and is now built (`quatQuadRepEquiv`, below).
+**The conclusion drawn from it is wrong.** Checked by grepping the `variable` line of every
+stage of the Θ chain:
+```
+LeftMultiplication    variable (P : SequentialProductOn (HermitianMat n 𝕜))
+Theta                 variable (P : SequentialProductOn (HermitianMat n 𝕜))
+ComparisonInstanceGen variable (P : SequentialProductOn (HermitianMat n 𝕜))
+BlockChiGen           variable (P : SequentialProductOn (HermitianMat n 𝕜))
+ChiContinuityGen      variable (P : SequentialProductOn (HermitianMat n 𝕜))
+```
+**The Θ apparatus is generic in the FIELD (`𝕜 : RCLike`) and CONCRETE in the CARRIER
+(`HermitianMat n 𝕜`).** `QuatCarrier n` is a `Submodule`, not a `HermitianMat`, so it can
+consume NONE of that chain no matter how field-general the chain is. Concretely `seqLeftMul`
+— the first link — is built from `posPart`/`negPart`, spectral machinery that exists on
+`HermitianMat` and not on a submodule. So the ℍ row needs one of:
+  * **(A) an abstract-carrier refactor**: lift the Θ chain from `HermitianMat n 𝕜` to an
+    interface (order-unit space + cfc + Jordan product + positive/negative parts), then
+    instantiate it twice. Seven files, and it touches two BANKED rows — high risk, real value
+    (it would also make the ℝ and ℂ rows instances of one theorem);
+  * **(B) a transfer argument** carrying the ℂ classification onto the subalgebra. No route
+    known: a product on `H_n(ℍ)` has no reason to extend to `H_{2n}(ℂ)`.
+Do NOT describe the ℍ row as "a lane" or quote a short estimate for it until (A) or (B) is
+chosen. The 08-06 text below is kept for provenance; its Mathlib facts are correct and its
+scheduling conclusion is superseded by this block.
+**LANDED 2026-08-07** (`Hermitian/QuatQuadRep.lean`, NEW, census 143, gates green 3100 jobs,
+custom axioms exactly []): `quatConjH_conj` — **the intertwining** `Φ (x.conj A) = (Φ x).conj A`
+for quaternionic `A` and EVERY `x`; `IsQuaternionic.conj`; `IsQuaternionic.sqrt`;
+`IsQuaternionic.quadRep`; `IsQuaternionic.quadRepInv`; and `quatQuadRep`/`quatQuadRepInv`/
+**`quatQuadRepEquiv`** — `Q_{√a}` is an ℝ-linear AUTOMORPHISM of `H_n(ℍ)`.
+KEY TRICK, reusable: the inverse branch conjugates by `a.cfc (fun x => (√x)⁻¹)`, and **that
+function is not continuous at 0**, so `IsQuaternionic.cfc_of_effect` cannot reach it. Stating
+the intertwining for EVERY `x` (not just quaternionic ones) makes the inverse branch free:
+`Q` is injective and `Q (Φ x) = Φ (Q x) = Φ y = y = Q x` forces `Φ x = x`. No functional
+calculus needed on the inverse side at all.
+Trap: `Matrix.PosDef` in a statement needs `open ComplexOrder` (else `PartialOrder ℂ` fails).
 
 ★★**CORRECTION to the ℍ assessment, verified against the pinned Mathlib 2026-08-06.**
 Earlier notes (including this session's) said "matrices over ℍ exist in no prover" and
