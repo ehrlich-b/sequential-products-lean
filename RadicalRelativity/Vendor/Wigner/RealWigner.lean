@@ -532,6 +532,30 @@ theorem basis_add_ne_zero (b : OrthonormalBasis ι ℝ E) {i j : ι} (hij : i �
   rw [h, inner_zero_left] at h1
   exact zero_ne_one h1
 
+omit [Nonempty ι] [FiniteDimensional ℝ E] in
+/-- **The two-slot transfer.**  The third input to `sign_pair_of_abs`: the image's
+coordinate against the image of `b i + b j` reproduces the SUM of the source's two
+coordinates, up to the same factor `‖b i + b j‖⁻¹` that `image_two_slot` produced.  With
+`|x| = |p|` and `|y| = |q|` from step 4a, this is precisely the `|x + y| = |p + q|` that
+forces a common sign. -/
+theorem TransProbPreservingR.abs_inner_two_slot {f : ℙ ℝ E → ℙ ℝ E}
+    (hf : TransProbPreservingR f) (b : OrthonormalBasis ι ℝ E) {ψ : E} (hψ : ψ ≠ 0)
+    {i j : ι} (hij : i ≠ j) :
+    |(inner ℝ (‖(f (Projectivization.mk ℝ ψ hψ)).rep‖⁻¹ • (f (Projectivization.mk ℝ ψ hψ)).rep)
+        (‖(f (Projectivization.mk ℝ (b i + b j) (basis_add_ne_zero b hij))).rep‖⁻¹ •
+          (f (Projectivization.mk ℝ (b i + b j) (basis_add_ne_zero b hij))).rep) : ℝ)|
+      = ‖b i + b j‖⁻¹ * |(inner ℝ (‖ψ‖⁻¹ • ψ) (b i) : ℝ)
+          + (inner ℝ (‖ψ‖⁻¹ • ψ) (b j) : ℝ)| := by
+  have hw := basis_add_ne_zero b hij
+  have hnw : ‖b i + b j‖ ≠ 0 := norm_ne_zero_iff.mpr hw
+  have hφ0 : ‖b i + b j‖⁻¹ • (b i + b j) ≠ 0 := normalize_ne_zero hw
+  have hray : Projectivization.mk ℝ (‖b i + b j‖⁻¹ • (b i + b j)) hφ0
+      = Projectivization.mk ℝ (b i + b j) hw := mk_smul_eq (inv_ne_zero hnw) hw hφ0
+  have h := hf.abs_inner_image hψ hφ0 (norm_normalize hw)
+  rw [hray] at h
+  rw [h, real_inner_smul_right, abs_mul, abs_of_nonneg (inv_nonneg.mpr (norm_nonneg _)),
+    inner_add_right]
+
 end ImageBasis
 
 /-! ## Step 4c, part 2: the arithmetic that forces a COMMON sign

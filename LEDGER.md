@@ -2055,8 +2055,14 @@ sorry-free Wigner rigidity — see 3.0.
     `basis_add_ne_zero` (distinct orthonormal basis vectors have nonzero sum), which removes
     the side hypothesis from every two-slot construction downstream. Axiom-checked = Lean
     core only.
-    **What remains of the rigidity: 4d — define the pattern from the pairs `(i₀, i)` (the
-    coordinates are inner products, so no choice is needed), prove pair-consistency for
+    **STEP 4c part 3 DONE (same day)**: **`abs_inner_two_slot`** — the third input to
+    `sign_pair_of_abs`. The image's coordinate against the image of `b i + b j` reproduces
+    the SUM of the source's two coordinates, with the same factor `‖b i + b j‖⁻¹` that
+    `image_two_slot` produced. So all three hypotheses of the common-sign lemma are now
+    machine-checked facts about `f`: `|x| = |p|` and `|y| = |q|` from `abs_inner_imgBasis`,
+    and `|x + y| = |p + q|` from this. Axiom-checked = Lean core only.
+    **What remains of the rigidity: 4d ONLY — define the pattern from the pairs `(i₀, i)`
+    (the coordinates are inner products, so no choice is needed), prove pair-consistency for
     arbitrary `(i,j)` via a THREE-slot vector, and assemble the isometry. The inputs are now
     all in place: `image_two_slot` supplies the moduli, `sign_pair_of_abs` the common sign,
     `signAdjustBasis` the absorption, `eq_sum_over_support` the expansion.** Use a
