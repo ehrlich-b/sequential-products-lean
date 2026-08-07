@@ -2159,6 +2159,18 @@ sorry-free Wigner rigidity — see 3.0.
     argument) and **`trace_rankOneR_mul_rankOneR`** (`= (ψ ⬝ᵥ φ)²`, exactly the real
     transition probability, with no modulus to take). Gates green at 3091 jobs, custom axioms
     exactly [].
+    **ℝ BRIDGE UNIT 2 DONE (same day)** — `Necessity/RealRankOneSpan.lean` (NEW, census 134
+    → **135**): `eq_zero_of_quadratic_zeroR` (a symmetric matrix with identically vanishing
+    quadratic form is zero — the form being both `≥ 0` and `≤ 0` pins it), `inner_rankOneR`,
+    `span_rankOneR_eq_top` (the rank-one projections of unit vectors SPAN, via trivial
+    orthogonal complement) and **`linearMap_eq_of_eq_on_rankOneR`** — agreement on rank-ones
+    is agreement everywhere. **This is the step that converts "the ray map is induced by an
+    orthogonal matrix" (real Wigner) into "the comparison map IS conjugation by it",** which
+    is what makes it a Jordan automorphism. Confirmation of the native-route bet: the ℂ
+    version's normalization step needs a `Complex.normSq` computation and a "the form is real"
+    lemma with conjugate-swapping; over ℝ rescaling just multiplies the form by `c²` and both
+    disappear. Gates green at 3092 jobs, custom axioms exactly []. Name trap:
+    `dotProduct_self_eq_zero` is ROOT namespace, not `Matrix.`.
     **★ ROUTE DECISION FOR THE ℝ BRIDGE — NATIVE, NOT A PORT, and here is the measurement.**
     The ℂ chain is phrased via `rankOne`/`tprob`/`nsq`, defined at ℂ in `ProjectionOrder` and
     `StrengthProbe`. Those primitives' scalars ARE inferable from their arguments, so in-place
