@@ -356,4 +356,36 @@ theorem TransProbPreservingR.abs_inner_image {f : ℙ ℝ E → ℙ ℝ E}
   exact hf.abs_coord_transfer hψ hφ hφ1 (normalize_ne_zero hrep) (norm_normalize hrep)
     (mk_normalize_rep _ (normalize_ne_zero hrep)).symm
 
+/-! ## Step 4b, part 1: a vector is its expansion over its support
+
+The sign-fixing argument works with vectors supported on two basis slots: the image of
+`b i + b j` has, by step 4a, coordinate modulus `1/√2` at `i` and `j` and modulus `0`
+everywhere else, so it is `a • b' i + d • b' j` with `|a| = |d| = 1/√2` and the ray
+depends only on the RELATIVE sign.  Turning "the other coordinates vanish" into that
+finite expansion is the general lemma below.
+-/
+
+/-- **A vector equals its expansion over any set carrying all its coordinates.**  Over ℝ
+the coordinates of `v` in an orthonormal basis are the inner products, so vanishing
+outside `s` collapses the full expansion to a sum over `s`. -/
+theorem eq_sum_over_support {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (b : OrthonormalBasis ι ℝ E) (v : E) (s : Finset ι)
+    (h : ∀ k, k ∉ s → (inner ℝ v (b k) : ℝ) = 0) :
+    v = ∑ k ∈ s, (inner ℝ v (b k) : ℝ) • b k := by
+  have hfull : ∑ k, (inner ℝ v (b k) : ℝ) • b k = v :=
+    (Finset.sum_congr rfl fun k _ => by rw [real_inner_comm]).trans (b.sum_repr' v)
+  refine hfull.symm.trans (Finset.sum_subset (Finset.subset_univ s) ?_).symm
+  intro k _ hks
+  rw [h k hks, zero_smul]
+
+/-- The two-slot case, which is the one the sign argument uses. -/
+theorem eq_pair_expansion {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (b : OrthonormalBasis ι ℝ E) (v : E) {i j : ι} (hij : i ≠ j)
+    (h : ∀ k, k ≠ i → k ≠ j → (inner ℝ v (b k) : ℝ) = 0) :
+    v = (inner ℝ v (b i) : ℝ) • b i + (inner ℝ v (b j) : ℝ) • b j := by
+  have := eq_sum_over_support b v {i, j} (fun k hk => by
+    simp only [Finset.mem_insert, Finset.mem_singleton, not_or] at hk
+    exact h k hk.1 hk.2)
+  rwa [Finset.sum_insert (by simpa using hij), Finset.sum_singleton] at this
+
 end Projectivization

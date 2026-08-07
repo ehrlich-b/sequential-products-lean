@@ -2009,7 +2009,17 @@ sorry-free Wigner rigidity — see 3.0.
     So the residual freedom is now a per-coordinate sign PATTERN, and all that remains of
     the real rigidity is that the pattern is a single GLOBAL sign. Axiom-checked = Lean
     core only.
-    **What remains of the rigidity: step 4b-4d — the sign-fixing argument proper.** Use a
+    **STEP 4b part 1 DONE (same day)**: `eq_sum_over_support` (a vector equals its
+    expansion over any set carrying all its coordinates) and `eq_pair_expansion` (the
+    two-slot case). This is the machine that turns step 4a's "the other coordinates
+    vanish" into a finite expansion: the image of `b i + b j` has coordinate modulus
+    `1/√2` at `i, j` and `0` elsewhere, hence equals `a • b' i + d • b' j`, so its RAY
+    depends only on the relative sign — which is the object the sign-fixing argument
+    manipulates. TRAP recorded: `rw [← b.sum_repr' v]` rewrites the `v` inside the
+    coordinates too; chain with `.trans` instead of rewriting. `OrthonormalBasis.coe_mk`
+    exists, so the bridge from `imageOrthonormalBasis` back to the explicit normalized
+    family is available for the next unit. Axiom-checked = Lean core only.
+    **What remains of the rigidity: step 4b part 2 - 4d — the sign-fixing proper.** Use a
     reference vector (e.g. `Σ eᵢ`, or successively the vectors `eᵢ + eⱼ`) to pin the
     relative signs, and check consistency via the transition probabilities with those
     mixed vectors; then assemble the isometry and conclude
