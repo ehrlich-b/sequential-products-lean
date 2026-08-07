@@ -1742,11 +1742,23 @@ sorry-free Wigner rigidity — see 3.0.
     (`n ≥ 3`) is induced by an orthogonal map — and there is no antiunitary branch to
     handle, since conjugation is trivial over ℝ, so the real statement is *strictly
     simpler* than the complex one already vendored.
-    **So the work is: (1) prove/port real Uhlhorn; (2) run the established `ℂ ⇝ 𝕜`
-    recipe over the eight M3 files.** Step (2) is mechanical at this point. Step (1) is
-    a real theorem but a classical and self-contained one, and it is the ONLY thing
-    standing between the ℝ row and unconditionality. Budget it as one theorem, not a
-    lane — this supersedes the earlier "new boulder of M3's kind" estimate.
+    **So the work is: (1) prove real Uhlhorn/Wigner FROM SCRATCH; (2) run the
+    established `ℂ ⇝ 𝕜` recipe over the eight M3 files.** Step (2) is mechanical.
+    ★**Step (1) cannot be a port — measured 2026-08-06**: the vendored
+    `WignerRigidity.lean` is 3179 lines with **85 uses of `Complex.I`, 117 circle/phase
+    references and 179 conjugation/antiunitary references**. That bulk IS the phase
+    structure: the unit-circle gauge freedom and the unitary-vs-antiunitary dichotomy.
+    None of it exists over ℝ, so the file is not portable — **but by the same token the
+    real proof is far shorter than 3179 lines**, because those three ingredients are
+    exactly what makes the complex proof long. The real argument is the classical one:
+    a transition-probability-preserving bijection carries an orthonormal basis to an
+    orthonormal basis, the preserved inner products pin the candidate orthogonal map on
+    that basis, and over ℝ the only residual freedom is a global sign (no circle, no
+    conjugation branch). Estimate: a few hundred lines, self-contained, no dependence on
+    the vendored artifact.
+    Net: the ℝ row is ONE self-contained classical theorem from unconditional — this
+    supersedes both the earlier "new boulder of M3's kind" estimate and any reading that
+    the vendored artifact could be reused.
   * This corrects the earlier "the real row is perhaps a session away" estimate a
     second time: the *machinery* is nearly ported, but an unconditional ℝ row is
     gated on real Kadison. Decide explicitly which of the two deliverables is wanted
