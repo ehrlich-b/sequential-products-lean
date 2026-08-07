@@ -627,6 +627,12 @@ their product has a genuine sign.
 noncomputable def normImg (f : ℙ ℝ E → ℙ ℝ E) {ψ : E} (hψ : ψ ≠ 0) : E :=
   ‖(f (Projectivization.mk ℝ ψ hψ)).rep‖⁻¹ • (f (Projectivization.mk ℝ ψ hψ)).rep
 
+/-- `normImg` in rewritable form, for FOLDING the expanded expression that the earlier
+step-4a lemmas are stated with. -/
+theorem normImg_def (f : ℙ ℝ E → ℙ ℝ E) {ψ : E} (hψ : ψ ≠ 0) :
+    ‖(f (Projectivization.mk ℝ ψ hψ)).rep‖⁻¹ • (f (Projectivization.mk ℝ ψ hψ)).rep
+      = normImg f hψ := rfl
+
 theorem normImg_ne_zero (f : ℙ ℝ E → ℙ ℝ E) {ψ : E} (hψ : ψ ≠ 0) : normImg f hψ ≠ 0 :=
   normalize_ne_zero (f _).rep_nonzero
 
@@ -637,6 +643,21 @@ theorem norm_normImg (f : ℙ ℝ E → ℙ ℝ E) {ψ : E} (hψ : ψ ≠ 0) : �
 theorem mk_normImg (f : ℙ ℝ E → ℙ ℝ E) {ψ : E} (hψ : ψ ≠ 0) :
     Projectivization.mk ℝ (normImg f hψ) (normImg_ne_zero f hψ) = f (Projectivization.mk ℝ ψ hψ) :=
   mk_normalize_rep _ _
+
+/-- **The transfer in full generality**: for ANY two rays, the modulus of the inner product
+of the normalized images equals that of the normalized sources.  Every specific transfer in
+this development (two-slot, three-slot) is now just a computation of the right-hand side —
+which is what makes the remaining pair-consistency argument mechanical rather than novel. -/
+theorem TransProbPreservingR.abs_inner_normImg {f : ℙ ℝ E → ℙ ℝ E}
+    (hf : TransProbPreservingR f) {ψ w : E} (hψ : ψ ≠ 0) (hw : w ≠ 0) :
+    |(inner ℝ (normImg f hψ) (normImg f hw) : ℝ)|
+      = |(inner ℝ (‖ψ‖⁻¹ • ψ) (‖w‖⁻¹ • w) : ℝ)| := by
+  have hφ0 : ‖w‖⁻¹ • w ≠ 0 := normalize_ne_zero hw
+  have hray : Projectivization.mk ℝ (‖w‖⁻¹ • w) hφ0 = Projectivization.mk ℝ w hw :=
+    mk_smul_eq (inv_ne_zero (norm_ne_zero_iff.mpr hw)) hw hφ0
+  have h := hf.abs_inner_image hψ hφ0 (norm_normalize hw)
+  rw [hray, normImg_def, normImg_def] at h
+  exact h
 
 section PairModuli
 
@@ -827,6 +848,20 @@ theorem TransProbPreservingR.two_slot_normBasis [DecidableEq ι] {f : ℙ ℝ E 
   refine ⟨(inner ℝ (normImg f (basis_add_ne_zero b h)) (hf.normBasis b i₀ i₀) : ℝ), hmodL, ?_⟩
   exact (eq_pair_expansion (hf.normBasis b i₀) (normImg f (basis_add_ne_zero b h)) h
     hvanish).trans (by rw [← heq, smul_add])
+
+/-- **The pair transfer for an arbitrary ray.**  `sign_pair_of_abs`'s third hypothesis, in
+the normalized basis: the moduli of the coordinate SUMS agree. -/
+theorem TransProbPreservingR.abs_add_coord_transfer [DecidableEq ι] {f : ℙ ℝ E → ℙ ℝ E}
+    (hf : TransProbPreservingR f) (b : OrthonormalBasis ι ℝ E) {i₀ i : ι} (h : i₀ ≠ i)
+    {ψ : E} (hψ : ψ ≠ 0) :
+    |(inner ℝ (normImg f hψ) (hf.normBasis b i₀ i₀) : ℝ)
+        + (inner ℝ (normImg f hψ) (hf.normBasis b i₀ i) : ℝ)|
+      = |(inner ℝ (‖ψ‖⁻¹ • ψ) (b i₀) : ℝ) + (inner ℝ (‖ψ‖⁻¹ • ψ) (b i) : ℝ)| := by
+  obtain ⟨A, hA, hAeq⟩ := hf.two_slot_normBasis b h
+  have hkey := hf.abs_inner_two_slot b hψ h
+  rw [normImg_def, normImg_def, hAeq, real_inner_smul_right, inner_add_right, abs_mul, hA]
+    at hkey
+  exact mul_left_cancel₀ (inv_ne_zero (norm_ne_zero_iff.mpr (basis_add_ne_zero b h))) hkey
 
 end PairModuli
 

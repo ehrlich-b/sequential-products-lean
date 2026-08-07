@@ -2098,7 +2098,28 @@ sorry-free Wigner rigidity — see 3.0.
     construction: it is what lets the transition probability between an arbitrary ray and
     `b i₀ + b i` be read directly as `|x + y|` in the ray's own coordinates, which is
     `sign_pair_of_abs`'s third hypothesis in usable form. Axiom-checked = Lean core only.
-    **What remains of the rigidity: 4d part 2e — the pattern from the pairs `(i₀, i)`
+    **STEP 4d part 2e DONE (same day)**: `normImg_def` (the folding lemma — the earlier
+    step-4a statements are in expanded form, so folding is what lets them meet the new ones),
+    **`abs_add_coord_transfer`** (`sign_pair_of_abs`'s third hypothesis for an ARBITRARY ray,
+    in the normalized basis: the moduli of the coordinate SUMS agree — obtained by cancelling
+    the common factor `‖b i₀ + b i‖⁻¹`), and **`abs_inner_normImg`**: the transfer in FULL
+    GENERALITY, for any two rays. That last one is the structural simplification of the
+    remaining work — every specific transfer (two-slot, three-slot) is now a computation of
+    its right-hand side, so the pair-consistency argument is mechanical rather than novel.
+    Axiom-checked = Lean core only.
+    **SCOPE OF WHAT IS LEFT, stated precisely (this replaces the earlier vaguer note).** With
+    `p_k = ⟨ψ̂, b k⟩` and `x_k = ⟨ψ', b'' k⟩`: `abs_inner_normBasis` gives `|x_k| = |p_k|` and
+    `abs_add_coord_transfer` gives `|x_{i₀} + x_i| = |p_{i₀} + p_i|`, so `sign_pair_of_abs`
+    yields `x_k = ε·p_k` for ALL k with ONE ε — **whenever `p_{i₀} ≠ 0`**. That case is
+    finished mathematically. The residual case `p_{i₀} = 0` cannot be anchored at `i₀`, and it
+    needs PAIR CONSISTENCY: that the `i₀`-normalization also symmetrizes pairs `(i,j)` with
+    neither index `i₀`. The route is a THREE-slot vector `b i₀ + b i + b j` (all three source
+    coordinates nonzero, so both pairs `(i₀,i)` and `(i₀,j)` transmit and share the anchor's
+    sign) plus an equality-in-the-triangle-inequality step. Estimated 3-4 units, all of the
+    same kind as those already banked. **Per-anchor isometries are NOT a shortcut** — anchoring
+    at a different index per ray gives a different isometry, which does not prove the single-`e`
+    statement; that dead end is recorded so it is not retried.
+    **What remains of the rigidity: 4d part 2f — the pattern from the pairs `(i₀, i)`
     (the coordinates are inner products, so no choice is needed), prove pair-consistency for
     arbitrary `(i,j)` via a THREE-slot vector, and assemble the isometry. The inputs are now
     all in place: `image_two_slot` supplies the moduli, `sign_pair_of_abs` the common sign,
