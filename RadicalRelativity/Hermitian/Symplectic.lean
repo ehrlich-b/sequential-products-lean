@@ -115,12 +115,66 @@ theorem quatConj_smul_of_conj_eq {c : ℂ} (hc : (starRingEnd ℂ) c = c)
     simp only [Matrix.map_apply, Matrix.smul_apply, smul_eq_mul, map_mul, hc]
   rw [hmap, Matrix.mul_smul, Matrix.smul_mul]
 
+/-- `J₀² = −1`: the symplectic matrix squares to minus the identity, which is what makes
+`Φ` an involution. -/
+theorem symplecticJ_sq : symplecticJ (n := n) * symplecticJ (n := n) = -1 := by
+  rw [symplecticJ, Matrix.fromBlocks_multiply]
+  ext i j
+  rcases i with i | i <;> rcases j with j | j <;>
+    simp [Matrix.fromBlocks, Matrix.one_apply, apply_ite]
+
+/-- **`Φ` is an involution**: `J₀` is real, so conjugating twice returns `J₀² A (J₀ᵀ)²`,
+and both squares are `−1`. -/
+theorem quatConj_involutive (A : Matrix (n ⊕ n) (n ⊕ n) ℂ) :
+    quatConj (quatConj A) = A := by
+  unfold quatConj
+  have hJreal : (symplecticJ (n := n)).map (starRingEnd ℂ) = symplecticJ (n := n) := by
+    rw [symplecticJ]
+    ext i j
+    rcases i with i | i <;> rcases j with j | j <;>
+      simp [Matrix.fromBlocks, Matrix.map_apply, Matrix.one_apply, apply_ite]
+  have hJTreal : ((symplecticJ (n := n))ᵀ).map (starRingEnd ℂ)
+      = (symplecticJ (n := n))ᵀ := by
+    ext i j
+    have := congrFun (congrFun hJreal j) i
+    simpa [Matrix.transpose_apply, Matrix.map_apply] using this
+  have hmap : ∀ X Y Z : Matrix (n ⊕ n) (n ⊕ n) ℂ,
+      (X * Y * Z).map (starRingEnd ℂ)
+        = X.map (starRingEnd ℂ) * Y.map (starRingEnd ℂ) * Z.map (starRingEnd ℂ) := by
+    intro X Y Z
+    have h1 : ∀ P Q : Matrix (n ⊕ n) (n ⊕ n) ℂ, (P * Q).map (starRingEnd ℂ)
+        = P.map (starRingEnd ℂ) * Q.map (starRingEnd ℂ) := by
+      intro P Q
+      ext i j
+      simp only [Matrix.map_apply, Matrix.mul_apply, map_sum, map_mul]
+    rw [h1, h1]
+  have hdouble : (A.map (starRingEnd ℂ)).map (starRingEnd ℂ) = A := by
+    ext i j
+    simp only [Matrix.map_apply, Complex.conj_conj]
+  rw [hmap, hJreal, hJTreal, hdouble]
+  calc symplecticJ * (symplecticJ * A * symplecticJᵀ) * symplecticJᵀ
+      = (symplecticJ * symplecticJ) * A * (symplecticJᵀ * symplecticJᵀ) := by
+        noncomm_ring
+    _ = A := by
+        rw [symplecticJ_sq, ← Matrix.transpose_mul, symplecticJ_sq,
+          Matrix.transpose_neg, Matrix.transpose_one]
+        noncomm_ring
+
 /-! ## The quaternionic subalgebra -/
 
 /-- **`A` is quaternionic**: it commutes with right multiplication by `j`, i.e. it is a
 fixed point of `Φ`.  These are exactly the images of `H_n(ℍ)` in `H_{2n}(ℂ)`. -/
 def IsQuaternionic (A : HermitianMat (n ⊕ n) ℂ) : Prop :=
   quatConj A.mat = A.mat
+
+/-- The identity is quaternionic (`J₀ J₀ᵀ = 1`). -/
+theorem isQuaternionic_one : IsQuaternionic (1 : HermitianMat (n ⊕ n) ℂ) := by
+  unfold IsQuaternionic quatConj
+  rw [HermitianMat.mat_one]
+  have h : (1 : Matrix (n ⊕ n) (n ⊕ n) ℂ).map (starRingEnd ℂ) = 1 := by
+    ext i j
+    simp [Matrix.one_apply, apply_ite]
+  rw [h, Matrix.mul_one, symplecticJ_mul_transpose]
 
 theorem IsQuaternionic.add {A B : HermitianMat (n ⊕ n) ℂ}
     (hA : IsQuaternionic A) (hB : IsQuaternionic B) : IsQuaternionic (A + B) := by

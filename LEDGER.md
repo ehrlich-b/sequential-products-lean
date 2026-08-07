@@ -74,6 +74,16 @@ Traps: `symmMul` lives in `Vendor/HermitianMat/Jordan.lean` (import it, `OrderUn
 alone is not enough); `Matrix.add_mul`/`smul_mul` rewrites do not fire on the
 `J₀ * _ * J₀ᵀ` sandwich — use `noncomm_ring`; and `(starRingEnd ℂ) 2 = 2` wants routing
 through `Complex.conj_ofReal` after `show (2:ℂ) = ((2:ℝ):ℂ)`.
+Also landed (same day): **`symplecticJ_sq` (`J₀² = −1`)**, **`quatConj_involutive`**
+(`Φ∘Φ = id` — `J₀` is real, so double conjugation returns `J₀²A(J₀ᵀ)²` and both squares
+are `−1`), and **`isQuaternionic_one`** (the unit is quaternionic, from `J₀J₀ᵀ = 1`), all
+axiom-checked = Lean core only. So `Φ` is a genuine conjugate-linear ALGEBRA INVOLUTION
+fixing the unit, and the quaternionic set is a unital Jordan subalgebra.
+Traps: block identities like `fromBlocks (-1) 0 0 (-1) = -1` want `ext i j` +
+`rcases i with i | i` and `simp [Matrix.fromBlocks, Matrix.one_apply, apply_ite]`, not
+`fromBlocks_neg` juggling (a stray `-0` blocks the rewrite); and double conjugation needs
+an explicit `ext`-level lemma (`Complex.conj_conj`) — `Matrix.map_map` +
+`RingHomCompTriple.comp_eq` makes no progress.
 **Next for the ℍ row**: the order structure on the fixed set (an effect of `H_n(ℍ)` is a
 quaternionic effect of `H_{2n}(ℂ)`), then transport a product and run the ℝ-shaped
 argument — the quaternionic Peirce block is `ℍ`, whose centre is `ℝ`, so the same
