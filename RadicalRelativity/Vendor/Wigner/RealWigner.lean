@@ -935,6 +935,117 @@ theorem TransProbPreservingR.eq_projMapR_of_anchor [DecidableEq ι] {f : ℙ ℝ
   rw [← smul_smul, ← map_smul]
   exact hvec.symm
 
+/-! ## Step 4d, part 2g: THE RESIDUAL CASE, without pair consistency
+
+A ray orthogonal to the anchor cannot be handled by `sign_pair_of_abs` directly.  The
+textbook route is a three-slot vector and a pair-consistency argument; **it is not needed.**
+Shift the anchor instead: apply the main case to `ψ̂ + b i₀`, whose anchor coordinate is `1`.
+Because the image of `ψ` has vanishing `i₀` coordinate, its overlap with the shifted ray is
+FULL — `|⟨ψ', e ψ̂⟩| = ‖ψ'‖·‖e ψ̂‖` — and the equality case of Cauchy-Schwarz forces
+proportionality.  That is the whole residual case.
+-/
+
+/-- **The residual case.**  Rays orthogonal to the anchor, by anchor-shifting. -/
+theorem TransProbPreservingR.eq_projMapR_of_anchor_zero [DecidableEq ι] {f : ℙ ℝ E → ℙ ℝ E}
+    (hf : TransProbPreservingR f) (b : OrthonormalBasis ι ℝ E) (i₀ : ι)
+    {ψ : E} (hψ : ψ ≠ 0) (hanchor : (inner ℝ (‖ψ‖⁻¹ • ψ) (b i₀) : ℝ) = 0) :
+    f (Projectivization.mk ℝ ψ hψ)
+      = projMapR (basisIsometry b (hf.normBasis b i₀)) (Projectivization.mk ℝ ψ hψ) := by
+  classical
+  have hnψ : ‖ψ‖ ≠ 0 := norm_ne_zero_iff.mpr hψ
+  have hu1 : ‖‖ψ‖⁻¹ • ψ‖ = 1 := norm_normalize hψ
+  have hself : (inner ℝ (‖ψ‖⁻¹ • ψ) (‖ψ‖⁻¹ • ψ) : ℝ) = 1 := by
+    rw [real_inner_self_eq_norm_sq, hu1, one_pow]
+  -- the shifted vector, and its anchor coordinate
+  have hinnerχ : (inner ℝ (‖ψ‖⁻¹ • ψ + b i₀) (b i₀) : ℝ) = 1 := by
+    rw [inner_add_left, hanchor, real_inner_self_eq_norm_sq, b.orthonormal.1 i₀, zero_add,
+      one_pow]
+  have hχ : ‖ψ‖⁻¹ • ψ + b i₀ ≠ 0 := by
+    intro h
+    rw [h, inner_zero_left] at hinnerχ
+    exact zero_ne_one hinnerχ
+  have hnχ : ‖‖ψ‖⁻¹ • ψ + b i₀‖ ≠ 0 := norm_ne_zero_iff.mpr hχ
+  have hanchor' : (inner ℝ (‖‖ψ‖⁻¹ • ψ + b i₀‖⁻¹ • (‖ψ‖⁻¹ • ψ + b i₀)) (b i₀) : ℝ) ≠ 0 := by
+    rw [real_inner_smul_left, hinnerχ, mul_one]
+    exact inv_ne_zero hnχ
+  -- the main case applies to the shifted ray
+  have hmain := hf.eq_projMapR_of_anchor b i₀ hχ hanchor'
+  rw [← mk_normImg f hχ, projMapR_mk] at hmain
+  obtain ⟨a, ha⟩ := (Projectivization.mk_eq_mk_iff ℝ _ _ _ _).mp hmain
+  rw [Units.smul_def] at ha
+  -- the scale of `a` is forced by both sides being unit-normalized
+  have hae : |(a : ℝ)| * ‖‖ψ‖⁻¹ • ψ + b i₀‖ = 1 := by
+    have h1 : ‖(a : ℝ) • (basisIsometry b (hf.normBasis b i₀)) (‖ψ‖⁻¹ • ψ + b i₀)‖ = 1 := by
+      rw [ha]; exact norm_normImg f hχ
+    rwa [norm_smul, Real.norm_eq_abs, LinearIsometryEquiv.norm_map] at h1
+  -- the image's anchor coordinate vanishes
+  have hximg : (inner ℝ (normImg f hψ) (hf.normBasis b i₀ i₀) : ℝ) = 0 := by
+    have h := hf.abs_inner_normBasis b i₀ hψ i₀
+    rw [hanchor, abs_zero] at h
+    exact abs_eq_zero.mp h
+  -- the overlap with the shifted ray is full
+  have hfull : |(inner ℝ (normImg f hψ)
+      ((basisIsometry b (hf.normBasis b i₀)) (‖ψ‖⁻¹ • ψ)) : ℝ)| = 1 := by
+    have hkey := hf.abs_inner_normImg hψ hχ
+    rw [← ha] at hkey
+    rw [real_inner_smul_right] at hkey
+    rw [abs_mul] at hkey
+    rw [map_add] at hkey
+    rw [basisIsometry_apply b (hf.normBasis b i₀) i₀] at hkey
+    rw [inner_add_right] at hkey
+    rw [hximg, add_zero] at hkey
+    rw [real_inner_smul_right] at hkey
+    rw [inner_add_right] at hkey
+    rw [hself, hanchor, add_zero] at hkey
+    rw [abs_mul, abs_of_nonneg (inv_nonneg.mpr (norm_nonneg _)), abs_one, mul_one] at hkey
+    -- hkey : |a| * |⟨ψ', e ψ̂⟩| = ‖χ‖⁻¹, and |a| = ‖χ‖⁻¹
+    have habs : |(a : ℝ)| = ‖‖ψ‖⁻¹ • ψ + b i₀‖⁻¹ := by
+      have h1 : |(a : ℝ)| * ‖‖ψ‖⁻¹ • ψ + b i₀‖ * ‖‖ψ‖⁻¹ • ψ + b i₀‖⁻¹
+          = 1 * ‖‖ψ‖⁻¹ • ψ + b i₀‖⁻¹ := by rw [hae]
+      rwa [mul_assoc, mul_inv_cancel₀ hnχ, mul_one, one_mul] at h1
+    rw [habs] at hkey
+    exact mul_left_cancel₀ (inv_ne_zero hnχ) (hkey.trans (mul_one _).symm)
+  -- Cauchy-Schwarz equality
+  obtain ⟨r, hr0, hr⟩ := (norm_inner_eq_norm_iff (𝕜 := ℝ) (normImg_ne_zero f hψ)
+      (fun h => normalize_ne_zero hψ
+        ((basisIsometry b (hf.normBasis b i₀)).map_eq_zero_iff.mp h))).mp
+    (by rw [Real.norm_eq_abs, hfull, norm_normImg, LinearIsometryEquiv.norm_map, hu1, one_mul])
+  -- and the rays agree
+  have hez : (basisIsometry b (hf.normBasis b i₀)) ψ ≠ 0 := fun h =>
+    hψ ((basisIsometry b (hf.normBasis b i₀)).map_eq_zero_iff.mp h)
+  rw [← mk_normImg f hψ, projMapR_mk]
+  refine (Projectivization.mk_eq_mk_iff ℝ _ _ _ _).mpr
+    ⟨Units.mk0 (r⁻¹ * ‖ψ‖⁻¹) (mul_ne_zero (inv_ne_zero hr0) (inv_ne_zero hnψ)), ?_⟩
+  simp only [Units.smul_def, Units.val_mk0]
+  rw [← smul_smul, ← map_smul, hr, smul_smul, inv_mul_cancel₀ hr0, one_smul]
+
+/-! ## The real rigidity, assembled -/
+
+/-- **Every ray**: combining the two cases, `f` is induced by the isometry matching `b` to
+the sign-normalized image basis. -/
+theorem TransProbPreservingR.eq_projMapR [DecidableEq ι] {f : ℙ ℝ E → ℙ ℝ E}
+    (hf : TransProbPreservingR f) (b : OrthonormalBasis ι ℝ E) (i₀ : ι) (p : ℙ ℝ E) :
+    f p = projMapR (basisIsometry b (hf.normBasis b i₀)) p := by
+  induction p using Projectivization.ind with
+  | h ψ hψ =>
+    by_cases h : (inner ℝ (‖ψ‖⁻¹ • ψ) (b i₀) : ℝ) = 0
+    · exact hf.eq_projMapR_of_anchor_zero b i₀ hψ h
+    · exact hf.eq_projMapR_of_anchor b i₀ hψ h
+
 end PairModuli
+
+/-- **REAL WIGNER / KADISON RIGIDITY.**  Every transition-probability preserving map on the
+rays of a finite-dimensional real inner product space is induced by a linear isometry.  This
+is the real analogue of the vendored complex Wigner theorem, and unlike that one it is proved
+here rather than imported. -/
+theorem exists_isometry_of_transProbPreservingR [FiniteDimensional ℝ E] [Nontrivial E]
+    {f : ℙ ℝ E → ℙ ℝ E} (hf : TransProbPreservingR f) :
+    ∃ e : E ≃ₗᵢ[ℝ] E, ∀ p : ℙ ℝ E, f p = projMapR e p := by
+  classical
+  have hpos : 0 < Module.finrank ℝ E := Module.finrank_pos
+  haveI : Nonempty (Fin (Module.finrank ℝ E)) := ⟨⟨0, hpos⟩⟩
+  exact ⟨basisIsometry (stdOrthonormalBasis ℝ E)
+      (hf.normBasis (stdOrthonormalBasis ℝ E) ⟨0, hpos⟩),
+    hf.eq_projMapR (stdOrthonormalBasis ℝ E) ⟨0, hpos⟩⟩
 
 end Projectivization

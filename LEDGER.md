@@ -2133,7 +2133,37 @@ sorry-free Wigner rigidity — see 3.0.
     BACKWARDS from the goal; and `rw [hvec]` where `hvec`'s RHS mentions the rewritten term
     inside its own scalar rewrites it there too (the self-reference trap, third occurrence
     this campaign) — chain with `.trans`/`exact ….symm` instead.
-    **What remains of the real rigidity: the residual case `p_{i₀} = 0` ONLY** — see the scope
+    **★★ STEP 4 COMPLETE (same day) — REAL WIGNER RIGIDITY IS MACHINE-CHECKED,
+    UNCONDITIONAL.** `eq_projMapR_of_anchor_zero` (the residual case), `eq_projMapR` (every
+    ray, by case split), and **`exists_isometry_of_transProbPreservingR`**: for
+    finite-dimensional nontrivial real `E`, every transition-probability preserving map on
+    `ℙ ℝ E` is induced by a linear isometry. Axioms = Lean core only. Unlike the COMPLEX
+    Wigner theorem, which this development VENDORS, the real one is now PROVED here.
+    **The residual case did NOT need pair consistency, and this kills the estimate that stood
+    for most of the campaign.** Instead of a three-slot vector plus an
+    equality-in-the-triangle-inequality argument (~3-4 units), shift the ANCHOR: apply the main
+    case to `ψ̂ + b i₀`, whose anchor coordinate is `1`. Because the image of `ψ` has vanishing
+    `i₀` coordinate, the overlap with the shifted ray is FULL, so
+    `|⟨ψ', e ψ̂⟩| = ‖ψ'‖·‖e ψ̂‖`, and `norm_inner_eq_norm_iff` (the equality case of
+    Cauchy-Schwarz) forces proportionality outright. **Fifth instance of the campaign's
+    recurring lesson**: before building the machinery, check whether the obstruction dissolves
+    under a change of reference point. TRAPS: `Projectivization.mk_eq_mk_iff` returns a `ℝˣ`
+    scalar, so `rw [Units.smul_def] at ha` FIRST or every later rewrite misses; and
+    `norm_inner_eq_norm_iff` is stated with `‖·‖` on the scalar, so `Real.norm_eq_abs` is
+    needed to meet `|·|`.
+
+    **WHAT THIS DOES AND DOES NOT DISCHARGE — read before claiming the ℝ row.** The ℝ row's
+    carried hypothesis is `hjordAll : ∀ U unitary, ThetaPreservesJordanG (conjProductG P …)` —
+    the JORDAN property of the comparison map (real Kadison), not the Wigner statement. Real
+    Wigner is the classical INPUT to it, not the same theorem. The ℂ lane bridges the gap
+    across five files — `RayMap` (227) → `WignerBridge` (100) → `RankOneSpan` (184) →
+    `JordanWitness` (249) → `KadisonDischarge` (390), 1150 lines total, and a grep shows they
+    are written at ℂ with ZERO `RCLike`/`𝕜` occurrences, so they are NOT scalar-generic and
+    would need the same twin treatment as the M4 files. **So: the ℝ row is still conditional,
+    and the honest statement is that its one missing CLASSICAL THEOREM is now proved, with the
+    remaining work being an ℝ port of the known five-file bridge.** That is a much better
+    position than "gated on a theorem available in no prover", but it is not unconditional.
+    **(superseded) the residual case `p_{i₀} = 0`** — see the scope
     note above: three-slot pair consistency, ~3-4 units of the same kind. The main case being
     done means the theorem's mathematical content is banked; what is left is the coverage of
     rays orthogonal to the anchor.
