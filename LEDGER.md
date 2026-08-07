@@ -1773,9 +1773,17 @@ sorry-free Wigner rigidity — see 3.0.
     **`TransProbPreservingR.orthogonal`** and `.orthogonal_iff` — a TP-preserving map
     preserves orthogonality of rays, in both directions. Axiom-checked = Lean core only.
     That is the input to the basis argument.
-    **What remains is the rest of the rigidity**: (step 2) an orthonormal basis is
-    carried to a pairwise-orthogonal family, hence — after choosing unit representatives
-    — to an orthonormal basis, giving a candidate isometry `T` by `T eᵢ = fᵢ`; (step 3)
+    **STEP 2 DONE (same day)**: `inner_rep_eq_zero_iff` (orthogonality of rays is visible
+    on ANY representatives — the `.rep` bookkeeping discharged once and for all),
+    `TransProbPreservingR.image_pairwise_orthogonal`, and
+    **`TransProbPreservingR.image_orthonormal` — the normalized representatives of the
+    image rays form an orthonormal family**. Axiom-checked = Lean core only. So the
+    candidate isometry's data now exists: feed an orthonormal basis in, get an orthonormal
+    family out.
+    Trap: over ℝ use `real_inner_smul_left`/`real_inner_smul_right` and let
+    `simp [ha', hb', mul_eq_zero]` finish — going through `inner_smul_left` +
+    `starRingEnd` produces coerced disjuncts whose `≠ 0` facts no longer match.
+    **What remains of the rigidity**: (step 3)
     for general `v = Σ cᵢ eᵢ`, `transProb([v],[eᵢ]) = cᵢ²/‖v‖²` is preserved, so the
     image's coordinates agree with `cᵢ` UP TO SIGN; (step 4) the sign-fixing argument —
     use a reference vector (e.g. `Σ eᵢ`) to pin the signs and check consistency against

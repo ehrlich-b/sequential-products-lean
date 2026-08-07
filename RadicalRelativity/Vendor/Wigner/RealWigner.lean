@@ -169,4 +169,48 @@ theorem TransProbPreservingR.orthogonal_iff {f : ℙ ℝ E → ℙ ℝ E}
     (inner ℝ (f p).rep (f q).rep : ℝ) = 0 ↔ (inner ℝ p.rep q.rep : ℝ) = 0 := by
   rw [← transProbR_eq_zero_iff, ← transProbR_eq_zero_iff, hf p q]
 
+/-! ## Step 2: an orthonormal basis goes to an orthonormal family -/
+
+/-- Orthogonality of rays is visible on any representatives. -/
+theorem inner_rep_eq_zero_iff {v w : E} (hv : v ≠ 0) (hw : w ≠ 0) :
+    (inner ℝ (Projectivization.mk ℝ v hv).rep (Projectivization.mk ℝ w hw).rep : ℝ) = 0
+      ↔ (inner ℝ v w : ℝ) = 0 := by
+  obtain ⟨a, ha⟩ := Projectivization.exists_smul_eq_mk_rep ℝ v hv
+  obtain ⟨b, hb⟩ := Projectivization.exists_smul_eq_mk_rep ℝ w hw
+  have ha' : (a : ℝ) ≠ 0 := a.ne_zero
+  have hb' : (b : ℝ) ≠ 0 := b.ne_zero
+  rw [← ha, ← hb]
+  simp only [Units.smul_def, real_inner_smul_left, real_inner_smul_right]
+  simp [ha', hb', mul_eq_zero]
+
+/-- **Step 2**: a transition-probability preserving map carries the rays of an
+orthonormal family to pairwise-orthogonal rays.  Normalizing the representatives then
+gives an orthonormal family — and in finite dimension, with as many members as the
+dimension, an orthonormal basis, which is the candidate isometry's data. -/
+theorem TransProbPreservingR.image_pairwise_orthogonal {ι : Type*}
+    {f : ℙ ℝ E → ℙ ℝ E} (hf : TransProbPreservingR f) {v : ι → E}
+    (hv : ∀ i, v i ≠ 0) (horth : ∀ i j, i ≠ j → (inner ℝ (v i) (v j) : ℝ) = 0)
+    (i j : ι) (hij : i ≠ j) :
+    (inner ℝ (f (Projectivization.mk ℝ (v i) (hv i))).rep
+      (f (Projectivization.mk ℝ (v j) (hv j))).rep : ℝ) = 0 := by
+  apply hf.orthogonal
+  rw [inner_rep_eq_zero_iff]
+  exact horth i j hij
+
+/-- The normalized representatives of the image rays form an orthonormal family. -/
+theorem TransProbPreservingR.image_orthonormal {ι : Type*}
+    {f : ℙ ℝ E → ℙ ℝ E} (hf : TransProbPreservingR f) {v : ι → E}
+    (hv : ∀ i, v i ≠ 0) (horth : ∀ i j, i ≠ j → (inner ℝ (v i) (v j) : ℝ) = 0) :
+    Orthonormal ℝ (fun i => ‖(f (Projectivization.mk ℝ (v i) (hv i))).rep‖⁻¹ •
+      (f (Projectivization.mk ℝ (v i) (hv i))).rep) := by
+  constructor
+  · intro i
+    rw [norm_smul, norm_inv, norm_norm]
+    exact inv_mul_cancel₀ (norm_ne_zero_iff.mpr
+      (f (Projectivization.mk ℝ (v i) (hv i))).rep_nonzero)
+  · intro i j hij
+    rw [inner_smul_left, inner_smul_right,
+      hf.image_pairwise_orthogonal hv horth i j hij]
+    simp
+
 end Projectivization
