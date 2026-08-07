@@ -230,6 +230,36 @@ order-unit space with the inherited order — the carrier the `H_n(ℍ)` row nee
 theorem one_mem_quatSubmodule : (1 : HermitianMat (n ⊕ n) ℂ) ∈ quatSubmodule (n := n) :=
   isQuaternionic_one
 
+/-- `Φ` fixes the identity matrix (`J₀J₀ᵀ = 1`). -/
+theorem quatConj_one : quatConj (1 : Matrix (n ⊕ n) (n ⊕ n) ℂ) = 1 := by
+  unfold quatConj
+  have h : (1 : Matrix (n ⊕ n) (n ⊕ n) ℂ).map (starRingEnd ℂ) = 1 := by
+    ext i j
+    simp [Matrix.one_apply, apply_ite]
+  rw [h, Matrix.mul_one, symplecticJ_mul_transpose]
+
+theorem quatConj_sub (A B : Matrix (n ⊕ n) (n ⊕ n) ℂ) :
+    quatConj (A - B) = quatConj A - quatConj B := by
+  unfold quatConj
+  have hmap : (A - B).map (starRingEnd ℂ)
+      = A.map (starRingEnd ℂ) - B.map (starRingEnd ℂ) := by
+    ext i j
+    simp only [Matrix.map_apply, Matrix.sub_apply, map_sub]
+  rw [hmap]
+  noncomm_ring
+
+/-- **`Φ` fixes every power of a quaternionic matrix** — the polynomial half of the
+functional-calculus closure.  With `Φ` continuous and additive, Weierstrass plus
+`norm_cfc_sub_le_of_sup_le` then carry this to `cfc f` (the same skeleton as
+`continuousOn_cfc_sqrt_effects`). -/
+theorem quatConj_pow {A : HermitianMat (n ⊕ n) ℂ} (hA : IsQuaternionic A) (k : ℕ) :
+    quatConj (A.mat ^ k) = A.mat ^ k := by
+  induction k with
+  | zero =>
+    have h0 : A.mat ^ 0 = (1 : Matrix (n ⊕ n) (n ⊕ n) ℂ) := by simp
+    rw [h0, quatConj_one]
+  | succ k ih => rw [pow_succ, quatConj_mul, ih, hA]
+
 /-! ## `Φ` preserves positivity -/
 
 /-- For a Hermitian matrix, entrywise conjugation is transposition. -/

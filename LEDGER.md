@@ -100,15 +100,25 @@ transposition), `symplecticJ_transpose_eq_conjTranspose` (`J₀` is real), and
 **`quatConj_posSemidef` — `Φ` PRESERVES POSITIVE SEMIDEFINITENESS**, since for Hermitian
 `A` it is the congruence `J₀ Aᵀ J₀ᴴ`. Axiom-checked = Lean core only. (Needs
 `open ComplexOrder` in scope — the PSD order does not resolve without it.)
-★**NOTE for the next session — the one non-obvious gap on this row**: the fixed set's
+**POLYNOMIAL HALF OF THE CFC CLOSURE DONE (same day)**: `quatConj_one`,
+`quatConj_sub`, and **`quatConj_pow` — `Φ` fixes every power of a quaternionic matrix**
+(short induction on `quatConj_mul`). Axiom-checked = Lean core only. Combined with
+`quatConj_add`/`quatConj_smul_of_conj_eq`, `Φ` therefore fixes `p(A)` for every real
+polynomial `p`.
+★**NOTE for the next session — the remaining ANALYTIC half of the gap**: the fixed set's
 closure under the FUNCTIONAL CALCULUS (`IsQuaternionic a → IsQuaternionic (a.cfc f)`) is
 NOT yet proved, and there is **no square-root uniqueness lemma in the tree or Mathlib** to
-get it cheaply (checked). Two routes: (i) via uniqueness of the PSD square root — needs
-that lemma written first; (ii) **via polynomials + continuity, which today's new
-infrastructure now supports directly**: `Φ` is continuous and multiplicative, so it fixes
-`p(A)` for real polynomials `p`, and then `continuous_cfc_polynomial` +
-`norm_cfc_sub_le_of_sup_le` + Weierstrass transfer it to `cfc f` exactly as
-`continuousOn_cfc_sqrt_effects` was built. Route (ii) is the recommended one.
+get it cheaply (checked). With the polynomial half in hand, what is left is the
+transfer: `Φ` is continuous and additive (`quatConj_add`/`quatConj_sub`), so a
+three-ε estimate against a Weierstrass approximant plus `norm_cfc_sub_le_of_sup_le`
+gives `Φ (a.cfc f) = a.cfc f` — the SAME skeleton as
+`continuousOn_cfc_sqrt_effects`, which is already in the tree to copy from. The one
+ingredient to check first is that `Φ` is norm-bounded (it is in fact a Frobenius
+isometry, since `J₀` is unitary — `J₀ᵀJ₀ = 1` with `J₀` real — and entrywise conjugation
+preserves the Frobenius norm); if unitary invariance of that norm is not already in the
+vendored layer, bound `Φ` crudely instead, since only continuity is needed.
+Do NOT reach for PSD-square-root uniqueness: it is absent from both the tree and Mathlib
+(checked), so that route costs an extra lemma for no gain.
 **Next for the ℍ row**: that cfc closure, then transport a `SequentialProductOn` on the
 carrier and run the ℝ-shaped argument — the quaternionic Peirce block is `ℍ`, whose CENTRE is `ℝ`, so the
 same "no continuous character into a discrete sign group" kill applies and
