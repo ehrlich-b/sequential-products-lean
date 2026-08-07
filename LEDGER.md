@@ -1724,9 +1724,29 @@ sorry-free Wigner rigidity — see 3.0.
     how the manuscript cites van Imhoff–Roelands for it. That is a legitimate,
     disclosed configuration — but it must be stated as such in THEOREM-MAP, never
     described as "the real row is machine-checked" without the qualifier.
-  * Making ℝ unconditional is a NEW boulder of the same kind M3 was (a from-scratch
-    real Uhlhorn: build the orthogonal map column-by-column from orthogonality
-    preservation, with the sign casework). Not a session's work.
+  * ★★**ESTIMATE SHARPENED AT SOURCE 2026-08-06 — making ℝ unconditional needs ONE
+    THEOREM, not a redo of M3.** Measured: the ENTIRE M3 chain
+    (`Strength`, `StrengthProbe`, `RankOneSpan`, `RayMap`, `WignerBridge`,
+    `JordanWitness`, `KadisonDischarge`, `ProjectionOrder`) contains **zero** uses of
+    `Complex.I` or `Complex.exp` — the only field-specific content is `Complex.normSq`
+    (⇝ `RCLike.normSq`) and a couple of `starRingEnd ℂ` (⇝ `𝕜`), i.e. exactly the
+    substitutions this session has performed ~20 times. The Busch–Gudder strength
+    function is order-definable and therefore field-blind by construction; the probe,
+    the rank-one span, the ray map and the Kadison discharge are all algebra over the
+    carrier.
+    **The single genuinely complex input is the vendored
+    `Projectivization.wigner_rigidity`** (`Vendor/Wigner/WignerRigidity.lean`, ~3.2k
+    lines): a transition-probability-preserving self-map of `ℂP^{N-1}` is
+    `projMap e` or `projMap e ∘ conj` for a ℂ-linear isometry. Its real analogue is
+    **Uhlhorn's theorem over ℝ** — an orthogonality-preserving bijection of `ℝP^{n-1}`
+    (`n ≥ 3`) is induced by an orthogonal map — and there is no antiunitary branch to
+    handle, since conjugation is trivial over ℝ, so the real statement is *strictly
+    simpler* than the complex one already vendored.
+    **So the work is: (1) prove/port real Uhlhorn; (2) run the established `ℂ ⇝ 𝕜`
+    recipe over the eight M3 files.** Step (2) is mechanical at this point. Step (1) is
+    a real theorem but a classical and self-contained one, and it is the ONLY thing
+    standing between the ℝ row and unconditionality. Budget it as one theorem, not a
+    lane — this supersedes the earlier "new boulder of M3's kind" estimate.
   * This corrects the earlier "the real row is perhaps a session away" estimate a
     second time: the *machinery* is nearly ported, but an unconditional ℝ row is
     gated on real Kadison. Decide explicitly which of the two deliverables is wanted
