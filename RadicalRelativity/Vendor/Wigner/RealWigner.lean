@@ -269,4 +269,28 @@ theorem TransProbPreservingR.coord_sq_transfer {f : ℙ ℝ E → ℙ ℝ E}
   rw [← hL, ← hR]
   exact hkey
 
+/-! ## Step 2b: in finite dimension the image family is an orthonormal BASIS -/
+
+/-- **The image family spans.**  In finite dimension, an orthonormal family indexed by a
+type of cardinality `finrank` is automatically a basis — so the image of an orthonormal
+basis under a transition-probability preserving map is again an orthonormal basis.  This
+is what lets the sign-fixing step (step 4) expand an image vector in the image basis and
+conclude that its coordinates vanish outside the expected slots. -/
+noncomputable def TransProbPreservingR.imageOrthonormalBasis {ι : Type*} [Fintype ι]
+    [Nonempty ι]
+    [FiniteDimensional ℝ E] {f : ℙ ℝ E → ℙ ℝ E} (hf : TransProbPreservingR f)
+    {v : ι → E} (hv : ∀ i, v i ≠ 0)
+    (horth : ∀ i j, i ≠ j → (inner ℝ (v i) (v j) : ℝ) = 0)
+    (hcard : Fintype.card ι = Module.finrank ℝ E) :
+    OrthonormalBasis ι ℝ E := by
+  classical
+  refine OrthonormalBasis.mk (hf.image_orthonormal hv horth) ?_
+  have hli := (hf.image_orthonormal hv horth).linearIndependent
+  have hspan : Submodule.span ℝ (Set.range
+      (fun i => ‖(f (Projectivization.mk ℝ (v i) (hv i))).rep‖⁻¹ •
+        (f (Projectivization.mk ℝ (v i) (hv i))).rep)) = ⊤ := by
+    apply LinearIndependent.span_eq_top_of_card_eq_finrank hli
+    rw [hcard]
+  rw [hspan]
+
 end Projectivization

@@ -1791,6 +1791,12 @@ sorry-free Wigner rigidity — see 3.0.
     `φ'` equals the source's against `φ`. Axiom-checked = Lean core only. **That is the
     identity the sign-fixing step consumes: every coordinate of the image is now pinned
     up to sign.**
+    **STEP 2b DONE (same day)**: **`TransProbPreservingR.imageOrthonormalBasis`** — in
+    finite dimension, with the index type of cardinality `finrank`, the image family is
+    an `OrthonormalBasis` (orthonormal from step 2, spanning from
+    `LinearIndependent.span_eq_top_of_card_eq_finrank`; note it needs `[Nonempty ι]`).
+    Axiom-checked = Lean core only. This is what lets step 4 expand an image vector in
+    the image basis and conclude its coordinates vanish outside the expected slots.
     **What remains of the rigidity: step 4 ONLY — the sign-fixing argument.** Use a
     reference vector (e.g. `Σ eᵢ`, or successively the vectors `eᵢ + eⱼ`) to pin the
     relative signs, and check consistency via the transition probabilities with those
