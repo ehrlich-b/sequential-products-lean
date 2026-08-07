@@ -2083,7 +2083,14 @@ sorry-free Wigner rigidity — see 3.0.
     Recorded asymmetry: the `(i,j)`-swapped instance of `abs_inner_imgBasis_pair` is about
     the vector `b j + b i`, a DIFFERENT TERM, so the right slot genuinely needs its own
     statement — hence `abs_inner_imgBasis_pair_right`. Axiom-checked = Lean core only.
-    **What remains of the rigidity: 4d part 2c — the pattern from the pairs `(i₀, i)`
+    **STEP 4d part 2c DONE (same day)**: `normBasis` (the sign-normalized image basis),
+    `normBasis_apply`, `signPattern_self`, `signPattern_of_ne`, `mul_sign_mul_pos`, and
+    **`pair_coord_mul_pos`** — against `normBasis`, the two coordinates of the image of
+    `b i₀ + b i` have the SAME SIGN. That is the point of the whole construction: it means
+    `sign_pair_of_abs`, applied to a general ray and the pair `(i₀, i)`, becomes a statement
+    about coordinates in ONE fixed basis, with no per-pair bookkeeping left. Axiom-checked =
+    Lean core only.
+    **What remains of the rigidity: 4d part 2d — the pattern from the pairs `(i₀, i)`
     (the coordinates are inner products, so no choice is needed), prove pair-consistency for
     arbitrary `(i,j)` via a THREE-slot vector, and assemble the isometry. The inputs are now
     all in place: `image_two_slot` supplies the moduli, `sign_pair_of_abs` the common sign,

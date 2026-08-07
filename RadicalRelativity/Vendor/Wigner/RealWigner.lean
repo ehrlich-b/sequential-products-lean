@@ -725,6 +725,55 @@ theorem TransProbPreservingR.abs_signPattern [DecidableEq ι] {f : ℙ ℝ E →
       mul_ne_zero (hf.inner_imgBasis_pair_ne_zero b h) (hf.inner_imgBasis_pair_right_ne_zero b h)
     rw [abs_div, abs_abs, div_self (abs_ne_zero.mpr hne)]
 
+/-! ## Step 4d, part 2c: the normalization works
+
+With the image basis adjusted by `signPattern`, the two coordinates of the image of
+`b i₀ + b i` have the SAME sign — their product is positive.  This is the fact the
+arbitrary-ray argument runs against: it means `sign_pair_of_abs` applied to a general ray
+and the pair `(i₀, i)` can be read as a statement about coordinates in ONE fixed basis.
+-/
+
+/-- The arithmetic core: multiplying by `c/|c|` restores positivity. -/
+theorem mul_sign_mul_pos {A B : ℝ} (hAB : A * B ≠ 0) :
+    0 < A * ((A * B) / |A * B| * B) := by
+  have h : A * ((A * B) / |A * B| * B) = (A * B) ^ 2 / |A * B| := by ring
+  rw [h]
+  exact div_pos (lt_of_le_of_ne (sq_nonneg _) (Ne.symm (pow_ne_zero 2 hAB))) (abs_pos.mpr hAB)
+
+/-- The sign-normalized image basis. -/
+noncomputable def TransProbPreservingR.normBasis [DecidableEq ι] {f : ℙ ℝ E → ℙ ℝ E}
+    (hf : TransProbPreservingR f) (b : OrthonormalBasis ι ℝ E) (i₀ : ι) :
+    OrthonormalBasis ι ℝ E :=
+  signAdjustBasis (hf.imgBasis b) (hf.signPattern b i₀) (hf.abs_signPattern b i₀)
+
+theorem TransProbPreservingR.normBasis_apply [DecidableEq ι] {f : ℙ ℝ E → ℙ ℝ E}
+    (hf : TransProbPreservingR f) (b : OrthonormalBasis ι ℝ E) (i₀ k : ι) :
+    hf.normBasis b i₀ k = hf.signPattern b i₀ k • hf.imgBasis b k :=
+  signAdjustBasis_apply _ _ _ k
+
+theorem TransProbPreservingR.signPattern_self [DecidableEq ι] {f : ℙ ℝ E → ℙ ℝ E}
+    (hf : TransProbPreservingR f) (b : OrthonormalBasis ι ℝ E) (i₀ : ι) :
+    hf.signPattern b i₀ i₀ = 1 := dif_pos rfl
+
+theorem TransProbPreservingR.signPattern_of_ne [DecidableEq ι] {f : ℙ ℝ E → ℙ ℝ E}
+    (hf : TransProbPreservingR f) (b : OrthonormalBasis ι ℝ E) {i₀ i : ι} (h : i₀ ≠ i) :
+    hf.signPattern b i₀ i =
+      ((inner ℝ (normImg f (basis_add_ne_zero b h)) (hf.imgBasis b i₀) : ℝ) *
+        (inner ℝ (normImg f (basis_add_ne_zero b h)) (hf.imgBasis b i) : ℝ)) /
+      |(inner ℝ (normImg f (basis_add_ne_zero b h)) (hf.imgBasis b i₀) : ℝ) *
+        (inner ℝ (normImg f (basis_add_ne_zero b h)) (hf.imgBasis b i) : ℝ)| := dif_neg h
+
+/-- **The normalization works.**  Against `normBasis`, the two coordinates of the image of
+`b i₀ + b i` have the same sign. -/
+theorem TransProbPreservingR.pair_coord_mul_pos [DecidableEq ι] {f : ℙ ℝ E → ℙ ℝ E}
+    (hf : TransProbPreservingR f) (b : OrthonormalBasis ι ℝ E) {i₀ i : ι} (h : i₀ ≠ i) :
+    0 < (inner ℝ (normImg f (basis_add_ne_zero b h)) (hf.normBasis b i₀ i₀) : ℝ) *
+        (inner ℝ (normImg f (basis_add_ne_zero b h)) (hf.normBasis b i₀ i) : ℝ) := by
+  rw [hf.normBasis_apply b i₀ i₀, hf.normBasis_apply b i₀ i, real_inner_smul_right,
+    real_inner_smul_right, hf.signPattern_self b i₀, one_mul, hf.signPattern_of_ne b h]
+  exact mul_sign_mul_pos (mul_ne_zero (hf.inner_imgBasis_pair_ne_zero b h)
+    (hf.inner_imgBasis_pair_right_ne_zero b h))
+
 end PairModuli
 
 end Projectivization
