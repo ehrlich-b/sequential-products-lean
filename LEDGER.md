@@ -2247,6 +2247,24 @@ sorry-free Wigner rigidity — see 3.0.
     TRAP: `q.H` has type `(↑q).IsHermitian`, which `rw` cannot see through — ascribe it
     (`have h : q.matᴴ = q.mat := q.H`) before rewriting. `Matrix.mulVec_transpose`, not
     `vecMul_eq_mulVec_transpose`.
+    **ℝ BRIDGE UNIT 5b DONE (same day)** — `matrix_ext_of_mulVec` and **`rankOneR_isAtom`**:
+    rank-one projections ARE atoms of the real projection order. Gates green at 3095 jobs, axioms
+    Lean core. The proof is the conceptual route, and it came out ~25 lines against the ℂ
+    version's ~50: `q ≤ ψψᵀ` kills `ψ`'s orthogonal complement, so `q` is determined by `u = qψ`
+    via `qv = (ψ·v)u`; idempotence gives `u = (ψ·u)u`; then either `u = 0`, so `q` annihilates
+    everything and `q = 0`, or `ψ·u = u·u = 1`. **The last step is the slick one**: instead of
+    decomposing `u` and killing a component, compare `|ψ − u|² = 1 − 2(ψ·u) + u·u = 0` directly,
+    which gives `u = ψ` in one line.
+    **REMAINING FOR THE ℝ ROW, now genuinely small:** (i) `IsAtomProjectionR.exists_rankOne`
+    (every atom is a rank-one — the converse direction, which the ℂ lane does in 60 lines and
+    which should now be comparably short since `quadForm_isProjection` is available); (ii)
+    `isProjection_map` / `isAtomProjection_map` at ℝ (**purely order-theoretic — port by changing
+    ℂ to ℝ**); (iii) unit 5's assembly, whose five inputs are ALL banked (`rankOneR_isAtom`,
+    `tprobR_preserved`, `exists_isometry_of_transProbPreservingR`,
+    `linearMap_eq_of_eq_on_rankOneR`, `orthConj_preservesJordan` + `orthConj_rankOneR`).
+    TRAPS: `matrix_ext_of_mulVec` needs `DecidableEq` (for `Pi.single`) — do not omit it; and
+    `field_simp` on `(ψ·u)(u·u) = u·u` produces a disjunction that is awkward to case on — use
+    `mul_right_cancel₀` instead.
     **★ ℝ BRIDGE — WHAT IS LEFT, MEASURED (do not re-measure; execute).** Unit 5 is the
     discharge, and its only prerequisite is rank-one TRANSPORT: that an order automorphism
     carries rank-one projections to rank-one projections. At ℂ that is four declarations, and

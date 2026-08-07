@@ -77,4 +77,57 @@ theorem rankOneR_ne_zero {ψ : n → ℝ} (hψ : ψ ⬝ᵥ ψ = 1) : rankOneR ψ
   rw [h, HermitianMat.mat_zero, Matrix.zero_mulVec, dotProduct_zero, hψ] at hq
   norm_num at hq
 
+/-! ## Rank-ones are exactly the atoms -/
+
+/-- Matrices agreeing on every vector are equal. -/
+theorem matrix_ext_of_mulVec {M N : Matrix n n ℝ} (h : ∀ v, M *ᵥ v = N *ᵥ v) : M = N := by
+  ext i j
+  have hij := congrFun (h (Pi.single j 1)) i
+  simpa [Matrix.mulVec_single] using hij
+
+/-- **Rank-one projections are atoms.**  A subprojection `q ≤ ψψᵀ` kills `ψ`'s orthogonal
+complement, so `q` is determined by `u = qψ`; idempotence forces `u = (ψ·u)u`, and then either
+`u = 0` (so `q = 0`) or `ψ·u = u·u = 1`, whence `|ψ − u|² = 0` and `q = ψψᵀ`.  The last step is
+the slick one: rather than decomposing `u` and killing a component, compare `|ψ − u|²` directly. -/
+theorem rankOneR_isAtom {ψ : n → ℝ} (hψ : ψ ⬝ᵥ ψ = 1) : IsAtomProjectionR (rankOneR ψ) := by
+  refine ⟨rankOneR_isProjection hψ, rankOneR_ne_zero hψ, ?_⟩
+  intro q hq hle
+  -- `q` is determined by its value on `ψ`
+  have hdecomp : ∀ v : n → ℝ, q.mat *ᵥ v = (ψ ⬝ᵥ v) • (q.mat *ᵥ ψ) := by
+    intro v
+    have hw : ψ ⬝ᵥ (v - (ψ ⬝ᵥ v) • ψ) = 0 := by
+      rw [dotProduct_sub, dotProduct_smul, smul_eq_mul, hψ, mul_one, sub_self]
+    have hqw := mulVec_eq_zero_of_le_rankOneR hq hle hw
+    rwa [Matrix.mulVec_sub, Matrix.mulVec_smul, sub_eq_zero] at hqw
+  have hidem : q.mat *ᵥ (q.mat *ᵥ ψ) = q.mat *ᵥ ψ := by
+    rw [Matrix.mulVec_mulVec, HermitianMat.isProjection_iff_mat_mul_self.mp hq]
+  -- the norm identity: `ψ·u = u·u`
+  have hnorm : ψ ⬝ᵥ (q.mat *ᵥ ψ) = (q.mat *ᵥ ψ) ⬝ᵥ (q.mat *ᵥ ψ) := quadForm_isProjection hq ψ
+  by_cases hu : q.mat *ᵥ ψ = 0
+  · -- `q` annihilates everything, so it is zero
+    left
+    apply HermitianMat.ext
+    refine matrix_ext_of_mulVec fun v => ?_
+    rw [hdecomp v, hu, smul_zero, HermitianMat.mat_zero, Matrix.zero_mulVec]
+  · -- `ψ·u = 1`, hence `u = ψ`
+    right
+    have huu : (q.mat *ᵥ ψ) ⬝ᵥ (q.mat *ᵥ ψ) ≠ 0 := fun h => hu (dotProduct_self_eq_zero.mp h)
+    have ha : ψ ⬝ᵥ (q.mat *ᵥ ψ) = 1 := by
+      have h1 : (ψ ⬝ᵥ (q.mat *ᵥ ψ)) • (q.mat *ᵥ ψ) = q.mat *ᵥ ψ := by
+        rw [← hdecomp (q.mat *ᵥ ψ)]; exact hidem
+      have h2 : (ψ ⬝ᵥ (q.mat *ᵥ ψ)) * ((q.mat *ᵥ ψ) ⬝ᵥ (q.mat *ᵥ ψ))
+          = (q.mat *ᵥ ψ) ⬝ᵥ (q.mat *ᵥ ψ) := by
+        have h3 := congrArg (fun x => x ⬝ᵥ (q.mat *ᵥ ψ)) h1
+        simpa [smul_dotProduct] using h3
+      exact mul_right_cancel₀ huu (by rw [h2, one_mul])
+    have hueq : q.mat *ᵥ ψ = ψ := by
+      have hz : (ψ - q.mat *ᵥ ψ) ⬝ᵥ (ψ - q.mat *ᵥ ψ) = 0 := by
+        rw [sub_dotProduct, dotProduct_sub, dotProduct_sub, hψ, ha, ← hnorm, ha,
+          dotProduct_comm (q.mat *ᵥ ψ) ψ, ha]
+        ring
+      exact (sub_eq_zero.mp (dotProduct_self_eq_zero.mp hz)).symm
+    apply HermitianMat.ext
+    refine matrix_ext_of_mulVec fun v => ?_
+    rw [hdecomp v, hueq, rankOneR_mat, vecMulVec_mulVec]
+
 end Necessity
