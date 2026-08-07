@@ -105,4 +105,66 @@ theorem blochVec_smul (t : ℂ) (v : Fin 2 → ℂ) :
     simp [blochVec, Complex.mul_re, Complex.mul_im, Complex.normSq_apply] <;>
     ring
 
+/-! ## The Bloch map on the frame space -/
+
+/-- The Bloch vector at the `EuclideanSpace` level. -/
+def blochE (v : EuclideanSpace ℂ (Fin 2)) : EuclideanSpace ℝ (Fin 3) :=
+  blochVec (WithLp.ofLp v)
+
+theorem blochE_ne_zero {v : EuclideanSpace ℂ (Fin 2)} (hv : v ≠ 0) : blochE v ≠ 0 :=
+  blochVec_ne_zero (Necessity.nsq_ne_zero_of_ne_zero (by
+    intro h
+    exact hv ((WithLp.ofLp_eq_zero (p := 2)).mp h)))
+
+/-- **The Bloch map on the frame space** `ℂP¹ → ℝP²`.  Well defined because a
+rescaling of the ray scales the Bloch vector by the positive real `|t|²`
+(`blochVec_smul`), and `ℝP²` quotients by all real scalings. -/
+def blochFrame : QubitFrame → RP2 :=
+  Projectivization.lift
+    (fun v => RP2.mk (blochE v.val) (blochE_ne_zero v.property))
+    (by
+      rintro ⟨a, ha⟩ ⟨b, hb⟩ t hab
+      simp only at hab
+      apply (RP2.mk_eq_mk_iff _ _).mpr
+      refine ⟨Complex.normSq t, ?_⟩
+      show (Complex.normSq t) • blochE b = blochE a
+      rw [show blochE a = blochVec (WithLp.ofLp a) from rfl,
+        show blochE b = blochVec (WithLp.ofLp b) from rfl,
+        show WithLp.ofLp a = t • WithLp.ofLp b from by rw [hab]; rfl,
+        blochVec_smul])
+
+@[simp]
+theorem blochFrame_mk (v : EuclideanSpace ℂ (Fin 2)) (hv : v ≠ 0) :
+    blochFrame (Projectivization.mk ℂ v hv) = RP2.mk (blochE v) (blochE_ne_zero hv) := rfl
+
+/-- The Bloch vector is continuous in the vector. -/
+theorem blochVec_continuous :
+    Continuous (fun v : EuclideanSpace ℂ (Fin 2) => blochE v) := by
+  apply (PiLp.continuous_toLp 2 (fun _ : Fin 3 => ℝ)).comp
+  apply continuous_pi
+  intro i
+  fin_cases i <;> simp [blochVec] <;> fun_prop
+
+/-- **The Bloch map is continuous** on the frame space (vendored
+`continuous_lift`, the same route as `tauFrame_continuous`). -/
+theorem blochFrame_continuous : Continuous blochFrame := by
+  apply Projectivization.continuous_lift
+  exact Projectivization.continuous_mk'.comp
+    ((blochVec_continuous.comp continuous_subtype_val).subtype_mk _)
+
+/-- **The Bloch map is complementation invariant**: complementation negates the
+Bloch vector, and `ℝP²` identifies antipodes. -/
+theorem blochFrame_orthoFrame (p : QubitFrame) :
+    blochFrame (orthoFrame p) = blochFrame p := by
+  induction p using Projectivization.ind with
+  | h v hv =>
+    rw [orthoFrame_mk, blochFrame_mk, blochFrame_mk]
+    have hneg : blochE (orthoE v) = -blochE v := by
+      show blochVec (WithLp.ofLp (orthoE v)) = -blochVec (WithLp.ofLp v)
+      rw [ofLp_orthoE, blochVec_orthoVec]
+    rw [show RP2.mk (blochE (orthoE v)) (blochE_ne_zero (orthoE_ne_zero hv))
+        = RP2.mk (-blochE v) (by rw [← hneg]; exact blochE_ne_zero (orthoE_ne_zero hv))
+        from by congr 1]
+    exact RP2.mk_neg _ (blochE_ne_zero hv)
+
 end RankTwo

@@ -2192,8 +2192,24 @@ sorry-free Wigner rigidity — see 3.0.
   Proof note: `fin_cases i` on `Fin 3` produces goals indexed by `⟨0, _⟩` rather than the
   literal `0`, so `@[simp]` apply-lemmas stated at `0`/`1`/`2` do NOT fire — unfold
   `blochVec` (and `orthoVec`) directly in the `simp` set and close with `ring`.
-  So `τ` and the Bloch map are now a COMPATIBLE PAIR of descents: both see only the
-  unordered frame (this part 2 + part 1's `tauFrame_orthoFrame`).
+  **PART 2b DONE (same commit day)**: the map is now packaged ON THE FRAME SPACE —
+  `blochE`/`blochE_ne_zero`, **`blochFrame : QubitFrame → RP2`** (via
+  `Projectivization.lift`, well-definedness = `blochVec_smul` since `|t|² ` is a
+  positive real and `ℝP²` quotients by ALL real scalings),
+  **`blochFrame_continuous`** (the same `Projectivization.continuous_lift` route as
+  `tauFrame_continuous`, composed with the vendored `Projectivization.continuous_mk'`),
+  and **`blochFrame_orthoFrame` — the Bloch map is complementation invariant** (via
+  `RP2.mk_neg`). Both axiom-checked = Lean core only.
+  So `τ` and the Bloch map are now a COMPATIBLE PAIR of descents ON THE FRAME SPACE:
+  both continuous, both complementation invariant (`tauFrame_orthoFrame` +
+  `blochFrame_orthoFrame`).
+  Proof notes: `PiLp.continuous_toLp` is the name for the `WithLp` direction (there is
+  no `WithLp.continuous_toLp`); and componentwise continuity needs FULL `simp [blochVec]`
+  before `fun_prop`, because `fin_cases`'s `⟨0, ⋯⟩` indices block `Matrix.cons_val_*`.
+  **REMAINING for M5.3**: `blochFrame` SURJECTIVE (the inverse-Bloch construction:
+  every nonzero real 3-vector is `B(v)` for some ray — normalize and solve), which with
+  compactness of `ℂP¹` + Hausdorffness of `ℝP²` makes it a quotient map and pushes `τ`
+  down to `C(ℝP², ℝ)`; plus the frame-indexed gluing. Injectivity is already free.
   **The remaining pieces:**
   (i) **the descent** `ℂP¹ / complementation ≅ ℝP²` — a quotient-topology
       homeomorphism, with `tau_swap_invariant` as the descent datum; this is the
