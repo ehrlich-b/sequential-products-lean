@@ -251,6 +251,7 @@ import RadicalRelativity.Necessity.ConjTransportGen
 import RadicalRelativity.Necessity.RealRayMap
 import RadicalRelativity.Necessity.RealRankOneSpan
 import RadicalRelativity.Necessity.RealJordanWitness
+import RadicalRelativity.Necessity.RealStrength
 import RadicalRelativity.Necessity.RealRigidity
 
 -- M2 necessity core, tenth unit (LEDGER 2.6, chi part 1): the comparison character

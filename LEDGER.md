@@ -2184,6 +2184,24 @@ sorry-free Wigner rigidity — see 3.0.
     could have been generalized in place, but they sit in a file that is ℂ-bound elsewhere
     (`rankOne`) and is finished and banked — thirty re-derived lines beat reopening a completed
     row.
+    **ℝ BRIDGE UNIT 4a DONE (same day)** — `Necessity/RealStrength.lean` (NEW, census 136 →
+    **137**): `vecMulVec_mulVec`, `quadForm_smul_rankOneR` (the quadratic form of `t·ψψᵀ` at a
+    unit `ψ` is exactly `t`), `strengthR` (Busch-Gudder: `sup {t | t·p ≤ a}`),
+    `strengthR_set_nonempty`, `strengthR_set_bddAbove` (`t·ψψᵀ ≤ a ≤ 𝟙` forces `t ≤ 1`, by
+    testing the form at `ψ`) and **`strengthR_map` — order isomorphisms preserve the
+    strength.** Gates green at 3094 jobs, custom axioms exactly [].
+    **Why this is the load-bearing unit for what remains.** Real Wigner needs a
+    transition-probability preserving ray map, so the transition probability has to be ORDER
+    DATA. The strength is the device: it is defined from the order and the real scalar action
+    alone, so it transports along any order isomorphism, and the ℂ lane recovers
+    `τ = 2 − Str⁻¹` from it (`tprob_eq_of_strength`). With `strengthR_map` banked, the
+    remaining ℝ work in unit 4 is the COMPUTATIONAL half: `probeR φ = ½(𝟙 + φφᵀ)` and
+    `strengthR (rankOneR ψ) (probeR φ) = (2 − (ψ ⬝ᵥ φ)²)⁻¹`, which in the ℂ lane is three
+    lemmas (`strength_probe_le`, `probe_le_one`, `probe_ge_inv_smul_rankOne`). Then unit 4b is
+    `exists_rankOneR_map` (an order automorphism carries atoms to atoms) and unit 5 assembles.
+    NAME TRAPS: `Matrix.smul_mulVec` (not `smul_mulVec_assoc`); and `omit` placement is
+    load-bearing here — `DecidableEq` IS referenced by the bddAbove statement (through the
+    order on `HermitianMat`) but not by the nonempty one.
     **★ ROUTE DECISION FOR THE ℝ BRIDGE — NATIVE, NOT A PORT, and here is the measurement.**
     The ℂ chain is phrased via `rankOne`/`tprob`/`nsq`, defined at ℂ in `ProjectionOrder` and
     `StrengthProbe`. Those primitives' scalars ARE inferable from their arguments, so in-place
