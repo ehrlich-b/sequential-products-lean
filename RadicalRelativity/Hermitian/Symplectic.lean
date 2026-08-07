@@ -200,4 +200,33 @@ theorem IsQuaternionic.symmMul {A B : HermitianMat (n ⊕ n) ℂ}
       rw [show (2 : ℂ) = ((2 : ℝ) : ℂ) by norm_num, Complex.conj_ofReal]]
   rw [quatConj_smul_of_conj_eq hc, quatConj_add, quatConj_mul, quatConj_mul, hA, hB]
 
+/-! ## The quaternionic set as a real subspace -/
+
+theorem isQuaternionic_zero : IsQuaternionic (0 : HermitianMat (n ⊕ n) ℂ) := by
+  unfold IsQuaternionic quatConj
+  rw [HermitianMat.mat_zero]
+  have h : (0 : Matrix (n ⊕ n) (n ⊕ n) ℂ).map (starRingEnd ℂ) = 0 := by
+    ext i j
+    simp
+  rw [h, Matrix.mul_zero, Matrix.zero_mul]
+
+/-- **`H_n(ℍ)` as a real subspace of `H_{2n}(ℂ)`.**  Packaging the fixed set as a
+`Submodule ℝ` is what lets the quaternionic carrier inherit its normed and order
+structure from the complex one, rather than being built from scratch over a
+noncommutative ring. -/
+def quatSubmodule : Submodule ℝ (HermitianMat (n ⊕ n) ℂ) where
+  carrier := {A | IsQuaternionic A}
+  zero_mem' := isQuaternionic_zero
+  add_mem' := fun hA hB => IsQuaternionic.add hA hB
+  smul_mem' := fun r _ hA => IsQuaternionic.smul r hA
+
+@[simp]
+theorem mem_quatSubmodule {A : HermitianMat (n ⊕ n) ℂ} :
+    A ∈ quatSubmodule (n := n) ↔ IsQuaternionic A := Iff.rfl
+
+/-- The unit lies in the quaternionic subspace, so the subspace is a candidate
+order-unit space with the inherited order — the carrier the `H_n(ℍ)` row needs. -/
+theorem one_mem_quatSubmodule : (1 : HermitianMat (n ⊕ n) ℂ) ∈ quatSubmodule (n := n) :=
+  isQuaternionic_one
+
 end HermitianMat

@@ -84,10 +84,18 @@ Traps: block identities like `fromBlocks (-1) 0 0 (-1) = -1` want `ext i j` +
 `fromBlocks_neg` juggling (a stray `-0` blocks the rewrite); and double conjugation needs
 an explicit `ext`-level lemma (`Complex.conj_conj`) — `Matrix.map_map` +
 `RingHomCompTriple.comp_eq` makes no progress.
-**Next for the ℍ row**: the order structure on the fixed set (an effect of `H_n(ℍ)` is a
-quaternionic effect of `H_{2n}(ℂ)`), then transport a product and run the ℝ-shaped
-argument — the quaternionic Peirce block is `ℍ`, whose centre is `ℝ`, so the same
-"no continuous character into a discrete sign group" kill should apply.
+Also landed: `isQuaternionic_zero`, **`quatSubmodule : Submodule ℝ (HermitianMat (n⊕n) ℂ)`**
+(the fixed set as a real subspace — this is what lets the quaternionic carrier INHERIT its
+normed and order structure instead of being built from scratch over a noncommutative ring),
+`mem_quatSubmodule`, and `one_mem_quatSubmodule`. Axiom-checked = Lean core only.
+**Next for the ℍ row, in order**: (a) the `OrderUnitSpace` instance on
+`quatSubmodule` — normed structure comes free from the submodule (finite dimension ⟹
+closed), the order is the restricted Loewner order, `ousUnit := 1` is
+`one_mem_quatSubmodule`, and the unit-interval compactness is inherited from the ambient;
+(b) transport a `SequentialProductOn` from the quaternionic carrier and run the ℝ-shaped
+argument — the quaternionic Peirce block is `ℍ`, whose CENTRE is `ℝ`, so the same
+"no continuous character into a discrete sign group" kill that closed the ℝ row should
+apply, with `eq_one_of_sq_eq_one_of_continuous` reusable verbatim.
 
 **If the deliverable needs scoping**: the two finished rows are a defensible artifact —
 an unconditional complex classification plus a real row resting on one published
