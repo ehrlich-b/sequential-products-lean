@@ -124,7 +124,28 @@ With those, what is left is the
 transfer: `Φ` is continuous and additive (`quatConj_add`/`quatConj_sub`), so a
 three-ε estimate against a Weierstrass approximant plus `norm_cfc_sub_le_of_sup_le`
 gives `Φ (a.cfc f) = a.cfc f` — the SAME skeleton as
-`continuousOn_cfc_sqrt_effects`, which is already in the tree to copy from. ★**The one missing ingredient, attempted and BACKED OUT 2026-08-06**: the transfer needs
+`continuousOn_cfc_sqrt_effects`, which is already in the tree to copy from. ★★**THE REAL SHAPE OF THE REMAINING GAP — found by two backed-out attempts
+2026-08-06, and it is a STRUCTURAL point, not a missing lemma.** The transfer needs a
+NORM on the objects being estimated, and:
+* **bare `Matrix (n⊕n) (n⊕n) ℂ` has NO `Norm` instance in scope** (the Frobenius norm is
+  scoped; `HermitianMat` carries its own norm, `Matrix` does not). So an ε-argument
+  cannot even be *stated* about `quatConj` as it currently is — a matrix-level map.
+* the fix is to restate the whole closure **at the `HermitianMat` level**: `Φ` PRESERVES
+  HERMITIAN-NESS (for Hermitian `A` it is the congruence `J₀ Aᵀ J₀ᴴ`, and congruence of a
+  Hermitian matrix is Hermitian — `quatConj_posSemidef`'s proof already contains this
+  computation), so define `quatConjH : HermitianMat (n⊕n) ℂ → HermitianMat (n⊕n) ℂ` and
+  work there, where the norm, the ℝ-linear structure, and `norm_cfc_sub_le_of_sup_le` all
+  live.
+* with `quatConjH` in hand the bound is FREE and needs no Frobenius computation: `Φ` is
+  ℝ-linear (conjugate-linear over ℂ IS ℝ-linear — `quatConj_add` +
+  `quatConj_real_smul` are already proved), and an ℝ-linear map on a finite-dimensional
+  normed space is automatically continuous and bounded
+  (`LinearMap.toContinuousLinearMap` + `le_opNorm`). **Do not attempt the entrywise
+  Frobenius-invariance computation** recommended a moment ago — it is unnecessary once the
+  statement moves to the Hermitian level.
+**So the next pass is: define `quatConjH`, port the handful of lemmas to it (mechanical),
+then the ε-argument is a copy of `continuousOn_cfc_sqrt_effects`.**
+★**Superseded note (kept for provenance), the earlier framing of this gap**: the transfer needs
 `Φ` to be norm-BOUNDED, not merely continuous, and neither a Frobenius-invariance lemma
 nor a linear-map-bound route is cheaply available here (`Φ` is conjugate-linear, so the
 `ℂ`-linear `exists_bound` machinery does not apply, and the vendored `Inner.lean` has
