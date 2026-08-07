@@ -2229,6 +2229,24 @@ sorry-free Wigner rigidity — see 3.0.
     at **`v* = 2ψ − (ψ⬝φ)φ`**, where `ψ⬝v* = 2 − τ`, `φ⬝v* = ψ⬝φ`, `v*⬝v* = 4 − 3τ`, so the test
     reads `t(2 − τ)² ≤ 2 − τ`. With that vector written down the proof is arithmetic; without it
     there is nothing to do.
+    **ℝ BRIDGE UNIT 5a DONE (same day)** — `Necessity/RealProjectionOrder.lean` (NEW, census
+    137 → **138**): `IsAtomProjectionR`, **`quadForm_isProjection`** (for a projection the
+    quadratic form IS a squared norm, `v·qv = |qv|²`, from `q² = q` and `qᵀ = q`),
+    **`mulVec_eq_zero_of_le_rankOneR`** (a subprojection of `ψψᵀ` ANNIHILATES everything
+    orthogonal to `ψ`) and `rankOneR_ne_zero`. Gates green at 3095 jobs, axioms Lean core.
+    **★ THIS REPLACES THE ℂ PROOF RATHER THAN PORTING IT, and that is the point.** The ℂ
+    argument (`ProjectionOrder` 136-268, ~130 lines) manipulates `vecMulVec` factorizations
+    directly. The ℝ route is conceptual: because the form of a projection is a squared norm, the
+    order bound `q ≤ ψψᵀ` UPGRADES to vanishing — `v·qv ≤ (ψ·v)² = 0` forces `qv = 0` — which is
+    far stronger than an inequality and is what collapses the argument. The remaining two-case
+    step is then short: write `qψ = aψ + v₀`; idempotence gives `a = 1` or `qψ = 0`; the first
+    forces `v₀ = 0` by comparing `|qψ|² = ψ·qψ = 1` against `|ψ|² + |v₀|²`, giving `q = ψψᵀ`, and
+    the second gives `q = 0`. **So the 60-line "genuinely spectral step" in the measurement
+    above is now the cheapest part of unit 5, not the boulder.** That correction matters: the
+    earlier estimate treated it as the one piece needing real thought.
+    TRAP: `q.H` has type `(↑q).IsHermitian`, which `rw` cannot see through — ascribe it
+    (`have h : q.matᴴ = q.mat := q.H`) before rewriting. `Matrix.mulVec_transpose`, not
+    `vecMul_eq_mulVec_transpose`.
     **★ ℝ BRIDGE — WHAT IS LEFT, MEASURED (do not re-measure; execute).** Unit 5 is the
     discharge, and its only prerequisite is rank-one TRANSPORT: that an order automorphism
     carries rank-one projections to rank-one projections. At ℂ that is four declarations, and
