@@ -863,6 +863,78 @@ theorem TransProbPreservingR.abs_add_coord_transfer [DecidableEq ι] {f : ℙ �
     at hkey
   exact mul_left_cancel₀ (inv_ne_zero (norm_ne_zero_iff.mpr (basis_add_ne_zero b h))) hkey
 
+omit [Nonempty ι] [FiniteDimensional ℝ E] in
+/-- Two vectors agreeing in every coordinate against an orthonormal basis are equal.  (Proved
+from `sum_repr'` rather than imported: `InnerProductSpace.ext_inner_right_basis` lives in
+`Analysis.InnerProductSpace.Dual`, which this development does not import.) -/
+theorem eq_of_inner_basis_eq (c : OrthonormalBasis ι ℝ E) {u v : E}
+    (h : ∀ k, (inner ℝ u (c k) : ℝ) = (inner ℝ v (c k) : ℝ)) : u = v :=
+  (c.sum_repr' u).symm.trans ((Finset.sum_congr rfl fun k _ => by
+    rw [real_inner_comm u (c k), real_inner_comm v (c k), h k]).trans (c.sum_repr' v))
+
+/-! ## Step 4d, part 2f: THE MAIN CASE
+
+On any ray whose anchor coordinate is nonzero, the rigidity is now complete.  The assembly
+needs no sums: two vectors agreeing in every coordinate against an orthonormal basis are
+equal, and `e` being an isometry turns `⟨e ψ̂, b'' k⟩` into `⟨ψ̂, b k⟩` directly.
+-/
+
+/-- **The main case of the real rigidity.**  If `⟨ψ̂, b i₀⟩ ≠ 0` then `f` agrees on `[ψ]`
+with the projective map induced by the isometry carrying `b` to the sign-normalized image
+basis.  The global sign is `ε = x_{i₀}/p_{i₀}`, and `sign_pair_of_abs` propagates it to
+every other coordinate. -/
+theorem TransProbPreservingR.eq_projMapR_of_anchor [DecidableEq ι] {f : ℙ ℝ E → ℙ ℝ E}
+    (hf : TransProbPreservingR f) (b : OrthonormalBasis ι ℝ E) (i₀ : ι)
+    {ψ : E} (hψ : ψ ≠ 0) (hanchor : (inner ℝ (‖ψ‖⁻¹ • ψ) (b i₀) : ℝ) ≠ 0) :
+    f (Projectivization.mk ℝ ψ hψ)
+      = projMapR (basisIsometry b (hf.normBasis b i₀)) (Projectivization.mk ℝ ψ hψ) := by
+  classical
+  have habsA := hf.abs_inner_normBasis b i₀ hψ i₀
+  -- the global sign, defined outright
+  have hεabs : |(inner ℝ (normImg f hψ) (hf.normBasis b i₀ i₀) : ℝ)
+      / (inner ℝ (‖ψ‖⁻¹ • ψ) (b i₀) : ℝ)| = 1 := by
+    rw [abs_div, habsA, div_self (abs_ne_zero.mpr hanchor)]
+  have hεne : (inner ℝ (normImg f hψ) (hf.normBasis b i₀ i₀) : ℝ)
+      / (inner ℝ (‖ψ‖⁻¹ • ψ) (b i₀) : ℝ) ≠ 0 := sign_ne_zero hεabs
+  -- every coordinate carries that same sign
+  have hcoord : ∀ k, (inner ℝ (normImg f hψ) (hf.normBasis b i₀ k) : ℝ)
+      = ((inner ℝ (normImg f hψ) (hf.normBasis b i₀ i₀) : ℝ)
+          / (inner ℝ (‖ψ‖⁻¹ • ψ) (b i₀) : ℝ)) * (inner ℝ (‖ψ‖⁻¹ • ψ) (b k) : ℝ) := by
+    intro k
+    by_cases hk : k = i₀
+    · rw [hk, div_mul_cancel₀ _ hanchor]
+    by_cases hpk : (inner ℝ (‖ψ‖⁻¹ • ψ) (b k) : ℝ) = 0
+    · have hz := hf.abs_inner_normBasis b i₀ hψ k
+      rw [hpk, abs_zero] at hz
+      rw [abs_eq_zero.mp hz, hpk, mul_zero]
+    rcases sign_pair_of_abs habsA (hf.abs_inner_normBasis b i₀ hψ k)
+        (hf.abs_add_coord_transfer b (Ne.symm hk) hψ) (mul_ne_zero hanchor hpk) with
+      ⟨h1, h2⟩ | ⟨h1, h2⟩
+    · rw [h1, div_self hanchor, one_mul, h2]
+    · rw [h1, neg_div, div_self hanchor, h2]
+      ring
+  -- the vector identity: no sums needed
+  have hvec : normImg f hψ
+      = ((inner ℝ (normImg f hψ) (hf.normBasis b i₀ i₀) : ℝ)
+          / (inner ℝ (‖ψ‖⁻¹ • ψ) (b i₀) : ℝ)) •
+        (basisIsometry b (hf.normBasis b i₀)) (‖ψ‖⁻¹ • ψ) := by
+    refine eq_of_inner_basis_eq (hf.normBasis b i₀) fun k => ?_
+    conv_rhs => rw [real_inner_smul_left, ← basisIsometry_apply b (hf.normBasis b i₀) k,
+      LinearIsometryEquiv.inner_map_map]
+    exact hcoord k
+  -- and the rays agree
+  have hez : (basisIsometry b (hf.normBasis b i₀)) ψ ≠ 0 := by
+    intro h
+    exact hψ ((basisIsometry b (hf.normBasis b i₀)).map_eq_zero_iff.mp h)
+  rw [← mk_normImg f hψ, projMapR_mk]
+  refine (Projectivization.mk_eq_mk_iff ℝ _ _ _ _).mpr
+    ⟨Units.mk0 ((inner ℝ (normImg f hψ) (hf.normBasis b i₀ i₀) : ℝ)
+        / (inner ℝ (‖ψ‖⁻¹ • ψ) (b i₀) : ℝ) * ‖ψ‖⁻¹)
+      (mul_ne_zero hεne (inv_ne_zero (norm_ne_zero_iff.mpr hψ))), ?_⟩
+  simp only [Units.smul_def, Units.val_mk0]
+  rw [← smul_smul, ← map_smul]
+  exact hvec.symm
+
 end PairModuli
 
 end Projectivization

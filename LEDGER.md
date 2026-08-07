@@ -2119,7 +2119,25 @@ sorry-free Wigner rigidity — see 3.0.
     same kind as those already banked. **Per-anchor isometries are NOT a shortcut** — anchoring
     at a different index per ray gives a different isometry, which does not prove the single-`e`
     statement; that dead end is recorded so it is not retried.
-    **What remains of the rigidity: 4d part 2f — the pattern from the pairs `(i₀, i)`
+    **★ STEP 4d part 2f DONE (same day) — THE MAIN CASE IS MACHINE-CHECKED.**
+    **`eq_projMapR_of_anchor`**: for any ray with `⟨ψ̂, b i₀⟩ ≠ 0`,
+    `f [ψ] = projMapR (basisIsometry b (hf.normBasis b i₀)) [ψ]`. The global sign is
+    `ε = x_{i₀}/p_{i₀}` (defined outright, not chosen), `sign_pair_of_abs` propagates it to
+    every other coordinate, and coordinates where `p_k = 0` are handled by `|x_k| = |p_k| = 0`.
+    Also `eq_of_inner_basis_eq`, proved from `sum_repr'` because
+    `InnerProductSpace.ext_inner_right_basis` lives in `Analysis.InnerProductSpace.Dual`,
+    which this development does not import. **The assembly needs NO SUMS**: two vectors
+    agreeing in every coordinate against an orthonormal basis are equal, and `e` being an
+    isometry turns `⟨e ψ̂, b'' k⟩` into `⟨ψ̂, b k⟩` in one step. Axiom-checked = Lean core only.
+    TRAPS (both cost a round): `real_inner_comm (x y) : ⟪y,x⟫ = ⟪x,y⟫` — the arguments read
+    BACKWARDS from the goal; and `rw [hvec]` where `hvec`'s RHS mentions the rewritten term
+    inside its own scalar rewrites it there too (the self-reference trap, third occurrence
+    this campaign) — chain with `.trans`/`exact ….symm` instead.
+    **What remains of the real rigidity: the residual case `p_{i₀} = 0` ONLY** — see the scope
+    note above: three-slot pair consistency, ~3-4 units of the same kind. The main case being
+    done means the theorem's mathematical content is banked; what is left is the coverage of
+    rays orthogonal to the anchor.
+    **(superseded note) 4d part 2f — the pattern from the pairs `(i₀, i)`
     (the coordinates are inner products, so no choice is needed), prove pair-consistency for
     arbitrary `(i,j)` via a THREE-slot vector, and assemble the isometry. The inputs are now
     all in place: `image_two_slot` supplies the moduli, `sign_pair_of_abs` the common sign,
