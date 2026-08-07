@@ -339,4 +339,58 @@ theorem tauRP2_continuous : Continuous tauRP2 :=
 real function on `ℝP²`. -/
 def tauModuliRP2 : C(RP2, ℝ) := ⟨tauRP2, tauRP2_continuous⟩
 
+/-! ## The bridge: `τ` on `ℝP²` pulls back to `τ` on the frame space -/
+
+/-- `‖B(v)‖ = ‖v‖²`: the Bloch norm is the squared vector norm. -/
+theorem sqrt_blochVec_normSq (v : Fin 2 → ℂ) :
+    Real.sqrt ((WithLp.ofLp (blochVec v)) 0 ^ 2 + (WithLp.ofLp (blochVec v)) 1 ^ 2
+        + (WithLp.ofLp (blochVec v)) 2 ^ 2)
+      = HermitianMat.nsq v := by
+  have hsum : HermitianMat.nsq v = Complex.normSq (v 0) + Complex.normSq (v 1) := by
+    unfold HermitianMat.nsq
+    rw [Fin.sum_univ_two]
+  rw [blochVec_normSq, ← hsum]
+  refine Real.sqrt_sq ?_
+  rw [hsum]
+  exact add_nonneg (Complex.normSq_nonneg _) (Complex.normSq_nonneg _)
+
+/-- **The bridge identity, at the vector level**: `τ` in Bloch coordinates pulls
+back to `τ` on rays.  Both sides are closed forms, so this is algebra:
+`2|v₀|²/‖v‖² − 1 = (|v₀|²−|v₁|²)/‖v‖² = B₂/‖B‖`. -/
+theorem tauRVec_blochE (v : {w : EuclideanSpace ℂ (Fin 2) // w ≠ 0}) :
+    tauRVec ⟨blochE v.val, blochE_ne_zero v.property⟩ = tauVec v := by
+  have hns : HermitianMat.nsq (WithLp.ofLp v.val) ≠ 0 :=
+    Necessity.nsq_ne_zero_of_ne_zero (by
+      intro h
+      exact v.property ((WithLp.ofLp_eq_zero (p := 2)).mp h))
+  have hsum : HermitianMat.nsq (WithLp.ofLp v.val)
+      = Complex.normSq ((WithLp.ofLp v.val) 0) + Complex.normSq ((WithLp.ofLp v.val) 1) := by
+    unfold HermitianMat.nsq
+    rw [Fin.sum_univ_two]
+  rw [tauVec_eq]
+  unfold tauRVec
+  show (((WithLp.ofLp (blochVec (WithLp.ofLp v.val))) 2)
+      / Real.sqrt ((WithLp.ofLp (blochVec (WithLp.ofLp v.val))) 0 ^ 2
+        + (WithLp.ofLp (blochVec (WithLp.ofLp v.val))) 1 ^ 2
+        + (WithLp.ofLp (blochVec (WithLp.ofLp v.val))) 2 ^ 2)) ^ 2 = _
+  rw [sqrt_blochVec_normSq, blochVec_apply_two]
+  congr 1
+  field_simp
+  rw [hsum]
+  ring
+
+/-- **The bridge identity**: the `ℝP²` moduli function pulls back along the Bloch
+map to the frame function.  So `tauModuliRP2` really is `τ`, expressed on the
+carrier `cor:qubit-classification` names. -/
+theorem tauRP2_blochFrame (p : QubitFrame) : tauRP2 (blochFrame p) = tauFrame p := by
+  induction p using Projectivization.ind with
+  | h v hv =>
+    rw [blochFrame_mk, tauFrame_mk]
+    show tauRVec ⟨blochE v, blochE_ne_zero hv⟩ = tauVec ⟨v, hv⟩
+    exact tauRVec_blochE ⟨v, hv⟩
+
+@[simp]
+theorem tauModuliRP2_blochFrame (p : QubitFrame) :
+    tauModuliRP2 (blochFrame p) = tauModuli p := tauRP2_blochFrame p
+
 end RankTwo

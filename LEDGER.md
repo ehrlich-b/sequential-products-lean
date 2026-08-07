@@ -2224,9 +2224,19 @@ sorry-free Wigner rigidity — see 3.0.
   `ℝP²` by `Projectivization.lift` + `continuous_lift`.  No compactness, no
   Hausdorffness, no closed-map argument, and **no injectivity-modulo-complementation
   needed** (that lemma was going to be required for the quotient route and is now moot).
-  **REMAINING for M5.3**: (a) the bridge identity `tauRP2 (blochFrame p) = tauFrame p`
-  — pure algebra from `tauVec_eq` + `blochVec_normSq`, no new concepts; (b) the
-  frame-indexed gluing. Injectivity of the classification is already free.
+  **BRIDGE IDENTITY DONE 2026-08-06**: `sqrt_blochVec_normSq` (`‖B(v)‖ = ‖v‖²`),
+  `tauRVec_blochE`, and **`tauRP2_blochFrame : tauRP2 (blochFrame p) = tauFrame p`**
+  (plus the `@[simp]` packaged form `tauModuliRP2_blochFrame`), axiom-checked = Lean
+  core only. So `tauModuliRP2` is not merely *a* function on `ℝP²` — it is provably
+  **the frame function itself**, expressed on the carrier `cor:qubit-classification`
+  names. The whole descent `ℂP¹ → ℝP²` is now complete and certified:
+  `blochFrame` (continuous, surjective, complementation invariant) together with
+  `tauRP2_blochFrame`.
+  **REMAINING for M5.3: only the frame-indexed gluing** — assembling the per-frame
+  family of `MasterTheorem.RankTwo.sp` into a single product over `QubitFrame`, which
+  is what makes the map `product ↦ τ` well defined in the first place. Injectivity of
+  the classification is already free (`tau_std_eq_one` vs `tau_had_eq_zero` +
+  `n2_necessity`).
   **The remaining pieces:**
   (i) **the descent** `ℂP¹ / complementation ≅ ℝP²` — a quotient-topology
       homeomorphism, with `tau_swap_invariant` as the descent datum; this is the
