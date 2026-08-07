@@ -167,4 +167,101 @@ theorem blochFrame_orthoFrame (p : QubitFrame) :
         from by congr 1]
     exact RP2.mk_neg _ (blochE_ne_zero hv)
 
+/-! ## Surjectivity: the inverse Bloch construction -/
+
+/-- The inverse Bloch construction, generic branch: for `w = (x,y,z) ≠ 0` with
+`r := z + ‖w‖ > 0`, the ray `v = (r, x + iy)` has `B(v) = 2r • w`.  The key
+identity is `r² − (x²+y²) = 2zr`, which is exactly the quadratic `r` solves. -/
+theorem blochVec_inverse (x y z : ℝ) (hs : Real.sqrt (x ^ 2 + y ^ 2 + z ^ 2) ^ 2
+      = x ^ 2 + y ^ 2 + z ^ 2) :
+    blochVec ![((z + Real.sqrt (x ^ 2 + y ^ 2 + z ^ 2) : ℝ) : ℂ),
+        (x : ℂ) + (y : ℂ) * Complex.I]
+      = (2 * (z + Real.sqrt (x ^ 2 + y ^ 2 + z ^ 2)))
+        • (WithLp.toLp 2 ![x, y, z] : EuclideanSpace ℝ (Fin 3)) := by
+  set s : ℝ := Real.sqrt (x ^ 2 + y ^ 2 + z ^ 2) with hsdef
+  set r : ℝ := z + s with hrdef
+  apply (WithLp.ofLp_injective (p := 2) (V := Fin 3 → ℝ))
+  funext i
+  fin_cases i <;>
+    simp [blochVec, Complex.mul_re, Complex.mul_im, Complex.normSq_apply, hrdef] <;>
+    nlinarith [hs, sq_nonneg s, sq_nonneg z]
+
+/-- **The Bloch map is surjective.**  Every point of `ℝP²` is the Bloch point of a
+ray: solve `r² − (x²+y²) = 2zr` by `r = z + ‖w‖` on the generic branch, and take the
+south pole `(0,1)` on the remaining axis. -/
+theorem blochFrame_surjective : Function.Surjective blochFrame := by
+  intro q
+  induction q using Projectivization.ind with
+  | h w hw =>
+    set x : ℝ := (WithLp.ofLp w) 0 with hx
+    set y : ℝ := (WithLp.ofLp w) 1 with hy
+    set z : ℝ := (WithLp.ofLp w) 2 with hz
+    have hwe : w = (WithLp.toLp 2 ![x, y, z] : EuclideanSpace ℝ (Fin 3)) := by
+      apply (WithLp.ofLp_injective (p := 2) (V := Fin 3 → ℝ))
+      funext i
+      fin_cases i <;> simp [hx, hy, hz]
+    have hs : Real.sqrt (x ^ 2 + y ^ 2 + z ^ 2) ^ 2 = x ^ 2 + y ^ 2 + z ^ 2 :=
+      Real.sq_sqrt (by positivity)
+    have hne : ¬ (x = 0 ∧ y = 0 ∧ z = 0) := by
+      rintro ⟨h0, h1, h2⟩
+      apply hw
+      rw [hwe]
+      apply (WithLp.ofLp_injective (p := 2) (V := Fin 3 → ℝ))
+      funext i
+      fin_cases i <;> simp [h0, h1, h2]
+    by_cases hgen : 0 < z + Real.sqrt (x ^ 2 + y ^ 2 + z ^ 2)
+    · -- generic branch
+      set r : ℝ := z + Real.sqrt (x ^ 2 + y ^ 2 + z ^ 2) with hrdef
+      set v : EuclideanSpace ℂ (Fin 2) :=
+        WithLp.toLp 2 ![((r : ℝ) : ℂ), (x : ℂ) + (y : ℂ) * Complex.I] with hvdef
+      have hv : v ≠ 0 := by
+        intro h
+        have h0 : (WithLp.ofLp v) 0 = 0 := by rw [h]; rfl
+        rw [hvdef] at h0
+        simp only [Matrix.cons_val_zero] at h0
+        exact (ne_of_gt hgen) (by exact_mod_cast h0)
+      refine ⟨Projectivization.mk ℂ v hv, ?_⟩
+      rw [blochFrame_mk]
+      apply (RP2.mk_eq_mk_iff _ _).mpr
+      refine ⟨2 * r, ?_⟩
+      show (2 * r) • w = blochE v
+      rw [show blochE v = blochVec (WithLp.ofLp v) from rfl, hvdef]
+      simp only [WithLp.ofLp_toLp]
+      rw [blochVec_inverse x y z hs, ← hwe]
+    · -- axis branch: `x = y = 0` and `z < 0`, met by the south pole `(0,1)`
+      push_neg at hgen
+      set v : EuclideanSpace ℂ (Fin 2) := WithLp.toLp 2 ![(0 : ℂ), 1] with hvdef
+      have hv : v ≠ 0 := by
+        intro h
+        have h1 : (WithLp.ofLp v) 1 = 0 := by rw [h]; rfl
+        rw [hvdef] at h1
+        simp at h1
+      -- on this branch `√(x²+y²+z²) ≤ -z`, forcing `x = y = 0` and `z < 0`
+      have hsle : Real.sqrt (x ^ 2 + y ^ 2 + z ^ 2) ≤ -z := by linarith
+      have hznn : z ≤ 0 := by
+        have := Real.sqrt_nonneg (x ^ 2 + y ^ 2 + z ^ 2)
+        linarith
+      have hxy : x = 0 ∧ y = 0 := by
+        have h1 : x ^ 2 + y ^ 2 + z ^ 2 ≤ z ^ 2 := by
+          nlinarith [Real.sq_sqrt (show (0:ℝ) ≤ x ^ 2 + y ^ 2 + z ^ 2 by positivity),
+            Real.sqrt_nonneg (x ^ 2 + y ^ 2 + z ^ 2), hsle]
+        constructor <;> nlinarith [sq_nonneg x, sq_nonneg y]
+      have hzneg : z < 0 := by
+        rcases lt_or_eq_of_le hznn with h | h
+        · exact h
+        · exact absurd ⟨hxy.1, hxy.2, h⟩ hne
+      refine ⟨Projectivization.mk ℂ v hv, ?_⟩
+      rw [blochFrame_mk]
+      apply (RP2.mk_eq_mk_iff _ _).mpr
+      refine ⟨-z⁻¹, ?_⟩
+      show (-z⁻¹) • w = blochE v
+      rw [show blochE v = blochVec (WithLp.ofLp v) from rfl, hvdef, hwe]
+      simp only [WithLp.ofLp_toLp]
+      apply (WithLp.ofLp_injective (p := 2) (V := Fin 3 → ℝ))
+      funext i
+      fin_cases i <;>
+        simp [blochVec, hxy.1, hxy.2, Complex.normSq_apply] <;>
+        field_simp <;>
+        exact div_self (ne_of_lt hzneg)
+
 end RankTwo

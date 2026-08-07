@@ -2206,10 +2206,17 @@ sorry-free Wigner rigidity — see 3.0.
   Proof notes: `PiLp.continuous_toLp` is the name for the `WithLp` direction (there is
   no `WithLp.continuous_toLp`); and componentwise continuity needs FULL `simp [blochVec]`
   before `fun_prop`, because `fin_cases`'s `⟨0, ⋯⟩` indices block `Matrix.cons_val_*`.
-  **REMAINING for M5.3**: `blochFrame` SURJECTIVE (the inverse-Bloch construction:
-  every nonzero real 3-vector is `B(v)` for some ray — normalize and solve), which with
-  compactness of `ℂP¹` + Hausdorffness of `ℝP²` makes it a quotient map and pushes `τ`
-  down to `C(ℝP², ℝ)`; plus the frame-indexed gluing. Injectivity is already free.
+  **SURJECTIVITY DONE 2026-08-06** — `blochVec_inverse` + **`blochFrame_surjective`**
+  (axiom-checked = Lean core only). The inverse-Bloch construction avoids trigonometry
+  and normalization entirely: for `w = (x,y,z) ≠ 0` put `r := z + ‖w‖` and take the ray
+  `v = (r, x + iy)`; then `B(v) = 2r • w`, because `r` is precisely the positive root of
+  `r² − 2zr − (x²+y²) = 0` (expand `r² − (x²+y²)` using `‖w‖² = x²+y²+z²`). The single
+  degenerate branch is `x = y = 0, z < 0` (where `r = 0`), met by the south pole
+  `v = (0,1)` with factor `−z⁻¹`. Two cases, no square roots beyond `‖w‖`, no charts.
+  **REMAINING for M5.3**: (a) the quotient step — `blochFrame` is a continuous
+  SURJECTION from the COMPACT `ℂP¹` onto the HAUSDORFF `ℝP²`, hence closed, hence a
+  quotient map, which pushes the complementation-invariant `τ` down to a member of
+  `C(ℝP², ℝ)`; (b) the frame-indexed gluing. Injectivity is already free.
   **The remaining pieces:**
   (i) **the descent** `ℂP¹ / complementation ≅ ℝP²` — a quotient-topology
       homeomorphism, with `tau_swap_invariant` as the descent datum; this is the
