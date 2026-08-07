@@ -2046,8 +2046,20 @@ sorry-free Wigner rigidity — see 3.0.
     tactic block; and `rw` on the ray of a sign-adjusted vector fails with "motive is not
     type correct" because the nonzero proof depends on the rewritten term — go through
     `mk_eq_mk_iff` instead. Axiom-checked = Lean core only.
-    **What remains of the rigidity: 4c part 2 + 4d — define the pattern from the pairs
-    `(i₀, i)`, prove it works for an arbitrary ray, and assemble the isometry.** Use a
+    **STEP 4c part 2 DONE (same day)**: **`sign_pair_of_abs`** — the engine of the entire
+    sign-fixing argument, and it is PURE REAL ARITHMETIC: from `|x| = |p|`, `|y| = |q|` and
+    `|x + y| = |p + q|` with `p·q ≠ 0`, conclude `(x,y) = (p,q)` or `(x,y) = (-p,-q)` — ONE
+    sign for both. The mixed case is killed because `|p - q| = |p + q|` forces `pq = 0`.
+    That is exactly why the global pattern is consistent rather than merely pointwise: a
+    nonvanishing pair of source coordinates TRANSMITS its relative sign. Also
+    `basis_add_ne_zero` (distinct orthonormal basis vectors have nonzero sum), which removes
+    the side hypothesis from every two-slot construction downstream. Axiom-checked = Lean
+    core only.
+    **What remains of the rigidity: 4d — define the pattern from the pairs `(i₀, i)` (the
+    coordinates are inner products, so no choice is needed), prove pair-consistency for
+    arbitrary `(i,j)` via a THREE-slot vector, and assemble the isometry. The inputs are now
+    all in place: `image_two_slot` supplies the moduli, `sign_pair_of_abs` the common sign,
+    `signAdjustBasis` the absorption, `eq_sum_over_support` the expansion.** Use a
     reference vector (e.g. `Σ eᵢ`, or successively the vectors `eᵢ + eⱼ`) to pin the
     relative signs, and check consistency via the transition probabilities with those
     mixed vectors; then assemble the isometry and conclude

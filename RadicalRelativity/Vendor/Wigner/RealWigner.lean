@@ -519,6 +519,46 @@ theorem mk_signAdjustBasis (b : OrthonormalBasis ι ℝ E) (σ : ι → ℝ)
       simp only [Units.smul_def, Units.val_mk0]
       exact (signAdjustBasis_apply b σ hσ i).symm⟩
 
+omit [Nonempty ι] [FiniteDimensional ℝ E] in
+/-- Two distinct vectors of an orthonormal basis have nonzero sum — so the two-slot
+vectors the sign argument uses never need a side hypothesis. -/
+theorem basis_add_ne_zero (b : OrthonormalBasis ι ℝ E) {i j : ι} (hij : i ≠ j) :
+    b i + b j ≠ 0 := by
+  intro h
+  have h1 : (inner ℝ (b i + b j) (b i) : ℝ) = 1 := by
+    rw [inner_add_left, real_inner_self_eq_norm_sq, b.orthonormal.1 i,
+      b.orthonormal.2 (Ne.symm hij)]
+    norm_num
+  rw [h, inner_zero_left] at h1
+  exact zero_ne_one h1
+
 end ImageBasis
+
+/-! ## Step 4c, part 2: the arithmetic that forces a COMMON sign
+
+Here is the engine of the whole sign-fixing argument, and it is pure real arithmetic.  Step
+4a gives `|x| = |p|` and `|y| = |q|` for the two coordinates; the transition probability
+against the two-slot vector gives `|x + y| = |p + q|`.  Those three facts together force
+`(x, y) = ±(p, q)` with **one sign for both** -- because the mixed case `x = p, y = -q`
+would give `|p - q| = |p + q|`, i.e. `pq = 0`.  So a nonvanishing pair of source
+coordinates transmits its relative sign, and that is what makes the global pattern
+consistent rather than merely pointwise.
+-/
+
+/-- **The common-sign lemma.**  Matching moduli of the two coordinates AND of their sum
+forces a single shared sign, provided neither source coordinate vanishes. -/
+theorem sign_pair_of_abs {x y p q : ℝ} (hx : |x| = |p|) (hy : |y| = |q|)
+    (hsum : |x + y| = |p + q|) (hpq : p * q ≠ 0) :
+    (x = p ∧ y = q) ∨ (x = -p ∧ y = -q) := by
+  have hsq : (x + y) ^ 2 = (p + q) ^ 2 := by
+    rw [← sq_abs (x + y), ← sq_abs (p + q), hsum]
+  rcases abs_eq_abs.mp hx with hx' | hx' <;> rcases abs_eq_abs.mp hy with hy' | hy'
+  · exact Or.inl ⟨hx', hy'⟩
+  · rw [hx', hy'] at hsq
+    exact absurd (by linarith [hsq, sq_nonneg (p - q)] : p * q = 0) hpq
+  · rw [hx', hy'] at hsq
+    exact absurd (by linarith [hsq, sq_nonneg (p - q)] : p * q = 0) hpq
+  · exact Or.inr ⟨hx', hy'⟩
+
 
 end Projectivization
