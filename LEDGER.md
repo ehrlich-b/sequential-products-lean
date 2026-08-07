@@ -2034,8 +2034,20 @@ sorry-free Wigner rigidity — see 3.0.
     hij` — I had them swapped; and `omit ... in` must precede the DOCSTRING, so dropping
     `[DecidableEq ι]` from the section and using `classical` in the one proof that needs
     it is cleaner. Axiom-checked = Lean core only.
-    **What remains of the rigidity: 4c-4d — pick the global sign pattern from a reference
-    vector and assemble the isometry.** Use a
+    **STEP 4c part 1 DONE (same day)**: `orthonormal_signAdjust`, `signAdjustBasis`,
+    `signAdjustBasis_apply`, **`mk_signAdjustBasis`** — rescaling an orthonormal basis by
+    any pattern of signs gives an orthonormal basis representing THE SAME RAYS. This is the
+    structural reason the sign-fixing step is not a search: it does not choose signs out of
+    nothing, it ABSORBS them into a re-choice of the image basis, and the projective
+    classification cannot see the difference. What is left is therefore to exhibit one
+    working pattern (from the pairs `(i₀, i)` via `image_two_slot`), not to justify that a
+    pattern may be used. TRAPS: `OrthonormalBasis.coe_mk` needs its `hon` argument by NAME,
+    so the orthonormality must be a top-level theorem, not a `have` inside the def's
+    tactic block; and `rw` on the ray of a sign-adjusted vector fails with "motive is not
+    type correct" because the nonzero proof depends on the rewritten term — go through
+    `mk_eq_mk_iff` instead. Axiom-checked = Lean core only.
+    **What remains of the rigidity: 4c part 2 + 4d — define the pattern from the pairs
+    `(i₀, i)`, prove it works for an arbitrary ray, and assemble the isometry.** Use a
     reference vector (e.g. `Σ eᵢ`, or successively the vectors `eᵢ + eⱼ`) to pin the
     relative signs, and check consistency via the transition probabilities with those
     mixed vectors; then assemble the isometry and conclude

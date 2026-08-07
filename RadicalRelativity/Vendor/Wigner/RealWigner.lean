@@ -470,6 +470,55 @@ theorem TransProbPreservingR.image_two_slot {f : ℙ ℝ E → ℙ ℝ E}
       ← hu] at habs
     exact abs_eq_zero.mp habs
 
+/-! ## Step 4c, part 1: the image basis may be sign-normalized for free
+
+The sign-fixing argument does not choose signs out of nothing -- it *absorbs* them.  Given
+any pattern `σ : ι → ℝ` of units, the rescaled family `σ i • b' i` is again an orthonormal
+basis, and it represents the SAME RAYS.  So replacing `b'` by a sign-normalized version
+changes nothing that the classification can see, and the remaining task is only to exhibit
+one pattern that works.
+-/
+
+omit [Nonempty ι] [FiniteDimensional ℝ E] in
+/-- Rescaling by signs preserves orthonormality. -/
+theorem orthonormal_signAdjust (b : OrthonormalBasis ι ℝ E) (σ : ι → ℝ)
+    (hσ : ∀ i, |σ i| = 1) : Orthonormal ℝ (fun i => σ i • b i) := by
+  refine ⟨fun i => ?_, fun {i j} hij => ?_⟩
+  · simp only [norm_smul, Real.norm_eq_abs, hσ i, b.orthonormal.1 i, mul_one]
+  · simp only [real_inner_smul_left, real_inner_smul_right, b.orthonormal.2 hij, mul_zero]
+
+/-- **Rescaling an orthonormal basis by signs gives an orthonormal basis.** -/
+noncomputable def signAdjustBasis (b : OrthonormalBasis ι ℝ E) (σ : ι → ℝ)
+    (hσ : ∀ i, |σ i| = 1) : OrthonormalBasis ι ℝ E :=
+  OrthonormalBasis.mk (orthonormal_signAdjust b σ hσ) (by
+    have hspan : Submodule.span ℝ (Set.range (fun i => σ i • b i)) = ⊤ := by
+      apply LinearIndependent.span_eq_top_of_card_eq_finrank
+        (orthonormal_signAdjust b σ hσ).linearIndependent
+      exact (Module.finrank_eq_card_basis b.toBasis).symm
+    rw [hspan])
+
+omit [FiniteDimensional ℝ E] in
+theorem signAdjustBasis_apply (b : OrthonormalBasis ι ℝ E) (σ : ι → ℝ)
+    (hσ : ∀ i, |σ i| = 1) (i : ι) : signAdjustBasis b σ hσ i = σ i • b i :=
+  congrFun (OrthonormalBasis.coe_mk (orthonormal_signAdjust b σ hσ) _) i
+
+theorem sign_ne_zero {c : ℝ} (hc : |c| = 1) : c ≠ 0 := by
+  intro h
+  rw [h, abs_zero] at hc
+  exact zero_ne_one hc
+
+omit [FiniteDimensional ℝ E] in
+/-- **A sign-adjusted basis represents the same rays.**  This is the precise sense in which
+the residual sign freedom is invisible to the projective classification. -/
+theorem mk_signAdjustBasis (b : OrthonormalBasis ι ℝ E) (σ : ι → ℝ)
+    (hσ : ∀ i, |σ i| = 1) (i : ι) :
+    Projectivization.mk ℝ (signAdjustBasis b σ hσ i) (basis_ne_zero _ i)
+      = Projectivization.mk ℝ (b i) (basis_ne_zero b i) :=
+  (Projectivization.mk_eq_mk_iff ℝ _ _ _ _).mpr
+    ⟨Units.mk0 (σ i) (sign_ne_zero (hσ i)), by
+      simp only [Units.smul_def, Units.val_mk0]
+      exact (signAdjustBasis_apply b σ hσ i).symm⟩
+
 end ImageBasis
 
 end Projectivization
