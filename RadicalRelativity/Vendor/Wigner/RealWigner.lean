@@ -774,6 +774,60 @@ theorem TransProbPreservingR.pair_coord_mul_pos [DecidableEq ι] {f : ℙ ℝ E 
   exact mul_sign_mul_pos (mul_ne_zero (hf.inner_imgBasis_pair_ne_zero b h)
     (hf.inner_imgBasis_pair_right_ne_zero b h))
 
+/-! ## Step 4d, part 2d: the two-slot image in the normalized basis
+
+Equal moduli plus a positive product means EQUAL.  So in the normalized basis the image of
+`b i₀ + b i` is a single scalar times `b'' i₀ + b'' i` — the two-slot image has become
+symmetric, which is what lets its transition probability with an arbitrary ray be read as
+`|x + y|` for the ray's own coordinates.
+-/
+
+/-- Equal moduli and a positive product force equality. -/
+theorem eq_of_abs_eq_of_mul_pos {A B : ℝ} (habs : |A| = |B|) (hpos : 0 < A * B) : A = B := by
+  rcases abs_eq_abs.mp habs with h | h
+  · exact h
+  · rw [h] at hpos
+    nlinarith [hpos, sq_nonneg B]
+
+/-- Step 4a against the normalized basis — the sign adjustment does not change moduli. -/
+theorem TransProbPreservingR.abs_inner_normBasis [DecidableEq ι] {f : ℙ ℝ E → ℙ ℝ E}
+    (hf : TransProbPreservingR f) (b : OrthonormalBasis ι ℝ E) (i₀ : ι) {ψ : E} (hψ : ψ ≠ 0)
+    (k : ι) :
+    |(inner ℝ (normImg f hψ) (hf.normBasis b i₀ k) : ℝ)|
+      = |(inner ℝ (‖ψ‖⁻¹ • ψ) (b k) : ℝ)| := by
+  rw [hf.normBasis_apply b i₀ k, real_inner_smul_right, abs_mul, hf.abs_signPattern b i₀ k,
+    one_mul]
+  exact hf.abs_inner_imgBasis b hψ k
+
+/-- **The two-slot image is symmetric in the normalized basis.** -/
+theorem TransProbPreservingR.two_slot_normBasis [DecidableEq ι] {f : ℙ ℝ E → ℙ ℝ E}
+    (hf : TransProbPreservingR f) (b : OrthonormalBasis ι ℝ E) {i₀ i : ι} (h : i₀ ≠ i) :
+    ∃ A : ℝ, |A| = ‖b i₀ + b i‖⁻¹ ∧
+      normImg f (basis_add_ne_zero b h) = A • (hf.normBasis b i₀ i₀ + hf.normBasis b i₀ i) := by
+  classical
+  have hmodL : |(inner ℝ (normImg f (basis_add_ne_zero b h)) (hf.normBasis b i₀ i₀) : ℝ)|
+      = ‖b i₀ + b i‖⁻¹ := by
+    rw [hf.normBasis_apply b i₀ i₀, real_inner_smul_right, abs_mul, hf.abs_signPattern b i₀ i₀,
+      one_mul]
+    exact hf.abs_inner_imgBasis_pair b h
+  have hmodR : |(inner ℝ (normImg f (basis_add_ne_zero b h)) (hf.normBasis b i₀ i) : ℝ)|
+      = ‖b i₀ + b i‖⁻¹ := by
+    rw [hf.normBasis_apply b i₀ i, real_inner_smul_right, abs_mul, hf.abs_signPattern b i₀ i,
+      one_mul]
+    exact hf.abs_inner_imgBasis_pair_right b h
+  -- equal moduli + positive product ⟹ the two coordinates coincide
+  have heq := eq_of_abs_eq_of_mul_pos (hmodL.trans hmodR.symm) (hf.pair_coord_mul_pos b h)
+  have hvanish : ∀ k, k ≠ i₀ → k ≠ i →
+      (inner ℝ (normImg f (basis_add_ne_zero b h)) (hf.normBasis b i₀ k) : ℝ) = 0 := by
+    intro k hki₀ hki
+    have habs := hf.abs_inner_normBasis b i₀ (basis_add_ne_zero b h) k
+    rw [real_inner_smul_left, inner_add_left, inner_basis_eq_ite, inner_basis_eq_ite,
+      if_neg (Ne.symm hki₀), if_neg (Ne.symm hki), add_zero, mul_zero, abs_zero] at habs
+    exact abs_eq_zero.mp habs
+  refine ⟨(inner ℝ (normImg f (basis_add_ne_zero b h)) (hf.normBasis b i₀ i₀) : ℝ), hmodL, ?_⟩
+  exact (eq_pair_expansion (hf.normBasis b i₀) (normImg f (basis_add_ne_zero b h)) h
+    hvanish).trans (by rw [← heq, smul_add])
+
 end PairModuli
 
 end Projectivization

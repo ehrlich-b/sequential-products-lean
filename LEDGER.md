@@ -2090,7 +2090,15 @@ sorry-free Wigner rigidity — see 3.0.
     `sign_pair_of_abs`, applied to a general ray and the pair `(i₀, i)`, becomes a statement
     about coordinates in ONE fixed basis, with no per-pair bookkeeping left. Axiom-checked =
     Lean core only.
-    **What remains of the rigidity: 4d part 2d — the pattern from the pairs `(i₀, i)`
+    **STEP 4d part 2d DONE (same day)**: `eq_of_abs_eq_of_mul_pos` (equal moduli + positive
+    product ⟹ EQUAL), `abs_inner_normBasis` (step 4a survives the sign adjustment, since
+    `|σ| = 1`), and **`two_slot_normBasis`**: in the normalized basis the image of
+    `b i₀ + b i` is `A • (b'' i₀ + b'' i)` with `|A| = ‖b i₀ + b i‖⁻¹` — the two-slot image
+    has become SYMMETRIC. That symmetry is the payoff of the whole `signPattern`
+    construction: it is what lets the transition probability between an arbitrary ray and
+    `b i₀ + b i` be read directly as `|x + y|` in the ray's own coordinates, which is
+    `sign_pair_of_abs`'s third hypothesis in usable form. Axiom-checked = Lean core only.
+    **What remains of the rigidity: 4d part 2e — the pattern from the pairs `(i₀, i)`
     (the coordinates are inner products, so no choice is needed), prove pair-consistency for
     arbitrary `(i,j)` via a THREE-slot vector, and assemble the isometry. The inputs are now
     all in place: `image_two_slot` supplies the moduli, `sign_pair_of_abs` the common sign,
