@@ -2213,10 +2213,20 @@ sorry-free Wigner rigidity — see 3.0.
   `r² − 2zr − (x²+y²) = 0` (expand `r² − (x²+y²)` using `‖w‖² = x²+y²+z²`). The single
   degenerate branch is `x = y = 0, z < 0` (where `r = 0`), met by the south pole
   `v = (0,1)` with factor `−z⁻¹`. Two cases, no square roots beyond `‖w‖`, no charts.
-  **REMAINING for M5.3**: (a) the quotient step — `blochFrame` is a continuous
-  SURJECTION from the COMPACT `ℂP¹` onto the HAUSDORFF `ℝP²`, hence closed, hence a
-  quotient map, which pushes the complementation-invariant `τ` down to a member of
-  `C(ℝP², ℝ)`; (b) the frame-indexed gluing. Injectivity is already free.
+  ★★**THE MODULI ELEMENT NOW LIVES IN THE PAPER'S CARRIER — 2026-08-06.**
+  `tauRVec`/`tauRVec_scale_invariant`/**`tauRP2 : RP2 → ℝ`**/`tauRP2_continuous`/
+  **`tauModuliRP2 : C(ℝP², ℝ)`** (axiom-checked = Lean core only).
+  ★**The quotient-map machinery turned out to be UNNECESSARY.** `τ` has a closed form
+  in Bloch coordinates: from `tauVec_eq`, `τ = (2|v₀|²/‖v‖² − 1)²`, and
+  `2|v₀|²/‖v‖² − 1 = (|v₀|²−|v₁|²)/‖v‖² = B₃/‖B‖` (using `‖B(v)‖ = ‖v‖²`, i.e.
+  `blochVec_normSq`).  So **`τ = (w₂/‖w‖)²` in Bloch coordinates** — a manifestly
+  scale-invariant, manifestly continuous function of `w`, which lifts straight to
+  `ℝP²` by `Projectivization.lift` + `continuous_lift`.  No compactness, no
+  Hausdorffness, no closed-map argument, and **no injectivity-modulo-complementation
+  needed** (that lemma was going to be required for the quotient route and is now moot).
+  **REMAINING for M5.3**: (a) the bridge identity `tauRP2 (blochFrame p) = tauFrame p`
+  — pure algebra from `tauVec_eq` + `blochVec_normSq`, no new concepts; (b) the
+  frame-indexed gluing. Injectivity of the classification is already free.
   **The remaining pieces:**
   (i) **the descent** `ℂP¹ / complementation ≅ ℝP²` — a quotient-topology
       homeomorphism, with `tau_swap_invariant` as the descent datum; this is the

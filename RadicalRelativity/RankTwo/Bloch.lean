@@ -264,4 +264,79 @@ theorem blochFrame_surjective : Function.Surjective blochFrame := by
         field_simp <;>
         exact div_self (ne_of_lt hzneg)
 
+/-! ## `τ` as a function on `ℝP²` -/
+
+/-- `τ` in Bloch coordinates: `(w₂/‖w‖)²`, at the vector level. -/
+def tauRVec (w : {u : EuclideanSpace ℝ (Fin 3) // u ≠ 0}) : ℝ :=
+  ((WithLp.ofLp w.val) 2 /
+    Real.sqrt ((WithLp.ofLp w.val) 0 ^ 2 + (WithLp.ofLp w.val) 1 ^ 2
+      + (WithLp.ofLp w.val) 2 ^ 2)) ^ 2
+
+theorem tauRVec_scale_invariant (a b : {u : EuclideanSpace ℝ (Fin 3) // u ≠ 0})
+    (t : ℝ) (hab : (a : EuclideanSpace ℝ (Fin 3)) = t • (b : EuclideanSpace ℝ (Fin 3))) :
+    tauRVec a = tauRVec b := by
+  have ht : t ≠ 0 := by
+    intro h
+    rw [h, zero_smul] at hab
+    exact a.property hab
+  have hco : ∀ i, (WithLp.ofLp a.val) i = t * (WithLp.ofLp b.val) i := by
+    intro i
+    rw [hab]
+    rfl
+  unfold tauRVec
+  rw [hco 0, hco 1, hco 2]
+  have hfac : (t * (WithLp.ofLp b.val) 0) ^ 2 + (t * (WithLp.ofLp b.val) 1) ^ 2
+        + (t * (WithLp.ofLp b.val) 2) ^ 2
+      = t ^ 2 * ((WithLp.ofLp b.val) 0 ^ 2 + (WithLp.ofLp b.val) 1 ^ 2
+        + (WithLp.ofLp b.val) 2 ^ 2) := by ring
+  rw [hfac, Real.sqrt_mul (sq_nonneg t), Real.sqrt_sq_eq_abs]
+  rw [div_pow, div_pow, mul_pow, mul_pow, sq_abs]
+  rcases eq_or_ne (Real.sqrt ((WithLp.ofLp b.val) 0 ^ 2 + (WithLp.ofLp b.val) 1 ^ 2
+      + (WithLp.ofLp b.val) 2 ^ 2)) 0 with h | h
+  · rw [h]
+    simp
+  · field_simp
+
+/-- **`τ` as a function on `ℝP²`** — the moduli object's carrier.  Well defined
+because `(w₂/‖w‖)²` is invariant under all real rescalings. -/
+def tauRP2 : RP2 → ℝ := Projectivization.lift tauRVec tauRVec_scale_invariant
+
+theorem tauRVec_continuous : Continuous tauRVec := by
+  apply Continuous.pow
+  apply Continuous.div
+  · exact (continuous_apply (2 : Fin 3)).comp
+      ((PiLp.continuous_ofLp 2 _).comp continuous_subtype_val)
+  · apply Real.continuous_sqrt.comp
+    fun_prop
+  · intro w
+    intro hzero
+    apply w.property
+    have hsq : (WithLp.ofLp w.val) 0 ^ 2 + (WithLp.ofLp w.val) 1 ^ 2
+        + (WithLp.ofLp w.val) 2 ^ 2 = 0 := by
+      have hle := Real.sqrt_eq_zero'.mp hzero
+      nlinarith [sq_nonneg ((WithLp.ofLp w.val) 0), sq_nonneg ((WithLp.ofLp w.val) 1),
+        sq_nonneg ((WithLp.ofLp w.val) 2), hle]
+    apply (WithLp.ofLp_injective (p := 2) (V := Fin 3 → ℝ))
+    have h0 : (WithLp.ofLp w.val) 0 = 0 := by
+      nlinarith [sq_nonneg ((WithLp.ofLp w.val) 0), sq_nonneg ((WithLp.ofLp w.val) 1),
+        sq_nonneg ((WithLp.ofLp w.val) 2), hsq]
+    have h1 : (WithLp.ofLp w.val) 1 = 0 := by
+      nlinarith [sq_nonneg ((WithLp.ofLp w.val) 0), sq_nonneg ((WithLp.ofLp w.val) 1),
+        sq_nonneg ((WithLp.ofLp w.val) 2), hsq]
+    have h2 : (WithLp.ofLp w.val) 2 = 0 := by
+      nlinarith [sq_nonneg ((WithLp.ofLp w.val) 0), sq_nonneg ((WithLp.ofLp w.val) 1),
+        sq_nonneg ((WithLp.ofLp w.val) 2), hsq]
+    funext i
+    fin_cases i
+    · exact h0
+    · exact h1
+    · exact h2
+
+theorem tauRP2_continuous : Continuous tauRP2 :=
+  Projectivization.continuous_lift tauRVec tauRVec_scale_invariant tauRVec_continuous
+
+/-- **The rank-two moduli element in the paper's carrier**: `τ` as a continuous
+real function on `ℝP²`. -/
+def tauModuliRP2 : C(RP2, ℝ) := ⟨tauRP2, tauRP2_continuous⟩
+
 end RankTwo
