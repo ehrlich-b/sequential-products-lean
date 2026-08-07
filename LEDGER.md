@@ -2076,7 +2076,14 @@ sorry-free Wigner rigidity — see 3.0.
     `‖b i + b j‖⁻¹` and is therefore NONZERO — which is what gives the sign pattern
     something to be the sign OF, and is exactly `sign_pair_of_abs`'s `p·q ≠ 0` hypothesis at
     the pair level. Axiom-checked = Lean core only.
-    **What remains of the rigidity: 4d part 2b — define the pattern from the pairs `(i₀, i)`
+    **STEP 4d part 2b DONE (same day)**: **`signPattern`** — the sign pattern, DEFINED (no
+    choice: the coordinates are inner products, and `inner_imgBasis_pair_ne_zero` plus the
+    new `..._pair_right_ne_zero` make their product nonzero, so `c / |c|` is a genuine sign)
+    — together with `abs_signPattern` (`|σ i| = 1`, which is all `signAdjustBasis` needs).
+    Recorded asymmetry: the `(i,j)`-swapped instance of `abs_inner_imgBasis_pair` is about
+    the vector `b j + b i`, a DIFFERENT TERM, so the right slot genuinely needs its own
+    statement — hence `abs_inner_imgBasis_pair_right`. Axiom-checked = Lean core only.
+    **What remains of the rigidity: 4d part 2c — the pattern from the pairs `(i₀, i)`
     (the coordinates are inner products, so no choice is needed), prove pair-consistency for
     arbitrary `(i,j)` via a THREE-slot vector, and assemble the isometry. The inputs are now
     all in place: `image_two_slot` supplies the moduli, `sign_pair_of_abs` the common sign,

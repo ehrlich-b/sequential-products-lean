@@ -672,6 +672,59 @@ theorem TransProbPreservingR.inner_imgBasis_pair_ne_zero {f : ℙ ℝ E → ℙ 
   rw [h, abs_zero] at this
   exact (inv_ne_zero (norm_ne_zero_iff.mpr (basis_add_ne_zero b hij))) this.symm
 
+/-- The same for the second slot.  (The `(i,j)`-swapped instance of the previous lemma is
+about the vector `b j + b i`, a different term, so the right slot needs its own statement.) -/
+theorem TransProbPreservingR.abs_inner_imgBasis_pair_right {f : ℙ ℝ E → ℙ ℝ E}
+    (hf : TransProbPreservingR f) (b : OrthonormalBasis ι ℝ E) {i j : ι} (hij : i ≠ j) :
+    |(inner ℝ (normImg f (basis_add_ne_zero b hij)) (hf.imgBasis b j) : ℝ)|
+      = ‖b i + b j‖⁻¹ := by
+  classical
+  have h := hf.abs_inner_imgBasis b (basis_add_ne_zero b hij) j
+  rw [show normImg f (basis_add_ne_zero b hij) = ‖(f (Projectivization.mk ℝ (b i + b j)
+      (basis_add_ne_zero b hij))).rep‖⁻¹ • (f (Projectivization.mk ℝ (b i + b j)
+      (basis_add_ne_zero b hij))).rep from rfl, h, real_inner_smul_left, inner_add_left,
+    inner_basis_eq_ite, inner_basis_eq_ite, if_neg hij, if_pos rfl, zero_add,
+    mul_one, abs_of_nonneg (inv_nonneg.mpr (norm_nonneg _))]
+
+theorem TransProbPreservingR.inner_imgBasis_pair_right_ne_zero {f : ℙ ℝ E → ℙ ℝ E}
+    (hf : TransProbPreservingR f) (b : OrthonormalBasis ι ℝ E) {i j : ι} (hij : i ≠ j) :
+    (inner ℝ (normImg f (basis_add_ne_zero b hij)) (hf.imgBasis b j) : ℝ) ≠ 0 := by
+  intro h
+  have := hf.abs_inner_imgBasis_pair_right b hij
+  rw [h, abs_zero] at this
+  exact (inv_ne_zero (norm_ne_zero_iff.mpr (basis_add_ne_zero b hij))) this.symm
+
+/-! ## Step 4d, part 2b: the sign pattern
+
+Defined from the pairs `(i₀, i)`: the sign of the PRODUCT of the two coordinates of the
+image of `b i₀ + b i`.  No choice is involved -- the coordinates are inner products, and
+they are nonzero by the previous two lemmas, so the product has a genuine sign.  Adjusting
+the image basis by this pattern makes each such image have two coordinates of EQUAL sign,
+which is the normalization the arbitrary-ray argument runs against.
+-/
+
+/-- **The sign pattern read off the pairs `(i₀, i)`.** -/
+noncomputable def TransProbPreservingR.signPattern [DecidableEq ι] {f : ℙ ℝ E → ℙ ℝ E}
+    (hf : TransProbPreservingR f) (b : OrthonormalBasis ι ℝ E) (i₀ : ι) : ι → ℝ := fun i =>
+  if h : i₀ = i then 1 else
+    ((inner ℝ (normImg f (basis_add_ne_zero b h)) (hf.imgBasis b i₀) : ℝ) *
+      (inner ℝ (normImg f (basis_add_ne_zero b h)) (hf.imgBasis b i) : ℝ)) /
+    |(inner ℝ (normImg f (basis_add_ne_zero b h)) (hf.imgBasis b i₀) : ℝ) *
+      (inner ℝ (normImg f (basis_add_ne_zero b h)) (hf.imgBasis b i) : ℝ)|
+
+/-- The pattern consists of signs, which is all `signAdjustBasis` needs. -/
+theorem TransProbPreservingR.abs_signPattern [DecidableEq ι] {f : ℙ ℝ E → ℙ ℝ E}
+    (hf : TransProbPreservingR f) (b : OrthonormalBasis ι ℝ E) (i₀ : ι) (i : ι) :
+    |hf.signPattern b i₀ i| = 1 := by
+  unfold TransProbPreservingR.signPattern
+  by_cases h : i₀ = i
+  · rw [dif_pos h, abs_one]
+  · rw [dif_neg h]
+    have hne : (inner ℝ (normImg f (basis_add_ne_zero b h)) (hf.imgBasis b i₀) : ℝ) *
+        (inner ℝ (normImg f (basis_add_ne_zero b h)) (hf.imgBasis b i) : ℝ) ≠ 0 :=
+      mul_ne_zero (hf.inner_imgBasis_pair_ne_zero b h) (hf.inner_imgBasis_pair_right_ne_zero b h)
+    rw [abs_div, abs_abs, div_self (abs_ne_zero.mpr hne)]
+
 end PairModuli
 
 end Projectivization
