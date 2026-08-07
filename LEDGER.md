@@ -11,6 +11,42 @@ THEOREM-MAP's corresponding row moves to "machine-checked."
 `mthm:omnibus`; closure = Lean core + at most JvNW as disclosed import; every §2
 interface structure instantiated on the intended algebras.
 
+---
+
+## ★ STATE OF THE SIX TARGETS — as of 2026-08-06 (read this first)
+
+Tree: `lake build` green at 3088 jobs; `AxiomAudit.lean` PASS at 131 tracked modules;
+**custom axioms exactly `[]`**, every tracked declaration's closure ⊆
+{`propext`, `Classical.choice`, `Quot.sound`}. All commits LOCAL (repo is public;
+pushing is Bryan-gated).
+
+| Row | Status | Capstone |
+| --- | --- | --- |
+| `H_N(ℂ)`, N ≥ 3 | **MACHINE-CHECKED, UNCONDITIONAL** — `∃!` real `t` with `a•b = a^{1/2+it} b a^{1/2−it}` on ALL effects | `Necessity.complex_classification` |
+| `H_n(ℝ)` | **MACHINE-CHECKED modulo the cited Jordan property** — `a•b = √a·b·√a` on ALL effects, no twist | `Necessity.sp_eq_luders_of_effect` |
+| `H_n(ℍ)` | **BLOCKED** — matrices over ℍ exist in no prover | — |
+| `H₃(𝕆)` | **BLOCKED** — the Albert algebra exists in no prover | — |
+| `cor:qubit-classification` | moduli space + one nonconstant element + certified `ℂP¹→ℝP²` descent + separation; **classification map `product ↦ moduli` ABSENT** | `RankTwo.tauModuliRP2`, `RankTwo.tauRP2_blochFrame` |
+| `mthm:omnibus` | untouched; sits behind the rows | — |
+
+**The ℝ row's single condition** is `ThetaPreservesJordanG` in each eigenframe, carried
+as a located hypothesis exactly as the manuscript cites vIR. Removing it needs ONE
+theorem — real Wigner rigidity — whose file is under way
+(`Vendor/Wigner/RealWigner.lean`): setup, the easy inclusion, orthogonality preservation,
+the orthonormal image, its packaging as a basis, and the squared-coordinate transfer are
+all landed and gated. **Only the sign-fixing step remains in that theorem.**
+
+**Field-general infrastructure now standing** (none of it in Mathlib):
+`HermitianMat.sqrt_mul_of_commute`, `eq_zero_of_commute_hermitian_of_trace_zero`,
+`continuous_cfc_polynomial`, `continuousOn_cfc_sqrt_effects`, plus the whole Θ chain,
+spectral resolution, and character/coalescence layers over arbitrary `RCLike 𝕜`.
+
+**If the deliverable needs scoping**: the two finished rows are a defensible artifact —
+an unconditional complex classification plus a real row resting on one published
+citation. The two blocked rows are foundational-algebra programs, not tasks.
+
+---
+
 **M0 status (day 1, complete by evening):** witnesses for all five interface
 structures constructed (`MasterTheorem/Witnesses.lean`) and audit Layer 6
 (interface constructor freezes) added — six-layer audit green at 27 modules.
