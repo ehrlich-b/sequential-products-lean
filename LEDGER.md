@@ -1768,10 +1768,21 @@ sorry-free Wigner rigidity — see 3.0.
     Trap: the representative bookkeeping produces an `ℝˣ`-action, and the scale-invariance
     lemmas take a plain `ℝ` — normalize with `simp only [Units.smul_def]` before
     rewriting, or the pattern will not match.
-    **What remains is exactly the rigidity (the converse)**: a transition-probability
-    preserving bijection of `ℝP(E)` is `projMapR e` for some orthogonal `e`. Route:
-    an orthonormal basis maps to an orthonormal basis, the preserved inner products pin
-    the candidate map there, and the only residual freedom is a global sign.
+    **STEP 1 OF THE RIGIDITY DONE (same day)**: `transProbVecR_eq_zero_iff`,
+    `transProbR_eq_zero_iff` (`transProb = 0` ⟺ the rays are orthogonal),
+    **`TransProbPreservingR.orthogonal`** and `.orthogonal_iff` — a TP-preserving map
+    preserves orthogonality of rays, in both directions. Axiom-checked = Lean core only.
+    That is the input to the basis argument.
+    **What remains is the rest of the rigidity**: (step 2) an orthonormal basis is
+    carried to a pairwise-orthogonal family, hence — after choosing unit representatives
+    — to an orthonormal basis, giving a candidate isometry `T` by `T eᵢ = fᵢ`; (step 3)
+    for general `v = Σ cᵢ eᵢ`, `transProb([v],[eᵢ]) = cᵢ²/‖v‖²` is preserved, so the
+    image's coordinates agree with `cᵢ` UP TO SIGN; (step 4) the sign-fixing argument —
+    use a reference vector (e.g. `Σ eᵢ`) to pin the signs and check consistency against
+    transition probabilities with mixed vectors. **Step 4 is the crux and the only part
+    with real case analysis**; in the complex development the analogous phase-fixing step
+    is what accounts for most of the 3179 lines, and over ℝ it is a sign rather than a
+    circle.
     Net: the ℝ row is ONE self-contained classical theorem from unconditional — this
     supersedes both the earlier "new boulder of M3's kind" estimate and any reading that
     the vendored artifact could be reused.

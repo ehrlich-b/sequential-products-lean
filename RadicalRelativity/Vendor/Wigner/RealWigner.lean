@@ -130,4 +130,43 @@ theorem projMapR_transProbPreservingR (e : E ≃ₗᵢ[ℝ] E) :
   rw [transProbVecR_smul_left (a : ℝ) a.ne_zero, transProbVecR_smul_right (b : ℝ) b.ne_zero,
     transProbVecR_isometry]
 
+/-! ## Step 1 of the rigidity: orthogonality is preserved -/
+
+theorem transProbVecR_eq_zero_iff {ψ φ : E} (hψ : ψ ≠ 0) (hφ : φ ≠ 0) :
+    transProbVecR ψ φ = 0 ↔ (inner ℝ ψ φ : ℝ) = 0 := by
+  unfold transProbVecR
+  have h1 : ‖ψ‖ ≠ 0 := norm_ne_zero_iff.mpr hψ
+  have h2 : ‖φ‖ ≠ 0 := norm_ne_zero_iff.mpr hφ
+  rw [div_eq_zero_iff]
+  constructor
+  · rintro (h | h)
+    · have := pow_eq_zero_iff (n := 2) (by norm_num) |>.mp h
+      exact norm_eq_zero.mp this
+    · exact absurd h (by positivity)
+  · intro h
+    left
+    rw [h]
+    simp
+
+/-- `transProbR p q = 0` exactly when the rays are orthogonal. -/
+theorem transProbR_eq_zero_iff (p q : ℙ ℝ E) :
+    transProbR p q = 0 ↔ (inner ℝ p.rep q.rep : ℝ) = 0 :=
+  transProbVecR_eq_zero_iff p.rep_nonzero q.rep_nonzero
+
+/-- **Step 1 of the rigidity**: a transition-probability preserving map preserves
+orthogonality of rays.  This is the input to the basis argument — an orthonormal basis
+is carried to a family of pairwise-orthogonal rays. -/
+theorem TransProbPreservingR.orthogonal {f : ℙ ℝ E → ℙ ℝ E}
+    (hf : TransProbPreservingR f) {p q : ℙ ℝ E}
+    (hpq : (inner ℝ p.rep q.rep : ℝ) = 0) :
+    (inner ℝ (f p).rep (f q).rep : ℝ) = 0 := by
+  rw [← transProbR_eq_zero_iff, hf p q, transProbR_eq_zero_iff]
+  exact hpq
+
+/-- And conversely: orthogonality of the images forces orthogonality of the sources. -/
+theorem TransProbPreservingR.orthogonal_iff {f : ℙ ℝ E → ℙ ℝ E}
+    (hf : TransProbPreservingR f) (p q : ℙ ℝ E) :
+    (inner ℝ (f p).rep (f q).rep : ℝ) = 0 ↔ (inner ℝ p.rep q.rep : ℝ) = 0 := by
+  rw [← transProbR_eq_zero_iff, ← transProbR_eq_zero_iff, hf p q]
+
 end Projectivization
