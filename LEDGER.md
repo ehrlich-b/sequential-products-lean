@@ -2232,7 +2232,25 @@ sorry-free Wigner rigidity — see 3.0.
   names. The whole descent `ℂP¹ → ℝP²` is now complete and certified:
   `blochFrame` (continuous, surjective, complementation invariant) together with
   `tauRP2_blochFrame`.
-  **REMAINING for M5.3: only the frame-indexed gluing** — assembling the per-frame
+  **NONCONSTANCY DONE**: `tauVec_std` (τ = 1 at `[1:0]`), `tauVec_had` (τ = 0 at
+  `[1:1]`) and **`tauModuliRP2_nonconstant`** — the distinguished element genuinely
+  varies over `ℝP²`, so the carrier is exercised rather than decorative (the
+  `ℝP²`-level form of the V9 separation). Axiom-checked = Lean core only.
+
+  ★★**SCOPING CORRECTION, verified at source 2026-08-06 — read this before planning
+  5.3.** `grep -c SequentialProductOn RadicalRelativity/RankTwo/*.lean` returns **0 for
+  every file**: NOTHING in the rank-two lane is product-parameterized, and
+  `MasterTheorem.RankTwo.n2_necessity` takes a *linear `angle`*, not a product. So what
+  the lane currently contains is (a) the moduli SPACE `C(ℝP², ℝ)`, (b) ONE distinguished
+  ELEMENT of it (`tauModuliRP2`, now known nonconstant), (c) the full certified descent
+  `ℂP¹ → ℝP²`, and (d) the separation. **The classification MAP `product ↦ moduli` is
+  entirely absent** — it is not "gluing an existing family", it is the whole forward
+  direction. Building it needs per-frame parameter extraction from an ARBITRARY rank-two
+  product, i.e. the `N = 2` analogue of the M2 lane; the `N ≥ 3` machinery does not apply
+  (`StabilizerCoupling` carries `rank_ge : 3 ≤ n`). Earlier LEDGER text describing 5.3's
+  remainder as "the frame-indexed family glued over `QubitFrame`" UNDERSTATED this;
+  budget it as a lane, not an assembly.
+  **REMAINING for M5.3: the classification map (above), i.e. the former "gluing"** — assembling the per-frame
   family of `MasterTheorem.RankTwo.sp` into a single product over `QubitFrame`, which
   is what makes the map `product ↦ τ` well defined in the first place. Injectivity of
   the classification is already free (`tau_std_eq_one` vs `tau_had_eq_zero` +

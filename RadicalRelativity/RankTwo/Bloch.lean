@@ -339,6 +339,9 @@ theorem tauRP2_continuous : Continuous tauRP2 :=
 real function on `ℝP²`. -/
 def tauModuliRP2 : C(RP2, ℝ) := ⟨tauRP2, tauRP2_continuous⟩
 
+@[simp]
+theorem tauModuliRP2_apply (p : RP2) : tauModuliRP2 p = tauRP2 p := rfl
+
 /-! ## The bridge: `τ` on `ℝP²` pulls back to `τ` on the frame space -/
 
 /-- `‖B(v)‖ = ‖v‖²`: the Bloch norm is the squared vector norm. -/
@@ -392,5 +395,56 @@ theorem tauRP2_blochFrame (p : QubitFrame) : tauRP2 (blochFrame p) = tauFrame p 
 @[simp]
 theorem tauModuliRP2_blochFrame (p : QubitFrame) :
     tauModuliRP2 (blochFrame p) = tauModuli p := tauRP2_blochFrame p
+
+/-! ## The distinguished moduli element is nonconstant -/
+
+/-- `τ = 1` at the standard frame `[1 : 0]`. -/
+theorem tauVec_std :
+    tauVec ⟨WithLp.toLp 2 ![(1 : ℂ), 0], by
+      intro h
+      have h0 : (WithLp.ofLp (WithLp.toLp 2 ![(1 : ℂ), 0])) 0 = 0 := by rw [h]; rfl
+      simp at h0⟩ = 1 := by
+  rw [tauVec_eq]
+  norm_num [HermitianMat.nsq, Fin.sum_univ_two]
+
+/-- `τ = 0` at the Hadamard frame `[1 : 1]`. -/
+theorem tauVec_had :
+    tauVec ⟨WithLp.toLp 2 ![(1 : ℂ), 1], by
+      intro h
+      have h0 : (WithLp.ofLp (WithLp.toLp 2 ![(1 : ℂ), 1])) 0 = 0 := by rw [h]; rfl
+      simp at h0⟩ = 0 := by
+  rw [tauVec_eq]
+  norm_num [HermitianMat.nsq, Fin.sum_univ_two]
+
+/-- **The moduli element is nonconstant on `ℝP²`.**  It is `1` at the Bloch point of
+the standard frame and `0` at that of the Hadamard frame — so the `ℝP²` carrier of
+`cor:qubit-classification` is genuinely exercised, not decorative.  (This is the
+`ℝP²`-level form of the `V9` separation `tau_std_eq_one` vs `tau_had_eq_zero`.) -/
+theorem tauModuliRP2_nonconstant :
+    ∃ p q : RP2, tauModuliRP2 p ≠ tauModuliRP2 q := by
+  refine ⟨blochFrame (Projectivization.mk ℂ (WithLp.toLp 2 ![(1 : ℂ), 0]) (by
+      intro h
+      have h0 : (WithLp.ofLp (WithLp.toLp 2 ![(1 : ℂ), 0])) 0 = 0 := by rw [h]; rfl
+      simp at h0)),
+    blochFrame (Projectivization.mk ℂ (WithLp.toLp 2 ![(1 : ℂ), 1]) (by
+      intro h
+      have h0 : (WithLp.ofLp (WithLp.toLp 2 ![(1 : ℂ), 1])) 0 = 0 := by rw [h]; rfl
+      simp at h0)), ?_⟩
+  have h1 : tauModuliRP2 (blochFrame (Projectivization.mk ℂ
+      (WithLp.toLp 2 ![(1 : ℂ), 0]) (by
+        intro h
+        have h0 : (WithLp.ofLp (WithLp.toLp 2 ![(1 : ℂ), 0])) 0 = 0 := by rw [h]; rfl
+        simp at h0))) = 1 := by
+    rw [tauModuliRP2_apply, tauRP2_blochFrame, tauFrame_mk]
+    exact tauVec_std
+  have h2 : tauModuliRP2 (blochFrame (Projectivization.mk ℂ
+      (WithLp.toLp 2 ![(1 : ℂ), 1]) (by
+        intro h
+        have h0 : (WithLp.ofLp (WithLp.toLp 2 ![(1 : ℂ), 1])) 0 = 0 := by rw [h]; rfl
+        simp at h0))) = 0 := by
+    rw [tauModuliRP2_apply, tauRP2_blochFrame, tauFrame_mk]
+    exact tauVec_had
+  rw [h1, h2]
+  norm_num
 
 end RankTwo
