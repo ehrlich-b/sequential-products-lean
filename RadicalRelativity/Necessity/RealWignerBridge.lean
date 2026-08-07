@@ -29,6 +29,7 @@ product on the nose.
 noncomputable section
 
 open scoped Matrix
+open scoped LinearAlgebra.Projectivization
 
 namespace Necessity
 
@@ -83,5 +84,43 @@ theorem rankOneR_unitVecR {v : Fin N → ℝ} (hv : v ≠ 0) :
   have hpos : 0 < v ⬝ᵥ v :=
     lt_of_le_of_ne (dotProduct_self_nonnegR v) (Ne.symm (dotProduct_self_ne_zero_of_ne_zero hv))
   rw [unitVecR, rankOneR_smul, inv_pow, Real.sq_sqrt hpos.le]
+
+/-! ## Unit representatives of rays
+
+The ray map picks, for each ray, a unit representative *as a function* `Fin N → ℝ` — that is the
+form `exists_rankOneR_map` consumes.  These three lemmas are the whole interface.
+-/
+
+theorem ofLp_rep_ne_zero (p : ℙ ℝ (EuclideanSpace ℝ (Fin N))) :
+    WithLp.ofLp p.rep ≠ 0 := fun h => p.rep_nonzero ((WithLp.ofLp_eq_zero (p := 2)).mp h)
+
+/-- A **unit representative** of a ray, as a function. -/
+def repUnitR (p : ℙ ℝ (EuclideanSpace ℝ (Fin N))) : Fin N → ℝ :=
+  unitVecR (ofLp_rep_ne_zero p)
+
+theorem repUnitR_unit (p : ℙ ℝ (EuclideanSpace ℝ (Fin N))) :
+    repUnitR p ⬝ᵥ repUnitR p = 1 := unitVecR_unit (ofLp_rep_ne_zero p)
+
+theorem repUnitR_ne_zero (p : ℙ ℝ (EuclideanSpace ℝ (Fin N))) : repUnitR p ≠ 0 := by
+  intro h
+  have := repUnitR_unit p
+  rw [h, zero_dotProduct] at this
+  exact zero_ne_one this
+
+/-- The unit representative represents the ray it came from. -/
+theorem mk_repUnitR (p : ℙ ℝ (EuclideanSpace ℝ (Fin N))) :
+    Projectivization.mk ℝ (WithLp.toLp 2 (repUnitR p))
+        (by
+          intro h
+          exact repUnitR_ne_zero p ((WithLp.toLp_eq_zero (p := 2)).mp h))
+      = p := by
+  have hpos : 0 < (WithLp.ofLp p.rep) ⬝ᵥ (WithLp.ofLp p.rep) :=
+    lt_of_le_of_ne (dotProduct_self_nonnegR _)
+      (Ne.symm (dotProduct_self_ne_zero_of_ne_zero (ofLp_rep_ne_zero p)))
+  -- `toLp (repUnitR p)` IS `c • p.rep` definitionally, so no rewrite is needed (and a rewrite
+  -- would fail: the nonzero proof depends on the term being rewritten)
+  exact (Projectivization.mk_smul_eq (c := (Real.sqrt ((WithLp.ofLp p.rep) ⬝ᵥ
+    (WithLp.ofLp p.rep)))⁻¹) (inv_ne_zero (Real.sqrt_ne_zero'.mpr hpos))
+    p.rep_nonzero _).trans (Projectivization.mk_rep p)
 
 end Necessity

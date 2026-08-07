@@ -2291,6 +2291,16 @@ sorry-free Wigner rigidity — see 3.0.
     vocabulary gap**: real Wigner speaks `EuclideanSpace` + `inner`, the Kadison side speaks
     `Fin N → ℝ` + `dotProduct`, and the two are now identified, so `tprobR_preserved` and
     `exists_isometry_of_transProbPreservingR` can be composed.
+    **ℝ BRIDGE UNIT 5f DONE (same day)** — appended to `RealWignerBridge.lean`:
+    `ofLp_rep_ne_zero`, **`repUnitR`** (a unit representative of a ray, AS A FUNCTION `Fin N → ℝ`
+    — which is the form `exists_rankOneR_map` consumes), `repUnitR_unit`, `repUnitR_ne_zero` and
+    **`mk_repUnitR`** (the unit representative represents the ray it came from). Gates green at
+    3096 jobs, axioms Lean core. TRAP, and the same class as the self-reference one:
+    `rw [hscale] at hne ⊢` fails with "motive is not type correct" because the ray's nonzero proof
+    DEPENDS on the term being rewritten — but no rewrite is needed, since
+    `toLp (repUnitR p)` IS `c • p.rep` definitionally, so `exact` with `(c := …)` pinned goes
+    straight through. **General form of the rule: when a rewrite target sits under a dependent
+    proof argument, look for the defeq instead of the rewrite.**
     **REMAINING FOR THE ℝ ROW — the assembly only.** All five inputs are banked
     (`exists_rankOneR_map`, `tprobR_preserved`, `exists_isometry_of_transProbPreservingR`,
     `linearMap_eq_of_eq_on_rankOneR`, `orthConj_preservesJordan` + `orthConj_rankOneR`). What the
