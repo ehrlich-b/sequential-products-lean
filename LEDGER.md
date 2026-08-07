@@ -24,8 +24,8 @@ pushing is Bryan-gated).
 | --- | --- | --- |
 | `H_N(ℂ)`, N ≥ 3 | **MACHINE-CHECKED, UNCONDITIONAL** — `∃!` real `t` with `a•b = a^{1/2+it} b a^{1/2−it}` on ALL effects | `Necessity.complex_classification` |
 | `H_n(ℝ)` | **MACHINE-CHECKED modulo the cited Jordan property** — `a•b = √a·b·√a` on ALL effects, no twist | `Necessity.sp_eq_luders_of_effect` |
-| `H_n(ℍ)` | **BLOCKED** — matrices over ℍ exist in no prover | — |
-| `H₃(𝕆)` | **BLOCKED** — the Albert algebra exists in no prover | — |
+| `H_n(ℍ)` | **NOT blocked the way earlier notes said — see the correction below** | — |
+| `H₃(𝕆)` | **BLOCKED** — octonions exist in no prover (verified: zero files) | — |
 | `cor:qubit-classification` | moduli space + one nonconstant element + certified `ℂP¹→ℝP²` descent + separation; **classification map `product ↦ moduli` ABSENT** | `RankTwo.tauModuliRP2`, `RankTwo.tauRP2_blochFrame` |
 | `mthm:omnibus` | untouched; sits behind the rows | — |
 
@@ -41,9 +41,29 @@ all landed and gated. **Only the sign-fixing step remains in that theorem.**
 `continuous_cfc_polynomial`, `continuousOn_cfc_sqrt_effects`, plus the whole Θ chain,
 spectral resolution, and character/coalescence layers over arbitrary `RCLike 𝕜`.
 
+★★**CORRECTION to the ℍ assessment, verified against the pinned Mathlib 2026-08-06.**
+Earlier notes (including this session's) said "matrices over ℍ exist in no prover" and
+budgeted the row at months. Checked at source:
+* **Quaternions ARE well supported**: `Algebra/Quaternion.lean`,
+  `Algebra/QuaternionBasis.lean`, `Analysis/Quaternion.lean`,
+  `Analysis/Normed/Algebra/QuaternionExponential.lean` — including `StarRing ℍ`, the
+  norm, and the exponential.
+* **ℍ is NOT `RCLike`** (grep: zero hits) — necessarily, since `RCLike` demands
+  commutativity. **That, not the absence of quaternions, is the actual blocker**: the
+  whole `HermitianMat n 𝕜` layer this campaign is built on is `RCLike`-based.
+* Octonions: **genuinely absent** (zero files matching `Octonion`/`CayleyDickson`), and
+  no Jordan-algebra or Albert-algebra files at all. The H₃(𝕆) row's assessment stands.
+**Consequence — the ℍ row should be re-planned around the symplectic embedding, which the
+route file already names**: `H_n(ℍ) ↪ H_{2n}(ℂ)` as the fixed points of a conjugate-linear
+involution `J`. That route lives ENTIRELY inside complex Hermitian matrices — i.e. inside
+the machinery this campaign already has field-general and, at ℂ, fully developed — and
+never needs a `HermitianMat` layer over a noncommutative ring. So the ℍ row is plausibly
+a LANE (like the ℝ row turned out to be), not a foundational program. It should be
+re-scoped before anyone budgets months for it.
+
 **If the deliverable needs scoping**: the two finished rows are a defensible artifact —
 an unconditional complex classification plus a real row resting on one published
-citation. The two blocked rows are foundational-algebra programs, not tasks.
+citation. Of the remainder, only H₃(𝕆) is a genuine foundational program.
 
 ---
 
