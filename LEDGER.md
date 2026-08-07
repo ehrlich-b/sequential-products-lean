@@ -2229,6 +2229,24 @@ sorry-free Wigner rigidity — see 3.0.
     at **`v* = 2ψ − (ψ⬝φ)φ`**, where `ψ⬝v* = 2 − τ`, `φ⬝v* = ψ⬝φ`, `v*⬝v* = 4 − 3τ`, so the test
     reads `t(2 − τ)² ≤ 2 − τ`. With that vector written down the proof is arithmetic; without it
     there is nothing to do.
+    **★ ℝ BRIDGE — WHAT IS LEFT, MEASURED (do not re-measure; execute).** Unit 5 is the
+    discharge, and its only prerequisite is rank-one TRANSPORT: that an order automorphism
+    carries rank-one projections to rank-one projections. At ℂ that is four declarations, and
+    they were counted, not estimated:
+      * `IsAtomProjection` + `rankOne_isAtom` (`ProjectionOrder`, ~30 lines) — rank-ones are
+        atoms of the projection order;
+      * `IsAtomProjection.exists_rankOne` (`ProjectionOrder` 208-268, **60 lines**) — conversely
+        every atom is a rank-one. This is the only genuinely spectral step: pick a nonzero range
+        vector, and atomicity forces the range to be one-dimensional;
+      * `isProjection_map` (`JordanWitness` 142-182, ~40 lines) and `isAtomProjection_map`
+        (183-235, ~55 lines) — order automorphisms preserve projections and atoms. **Both are
+        purely order-theoretic**, so they port with ℂ → ℝ and nothing else.
+    Total ≈ 185 lines, of which only the 60-line spectral step needs thought. Then unit 5 itself
+    is short: build `rayMapR` from rank-one transport, feed `tprobR_preserved` to get
+    `TransProbPreservingR`, apply `exists_isometry_of_transProbPreservingR` for an orthogonal
+    `U`, use `linearMap_eq_of_eq_on_rankOneR` with `orthConj_rankOneR` to conclude
+    `Φ = orthConj U`, and finish with `orthConj_preservesJordan`. Every one of those five inputs
+    is already banked.
     **Why this is the load-bearing unit for what remains.** Real Wigner needs a
     transition-probability preserving ray map, so the transition probability has to be ORDER
     DATA. The strength is the device: it is defined from the order and the real scalar action
