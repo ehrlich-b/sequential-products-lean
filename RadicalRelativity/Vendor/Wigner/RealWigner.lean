@@ -213,4 +213,60 @@ theorem TransProbPreservingR.image_orthonormal {ι : Type*}
       hf.image_pairwise_orthogonal hv horth i j hij]
     simp
 
+/-! ## Step 3: transition probability against a unit vector is a squared coordinate -/
+
+/-- Against a **unit** vector, the transition probability is the squared coordinate:
+`transProb(ψ, φ) = ⟨ψ,φ⟩²/‖ψ‖²`.  Over ℝ there is no modulus to take — the numerator
+is literally the square of the coordinate, which is why the rigidity's residual freedom
+is a sign rather than a phase. -/
+theorem transProbVecR_of_norm_one {φ : E} (hφ : ‖φ‖ = 1) (ψ : E) :
+    transProbVecR ψ φ = (inner ℝ ψ φ : ℝ) ^ 2 / ‖ψ‖ ^ 2 := by
+  unfold transProbVecR
+  rw [hφ, one_pow, mul_one, Real.norm_eq_abs, sq_abs]
+
+/-- **Step 3, the squared-coordinate transfer.**  If `f` preserves transition
+probabilities and carries the unit vector `φ` to the ray of the unit vector `φ'`, then
+for any ray `[ψ] ↦ [ψ']` the squared coordinates against `φ` and `φ'` agree after
+normalizing by the squared norms.  This is the identity the sign-fixing step consumes:
+each coordinate of the image is determined **up to sign**. -/
+theorem TransProbPreservingR.coord_sq_transfer {f : ℙ ℝ E → ℙ ℝ E}
+    (hf : TransProbPreservingR f) {ψ φ : E} (hψ : ψ ≠ 0) (hφ : φ ≠ 0)
+    (hφ1 : ‖φ‖ = 1)
+    {φ' : E} (hφ'1 : ‖φ'‖ = 1)
+    (hfφ : f (Projectivization.mk ℝ φ hφ) = Projectivization.mk ℝ φ' (by
+      intro h
+      rw [h, norm_zero] at hφ'1
+      exact one_ne_zero hφ'1.symm)) :
+    (inner ℝ (f (Projectivization.mk ℝ ψ hψ)).rep φ' : ℝ) ^ 2
+        / ‖(f (Projectivization.mk ℝ ψ hψ)).rep‖ ^ 2
+      = (inner ℝ ψ φ : ℝ) ^ 2 / ‖ψ‖ ^ 2 := by
+  have hφ'0 : φ' ≠ 0 := by
+    intro h
+    rw [h, norm_zero] at hφ'1
+    exact one_ne_zero hφ'1.symm
+  -- the transition probability is preserved, and both sides are squared coordinates
+  have hkey := hf (Projectivization.mk ℝ ψ hψ) (Projectivization.mk ℝ φ hφ)
+  unfold transProbR at hkey
+  -- rewrite each side against a unit representative
+  have hR : transProbVecR (Projectivization.mk ℝ ψ hψ).rep (Projectivization.mk ℝ φ hφ).rep
+      = (inner ℝ ψ φ : ℝ) ^ 2 / ‖ψ‖ ^ 2 := by
+    obtain ⟨a, ha⟩ := Projectivization.exists_smul_eq_mk_rep ℝ ψ hψ
+    obtain ⟨b, hb⟩ := Projectivization.exists_smul_eq_mk_rep ℝ φ hφ
+    rw [← ha, ← hb]
+    simp only [Units.smul_def]
+    rw [transProbVecR_smul_left (a : ℝ) a.ne_zero, transProbVecR_smul_right (b : ℝ) b.ne_zero]
+    exact transProbVecR_of_norm_one hφ1 ψ
+  have hL : transProbVecR (f (Projectivization.mk ℝ ψ hψ)).rep
+        (f (Projectivization.mk ℝ φ hφ)).rep
+      = (inner ℝ (f (Projectivization.mk ℝ ψ hψ)).rep φ' : ℝ) ^ 2
+        / ‖(f (Projectivization.mk ℝ ψ hψ)).rep‖ ^ 2 := by
+    rw [hfφ]
+    obtain ⟨b, hb⟩ := Projectivization.exists_smul_eq_mk_rep ℝ φ' hφ'0
+    rw [← hb]
+    simp only [Units.smul_def]
+    rw [transProbVecR_smul_right (b : ℝ) b.ne_zero]
+    exact transProbVecR_of_norm_one hφ'1 _
+  rw [← hL, ← hR]
+  exact hkey
+
 end Projectivization

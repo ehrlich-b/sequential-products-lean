@@ -1783,12 +1783,19 @@ sorry-free Wigner rigidity — see 3.0.
     Trap: over ℝ use `real_inner_smul_left`/`real_inner_smul_right` and let
     `simp [ha', hb', mul_eq_zero]` finish — going through `inner_smul_left` +
     `starRingEnd` produces coerced disjuncts whose `≠ 0` facts no longer match.
-    **What remains of the rigidity**: (step 3)
-    for general `v = Σ cᵢ eᵢ`, `transProb([v],[eᵢ]) = cᵢ²/‖v‖²` is preserved, so the
-    image's coordinates agree with `cᵢ` UP TO SIGN; (step 4) the sign-fixing argument —
-    use a reference vector (e.g. `Σ eᵢ`) to pin the signs and check consistency against
-    transition probabilities with mixed vectors. **Step 4 is the crux and the only part
-    with real case analysis**; in the complex development the analogous phase-fixing step
+    **STEP 3 DONE (same day)**: `transProbVecR_of_norm_one` (against a UNIT vector the
+    transition probability is literally the squared coordinate `⟨ψ,φ⟩²/‖ψ‖²` — over ℝ
+    there is no modulus to take, which is exactly why the residual freedom is a sign and
+    not a phase) and **`TransProbPreservingR.coord_sq_transfer`** — for a preserving `f`
+    carrying a unit `φ` to the ray of a unit `φ'`, the image's squared coordinate against
+    `φ'` equals the source's against `φ`. Axiom-checked = Lean core only. **That is the
+    identity the sign-fixing step consumes: every coordinate of the image is now pinned
+    up to sign.**
+    **What remains of the rigidity: step 4 ONLY — the sign-fixing argument.** Use a
+    reference vector (e.g. `Σ eᵢ`, or successively the vectors `eᵢ + eⱼ`) to pin the
+    relative signs, and check consistency via the transition probabilities with those
+    mixed vectors; then assemble the isometry and conclude
+    `f = projMapR e`. in the complex development the analogous phase-fixing step
     is what accounts for most of the 3179 lines, and over ℝ it is a sign rather than a
     circle.
     Net: the ℝ row is ONE self-contained classical theorem from unconditional — this
