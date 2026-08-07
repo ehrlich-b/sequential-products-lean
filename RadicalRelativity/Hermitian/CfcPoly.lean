@@ -101,4 +101,33 @@ theorem continuous_cfc_polynomial (p : Polynomial ℝ) :
     rw [h]
     exact ((continuous_subtype_val).pow k).const_smul c
 
+/-! ## `cfc` at a polynomial IS the matrix polynomial -/
+
+/-- **`(A.cfc p).mat = p(A)`** — the functional calculus at a polynomial is literally the
+matrix polynomial, `Polynomial.aeval` of the matrix.  This is the bridge any argument
+needs that transfers a property from matrix polynomials to the functional calculus
+(e.g. invariance under an algebra involution). -/
+theorem mat_cfc_polynomial (A : HermitianMat n 𝕜) (p : Polynomial ℝ) :
+    (A.cfc (fun x => p.eval x)).mat
+      = Polynomial.aeval A.mat (p.map (algebraMap ℝ 𝕜)) := by
+  induction p using Polynomial.induction_on' with
+  | add p q hp hq =>
+    have hfun : (fun x : ℝ => (p + q).eval x)
+        = (fun x : ℝ => p.eval x + q.eval x) := by
+      funext x
+      rw [Polynomial.eval_add]
+    rw [hfun, HermitianMat.cfc_add_apply, HermitianMat.mat_add, hp, hq,
+      Polynomial.map_add, map_add]
+  | monomial k c =>
+    have hfun : (fun x : ℝ => (Polynomial.monomial k c).eval x)
+        = (fun x : ℝ => c * x ^ k) := by
+      funext x
+      rw [Polynomial.eval_monomial]
+    rw [hfun, HermitianMat.mat_cfc_mul_apply, HermitianMat.cfc_const,
+      HermitianMat.mat_smul, HermitianMat.mat_one, mat_cfc_pow]
+    rw [Polynomial.map_monomial, Polynomial.aeval_monomial]
+    rw [Matrix.smul_mul, one_mul]
+    rw [Algebra.smul_def]
+    congr 1
+
 end HermitianMat

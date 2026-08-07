@@ -105,6 +105,12 @@ transposition), `symplecticJ_transpose_eq_conjTranspose` (`J₀` is real), and
 (short induction on `quatConj_mul`). Axiom-checked = Lean core only. Combined with
 `quatConj_add`/`quatConj_smul_of_conj_eq`, `Φ` therefore fixes `p(A)` for every real
 polynomial `p`.
+**AND THE BRIDGE LEMMA IS NOW IN** (`Hermitian/CfcPoly.lean`, compiled first try,
+axiom-checked = Lean core only): **`mat_cfc_polynomial : (A.cfc (p.eval ·)).mat =
+Polynomial.aeval A.mat (p.map (algebraMap ℝ 𝕜))`** — the functional calculus at a
+polynomial IS the matrix polynomial. That is exactly what transfers `quatConj_pow` +
+additivity to `Φ (A.cfc p) = A.cfc p`, and it is stated over any `RCLike 𝕜`, so it is
+reusable well beyond this row.
 ★**NOTE for the next session — the remaining ANALYTIC half of the gap**: the fixed set's
 closure under the FUNCTIONAL CALCULUS (`IsQuaternionic a → IsQuaternionic (a.cfc f)`) is
 NOT yet proved, and there is **no square-root uniqueness lemma in the tree or Mathlib** to
