@@ -1996,7 +1996,20 @@ sorry-free Wigner rigidity — see 3.0.
     `LinearIndependent.span_eq_top_of_card_eq_finrank`; note it needs `[Nonempty ι]`).
     Axiom-checked = Lean core only. This is what lets step 4 expand an image vector in
     the image basis and conclude its coordinates vanish outside the expected slots.
-    **What remains of the rigidity: step 4 ONLY — the sign-fixing argument.** Use a
+    **STEP 4a DONE (same day)**: `TransProbPreservingR.abs_coord_transfer` and its
+    self-contained form **`abs_inner_image`** — with everything normalized, the image
+    ray's coordinate against the normalized image of a unit `φ` has the SAME ABSOLUTE
+    VALUE as the source's coordinate against `φ`. Step 3 pinned coordinates squared; this
+    takes the unique nonnegative square root (`sq_eq_sq₀`), which is the form the sign
+    argument runs on. `abs_inner_image` carries **no side hypothesis about the image at
+    all** — taking `φ'` to be the normalized image of `φ` discharges it, via the three
+    ray-bookkeeping lemmas `mk_smul_eq` / `mk_normalize_rep` / `norm_normalize`.
+    Applied to an orthonormal basis with `b' = imageOrthonormalBasis`, the content is
+    exactly: **every coordinate of the image is ± the corresponding source coordinate.**
+    So the residual freedom is now a per-coordinate sign PATTERN, and all that remains of
+    the real rigidity is that the pattern is a single GLOBAL sign. Axiom-checked = Lean
+    core only.
+    **What remains of the rigidity: step 4b-4d — the sign-fixing argument proper.** Use a
     reference vector (e.g. `Σ eᵢ`, or successively the vectors `eᵢ + eⱼ`) to pin the
     relative signs, and check consistency via the transition probabilities with those
     mixed vectors; then assemble the isometry and conclude

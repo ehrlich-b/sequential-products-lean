@@ -293,4 +293,67 @@ noncomputable def TransProbPreservingR.imageOrthonormalBasis {ι : Type*} [Finty
     rw [hcard]
   rw [hspan]
 
+/-! ## Step 4a: only signs remain — the image's coordinate moduli are the source's
+
+Step 3 pinned each coordinate *squared*.  The lemmas here convert that into the statement
+the sign-fixing argument actually runs on: with everything normalized, the image vector's
+coordinate against the image of a unit vector has the **same absolute value** as the
+source's coordinate against that unit vector.  So a transition-probability preserving map
+is, coordinatewise, the identity up to a sign pattern -- and the whole remaining content
+of the real rigidity is that the pattern is a single global sign.
+-/
+
+/-- Rescaling a representative by a nonzero scalar does not change the ray. -/
+theorem mk_smul_eq {c : ℝ} (hc : c ≠ 0) {v : E} (hv : v ≠ 0) (h : c • v ≠ 0) :
+    Projectivization.mk ℝ (c • v) h = Projectivization.mk ℝ v hv :=
+  (Projectivization.mk_eq_mk_iff ℝ _ _ _ _).mpr ⟨Units.mk0 c hc, by simp [Units.smul_def]⟩
+
+/-- The normalized representative represents the same ray. -/
+theorem mk_normalize_rep (p : ℙ ℝ E) (h : ‖p.rep‖⁻¹ • p.rep ≠ 0) :
+    Projectivization.mk ℝ (‖p.rep‖⁻¹ • p.rep) h = p :=
+  (mk_smul_eq (inv_ne_zero (norm_ne_zero_iff.mpr p.rep_nonzero)) p.rep_nonzero h).trans
+    (Projectivization.mk_rep p)
+
+theorem norm_normalize {v : E} (hv : v ≠ 0) : ‖‖v‖⁻¹ • v‖ = 1 := by
+  rw [norm_smul, norm_inv, norm_norm]
+  exact inv_mul_cancel₀ (norm_ne_zero_iff.mpr hv)
+
+theorem normalize_ne_zero {v : E} (hv : v ≠ 0) : ‖v‖⁻¹ • v ≠ 0 :=
+  smul_ne_zero (inv_ne_zero (norm_ne_zero_iff.mpr hv)) hv
+
+/-- **Step 4a.**  With both sides normalized, the coordinate transfers *in absolute
+value*: the squared identity of step 3 has a unique nonnegative square root. -/
+theorem TransProbPreservingR.abs_coord_transfer {f : ℙ ℝ E → ℙ ℝ E}
+    (hf : TransProbPreservingR f) {ψ φ : E} (hψ : ψ ≠ 0) (hφ : φ ≠ 0) (hφ1 : ‖φ‖ = 1)
+    {φ' : E} (hφ'0 : φ' ≠ 0) (hφ'1 : ‖φ'‖ = 1)
+    (hfφ : f (Projectivization.mk ℝ φ hφ) = Projectivization.mk ℝ φ' hφ'0) :
+    |(inner ℝ (‖(f (Projectivization.mk ℝ ψ hψ)).rep‖⁻¹ •
+        (f (Projectivization.mk ℝ ψ hψ)).rep) φ' : ℝ)|
+      = |(inner ℝ (‖ψ‖⁻¹ • ψ) φ : ℝ)| := by
+  have hψ'0 : (f (Projectivization.mk ℝ ψ hψ)).rep ≠ 0 := (f _).rep_nonzero
+  have hnψ' : ‖(f (Projectivization.mk ℝ ψ hψ)).rep‖ ≠ 0 := norm_ne_zero_iff.mpr hψ'0
+  have hnψ : ‖ψ‖ ≠ 0 := norm_ne_zero_iff.mpr hψ
+  have hsq := hf.coord_sq_transfer hψ hφ hφ1 hφ'1 hfφ
+  rw [div_eq_inv_mul, div_eq_inv_mul] at hsq
+  rw [real_inner_smul_left, real_inner_smul_left, abs_mul, abs_mul, abs_inv, abs_inv,
+    abs_norm, abs_norm, ← sq_eq_sq₀ (by positivity) (by positivity),
+    mul_pow, mul_pow, sq_abs, sq_abs, inv_pow, inv_pow]
+  exact hsq
+
+/-- **Step 4a, the self-contained form.**  Taking `φ'` to be the *normalized image* of
+`φ` removes the side hypothesis entirely: for any preserving `f` and any unit `φ`, the
+normalized image of any ray has the same coordinate modulus against the normalized image
+of `φ` as the source ray has against `φ`.  Applied to an orthonormal basis `b`, with
+`b' = imageOrthonormalBasis`, this says **every coordinate of the image is `±` the
+corresponding coordinate of the source**. -/
+theorem TransProbPreservingR.abs_inner_image {f : ℙ ℝ E → ℙ ℝ E}
+    (hf : TransProbPreservingR f) {ψ φ : E} (hψ : ψ ≠ 0) (hφ : φ ≠ 0) (hφ1 : ‖φ‖ = 1) :
+    |(inner ℝ (‖(f (Projectivization.mk ℝ ψ hψ)).rep‖⁻¹ •
+        (f (Projectivization.mk ℝ ψ hψ)).rep)
+      (‖(f (Projectivization.mk ℝ φ hφ)).rep‖⁻¹ • (f (Projectivization.mk ℝ φ hφ)).rep) : ℝ)|
+      = |(inner ℝ (‖ψ‖⁻¹ • ψ) φ : ℝ)| := by
+  have hrep : (f (Projectivization.mk ℝ φ hφ)).rep ≠ 0 := (f _).rep_nonzero
+  exact hf.abs_coord_transfer hψ hφ hφ1 (normalize_ne_zero hrep) (norm_normalize hrep)
+    (mk_normalize_rep _ (normalize_ne_zero hrep)).symm
+
 end Projectivization
