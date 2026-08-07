@@ -27,7 +27,7 @@ pushing is Bryan-gated).
 | `H_n(ℍ)` | **FOUNDATION COMPLETE** (carrier, order-unit, unital Jordan subalgebra, positivity, cfc-closure); **argument is a lane** — the Θ chain is not yet available on this carrier | `QuatCarrier`, `IsQuaternionic.cfc_of_effect` |
 | `H₃(𝕆)` | **BLOCKED** — octonions exist in no prover (verified: zero files) | — |
 | `cor:qubit-classification` | moduli space + one nonconstant element + certified `ℂP¹→ℝP²` descent + separation; **classification map `product ↦ moduli` ABSENT** | `RankTwo.tauModuliRP2`, `RankTwo.tauRP2_blochFrame` |
-| `mthm:omnibus` | **carrier EXISTS** (`OrderUnitSpace (V × W)` + effect characterization); factorwise assembly remains | `OrderUnitSpace.instProd` |
+| `mthm:omnibus` | **carrier + BOTH assembly halves** (sufficiency `prod`, determination `sp_eq_of_prod_eq`); conditional on the SPLITTING (`prop:central`, paper proof) | `SequentialProductOn.prod` |
 
 **The ℝ row's single condition** is `ThetaPreservesJordanG` in each eigenframe, carried
 as a located hypothesis exactly as the manuscript cites vIR. Removing it needs ONE
@@ -2602,6 +2602,36 @@ custom axioms exactly `[]`; `instProd`, `isEffect_prod_iff` and
 restrict a `SequentialProductOn (V × W)` to each summand (well defined by
 `isEffect_prod_iff`), then show a product is determined by its restrictions. That step is
 independent of whether the per-type rows are finished, so it can be done now.
+
+
+### M7 unit 2 — the factorwise assembly, both provable halves (DONE, 2026-08-06)
+
+`RadicalRelativity/DirectSum.lean` (extended). The assembly splits into THREE statements,
+and exactly two of them are provable without `prop:central`:
+
+1. **Sufficiency — DONE.** `SequentialProductOn.prod P Q : SequentialProductOn (V × W)`,
+   `sp a b := (P.sp a.1 b.1, Q.sp a.2 b.2)`. All nine S1–S7 fields discharged
+   componentwise, first compile, zero errors. The reason it is this cheap is worth
+   recording: **compatibility in this interface is not a side condition but literally the
+   equation `a & b = b & a`**, and on a pair that equation splits into its two components
+   via `Prod.mk.injEq`. So the four compatibility-hypothesis fields need no extra input —
+   they destructure exactly like the algebraic ones. Order hypotheses (`b + c ≤ 𝟙`) split
+   through `Prod.le_def`, effect hypotheses through `isEffect_prod_iff` (unit 1).
+2. **Determination — DONE.** `prod_fst`/`prod_snd` (both `rfl`: the restriction to a
+   summand is literally a projection) and `sp_eq_of_prod_eq : (P.prod Q).sp =
+   (P'.prod Q').sp → P.sp = P'.sp ∧ Q.sp = Q'.sp`, by probing at `(a, 0)` and `(0, a')`.
+   This is what makes the factorwise classification lossless: distinct summand products
+   give distinct sums, so classifying the factors classifies the sum.
+3. **The splitting — NOT DONE, and it is the paper's own citation boundary.** That *every*
+   product on a direct sum has the form `P.prod Q`. This is `prop:central`: a product is
+   compatible with each central idempotent, hence preserves the summands.
+   `central_decomposition` machine-checks only the componentwise identity, not this.
+
+**Honest statement of the omnibus row: the assembly is certified CONDITIONAL on the
+splitting.** That is a different and much better position than "assembly remains" — the
+two halves that were open combinatorial work are now machine-checked, and what is left is
+one structural proposition that the manuscript already cites rather than proves. Gates
+green at 3090 jobs, census 133, custom axioms exactly [].
 
 - **7.1 mthm:omnibus.** Direct-sum assembly; summand inheritance of S1–S7 +
   converse (the documented paper-only halves of prop:central). Risk LOW-MED.

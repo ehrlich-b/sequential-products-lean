@@ -3,7 +3,7 @@ Copyright (c) 2026 Bryan Ehrlich. All rights reserved.
 Released under Apache 2.0 license.
 Authors: Bryan Ehrlich
 -/
-import RadicalRelativity.OrderUnitSpace
+import RadicalRelativity.SequentialProduct
 
 set_option linter.style.longLine false
 
@@ -69,3 +69,97 @@ theorem isEffect_prod_iff {a : V × W} :
     · exact ⟨h.1.2, h.2.2⟩
 
 end OrderUnitSpace
+namespace SequentialProductOn
+
+variable {V W : Type*} [OrderUnitSpace V] [OrderUnitSpace W]
+
+open OrderUnitSpace
+
+/-- **The direct sum of two sequential products is a sequential product.**  This is the
+*sufficiency* half of the omnibus's factorwise assembly: every S1-S7 axiom is a pointwise
+identity or an implication between pointwise identities, so each one holds in `V × W`
+exactly when it holds in both summands.  Compatibility is not a side condition here but
+literally the equation `a & b = b & a`, which on a pair splits into its two components --
+that is why no extra hypothesis is needed. -/
+def prod (P : SequentialProductOn V) (Q : SequentialProductOn W) :
+    SequentialProductOn (V × W) where
+  sp a b := (P.sp a.1 b.1, Q.sp a.2 b.2)
+  sp_add_right ha hb hc hbc := by
+    rw [isEffect_prod_iff] at ha hb hc
+    rw [Prod.le_def] at hbc
+    exact Prod.ext_iff.mpr
+      ⟨P.sp_add_right ha.1 hb.1 hc.1 hbc.1, Q.sp_add_right ha.2 hb.2 hc.2 hbc.2⟩
+  sp_unit_left ha := by
+    rw [isEffect_prod_iff] at ha
+    exact Prod.ext_iff.mpr ⟨P.sp_unit_left ha.1, Q.sp_unit_left ha.2⟩
+  sp_zero_symm ha hb h := by
+    rw [isEffect_prod_iff] at ha hb
+    simp only [Prod.mk_eq_zero] at h ⊢
+    exact ⟨P.sp_zero_symm ha.1 hb.1 h.1, Q.sp_zero_symm ha.2 hb.2 h.2⟩
+  sp_assoc_of_compatible ha hb hc h := by
+    rw [isEffect_prod_iff] at ha hb hc
+    simp only [Prod.mk.injEq] at h ⊢
+    exact ⟨P.sp_assoc_of_compatible ha.1 hb.1 hc.1 h.1,
+      Q.sp_assoc_of_compatible ha.2 hb.2 hc.2 h.2⟩
+  compatible_ortho ha hb h := by
+    rw [isEffect_prod_iff] at ha hb
+    simp only [Prod.mk.injEq] at h ⊢
+    exact ⟨P.compatible_ortho ha.1 hb.1 h.1, Q.compatible_ortho ha.2 hb.2 h.2⟩
+  compatible_add ha hb hc hbc h h' := by
+    rw [isEffect_prod_iff] at ha hb hc
+    rw [Prod.le_def] at hbc
+    simp only [Prod.mk.injEq] at h h' ⊢
+    exact ⟨P.compatible_add ha.1 hb.1 hc.1 hbc.1 h.1 h'.1,
+      Q.compatible_add ha.2 hb.2 hc.2 hbc.2 h.2 h'.2⟩
+  compatible_sp ha hb hc h h' := by
+    rw [isEffect_prod_iff] at ha hb hc
+    simp only [Prod.mk.injEq] at h h' ⊢
+    exact ⟨P.compatible_sp ha.1 hb.1 hc.1 h.1 h'.1,
+      Q.compatible_sp ha.2 hb.2 hc.2 h.2 h'.2⟩
+  sp_effect ha hb := by
+    rw [isEffect_prod_iff] at ha hb
+    exact isEffect_prod_iff.mpr ⟨P.sp_effect ha.1 hb.1, Q.sp_effect ha.2 hb.2⟩
+
+@[simp]
+theorem prod_sp (P : SequentialProductOn V) (Q : SequentialProductOn W) (a b : V × W) :
+    (P.prod Q).sp a b = (P.sp a.1 b.1, Q.sp a.2 b.2) := rfl
+
+end SequentialProductOn
+
+namespace SequentialProductOn
+
+variable {V W : Type*} [OrderUnitSpace V] [OrderUnitSpace W]
+
+/-! ## The summand products are recoverable
+
+The omnibus's assembly has two halves.  `prod` is sufficiency: summand products give a
+product on the sum.  The lemmas below are *determination*: the summand products are read
+back off the sum, so a split product carries exactly the data of its two restrictions and
+the factorwise classification is not lossy.
+
+What is **not** here is the third statement -- that *every* product on a direct sum is of
+the form `P.prod Q`.  That is `prop:central`'s content (a product is compatible with each
+central idempotent, hence preserves the summands), and it is the piece the manuscript
+carries as a paper proof; `central_decomposition` machine-checks only its componentwise
+identity.  So the assembly is certified conditional on the splitting, not unconditionally.
+-/
+
+/-- The left summand's product is the first component of the sum's, at any second
+argument -- the restriction is literally a projection. -/
+theorem prod_fst (P : SequentialProductOn V) (Q : SequentialProductOn W)
+    (a b : V) (a' b' : W) : ((P.prod Q).sp (a, a') (b, b')).1 = P.sp a b := rfl
+
+theorem prod_snd (P : SequentialProductOn V) (Q : SequentialProductOn W)
+    (a b : V) (a' b' : W) : ((P.prod Q).sp (a, a') (b, b')).2 = Q.sp a' b' := rfl
+
+/-- **A split product determines its factors.**  Hence the factorwise classification of
+`mthm:omnibus` loses no information: distinct summand products give distinct sums. -/
+theorem sp_eq_of_prod_eq {P P' : SequentialProductOn V} {Q Q' : SequentialProductOn W}
+    (h : (P.prod Q).sp = (P'.prod Q').sp) : P.sp = P'.sp ∧ Q.sp = Q'.sp := by
+  refine ⟨funext fun a => funext fun b => ?_, funext fun a' => funext fun b' => ?_⟩
+  · have := congrFun (congrFun h (a, (0 : W))) (b, (0 : W))
+    exact congrArg Prod.fst this
+  · have := congrFun (congrFun h ((0 : V), a')) ((0 : V), b')
+    exact congrArg Prod.snd this
+
+end SequentialProductOn
