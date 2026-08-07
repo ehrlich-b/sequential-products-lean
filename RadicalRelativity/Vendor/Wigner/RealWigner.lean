@@ -615,4 +615,63 @@ theorem sign_pair_of_abs {x y p q : ℝ} (hx : |x| = |p|) (hy : |y| = |q|)
   · exact Or.inr ⟨hx', hy'⟩
 
 
+/-! ## Step 4d, part 2: naming the normalized image, and the pair moduli
+
+The assembly manipulates "the normalized representative of the image ray" constantly, so it
+gets a name.  With it, the two facts the sign pattern is defined from become short: each
+coordinate of the image of `b i + b j` has modulus `‖b i + b j‖⁻¹`, hence is NONZERO, so
+their product has a genuine sign.
+-/
+
+/-- The normalized representative of the image ray. -/
+noncomputable def normImg (f : ℙ ℝ E → ℙ ℝ E) {ψ : E} (hψ : ψ ≠ 0) : E :=
+  ‖(f (Projectivization.mk ℝ ψ hψ)).rep‖⁻¹ • (f (Projectivization.mk ℝ ψ hψ)).rep
+
+theorem normImg_ne_zero (f : ℙ ℝ E → ℙ ℝ E) {ψ : E} (hψ : ψ ≠ 0) : normImg f hψ ≠ 0 :=
+  normalize_ne_zero (f _).rep_nonzero
+
+theorem norm_normImg (f : ℙ ℝ E → ℙ ℝ E) {ψ : E} (hψ : ψ ≠ 0) : ‖normImg f hψ‖ = 1 :=
+  norm_normalize (f _).rep_nonzero
+
+/-- The normalized image represents the image ray — so `normImg` loses nothing. -/
+theorem mk_normImg (f : ℙ ℝ E → ℙ ℝ E) {ψ : E} (hψ : ψ ≠ 0) :
+    Projectivization.mk ℝ (normImg f hψ) (normImg_ne_zero f hψ) = f (Projectivization.mk ℝ ψ hψ) :=
+  mk_normalize_rep _ _
+
+section PairModuli
+
+variable {ι : Type*} [Fintype ι] [Nonempty ι] [FiniteDimensional ℝ E]
+
+omit [Nonempty ι] [FiniteDimensional ℝ E] in
+/-- The inner products of an orthonormal basis, as one reusable identity. -/
+theorem inner_basis_eq_ite [DecidableEq ι] (b : OrthonormalBasis ι ℝ E) (p q : ι) :
+    (inner ℝ (b p) (b q) : ℝ) = if p = q then 1 else 0 := by
+  rcases eq_or_ne p q with h | h
+  · rw [if_pos h, h, real_inner_self_eq_norm_sq, b.orthonormal.1 q]; norm_num
+  · rw [if_neg h, b.orthonormal.2 h]
+
+/-- **Both coordinates of a two-slot image are nonzero, with modulus `‖b i + b j‖⁻¹`.**
+This is what gives the sign pattern something to be the sign OF. -/
+theorem TransProbPreservingR.abs_inner_imgBasis_pair {f : ℙ ℝ E → ℙ ℝ E}
+    (hf : TransProbPreservingR f) (b : OrthonormalBasis ι ℝ E) {i j : ι} (hij : i ≠ j) :
+    |(inner ℝ (normImg f (basis_add_ne_zero b hij)) (hf.imgBasis b i) : ℝ)|
+      = ‖b i + b j‖⁻¹ := by
+  classical
+  have h := hf.abs_inner_imgBasis b (basis_add_ne_zero b hij) i
+  rw [show normImg f (basis_add_ne_zero b hij) = ‖(f (Projectivization.mk ℝ (b i + b j)
+      (basis_add_ne_zero b hij))).rep‖⁻¹ • (f (Projectivization.mk ℝ (b i + b j)
+      (basis_add_ne_zero b hij))).rep from rfl, h, real_inner_smul_left, inner_add_left,
+    inner_basis_eq_ite, inner_basis_eq_ite, if_pos rfl, if_neg (Ne.symm hij), add_zero,
+    mul_one, abs_of_nonneg (inv_nonneg.mpr (norm_nonneg _))]
+
+theorem TransProbPreservingR.inner_imgBasis_pair_ne_zero {f : ℙ ℝ E → ℙ ℝ E}
+    (hf : TransProbPreservingR f) (b : OrthonormalBasis ι ℝ E) {i j : ι} (hij : i ≠ j) :
+    (inner ℝ (normImg f (basis_add_ne_zero b hij)) (hf.imgBasis b i) : ℝ) ≠ 0 := by
+  intro h
+  have := hf.abs_inner_imgBasis_pair b hij
+  rw [h, abs_zero] at this
+  exact (inv_ne_zero (norm_ne_zero_iff.mpr (basis_add_ne_zero b hij))) this.symm
+
+end PairModuli
+
 end Projectivization

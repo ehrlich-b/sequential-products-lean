@@ -2067,7 +2067,16 @@ sorry-free Wigner rigidity — see 3.0.
     them as RAYS. Pure plumbing, which is the point: the rigidity's content was never
     *building* the isometry, it is showing `f` agrees with the induced map, and that is
     exactly where the sign pattern gets consumed. Axiom-checked = Lean core only.
-    **What remains of the rigidity: 4d part 2 — define the pattern from the pairs `(i₀, i)`
+    **STEP 4d part 2a DONE (same day)**: `normImg` (the normalized representative of the
+    image ray, with `norm_normImg`, `normImg_ne_zero` and `mk_normImg` showing it loses
+    nothing) — the assembly manipulates this object constantly, so naming it is what keeps
+    the remaining statements readable. Plus `inner_basis_eq_ite` (hoisted out of
+    `image_two_slot`'s local proof) and **`abs_inner_imgBasis_pair` /
+    `inner_imgBasis_pair_ne_zero`**: each coordinate of the image of `b i + b j` has modulus
+    `‖b i + b j‖⁻¹` and is therefore NONZERO — which is what gives the sign pattern
+    something to be the sign OF, and is exactly `sign_pair_of_abs`'s `p·q ≠ 0` hypothesis at
+    the pair level. Axiom-checked = Lean core only.
+    **What remains of the rigidity: 4d part 2b — define the pattern from the pairs `(i₀, i)`
     (the coordinates are inner products, so no choice is needed), prove pair-consistency for
     arbitrary `(i,j)` via a THREE-slot vector, and assemble the isometry. The inputs are now
     all in place: `image_two_slot` supplies the moduli, `sign_pair_of_abs` the common sign,
