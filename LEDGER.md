@@ -95,8 +95,22 @@ TRY): `QuatCarrier n := quatSubmodule` with **`instance : OrderUnitSpace (QuatCa
 by probe: **`SequentialProductOn (HermitianMat.QuatCarrier n)` TYPECHECKS.** So the ℍ
 row's statement is now expressible in the tree, on a carrier built entirely from complex
 Hermitian matrices — no algebra over a noncommutative ring anywhere.
-**Next for the ℍ row**: transport a `SequentialProductOn` on the carrier and run the
-ℝ-shaped argument — the quaternionic Peirce block is `ℍ`, whose CENTRE is `ℝ`, so the
+Also landed: `map_conj_eq_transpose` (for a Hermitian matrix, entrywise conjugation IS
+transposition), `symplecticJ_transpose_eq_conjTranspose` (`J₀` is real), and
+**`quatConj_posSemidef` — `Φ` PRESERVES POSITIVE SEMIDEFINITENESS**, since for Hermitian
+`A` it is the congruence `J₀ Aᵀ J₀ᴴ`. Axiom-checked = Lean core only. (Needs
+`open ComplexOrder` in scope — the PSD order does not resolve without it.)
+★**NOTE for the next session — the one non-obvious gap on this row**: the fixed set's
+closure under the FUNCTIONAL CALCULUS (`IsQuaternionic a → IsQuaternionic (a.cfc f)`) is
+NOT yet proved, and there is **no square-root uniqueness lemma in the tree or Mathlib** to
+get it cheaply (checked). Two routes: (i) via uniqueness of the PSD square root — needs
+that lemma written first; (ii) **via polynomials + continuity, which today's new
+infrastructure now supports directly**: `Φ` is continuous and multiplicative, so it fixes
+`p(A)` for real polynomials `p`, and then `continuous_cfc_polynomial` +
+`norm_cfc_sub_le_of_sup_le` + Weierstrass transfer it to `cfc f` exactly as
+`continuousOn_cfc_sqrt_effects` was built. Route (ii) is the recommended one.
+**Next for the ℍ row**: that cfc closure, then transport a `SequentialProductOn` on the
+carrier and run the ℝ-shaped argument — the quaternionic Peirce block is `ℍ`, whose CENTRE is `ℝ`, so the
 same "no continuous character into a discrete sign group" kill applies and
 **`eq_one_of_sq_eq_one_of_continuous` (from `RealRigidity`) is reusable VERBATIM.**
 

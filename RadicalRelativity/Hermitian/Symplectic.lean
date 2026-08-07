@@ -37,6 +37,7 @@ already has — and never needs a Hermitian layer over a noncommutative ring.
 
 noncomputable section
 
+open ComplexOrder
 open scoped Matrix
 
 namespace HermitianMat
@@ -228,6 +229,31 @@ theorem mem_quatSubmodule {A : HermitianMat (n ⊕ n) ℂ} :
 order-unit space with the inherited order — the carrier the `H_n(ℍ)` row needs. -/
 theorem one_mem_quatSubmodule : (1 : HermitianMat (n ⊕ n) ℂ) ∈ quatSubmodule (n := n) :=
   isQuaternionic_one
+
+/-! ## `Φ` preserves positivity -/
+
+/-- For a Hermitian matrix, entrywise conjugation is transposition. -/
+theorem map_conj_eq_transpose (A : HermitianMat (n ⊕ n) ℂ) :
+    A.mat.map (starRingEnd ℂ) = A.matᵀ := by
+  ext i j
+  have h := congrFun (congrFun A.H j) i
+  simpa [Matrix.conjTranspose_apply, Matrix.transpose_apply, Matrix.map_apply] using h
+
+/-- `J₀` is real, so its transpose is its conjugate transpose. -/
+theorem symplecticJ_transpose_eq_conjTranspose :
+    (symplecticJ (n := n))ᵀ = (symplecticJ (n := n))ᴴ := by
+  ext i j
+  rcases i with i | i <;> rcases j with j | j <;>
+    simp [symplecticJ, Matrix.fromBlocks, Matrix.conjTranspose_apply,
+      Matrix.transpose_apply, Matrix.one_apply, apply_ite]
+
+/-- **`Φ` preserves positive semidefiniteness**: `Φ A = J₀ Aᵀ J₀ᴴ` for Hermitian `A`
+(conjugation is transposition there, and `J₀` is real), which is a congruence. -/
+theorem quatConj_posSemidef {A : HermitianMat (n ⊕ n) ℂ} (hA : A.mat.PosSemidef) :
+    (quatConj A.mat).PosSemidef := by
+  unfold quatConj
+  rw [map_conj_eq_transpose, symplecticJ_transpose_eq_conjTranspose]
+  exact hA.transpose.mul_mul_conjTranspose_same _
 
 /-! ## The quaternionic carrier as an order-unit space -/
 
