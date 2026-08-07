@@ -290,14 +290,36 @@ machine-checked on the concrete carrier: `lem:twist-sufficiency` in §1.)
   `ℝ² → SO(2)` lifts through the universal cover to a linear functional. Lean
   *assumes* `angle` is linear and proves only the factorization, so this step is
   supplied by the paper, not checked.
-- **`lem:n2-bounded`, `lem:n2-continuity`, `lem:n2-descent`** (boundedness,
-  continuity, evenness/descent to `ℝP²`) and the assembled bijection
-  `cor:qubit-classification`. The rank-two Lean content is the fixed-frame
-  *algebraic* core on concrete `M₂(ℂ)`, not the classification.
+- **`lem:n2-bounded`** (boundedness) and the assembled bijection
+  `cor:qubit-classification` itself.
+  **UPDATED 2026-08-06 — `lem:n2-descent` is no longer in this section.** The
+  evenness/descent to `ℝP²` IS now machine-checked, on the concrete carrier:
+  `RankTwo.orthoFrame` (complementation as an involution on `ℂP¹`, well defined
+  because the complement map is *conjugate*-linear), `RankTwo.tauFrame_orthoFrame` and
+  `RankTwo.blochFrame_orthoFrame` (both the frame function and the Bloch map are
+  complementation invariant), `RankTwo.blochFrame` with
+  `blochFrame_continuous`/`blochFrame_surjective`, the moduli element
+  `RankTwo.tauModuliRP2 : C(ℝP², ℝ)` with `tauRP2_continuous`, the bridge
+  `RankTwo.tauRP2_blochFrame` (the `ℝP²` function pulls back to the frame function),
+  and `RankTwo.tauModuliRP2_nonconstant`. Files: `RankTwo/Descent.lean`,
+  `RankTwo/Bloch.lean`. `lem:n2-continuity` is likewise covered for these objects
+  (`tauFrame_continuous`, `tauRP2_continuous`).
+  ★**What remains unproved for rank two is bigger than the residue above suggests, and
+  the honest statement is this**: NO declaration in `RankTwo/` takes a
+  `SequentialProductOn` (verify: `grep -c SequentialProductOn RadicalRelativity/RankTwo/*.lean`
+  → 0 everywhere), and `n2_necessity` takes a linear `angle` rather than a product. So
+  the **classification map `product ↦ moduli` does not exist in Lean at all** — what
+  exists is the moduli space, one distinguished (nonconstant) element of it, the
+  certified descent, and the separation. Building the map needs per-frame parameter
+  extraction from an arbitrary rank-two product, and the `N ≥ 3` machinery cannot be
+  reused (`StabilizerCoupling` carries `rank_ge : 3 ≤ n`).
 - **`mthm:omnibus`** (the finite-dimensional omnibus classification) and
   **`prop:pseudo-transfer`**.
-- **`prop:singular`** exists as a standalone lemma but is *not* invoked by
-  `master_chain`.
+- **`prop:singular`** is not invoked by `master_chain` (the abstract skeleton).
+  **UPDATED 2026-08-06**: it IS invoked on the concrete carrier, by both finished
+  rows — `Necessity.sp_eq_twistSeq_of_effect` (ℂ) via
+  `sp_eq_on_effects_of_eq_on_posDef`, and `Necessity.sp_eq_luders_of_effect` (ℝ) via
+  `dense_posDef_effectsR` + `MasterTheorem.prop_singular` directly.
 - Analytic content generally: norm continuity arguments, spectral theory, and
   the singular-effect extensions live in the paper.
 
