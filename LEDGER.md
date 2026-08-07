@@ -27,7 +27,7 @@ pushing is Bryan-gated).
 | `H_n(ℍ)` | **FOUNDATION COMPLETE** (carrier, order-unit, unital Jordan subalgebra, positivity, cfc-closure); **argument is a lane** — the Θ chain is not yet available on this carrier | `QuatCarrier`, `IsQuaternionic.cfc_of_effect` |
 | `H₃(𝕆)` | **BLOCKED** — octonions exist in no prover (verified: zero files) | — |
 | `cor:qubit-classification` | moduli space + one nonconstant element + certified `ℂP¹→ℝP²` descent + separation; **classification map `product ↦ moduli` ABSENT** | `RankTwo.tauModuliRP2`, `RankTwo.tauRP2_blochFrame` |
-| `mthm:omnibus` | untouched; sits behind the rows | — |
+| `mthm:omnibus` | untouched; **its foundation (a direct-sum carrier) was attempted and scoped — see M7 note** | — |
 
 **The ℝ row's single condition** is `ThetaPreservesJordanG` in each eigenframe, carried
 as a located hypothesis exactly as the manuscript cites vIR. Removing it needs ONE
@@ -2569,6 +2569,25 @@ sorry-free Wigner rigidity — see 3.0.
   shared shape with 2.6.
 
 ## M7 — Omnibus + statement upgrade + re-audit
+
+★**FOUNDATION ATTEMPTED AND SCOPED 2026-08-06 (draft reverted, tree left green).** The
+omnibus assembly needs a carrier for the simple-factor decomposition — the DIRECT SUM of
+order-unit spaces — and that is the natural first unit, because the assembly theorem
+("given the per-type rows, a product on a direct sum is determined factorwise") can be
+proved INDEPENDENTLY of whether the rows are finished. Attempting
+`instance : OrderUnitSpace (V × W)` surfaced two concrete obstacles, both plumbing:
+* **`OrderUnitSpace` extends `PartialOrder`, so a product instance must SUPPLY that parent
+  explicitly** (`toPartialOrder := Prod.instPartialOrder`). Without it Lean synthesizes an
+  anonymous parent and then `h.1`/`h.2` on an order hypothesis fail with
+  "Invalid projection … `instProd.toLE.1 0 a`". Same reason `prod_ousUnit`'s `rfl` fails.
+* **The class has NO scalar-monotonicity-in-the-scalar lemma** (`r ≤ s → 0 ≤ x →
+  r • x ≤ s • x`): grep for `smul_le_smul`/`smul_mono` in `OrderUnitSpace.lean` returns
+  nothing. `archimedean` for the product needs exactly that (to compare against
+  `max r₁ r₂`), so **write that lemma first** — from `smul_nonneg_mono` plus
+  `sub_smul` and `ousUnit_nonneg` it is a few lines, and it is generally useful.
+Order of work: (1) the missing scalar-monotonicity lemma in `OrderUnitSpace.lean`;
+(2) the product instance with its parent supplied; (3) `isEffect_prod_iff` (an effect of a
+sum is a pair of effects) via `Prod.le_def`; (4) THEN the factorwise assembly.
 
 - **7.1 mthm:omnibus.** Direct-sum assembly; summand inheritance of S1–S7 +
   converse (the documented paper-only halves of prop:central). Risk LOW-MED.
