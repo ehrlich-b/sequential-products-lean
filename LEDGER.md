@@ -2164,7 +2164,21 @@ sorry-free Wigner rigidity — see 3.0.
   `orthoVec_eq`, `Vec_real_smul`), the lifting/character layer, and the separation
   (`Coeff_sep`, `sp_luders_ne_unit_twist`). On the abstract side
   `MasterTheorem.RankTwo.sp`/`sp_apply`/`sp_maps_effects`/`sp_blockForm` are proved.
-  **The two genuinely missing pieces are both structural, not bookkeeping:**
+  **PART 1 DONE 2026-08-06** (`RankTwo/Descent.lean`, NEW, census 129, gates green,
+  tree at 3086 jobs, custom axioms exactly `[]`; `tauFrame_orthoFrame` axiom-checked =
+  Lean core only): `orthoE` (complementation at the `EuclideanSpace` level) with
+  `nsq_orthoE`/`orthoE_ne_zero`, **`orthoVec_smul` — `orthoVec` is CONJUGATE-linear
+  (`orthoVec (t • v) = star t • orthoVec v`), which is exactly why complementation
+  descends to projective space** (a scaling becomes its conjugate, still a unit),
+  `orthoFrame` (the involution on `ℂP¹`, via `Projectivization.lift` with that
+  conjugate-linearity as the well-definedness datum), and
+  **`tauFrame_orthoFrame` — the frame function is complementation invariant, so `τ`
+  factors through `ℂP¹ / complementation`.**
+  Proved from `tauVec_eq`'s explicit formula rather than the abstract
+  `tau_swap_invariant`: complementation swaps `|v₀|²` and `|v₁|²`, which negates
+  `2|v₀|²/‖v‖² − 1`, and that bracket is squared. Much shorter than routing through
+  the Jordan-level swap lemma.
+  **The remaining pieces:**
   (i) **the descent** `ℂP¹ / complementation ≅ ℝP²` — a quotient-topology
       homeomorphism, with `tau_swap_invariant` as the descent datum; this is the
       real work of 5.3 and is a topology unit, not an algebra one;

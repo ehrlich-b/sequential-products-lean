@@ -525,6 +525,11 @@ import RadicalRelativity.RankTwo.FrameFunction
 -- of the frame rather than of the ray.
 import RadicalRelativity.RankTwo.Complementation
 
+-- M5.3 part 1: complementation as an involution on the frame space CP^1, and the
+-- invariance of the frame function under it -- the descent datum for
+-- cor:qubit-classification's moduli object C(RP^2, R).
+import RadicalRelativity.RankTwo.Descent
+
 -- M5 (LEDGER 5.3): FRAME DEPENDENCE AT THE LEVEL OF THE OPERATION.  RankTwo.lean
 -- recorded the pair (tau = 0 on the Hadamard frame gives Luders, tau = 1 on the
 -- reference frame gives the unit twist) but never showed the two products
