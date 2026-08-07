@@ -2281,6 +2281,16 @@ sorry-free Wigner rigidity — see 3.0.
     uses, 11 consumers), where in-place generalization was correctly rejected. **The rule is not
     "never generalize in place" but "measure the ℂ-specific surface first":** one type annotation
     is free, sixty normSq uses are not.
+    **ℝ BRIDGE UNIT 5e DONE (same day)** — `Necessity/RealWignerBridge.lean` (NEW, census 138 →
+    **139**): `inner_eq_dotProductR` (on `EuclideanSpace ℝ (Fin N)` the inner product IS the dot
+    product — no conjugation, which is the whole simplification over ℂ),
+    `norm_sq_eq_dotProduct_self`, **`transProbVecR_eq_sq_dotProduct`** (on unit vectors the
+    vendored transition probability is `(ψ ⬝ᵥ φ)²`, exactly the quantity `tprobR_preserved`
+    transports), plus the normalization helpers `unitVecR` / `unitVecR_unit` /
+    `rankOneR_unitVecR`. Gates green at 3096 jobs, custom axioms exactly []. **This closes the
+    vocabulary gap**: real Wigner speaks `EuclideanSpace` + `inner`, the Kadison side speaks
+    `Fin N → ℝ` + `dotProduct`, and the two are now identified, so `tprobR_preserved` and
+    `exists_isometry_of_transProbPreservingR` can be composed.
     **REMAINING FOR THE ℝ ROW — the assembly only.** All five inputs are banked
     (`exists_rankOneR_map`, `tprobR_preserved`, `exists_isometry_of_transProbPreservingR`,
     `linearMap_eq_of_eq_on_rankOneR`, `orthConj_preservesJordan` + `orthConj_rankOneR`). What the
