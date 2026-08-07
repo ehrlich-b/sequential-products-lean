@@ -27,7 +27,7 @@ pushing is Bryan-gated).
 | `H_n(ℍ)` | **FOUNDATION COMPLETE** (carrier, order-unit, unital Jordan subalgebra, positivity, cfc-closure); **argument is a lane** — the Θ chain is not yet available on this carrier | `QuatCarrier`, `IsQuaternionic.cfc_of_effect` |
 | `H₃(𝕆)` | **BLOCKED** — octonions exist in no prover (verified: zero files) | — |
 | `cor:qubit-classification` | moduli space + one nonconstant element + certified `ℂP¹→ℝP²` descent + separation; **classification map `product ↦ moduli` ABSENT** | `RankTwo.tauModuliRP2`, `RankTwo.tauRP2_blochFrame` |
-| `mthm:omnibus` | untouched; **its foundation (a direct-sum carrier) was attempted and scoped — see M7 note** | — |
+| `mthm:omnibus` | **carrier EXISTS** (`OrderUnitSpace (V × W)` + effect characterization); factorwise assembly remains | `OrderUnitSpace.instProd` |
 
 **The ℝ row's single condition** is `ThetaPreservesJordanG` in each eigenframe, carried
 as a located hypothesis exactly as the manuscript cites vIR. Removing it needs ONE
@@ -2585,9 +2585,23 @@ proved INDEPENDENTLY of whether the rows are finished. Attempting
   nothing. `archimedean` for the product needs exactly that (to compare against
   `max r₁ r₂`), so **write that lemma first** — from `smul_nonneg_mono` plus
   `sub_smul` and `ousUnit_nonneg` it is a few lines, and it is generally useful.
-Order of work: (1) the missing scalar-monotonicity lemma in `OrderUnitSpace.lean`;
-(2) the product instance with its parent supplied; (3) `isEffect_prod_iff` (an effect of a
-sum is a pair of effects) via `Prod.le_def`; (4) THEN the factorwise assembly.
+★★**STEPS (1)–(3) NOW DONE 2026-08-06** (census 133, gates green, tree at 3090 jobs,
+custom axioms exactly `[]`; `instProd`, `isEffect_prod_iff` and
+`smul_le_smul_of_le_of_nonneg` all axiom-checked = Lean core only):
+* `OrderUnitSpace.le_of_sub_nonneg` and **`OrderUnitSpace.smul_le_smul_of_le_of_nonneg`**
+  (monotonicity in the SCALAR — the companion to `smul_nonneg_mono`'s monotonicity in the
+  element; the class had been missing it, and it is generally useful);
+* **`OrderUnitSpace.instProd : OrderUnitSpace (V × W)`** — the direct-sum carrier, with
+  the parent supplied as `Prod.instPartialOrder _ _` (note the EXPLICIT `_ _`: the bare
+  name is a function of the two types and mismatches) and order-unit boundedness by
+  comparing both components against `max r₁ r₂`;
+* **`isEffect_prod_iff`** — an effect of a sum is exactly a pair of effects; the order
+  hypotheses must be unfolded with `Prod.le_def` before projecting, exactly as the failed
+  first attempt indicated.
+**So M7's carrier now exists.** REMAINING for the omnibus: (4) the factorwise assembly —
+restrict a `SequentialProductOn (V × W)` to each summand (well defined by
+`isEffect_prod_iff`), then show a product is determined by its restrictions. That step is
+independent of whether the per-type rows are finished, so it can be done now.
 
 - **7.1 mthm:omnibus.** Direct-sum assembly; summand inheritance of S1–S7 +
   converse (the documented paper-only halves of prop:central). Risk LOW-MED.

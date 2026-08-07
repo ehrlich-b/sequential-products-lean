@@ -104,6 +104,23 @@ theorem le_add_of_nonneg_right {a b : V} (h : (0 : V) ≤ b) : a ≤ a + b := by
 /-- An effect is an element `a` with `0 ≤ a ≤ 𝟙`. -/
 def IsEffect (a : V) : Prop := (0 : V) ≤ a ∧ a ≤ 𝟙
 
+/-- The converse of `sub_nonneg_of_le`: a nonnegative difference gives an inequality. -/
+theorem le_of_sub_nonneg {a b : V} (h : (0 : V) ≤ b - a) : a ≤ b := by
+  have h1 := add_le_add_left 0 (b - a) h a
+  rw [add_zero, add_sub_cancel] at h1
+  exact h1
+
+/-- **Monotonicity in the SCALAR**: on a nonnegative element, a larger scalar gives a
+larger multiple.  (`smul_nonneg_mono` is monotonicity in the *element*; this is the
+companion the class was missing, and the direct-sum carrier's order-unit bound needs it
+to compare against `max r₁ r₂`.) -/
+theorem smul_le_smul_of_le_of_nonneg {r s : ℝ} (hrs : r ≤ s) {a : V}
+    (ha : (0 : V) ≤ a) : r • a ≤ s • a := by
+  apply le_of_sub_nonneg
+  rw [← sub_smul]
+  have h := smul_nonneg_mono (s - r) (by linarith) ha
+  rwa [smul_zero] at h
+
 theorem isEffect_zero : IsEffect (0 : V) :=
   ⟨le_refl 0, ousUnit_nonneg⟩
 

@@ -11,6 +11,12 @@
 -- Twist normal form (operator-level normal form; statement-level scaffold).
 import RadicalRelativity.TwistNormalForm
 
+-- M7 foundation: direct sums of order-unit spaces, the carrier the omnibus's
+-- simple-factor decomposition needs.  The assembly theorem it enables ("given the
+-- per-type rows, a product on a direct sum is determined factorwise") does NOT depend on
+-- those rows being finished, so this foundation is not gated on them.
+import RadicalRelativity.DirectSum
+
 -- Part II selection: block-restricted equidistribution and the selector core.
 import RadicalRelativity.Selection.Equidistribution
 import RadicalRelativity.Selection.NormalFormExistence
