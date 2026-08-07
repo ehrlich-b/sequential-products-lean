@@ -260,6 +260,33 @@ theorem quatConj_pow {A : HermitianMat (n ⊕ n) ℂ} (hA : IsQuaternionic A) (k
     rw [h0, quatConj_one]
   | succ k ih => rw [pow_succ, quatConj_mul, ih, hA]
 
+/-- **`Φ` fixes every real matrix polynomial in a quaternionic matrix.**  Real
+coefficients are self-conjugate, so the scalar homogeneity applies, and `quatConj_pow`
+handles the powers. -/
+theorem quatConj_aeval {A : HermitianMat (n ⊕ n) ℂ} (hA : IsQuaternionic A)
+    (p : Polynomial ℝ) :
+    quatConj (Polynomial.aeval A.mat (p.map (algebraMap ℝ ℂ)))
+      = Polynomial.aeval A.mat (p.map (algebraMap ℝ ℂ)) := by
+  induction p using Polynomial.induction_on' with
+  | add p q hp hq =>
+    rw [Polynomial.map_add, map_add, quatConj_add, hp, hq]
+  | monomial k c =>
+    rw [Polynomial.map_monomial, Polynomial.aeval_monomial, ← Algebra.smul_def]
+    have hc : (starRingEnd ℂ) ((algebraMap ℝ ℂ) c) = (algebraMap ℝ ℂ) c := by
+      simp [Complex.conj_ofReal]
+    rw [quatConj_smul_of_conj_eq hc, quatConj_pow hA]
+
+/-- `Φ` is continuous. -/
+theorem quatConj_continuous :
+    Continuous (quatConj (n := n)) := by
+  unfold quatConj
+  have hmap : Continuous fun A : Matrix (n ⊕ n) (n ⊕ n) ℂ => A.map (starRingEnd ℂ) := by
+    apply continuous_matrix
+    intro i j
+    exact Complex.continuous_conj.comp ((continuous_apply j).comp (continuous_apply i))
+  apply Continuous.matrix_mul _ continuous_const
+  exact Continuous.matrix_mul continuous_const hmap
+
 /-! ## `Φ` preserves positivity -/
 
 /-- For a Hermitian matrix, entrywise conjugation is transposition. -/

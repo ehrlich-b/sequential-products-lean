@@ -114,15 +114,27 @@ reusable well beyond this row.
 ★**NOTE for the next session — the remaining ANALYTIC half of the gap**: the fixed set's
 closure under the FUNCTIONAL CALCULUS (`IsQuaternionic a → IsQuaternionic (a.cfc f)`) is
 NOT yet proved, and there is **no square-root uniqueness lemma in the tree or Mathlib** to
-get it cheaply (checked). With the polynomial half in hand, what is left is the
+get it cheaply (checked). **`quatConj_aeval` AND `quatConj_continuous` NOW DONE** (axiom-checked = Lean core
+only): `Φ` fixes every real matrix polynomial in a quaternionic matrix (via
+`Polynomial.induction_on'`, `quatConj_pow`, and the fact that real coefficients are
+self-conjugate — note `aeval_monomial`'s `algebraMap` lands in the MATRIX algebra, so
+convert with `← Algebra.smul_def` rather than casting to ℂ), and `Φ` is continuous (via
+`continuous_matrix` entrywise + `Continuous.matrix_mul`).
+With those, what is left is the
 transfer: `Φ` is continuous and additive (`quatConj_add`/`quatConj_sub`), so a
 three-ε estimate against a Weierstrass approximant plus `norm_cfc_sub_le_of_sup_le`
 gives `Φ (a.cfc f) = a.cfc f` — the SAME skeleton as
-`continuousOn_cfc_sqrt_effects`, which is already in the tree to copy from. The one
-ingredient to check first is that `Φ` is norm-bounded (it is in fact a Frobenius
-isometry, since `J₀` is unitary — `J₀ᵀJ₀ = 1` with `J₀` real — and entrywise conjugation
-preserves the Frobenius norm); if unitary invariance of that norm is not already in the
-vendored layer, bound `Φ` crudely instead, since only continuity is needed.
+`continuousOn_cfc_sqrt_effects`, which is already in the tree to copy from. ★**The one missing ingredient, attempted and BACKED OUT 2026-08-06**: the transfer needs
+`Φ` to be norm-BOUNDED, not merely continuous, and neither a Frobenius-invariance lemma
+nor a linear-map-bound route is cheaply available here (`Φ` is conjugate-linear, so the
+`ℂ`-linear `exists_bound` machinery does not apply, and the vendored `Inner.lean` has
+`frobenius_norm_def` but no congruence invariance). A draft using it was written and
+REMOVED rather than left with `sorry`s. Two clean options for the next pass: (a) prove
+`‖quatConj X‖ = ‖X‖` directly from `frobenius_norm_def` — entrywise, the map permutes and
+conjugates entries, so the sum of squared moduli is literally unchanged; that is an
+`ext`-level computation, not an operator-theory one; or (b) treat `Φ` as ℝ-linear (it IS
+ℝ-linear) and use the real bound machinery. Option (a) is the recommended one and is the
+smaller job.
 Do NOT reach for PSD-square-root uniqueness: it is absent from both the tree and Mathlib
 (checked), so that route costs an extra lemma for no gain.
 **Next for the ℍ row**: that cfc closure, then transport a `SequentialProductOn` on the
