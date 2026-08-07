@@ -2255,9 +2255,17 @@ sorry-free Wigner rigidity — see 3.0.
     everything and `q = 0`, or `ψ·u = u·u = 1`. **The last step is the slick one**: instead of
     decomposing `u` and killing a component, compare `|ψ − u|² = 1 − 2(ψ·u) + u·u = 0` directly,
     which gives `u = ψ` in one line.
-    **REMAINING FOR THE ℝ ROW, now genuinely small:** (i) `IsAtomProjectionR.exists_rankOne`
-    (every atom is a rank-one — the converse direction, which the ℂ lane does in 60 lines and
-    which should now be comparably short since `quadForm_isProjection` is available); (ii)
+    **ℝ BRIDGE UNIT 5c DONE (same day)** — **`IsAtomProjectionR.exists_rankOne`**: every atom
+    IS a rank-one. So over ℝ, rank-one projections and atoms of the projection order COINCIDE,
+    which is the whole content of rank-one transport's algebraic side. ~35 lines against the ℂ
+    lane's 60: take any nonzero range vector, normalize to `ψ`; then `pψ = ψ`, and symmetry of
+    `p` plus Cauchy-Schwarz give `(ψ·w)² = (ψ·pw)² ≤ (ψ·ψ)(pw·pw) = w·pw`, i.e. `ψψᵀ ≤ p`;
+    atomicity leaves only `ψψᵀ = p`. TRAP worth recording: the normalization constant must be
+    given an OPAQUE local name (`obtain ⟨c, hc⟩ : ∃ c, c = …`), because `hmove`'s pattern
+    `x ⬝ᵥ (p *ᵥ y)` otherwise matches the `(p*ᵥv) ⬝ᵥ (p*ᵥv)` sitting inside `√(…)` and rewrites
+    there too — the same class of failure as the self-reference trap, and the same fix
+    (make the thing you do not want rewritten opaque).
+    **REMAINING FOR THE ℝ ROW:** (ii)
     `isProjection_map` / `isAtomProjection_map` at ℝ (**purely order-theoretic — port by changing
     ℂ to ℝ**); (iii) unit 5's assembly, whose five inputs are ALL banked (`rankOneR_isAtom`,
     `tprobR_preserved`, `exists_isometry_of_transProbPreservingR`,

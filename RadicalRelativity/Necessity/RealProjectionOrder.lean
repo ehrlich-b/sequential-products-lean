@@ -130,4 +130,49 @@ theorem rankOneR_isAtom {ψ : n → ℝ} (hψ : ψ ⬝ᵥ ψ = 1) : IsAtomProjec
     refine matrix_ext_of_mulVec fun v => ?_
     rw [hdecomp v, hueq, rankOneR_mat, vecMulVec_mulVec]
 
+/-- **Conversely, every atom is a rank-one.**  Take any nonzero range vector, normalize it to
+`ψ`; then `pψ = ψ`, and symmetry plus Cauchy-Schwarz give `(ψ·w)² ≤ w·pw`, i.e.
+`ψψᵀ ≤ p`.  Atomicity leaves only `ψψᵀ = p`. -/
+theorem IsAtomProjectionR.exists_rankOne {p : HermitianMat n ℝ} (hp : IsAtomProjectionR p) :
+    ∃ ψ : n → ℝ, ψ ⬝ᵥ ψ = 1 ∧ p = rankOneR ψ := by
+  obtain ⟨hproj, hne, hatom⟩ := hp
+  have hmul : p.mat * p.mat = p.mat := HermitianMat.isProjection_iff_mat_mul_self.mp hproj
+  have hsym : p.matᵀ = p.mat := by
+    have h : p.matᴴ = p.mat := p.H
+    rwa [Matrix.conjTranspose_eq_transpose_of_trivial] at h
+  have hmove : ∀ x y : n → ℝ, x ⬝ᵥ (p.mat *ᵥ y) = (p.mat *ᵥ x) ⬝ᵥ y := by
+    intro x y
+    rw [Matrix.dotProduct_mulVec, ← Matrix.mulVec_transpose, hsym]
+  -- a nonzero range vector
+  obtain ⟨v, hv⟩ : ∃ v, p.mat *ᵥ v ≠ 0 := by
+    by_contra hall
+    push_neg at hall
+    exact hne (HermitianMat.ext (matrix_ext_of_mulVec fun w => by
+      rw [hall w, HermitianMat.mat_zero, Matrix.zero_mulVec]))
+  have hvv : (0 : ℝ) < (p.mat *ᵥ v) ⬝ᵥ (p.mat *ᵥ v) :=
+    lt_of_le_of_ne (dotProduct_self_nonnegR _)
+      (fun h => hv (dotProduct_self_eq_zero.mp h.symm))
+  -- name the constant and the vector so later rewrites cannot reach inside them
+  obtain ⟨c, hc⟩ : ∃ c : ℝ, c = (Real.sqrt ((p.mat *ᵥ v) ⬝ᵥ (p.mat *ᵥ v)))⁻¹ := ⟨_, rfl⟩
+  obtain ⟨ψ, hψd⟩ : ∃ ψ : n → ℝ, ψ = c • (p.mat *ᵥ v) := ⟨_, rfl⟩
+  have hunit : ψ ⬝ᵥ ψ = 1 := by
+    rw [hψd, smul_dotProduct, dotProduct_smul, smul_eq_mul, smul_eq_mul, ← mul_assoc, ← sq, hc,
+      inv_pow, Real.sq_sqrt hvv.le, inv_mul_cancel₀ hvv.ne']
+  have hfix : p.mat *ᵥ ψ = ψ := by
+    rw [hψd, Matrix.mulVec_smul, Matrix.mulVec_mulVec, hmul]
+  -- `ψψᵀ ≤ p`, by symmetry of `p` and Cauchy-Schwarz
+  have hle : rankOneR ψ ≤ p := by
+    rw [HermitianMat.le_iff_mulVec_le_mulVec]
+    intro w
+    rw [star_trivial, quadForm_rankOneR]
+    have hstep : ψ ⬝ᵥ w = ψ ⬝ᵥ (p.mat *ᵥ w) := by rw [hmove, hfix]
+    rw [hstep]
+    have hcs := dotProduct_sq_le ψ (p.mat *ᵥ w)
+    rw [hunit, one_mul, ← quadForm_isProjection hproj w] at hcs
+    exact hcs
+  refine ⟨ψ, hunit, ?_⟩
+  rcases hatom _ (rankOneR_isProjection hunit) hle with h | h
+  · exact absurd h (rankOneR_ne_zero hunit)
+  · exact h.symm
+
 end Necessity
