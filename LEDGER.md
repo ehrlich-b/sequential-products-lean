@@ -57,7 +57,18 @@ instantiated, exactly as the attack plan called for):
 * `frameTwistConst` needs `intro F G` + explicit `(Adj := …) (t := …)`; term-mode with
   implicit unification times out at `whnf` on `frameTwist`'s `Classical.choose` body.
 
-**Item 7.3 (statement layer) is the remaining arc item** — see the ORDERS block below.
+**Item 7.3 (statement layer) — also DONE for the ℝ and ℂ rows.**
+`RadicalRelativity/PaperA/CertifiedConfiguration.lean`: both reference maps instantiated
+concretely with effect closure proved, the pinned-product→class bridge built, and both frozen
+shapes discharged (`PaperA.real_meets_ludersConclusion`,
+`PaperA.complex_meets_uniqueTwistConclusion`, both Lean-core). Final gates: `lake build` green
+**3105 jobs**, `AxiomAudit` PASS at **148** modules, custom axioms exactly `[]`. See item 7.3
+in the roadmap below for what is still open there (ℍ/𝕆 shapes, README, paper §App).
+
+**ARC-3 SCORECARD.** U1 cross-coherence ✓ · U2 connectivity ✓ · U4 capstone ✓ · U5 statement
+layer ✓ (ℝ/ℂ). Nothing in the arc hit a wall; no out-of-scope row was touched. Total: five new
+declarations of record (`sp_eq_twistSeq_frame`, `frameTwist_eq_of_adjAxis`, `adjAxis_connected`,
+`frameTwistConst`, `complex_classification_unconditional`) plus the statement-layer pair.
 
 ---
 
@@ -3258,9 +3269,19 @@ green at 3090 jobs, census 133, custom axioms exactly [].
 - **7.1 mthm:omnibus.** Direct-sum assembly; summand inheritance of S1–S7 +
   converse (the documented paper-only halves of prop:central). Risk LOW-MED.
 - **7.2 prop:pseudo-transfer.** Small. Risk LOW.
-- **7.3 Statement upgrade.** Replace the skeleton capstone with concrete
-  per-type theorems; rewrite `PaperA/Statement.lean`, AuditPins, THEOREM-MAP,
-  README, paper §App + disclosure paragraph to the certified configuration.
+- **7.3 Statement upgrade. DONE for the ℝ and ℂ rows (2026-08-07).**
+  `PaperA/CertifiedConfiguration.lean` instantiates both reference maps concretely —
+  `ludersRefR` (conj-Lüders) and `twistRefC` (`twistSeq`), each with effect closure PROVED
+  (`HermitianMat.luders_isEffect`, resting on the new field-general
+  `HermitianMat.cfcSqrt_mul_self`: `√a·√a = a`) — bridges the carrier-pinned product to the
+  statement layer's class (`SequentialProductOn.toSequentialProduct`), and discharges both
+  frozen shapes: `PaperA.real_meets_ludersConclusion` and
+  `PaperA.complex_meets_uniqueTwistConclusion`. So for these two rows the audited shape and
+  the proved theorem are the SAME statement, which is the whole point of the boundary.
+  `Statement.lean`'s now-false "the concrete reference maps do not yet exist" paragraph was
+  corrected in place (docstring only — no printed type changed, so no audit pin moved).
+  **Still open in 7.3:** the ℍ and 𝕆 rows have no theorems to point at, so their shapes
+  remain shapes; README and the paper's §App/disclosure paragraph are NOT yet rewritten.
 - **7.4 Full audit re-elaboration** at every milestone boundary, not just M7
   (`lake env lean AxiomAudit.lean`; never truncate its output — tail-truncation
   hid a real failure on 2026-08-04 day 1).

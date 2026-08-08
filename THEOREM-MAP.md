@@ -185,6 +185,27 @@ type-frozen, so the audited surface cannot drift from the paper's wording:
 `auditPin_effectProduct`, `auditPin_luders`, `auditPin_uniqueTwist`, and `_body`
 pins for the S2 predicate, `IsEffect`, `Effect`, `EffectProduct`.
 
+**The frozen shapes are now MET, for the ℝ and ℂ rows (2026-08-07).**
+`PaperA/Statement.lean` deliberately leaves the Lüders and twist reference maps as
+*parameters*, and its original docstring said the concrete maps "do not yet exist in this
+development." They exist now, and `PaperA/CertifiedConfiguration.lean` closes the loop:
+
+| Paper statement | Lean declaration | File |
+| --- | --- | --- |
+| the real row satisfies the frozen Lüders shape | `PaperA.real_meets_ludersConclusion` | `PaperA/CertifiedConfiguration.lean` |
+| the complex row satisfies the frozen unique-twist shape | `PaperA.complex_meets_uniqueTwistConclusion` | `PaperA/CertifiedConfiguration.lean` |
+| the concrete reference maps, effect closure proved | `PaperA.ludersRefR`, `PaperA.twistRefC` | `PaperA/CertifiedConfiguration.lean` |
+| pinned product + S2 is a `SequentialProduct` instance | `SequentialProductOn.toSequentialProduct` | `PaperA/CertifiedConfiguration.lean` |
+| `√a · √a = a`, field-general | `HermitianMat.cfcSqrt_mul_self` | `PaperA/CertifiedConfiguration.lean` |
+
+Both are Lean-core. What this establishes and nothing more: for `H_N(ℝ)` and `H_N(ℂ)` (`N ≥ 3`)
+the *audited shape* and the *proved theorem* are the same statement, so neither capstone can be
+described as a theorem about the paper's sequential product while concluding something weaker.
+The reference maps are no longer parameters that a caller could instantiate favourably — they
+are pinned to conj-Lüders and `HermitianMat.twistSeq`. **For `H_n(ℍ)` and `H₃(𝕆)` the shapes
+remain shapes**: there is no theorem to point at, and constructing the proposition is still not
+evidence that it holds.
+
 The S1, S3–S7 fields match the paper's Definition 2.1 clause by clause, including
 the effect riders and the `b + c ≤ 1` domain condition; that effects are closed
 under the product is carried separately by `sp_effect` as a codomain condition
