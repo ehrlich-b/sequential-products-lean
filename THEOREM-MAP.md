@@ -186,7 +186,28 @@ unconditional statement is at `n := Fin N`; `sp_eq_luders_of_effect` is stated a
 exactly S1–S7 + S2 + a dimension bound, and each closes over Lean core alone. Neither row is
 "better founded" than the other on axioms — that axis is identical. The remaining rows of
 `mthm:master` are unchanged: `H_n(ℍ)` has its foundation built but is blocked on quaternionic
-Wigner rigidity, and `H₃(𝕆)` is blocked on octonions, which exist in no prover.
+Wigner rigidity, and `H₃(𝕆)` is ABSENT.
+
+★★**CORRECTION 2026-08-08 — "`H₃(𝕆)` is blocked on octonions, which exist in no prover" was
+FALSE and is retracted.** Verified at source this session. It is true of *Mathlib* (the four
+`octonion` hits are prose comments; Mathlib does however have `IsJordan`/`IsCommJordan` in
+`Algebra/Jordan/Basic.lean`, so the archive's "no Jordan-algebra files at all" is also
+retracted). It is **false of our own work**: `~/repos/research/lean/RadicalRelativity/`
+`Octonions.lean` is 310 lines, 37 declarations, **zero sorries**, on the **same toolchain**
+(`v4.28.0`) — explicit Cayley-table `mul`, `conj` proved an anti-automorphism (`conj_mul`),
+`norm_multiplicative`, `mul_conj`, both alternativity laws, all three Moufang identities, and
+full bilinearity. That is precisely the input list `ALBERT-KERNEL-MEMO.md` §2 says the row
+consumes. The memo (2026-08-04) already re-scoped this row to "weeks of equational algebra";
+that re-scope was never propagated into this summary. **The status word is ABSENT (nobody has
+built the row), never BLOCKED (no wall).** See `LEDGER.md`'s `H₃(𝕆)` row for the work list.
+
+Same session, the memo's one remaining computational input was **proved**:
+`Octonion.nucleus_real` (`~/repos/research/lean/RadicalRelativity/OctonionNucleus.lean`) —
+associating with every pair forces all seven imaginary coordinates to vanish, i.e.
+`nucleus(𝕆) = ℝ·1`. Axioms `[propext, Classical.choice, Quot.sound]`, no `native_decide`,
+that project's `lake build` green at 2862 jobs. **It is OUT-OF-TREE**: it lives in the
+`lean/` project, not in `twist-normal-form-lean/`, so it is outside this campaign's census
+and manifest and contributes nothing to the 5/36 coverage count until ported.
 
 The supporting field-general infrastructure (of independent interest, all
 `RCLike 𝕜`): `HermitianMat.sqrt_mul_of_commute` (square roots multiply on commuting

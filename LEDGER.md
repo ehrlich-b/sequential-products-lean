@@ -455,9 +455,67 @@ write "fully formalized". Itemization: blog `research/paperA-supplementary-rewri
 | `H_N(ℂ)`, N ≥ 3 | **MACHINE-CHECKED, HYPOTHESIS-FREE (2026-08-07)** — `∃! t`, twist on ALL effects; both frame-graph facts DISCHARGED in-tree (cross-coherence + connectivity). Carries only S1-S7 + S2 + `3 ≤ N`. **08-08: also stated with S2 in the ORDER-UNIT norm** (`complex_classification_unconditional_ouNorm`), so the paper's S2 is the literal hypothesis | `Necessity.complex_classification_unconditional` |
 | `H_n(ℝ)` | **MACHINE-CHECKED, HYPOTHESIS-FREE (2026-08-07)** — `a•b = √a·b·√a` on ALL effects, no twist; Jordan hypothesis DISCHARGED by real Kadison proved in-tree, now stated as the full **classification** (`orderAutoR_eq_orthConj`, exact — converse packaged). **08-08: also stated with S2 in the ORDER-UNIT norm** (`real_classification_ouNorm`) | `Necessity.real_classification` |
 | `H_n(ℍ)` | **FOUNDATION COMPLETE + `Q_{√a}` restricts** (carrier, order-unit, unital Jordan subalgebra, positivity, cfc-closure, `quatQuadRepEquiv`); **NOT a short lane — see the carrier-genericity finding in `LEDGER-ARCHIVE-M1-M7.md`** | `QuatCarrier`, `quatQuadRepEquiv` |
-| `H₃(𝕆)` | **BLOCKED** — octonions exist in no prover (verified: zero files) | — |
+| `H₃(𝕆)` | **ABSENT, not blocked** (row corrected 08-08 — see below). Octonions are BUILT and sorry-free in the sibling project `~/repos/research/lean/`, same toolchain; the scary Yokota/triality import was re-scoped to an elementary argument by `ALBERT-KERNEL-MEMO.md` on 08-04, and **its one computational input `nucleus(𝕆) = ℝ` is now PROVED** (08-08). Remaining: the model, (I)/(II), and M2-for-Albert (unscoped) | `lean/…/Octonions.lean`, `Octonion.nucleus_real` (both out-of-tree) |
 | `cor:qubit-classification` | moduli space + one nonconstant element + certified `ℂP¹→ℝP²` descent + separation; **classification map `product ↦ moduli` ABSENT** | `RankTwo.tauModuliRP2`, `RankTwo.tauRP2_blochFrame` |
 | `mthm:omnibus` | **carrier + BOTH assembly halves** (sufficiency `prod`, determination `sp_eq_of_prod_eq`); conditional on the SPLITTING (`prop:central`, paper proof) | `SequentialProductOn.prod` |
+
+★★**`H₃(𝕆)` ROW CORRECTED 2026-08-08 — "BLOCKED, octonions exist in no prover" was FALSE.**
+Bryan challenged the claim; verified at source. The original check (archive line 104) was
+scoped to **pinned Mathlib only** and its conclusion was then written down as a statement
+about *every* prover. Both halves need retracting:
+* Mathlib octonions: genuinely absent — the four `octonion` grep hits are prose comments.
+  But Mathlib **does** have `IsJordan`/`IsCommJordan` (`Algebra/Jordan/Basic.lean`, 237
+  lines, Jordan axioms + `L`/`R` commutation lemmas), so "no Jordan-algebra files at all"
+  is retracted too.
+* **Our own octonions exist and are sorry-free.** `~/repos/research/lean/RadicalRelativity/`
+  `Octonions.lean`: 310 lines, 37 declarations, **0 sorries**, toolchain `v4.28.0` — the
+  same toolchain this project pins, so it is portable, not a rewrite. Proved: explicit
+  Cayley-table `mul`, `one_mul`/`mul_one`, `non_associative` (with witness),
+  `left_alternative`, `right_alternative`, `norm_multiplicative`, `mul_eq_zero_iff`,
+  `conj_mul` (anti-automorphism), `conj_conj`, `mul_conj`, all three Moufang identities,
+  and full bilinearity (`mul_add`/`add_mul`/`smul_mul`/`mul_smul`). Compare
+  `ALBERT-KERNEL-MEMO.md` §2's "inputs consumed, in full" — that list is **already met**
+  except ingredient (N).
+* `lean/…/Albert.lean` also exists (350 lines, 31 declarations) with `h3O` and `jordanMul`,
+  but its 3 sorries include `jordan_identity` itself; all three are marked "expository, not
+  referenced by any downstream file", so the carrier is scaffolding, not a usable Jordan
+  algebra yet.
+
+**Honest work list for the row** (nothing here is a wall; none of it is done):
+1. Port `Octonions.lean` in-tree (same toolchain; it would enter the census and the manifest).
+2. ~~`nucleus(𝕆) = ℝ` — memo ingredient (N)~~ **DONE 2026-08-08, same session as this
+   correction.** `~/repos/research/lean/RadicalRelativity/OctonionNucleus.lean`,
+   `Octonion.nucleus_real`, axioms `[propext, Classical.choice, Quot.sound]`, no
+   `native_decide`, `lake build` green at 2862 jobs, zero warnings beyond the expected
+   `setOption` note. Statement: if `c` associates with every pair then all seven imaginary
+   coordinates vanish. Recipe, for whoever ports it: reduce the basis product FIRST
+   (`tbl_i_j : e_i * e_j = e_k`, each by `ext m; fin_cases m <;> simp [mul, basisVec]`),
+   then read off coordinates, then `simp only [mul, basisVec, Fin.isValue]` followed by
+   `simp +decide only [...]` per triple — each imaginary coordinate outside the quaternion
+   subalgebra falls out as `c.coords m = -c.coords m` and `linarith` finishes. Three
+   triples suffice mathematically; all seven are used for margin.
+   Two traps that cost most of the time: (a) unfolding `mul` against a symbolic `c` on
+   both sides times out `simp`, and `norm_num [Fin.ext_iff]` blows the interpreter stack —
+   reduce the basis product before touching coordinates; (b) `fin_cases i` on the goal
+   `∀ i ≠ 0, c.coords i = 0` produces an index atom that does NOT match the `c.coords 1`
+   in the hypotheses, so `linarith` fails with the winning equation sitting right there —
+   state the conclusion as an explicit conjunction over numeral literals instead.
+3. Build `H₃(𝕆)`: 27-dim ℝ-module, symmetrized product, frame `E_11,E_22,E_33`, Peirce
+   blocks as `F_ij` images; prove the Jordan identity for real (not expository).
+4. Identities (I)/(II) in the chosen convention (§4's caveat: re-derive, don't quote), plus
+   (P1)/(P2) generically → the unit-slot argument discharges `block_injective` with **no
+   Spin(8), no triality, no rank certificate**. Memo estimate: weeks of equational algebra.
+5. **The genuinely unscoped part:** the M2 `DiagonalHomSetup` machinery (`Θ`, `dχ`, `ρ` from
+   the actual sequential product) specialized to the Albert model. The memo explicitly puts
+   this outside its own question and calls it "the heavy remaining Albert work". No estimate
+   exists for it. This, not the octonions, is what stands between us and the row.
+
+**Lesson, third occurrence of this exact shape** (see the `feedback-fix-the-row-not-just-the-footnote`
+and "grep before claiming the library lacks X" rules): a library-absence check has a SCOPE,
+and the scope must travel with the claim. "Absent from pinned Mathlib" became "exists in no
+prover" became "BLOCKED", and a memo that superseded it four days earlier sat unread in the
+same directory. Status words: use **ABSENT** for "nobody built it", **BLOCKED** only for a
+named wall with evidence.
 
 ★★**THE ℝ ROW'S CONDITION IS GONE (2026-08-07).** `Necessity.real_classification`
 (`Necessity/RealRowUnconditional.lean`) proves: for any S1-S7 product with S2 on
