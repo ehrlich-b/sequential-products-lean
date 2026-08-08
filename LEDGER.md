@@ -13,6 +13,76 @@ interface structure instantiated on the intended algebras.
 
 ---
 
+## ★★ ARC-3 ORDERS (2026-08-07, Fable handoff — Bryan funded 18h of Opus and delegated scoping)
+
+**THE GOAL OF THIS ARC:** make the ℂ row hypothesis-free. Deliver
+`Necessity.complex_classification_unconditional` whose signature carries ONLY
+`{3 ≤ N, P : SequentialProductOn (HermitianMat (Fin N) ℂ), hS2 : P.FirstArgContinuous}`
+and concludes `∃! t, ∀ a b effects, P.sp a b = twistSeq t a b`. Then re-point the
+certified-configuration statement layer (item 7.3) at the ℝ and ℂ capstones. Verify with
+`#check` + `#print axioms` in-transcript; both gates green after every unit.
+
+**SCOPE DECISIONS, made under delegated authority — do not relitigate this arc:**
+* ℍ refactor: DEFERRED. Even after the 7-file abstract-carrier lift, the row needs
+  quaternionic Wigner rigidity — a second from-scratch classical theorem. Cannot close in
+  any near window; the refactor's real payoff (ℝ/ℂ/ℍ as one theorem) is post-submission work.
+* H₃(𝕆): out of scope (no octonions in any prover — separately fundable program).
+* `prop:central`, rank-two classification map: out of scope (open mathematics).
+* Standing gates unchanged: all commits LOCAL, no push, no sync.sh, frozen tag untouched,
+  JMP reserved, T1/T2 parked.
+
+**THE ATTACK PLAN (verified against source 08-07 — every named ingredient exists):**
+The capstone `complex_classification` already takes `(Adj, connected, overlap)`. Do NOT build
+a new globalization: INSTANTIATE it. Define
+`AdjSplit F G := ∃ (S : Finset (Fin N)), S.Nonempty ∧ Sᶜ.Nonempty ∧ (F⁻¹*G preserves the
+coordinate splitting S ⊕ Sᶜ)` and discharge the two hypotheses:
+
+* **U1 (overlap = cross-coherence, the crux).** If `W := F⁻¹G` preserves a splitting, both
+  frames diagonalize the common scaled family `a_x = diag(exp(x·s))` (s constant on each part,
+  distinct across, s ≤ 0 so a_x is a posdef effect for x > 0 — the `log_eigenvalues_nonpos`
+  trick). Route via PRODUCT VALUES, not couplings: the per-frame product formula
+  (`ComplexMaster.lean:78-79` — `sp_eq_twistSeq_transport` + `sp_eq_twistSeq_diagFamily` +
+  `eq_adU_diagFamily`) gives `P.sp a_x b = twistSeq t_F a_x b = twistSeq t_G a_x b` for ALL b.
+  Evaluate both twistSeq at a block b with distinct part-eigenvalues: entries carry
+  `exp(i·t·x·(s_i − s_j))`, agreement on an interval of x, then
+  `MasterTheorem.real_character_unique` (Globalization.lean:98) forces `t_F = t_G` EXACTLY
+  (single-point agreement only pins t mod 2π — the interval is not optional).
+  Tie the transported t to `frameTwist` via `frameTwist_unique` (built 08-07 for exactly this:
+  it converts "some parameter works" into "the parameter equals" without fighting `choose`).
+  FALLBACK ROUTE if the product-value route jams: compare stabilizer couplings directly
+  through `conjProduct` composition (`Ad` functoriality; add `SequentialProductOn.ext` by
+  sp-equality — all other fields are Props over sp).
+* **U2 (connected = Givens generation, the only new development).** Every `U ∈ U(N)` is a
+  finite product of plane unitaries (supported on `span{e_k, e_l}`) and a diagonal phase.
+  Constructive induction on N: zero out the first column with plane rotations, recurse.
+  ~150-300 lines, elementary. Each factor step preserves the `({k,l}, rest)` splitting —
+  nonempty complement needs only N ≥ 3 ✓. Chain: `U_{p+1} = U_p · (plane factor)` gives
+  `Relation.ReflTransGen (SymmStep AdjSplit) F G` for all F, G.
+* **U3 (cheap invariances, do first as warm-up).** Permutation W: per-frame t is
+  label-independent (the per-frame theorem is one t across ALL blocks). Diagonal-phase W:
+  fixes every diagonal matrix; its block action is an SO(2) rotation commuting with `rotJ`.
+* **U4 (assembly).** `complex_classification_unconditional := complex_classification hN P hS2
+  AdjSplit (U2) (U1)`. One-liner once U1/U2 land.
+* **U5 (packaging, item 7.3).** Instantiate `PaperA/Statement.lean`'s parameterized
+  `LudersConclusion`/`UniqueTwistConclusion` with the CONCRETE references (conj-Lüders,
+  `twistSeq`), prove the ℝ and ℂ capstones meet them, refresh AuditPins/THEOREM-MAP/README
+  and this file's state-of-six block. Mechanical.
+
+**Estimate:** U3 0.5-1h · U1 4-6h · U2 3-5h · U4 <1h · U5 2-3h · banking ~1h ≈ 12-17h.
+P(complete) ≈ 0.8 at demonstrated velocity. **Failure protocol:** if a component hits a
+genuine wall, bank the measured remainder declaration-by-declaration here (as the ℝ bridge
+did), finish U5 against whatever IS certified, and say plainly which conjunct failed.
+Documented failure ≠ completion; do not grind past a measured wall, and do not touch
+out-of-scope rows to manufacture progress.
+
+**Working discipline that produced the last two rows — keep all of it:** unit-by-unit with
+both gates after each; single-sentence commits with explicit paths; bank each unit to the
+blog route file + memory; THEOREM-MAP wins over this file on any disagreement; check
+hypothesis lists with `#check`, never prose; no vacuous stub theorems; when a rewrite target
+sits under a dependent proof argument, look for the defeq.
+
+---
+
 ## ★ STATE OF THE SIX TARGETS — as of 2026-08-07 (read this first)
 
 Tree: `lake build` green at 3101 jobs; `AxiomAudit.lean` PASS at 144 tracked modules;
