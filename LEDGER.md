@@ -103,14 +103,42 @@ continue with the next item — the ARC-4 rule):**
   Banked with that as the measured remainder.
   (c) **DONE.** `THEOREM-MAP.md` §3b now carries rows for `lem:homog`, `lem:cone-ext`,
   `lem:frame-fix`, and `prop:bridge`, so the map covers all 36 like the manifest does.
-* **5.3 THE BOULDER — the rank-two classification map** (the title's SECOND claim, "and
-  the Complex Qubit", currently absent as a map). Build `product ↦ moduli` taking an
-  arbitrary S1–S7+S2 product on M₂(ℂ)ˢᵃ as input; closes en bloc: `prop:n2-necessity`
-  lifting (prove the angle map linear, don't assume it), `lem:n2-bounded`,
-  `lem:n2-continuity`, `lem:n2-descent` (arbitrary product), `prop:n2-sufficiency`,
-  `thm:qubit-boundary` bundling, `cor:qubit-classification`. **Pre-registered wall:**
-  continuity/canonicity of the frame-function extraction from the block normal form.
-  Fallback: bank the explicit-selection version with the gap recorded in THEOREM-MAP.
+* **5.3 THE BOULDER — the rank-two classification map. THE INPUT NOW EXISTS (2026-08-08);
+  the assembly does not.** Landed: `Necessity.n2FrameTwist : (P : SequentialProductOn
+  (H₂(ℂ))) → P.FirstArgContinuous → U(2) → ℝ`, the frame function extracted from an
+  **arbitrary** product, plus `n2_sp_eq_twistSeq_frame` — at every ordered frame `U` and
+  every nonpositive `r`, `P.sp a b = twistSeq (n2FrameTwist P hS2 U) a b` for
+  `a = Ad_U (diagFamily r)` and all effects `b`. Lean-core closure. In
+  `Necessity/FrameConstancy.lean`, section `RankTwoExtraction`.
+  **★ The pre-registered wall did not bite, and the reason is a corrected diagnosis.** The
+  route was billed as needing the frame-function extraction built from scratch because "the
+  `N ≥ 3` machinery cannot be reused (`StabilizerCoupling` carries `rank_ge : 3 ≤ n`)". In
+  fact only 15 of 76 `Necessity/` modules carry a rank-3 hypothesis and **none of the needed
+  pieces is among them**: `prop:theta` on the carrier is rank-free (correctly — unital order
+  automorphisms of `H₂(ℂ)` are `O(3)` on the Bloch ball, still `{Ad_U} ∪ {Ad_U∘ᵗ}`; the
+  dimension-3 requirement in this area is *Uhlhorn's*, whose hypothesis is weaker), and so
+  are `dChi_kills_corner`, `conjProduct`, `sp_eq_twistSeq_transport`,
+  `sp_eq_twistSeq_diagFamily`, `tval_antisymm`. The genuinely rank-3-gated step is
+  `tvalLm_of_coupling` — the cross-frame constancy, which at rank two is *false*, which is
+  exactly why the moduli space is `C(ℝP²,ℝ)` and not `ℝ`.
+  **★ And the "lifting step" was never missing.** THEOREM-MAP said Lean "*assumes* `angle` is
+  linear … the universal-cover lift `ℝ² → SO(2)` ⟹ linear functional is supplied by the
+  paper." But `Necessity.tvalLm` is a **constructed** `(n → ℝ) →ₗ[ℝ] ℝ` with no rank
+  hypothesis: the linear functional `n2_necessity` takes as a parameter was already in the
+  tree, unused at rank two. The replacement argument is exact and `2π`-free — a linear
+  functional on `ℝ²` vanishing on `⟨(1,1)⟩` factors through `r ↦ r 0 − r 1`.
+  **Still open, exactly:** boundedness (`lem:n2-bounded`), continuity (`lem:n2-continuity`)
+  and frame-reversal invariance/`ℝP²`-descent (`lem:n2-descent`) **of that function**, plus
+  `prop:n2-sufficiency` for the reverse direction, before `cor:qubit-classification`
+  assembles. Those three are now statements about a function that exists, which they were
+  not this morning. `prop:n2-necessity` stays PARTIAL for a presentational reason only: the
+  article's conclusion is about `Θ_a|_{W_n}` with frames indexed by `n ∈ S²`, Lean's is the
+  equivalent product-level identity with frames indexed by `U ∈ U(2)`.
+  **Lesson banked:** the old entry inferred "the classification map does not exist in Lean at
+  all" from `grep -c SequentialProductOn RadicalRelativity/RankTwo/*.lean` → 0. The grep was
+  accurate; the inference was wrong, because the map got built in `Necessity/`. Scoping an
+  absence claim to a *directory* is the same error as scoping one to a library — the third
+  instance of this failure in a week.
 * **5.4 The differential trio.** `lem:homomorphism` (differentiate Θ in the matrix
   argument; prove `dχAdd` IS its derivative — the development currently *begins after*
   this transition), `lem:coalescence` identification, `prop:stabilizers` construction.
@@ -135,7 +163,7 @@ after 5.4; the stretch adds ~1 plus a first-party quaternionic Wigner. Unlike AR
 bounded refactors, one hour), 5.3 and 5.4 are NEW MATHEMATICS in Lean — expect walls, use
 the fallbacks, report the remainder honestly.
 
-**ACTUAL after 5.0–5.2 (2026-08-08): 5/36 → 7/36 formalized, 19 partial, 10 absent.** Short
+**ACTUAL after 5.0–5.3 (2026-08-08): 5/36 → 7/36 formalized, 19 partial, 10 absent.** Short
 of the ~14 projection, and the reason is a repricing, not a shortfall in effort: the 5.1
 projection assumed the abstract sub-tier was mechanical, and it is not (the Archimedean
 finding above). Two rows moved to FORMALIZED (`lem:aone`, by audit; `lem:adjacent`, by
@@ -145,9 +173,21 @@ were corrected upward from ABSENT to PARTIAL, and two caveats were retired
 (`AdjAxis` non-vacuity; the frame-adjacency mismatch, now narrowed to `lem:frame-connectivity`
 alone). Every gate green throughout: `lake build` 3106 jobs, census 149 modules, **custom
 axioms exactly `[]`**, every new declaration's closure = the three core axioms.
+The count understates 5.3: the rank-two frame function is a new *capability* rather than a
+row, and it is the input every remaining rank-two row consumes. Three superseded claims were
+corrected on the record in the process (the abstract tier is not mechanical; `AdjBlock` is
+finer than `AdjAxis` so connectivity does not follow; the rank-two lifting step was never
+missing).
+
 Commits: `6f2442a` (5.0) · `51cfbb9` (coverage corrections) · `287cff3` (selector ii) ·
-`4e12d84` (abstract span + AdjAxis non-vacuity) · `88aba62` (article adjacency); blog
-`650aa12` · `326aedb` · `8900e4b` · `168e9a7`.
+`4e12d84` (abstract span + AdjAxis non-vacuity) · `88aba62` (article adjacency) · `9248f3d`
+(5.2 close + 5.1 repricing); blog `650aa12` · `326aedb` · `8900e4b` · `168e9a7`.
+
+**Rungs 5.4 (differential trio) and 5.5 (ℍ row) NOT STARTED.** They remain as written above.
+5.4's `lem:homomorphism` is worth re-checking against the same lesson that just paid off
+three times: read what `dChi`/`chiTilde` actually prove before accepting "Lean never
+differentiates Θ" — `chiTilde_eq_exp_dChi` exists and is used by `dChi_kills_corner`, so the
+exponential/differential relationship is at least partly in the tree already.
 
 ---
 

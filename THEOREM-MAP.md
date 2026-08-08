@@ -541,22 +541,53 @@ machine-checked on the concrete carrier: `lem:twist-sufficiency` in §1.)
   not prove that a given algebra is of a particular coordinate type, that an
   operation satisfies S1–S7, that `L_a = Q_{√a}Θ_a`, that `Θ_a = id`, or any
   product equality. Its own docstring says so.
-- **Rank two, all of it: `lem:n2-bounded`, `lem:n2-descent`, `lem:n2-continuity`,
-  the lifting step of `prop:n2-necessity`, and the assembled bijection
-  `cor:qubit-classification`.**
+- **Rank two: `lem:n2-bounded`, `lem:n2-descent`, `lem:n2-continuity`, and the assembled
+  bijection `cor:qubit-classification`.** (The lifting step of `prop:n2-necessity` was on
+  this list and has come off it — see the correction below.)
 
-  ★ **The governing statement (2026-08-08, correcting the 2026-08-06 entry that
-  removed `lem:n2-descent` from this section — that entry contradicted its own
-  footnote and the footnote was right).** NO declaration in `RankTwo/` takes a
-  `SequentialProductOn` (verify: `grep -c SequentialProductOn
-  RadicalRelativity/RankTwo/*.lean` → 0 in all seven files), and `n2_necessity` takes
-  a linear `angle` rather than a product. So the **classification map
-  `product ↦ moduli` does not exist in Lean at all.** Each rank-two lemma above is a
-  statement about that map, or about the moduli function of an *arbitrary* rank-two
-  product; at that generality none of them is machine-checked. The lifting step is
-  separately unchecked even at generator level: Lean *assumes* `angle` is linear and
-  proves only the factorization, so the universal-cover lift `ℝ² → SO(2)` ⟹ linear
-  functional is supplied by the paper.
+  ★★ **SUPERSEDED IN PART, 2026-08-08 (ARC-5 rung 5.3).** The entry below read: "the
+  **classification map `product ↦ moduli` does not exist in Lean at all**", and inferred
+  that from `grep -c SequentialProductOn RadicalRelativity/RankTwo/*.lean` → 0. **The grep
+  is still accurate and the inference was wrong.** The map's input now exists, built in
+  `Necessity/FrameConstancy.lean` (section `RankTwoExtraction`) rather than in `RankTwo/`,
+  which is why a `RankTwo/`-scoped grep could not see it and why scoping an absence claim to
+  a directory is the same mistake as scoping one to a library:
+
+  * `Necessity.n2FrameTwist : (P : SequentialProductOn (H₂(ℂ))) → P.FirstArgContinuous →
+    U(2) → ℝ` — **the frame function, extracted from an arbitrary product**; and
+  * `Necessity.n2_sp_eq_twistSeq_frame` — at every ordered frame `U` and every nonpositive
+    `r`, `P.sp a b = twistSeq (n2FrameTwist P hS2 U) a b` for `a = Ad_U (diagFamily r)` and
+    all effects `b`. Closure: the three core axioms.
+
+  **The lifting step is therefore discharged, and the old entry's account of it was wrong on
+  a point of fact.** It said "Lean *assumes* `angle` is linear … so the universal-cover lift
+  `ℝ² → SO(2)` ⟹ linear functional is supplied by the paper." But `Necessity.tvalLm` is a
+  *constructed* `(n → ℝ) →ₗ[ℝ] ℝ` with **no rank hypothesis** — the linear functional
+  `n2_necessity` takes as a parameter was already sitting in the tree, unused at rank two.
+  What replaces the article's universal-cover argument here is elementary and exact, with no
+  `2π` ambiguity: a linear functional on `ℝ²` vanishing on the diagonal `⟨(1,1)⟩` factors
+  through `r ↦ r 0 − r 1`.
+
+  **Why the `rank_ge : 3 ≤ n` worry did not bite.** Only 15 of the 76 `Necessity/` modules
+  carry a rank-3 hypothesis, and none of the needed pieces is among them: `Necessity.theta`
+  and `thetaPreservesJordan_of_S2` (`prop:theta`) are rank-free — correctly, since unital
+  order automorphisms of `H_2(ℂ)` are `O(3)` on the Bloch ball, still exactly
+  `{Ad_U} ∪ {Ad_U ∘ ᵗ}`; the dimension-3 requirement in this area belongs to *Uhlhorn's*
+  theorem, whose hypothesis is weaker than being an order automorphism. `dChi_kills_corner`,
+  `conjProduct`, `sp_eq_twistSeq_transport`, `sp_eq_twistSeq_diagFamily` and `tval_antisymm`
+  are rank-free too. What *is* rank-3-gated is `tvalLm_of_coupling`, which uses
+  `prop:stabilizers` to pin the rate across index pairs — i.e. precisely the cross-frame
+  constancy that is *false* at rank two, which is why the rank-two moduli space is
+  `C(ℝP², ℝ)` and not `ℝ`.
+
+  **What is still open, stated exactly.** The frame function exists; nothing yet proves it
+  **bounded** (`lem:n2-bounded`), **continuous** (`lem:n2-continuity`), or **invariant under
+  reversing the frame** so as to descend to `ℝP²` (`lem:n2-descent`), and so
+  `cor:qubit-classification` is not assembled. Those three lemmas are now statements *about
+  a function that exists*, which they were not before. `prop:n2-necessity` itself remains
+  PARTIAL for a reason that is presentational rather than mathematical: the article states
+  its conclusion about `Θ_a|_{W_n}` with frames indexed by `n ∈ S²`, and Lean states the
+  equivalent product-level identity with frames indexed by `U ∈ U(2)`.
 
   What IS machine-checked is the *geometry those lemmas would act on*, for one
   concrete distinguished moduli element rather than for an arbitrary product:

@@ -288,6 +288,119 @@ theorem frameTwist_eq_of_adjAxis (hN : 3 ≤ N)
   rw [← sp_eq_twistSeq_frame hN P hS2 F hr rfl hc,
     sp_eq_twistSeq_frame hN P hS2 G hr hGdiag hc]
 
+/-! ## Rank two: the per-frame parameter, extracted from an ARBITRARY product
+
+Everything above is the `N ≥ 3` story, where cross-frame constancy collapses the family of
+per-frame parameters to a single `t`.  At rank two that collapse is exactly what fails, and
+the article's `prop:n2-necessity` is the surviving statement: *one real parameter per ordered
+frame*, with no cross-frame constancy.
+
+`THEOREM-MAP.md` recorded that the classification map `product ↦ moduli` "does not exist in
+Lean at all", and that the `N ≥ 3` machinery could not be reused because `StabilizerCoupling`
+carries `rank_ge : 3 ≤ n`.  The first half is what this section changes; the second half was
+true but misleading about *which* machinery is rank-gated.  Auditing the chain: only 15 of the
+76 `Necessity/` modules carry a rank-3 hypothesis at all, and the pieces this extraction needs
+are all outside them —
+
+* `Necessity.theta` and `thetaPreservesJordan_of_S2` — `prop:theta` on the concrete carrier,
+  **no rank hypothesis**.  (This is not an oversight: unital order automorphisms of `H_2(ℂ)`
+  are `O(3)` acting on the Bloch ball, which is still exactly `{Ad_U} ∪ {Ad_U ∘ ᵗ}`.  The
+  dimension-3 requirement that does exist in this area belongs to *Uhlhorn's* theorem, whose
+  hypothesis — preserving transition probabilities between rays — is weaker than being an
+  order automorphism.)
+* `tvalLm` — the phase rate as an **ℝ-linear functional** of `r`, built from `dChi`, no rank
+  hypothesis.  So the "universal-cover lift ⟹ linear functional" step is *already discharged
+  in the tree*; `MasterTheorem.RankTwo.n2_necessity` takes a linear `angle` as a parameter,
+  and `tvalLm` is exactly the argument it was waiting for.
+* `dChi_kills_corner` — the coalescence vanishing, no rank hypothesis.  At `N = 2` it is
+  especially cheap: the Peirce 2-corner of `p₀ + p₁ = 1` is the whole algebra
+  (`cornerJ2_all`), so `r 0 = r 1` forces `dχ(r) = 0` outright.
+* `conjProduct`, `sp_eq_twistSeq_transport`, `sp_eq_twistSeq_diagFamily`, `tval_antisymm` —
+  all rank-free.
+
+What remains genuinely rank-3-gated is the *coupling* step `tvalLm_of_coupling`, which uses
+`prop:stabilizers` to pin the rate across index pairs.  That is the cross-frame constancy, and
+at rank two it is false — which is why the rank-two moduli space is `C(ℝP², ℝ)` and not `ℝ`.
+
+The linearity argument replacing it here is elementary and exact, with no `2π` ambiguity: a
+linear functional on `ℝ²` that vanishes on the diagonal `⟨(1,1)⟩` factors through
+`r ↦ r 0 - r 1`, so `tvalLm ... 0 1 r = t · (r 0 - r 1)` with `t` its value at `(1,0)`.
+
+**What this section does NOT do.** It produces the frame function
+`n2FrameTwist : U(2) → ℝ` and proves the product is the twist with that parameter at every
+ordered frame.  It does *not* yet prove that function bounded (`lem:n2-bounded`), continuous
+(`lem:n2-continuity`), or invariant under reversing the frame so as to descend to `ℝP²`
+(`lem:n2-descent`), and so does not assemble `cor:qubit-classification`.  Those are the next
+steps and they now have an input to act on.
+-/
+
+section RankTwoExtraction
+
+variable (P : SequentialProductOn (HermitianMat (Fin 2) ℂ))
+
+/-- Every element of `H_2(ℂ)` lies in the Peirce 2-corner of `p₀ + p₁ = 1`. -/
+theorem cornerJ2_all (x : HermitianMat (Fin 2) ℂ) : cornerJ2 (0 : Fin 2) 1 x := by
+  refine blockElt_cornerJ2 (fun k hk0 hk1 => ?_)
+  revert hk0 hk1
+  fin_cases k <;> simp
+
+/-- The generator of the rank-two coherence rotation. -/
+def n2Twist (hS2 : P.FirstArgContinuous) : ℝ :=
+  tvalLm P hS2 (thetaPreservesJordan_of_S2 P hS2) 0 1 (fun k => if k = 0 then 1 else 0)
+
+theorem n2_tval_diag_zero (hS2 : P.FirstArgContinuous) {r : Fin 2 → ℝ} (h : r 0 = r 1) :
+    tvalLm P hS2 (thetaPreservesJordan_of_S2 P hS2) 0 1 r = 0 := by
+  rw [tvalLm_apply,
+    dChi_kills_corner P hS2 (thetaPreservesJordan_of_S2 P hS2) h (cornerJ2_all _)]
+  simp
+
+theorem n2_tval_eq (hS2 : P.FirstArgContinuous) (r : Fin 2 → ℝ) :
+    tvalLm P hS2 (thetaPreservesJordan_of_S2 P hS2) 0 1 r
+      = n2Twist P hS2 * (r 0 - r 1) := by
+  have hdecomp : r = (r 0 - r 1) • (fun k : Fin 2 => if k = 0 then (1 : ℝ) else 0)
+      + r 1 • (fun _ : Fin 2 => (1 : ℝ)) := by
+    funext k
+    fin_cases k <;> simp
+  have honesz : tvalLm P hS2 (thetaPreservesJordan_of_S2 P hS2) 0 1
+      (fun _ : Fin 2 => (1 : ℝ)) = 0 := n2_tval_diag_zero P hS2 rfl
+  conv_lhs => rw [hdecomp]
+  rw [map_add, map_smul, map_smul, honesz, smul_zero, add_zero, smul_eq_mul, mul_comm]
+  rfl
+
+/-- **The rank-two per-frame parameter, extracted from an arbitrary product.** -/
+theorem n2_sp_eq_twistSeq (hS2 : P.FirstArgContinuous) {r : Fin 2 → ℝ}
+    (hr : ∀ i, r i ≤ 0) {b : HermitianMat (Fin 2) ℂ} (hb : IsEffect b) :
+    P.sp (diagFamily r) b = HermitianMat.twistSeq (n2Twist P hS2) (diagFamily r) b := by
+  refine sp_eq_twistSeq_diagFamily P hS2 (thetaPreservesJordan_of_S2 P hS2)
+    (n2Twist P hS2) hr (fun i j hij => ?_) hb
+  have hcase : ∀ i j : Fin 2, i ≠ j → (i = 0 ∧ j = 1) ∨ (i = 1 ∧ j = 0) := by decide
+  rcases hcase i j hij with ⟨hi, hj⟩ | ⟨hi, hj⟩
+  · rw [hi, hj]; exact n2_tval_eq P hS2 r
+  · rw [hi, hj, tval_antisymm P hS2 (thetaPreservesJordan_of_S2 P hS2) r 0 1,
+      n2_tval_eq P hS2 r]
+    ring
+
+/-- **The rank-two frame function.**  The twist parameter of `P` at the ordered frame given
+by the columns of `U`, obtained by transporting `P` along `Ad_U` and reading the
+standard-frame generator of the transported product. -/
+def n2FrameTwist (hS2 : P.FirstArgContinuous) (U : Matrix.unitaryGroup (Fin 2) ℂ) : ℝ :=
+  n2Twist (conjProduct P (unitaryGroup_conjTranspose_mul U)
+      (unitaryGroup_mul_conjTranspose U))
+    (conjProduct_firstArgContinuous P _ _ hS2)
+
+/-- **`prop:n2-necessity`, per ordered frame, from an arbitrary product.** -/
+theorem n2_sp_eq_twistSeq_frame (hS2 : P.FirstArgContinuous)
+    (U : Matrix.unitaryGroup (Fin 2) ℂ) {r : Fin 2 → ℝ} (hr : ∀ i, r i ≤ 0)
+    {a : HermitianMat (Fin 2) ℂ}
+    (ha : a = adU (U : Matrix (Fin 2) (Fin 2) ℂ) (diagFamily r))
+    {b : HermitianMat (Fin 2) ℂ} (hb : IsEffect b) :
+    P.sp a b = HermitianMat.twistSeq (n2FrameTwist P hS2 U) a b :=
+  sp_eq_twistSeq_transport P (unitaryGroup_conjTranspose_mul U)
+    (unitaryGroup_mul_conjTranspose U) ha (n2FrameTwist P hS2 U)
+    (fun _b' hb' => n2_sp_eq_twistSeq _ (conjProduct_firstArgContinuous P _ _ hS2) hr hb') hb
+
+end RankTwoExtraction
+
 /-! ## The article's own frame adjacency
 
 `AdjAxis` is not the relation `lem:adjacent` and `lem:frame-connectivity` are stated with.
