@@ -79,7 +79,7 @@ vendored `Projectivization.wigner_rigidity`).
 | uniqueness of the twist parameter | `Necessity.twist_param_unique` | `Necessity/TwistUniqueness.lean` |
 | `prop:theta` (`Θ` is a Jordan automorphism) — **derived, no longer assumed** | `Necessity.thetaPreservesJordan_of_S2` | `Necessity/KadisonDischarge.lean` |
 | complex Kadison **CLASSIFIED** (2026-08-08): a unital order-automorphism of `H_N(ℂ)` is `Ad_U` or `Ad_U∘ᵗ` for a unitary `U` — stronger than `prop:theta`, which needs only the Jordan corollary | `Necessity.orderAuto_classification` | `Necessity/KadisonDischarge.lean` |
-| the unitary branch of that classification is realized (non-vacuity) | `Necessity.unitaryConj_orderAuto` | `Necessity/KadisonDischarge.lean` |
+| the converse, so the ℂ classification is **exact** in BOTH branches: `Ad_U` and `Ad_U∘ᵗ` are each unital order-automorphisms | `Necessity.unitaryConj_orderAuto`, `Necessity.antiunitaryConj_orderAuto`, `Necessity.orderAuto_classification_realized` | `Necessity/KadisonDischarge.lean` |
 
 **Exact hypothesis accounting for `complex_classification_unconditional` (2026-08-07)**:
 the `SequentialProductOn` fields (S1, S3–S7); S2 (`P.FirstArgContinuous`); and `3 ≤ N`.

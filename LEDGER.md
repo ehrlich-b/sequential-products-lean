@@ -63,10 +63,16 @@ restated with the paper's S2 verbatim: `real_classification_ouNorm`,
   `agrees_antiunitaryConj_of_rayMap_eq_projMap_conj`) and drawing *two* conclusions from
   it instead of one. No proof was weakened: the old `preservesJordan_of_*` theorems are
   now one-liners over the extracted lemmas.
-* **Measured remainder, banked not hidden:** the ℂ converse is packaged for the unitary
-  branch only (`unitaryConj_orderAuto`). The antiunitary branch needs
-  `PosSemidef`-under-transpose, which Mathlib does not have (~15–25 lines to prove); it is
-  recorded as unproved at the point of statement, and nothing consumes it.
+* **BOTH classifications are EXACT** (`orthConj_orderAuto` over ℝ;
+  `unitaryConj_orderAuto` + `antiunitaryConj_orderAuto` + `orderAuto_classification_realized`
+  over ℂ), so each order-automorphism group is *characterized*, not merely embedded.
+  ★ **The ℂ antiunitary converse landed only because the cold review refuted me.** I wrote
+  that it was blocked on a "`PosSemidef`-under-transpose lemma Mathlib does not have"; the
+  reviewer grep-checked and produced a compiling proof — `Matrix.posSemidef_transpose_iff`
+  is in Mathlib (`LinearAlgebra/Matrix/PosDef.lean:91`) and the branch follows in a dozen
+  lines. **Lesson, now binding: a claimed library obstruction is a claim. Grep the library
+  before writing "Mathlib does not have X" into a docstring** — the cost of being wrong is
+  that real work gets deferred as impossible.
 
 **4.4 Real-Wigner Mathlib PR package — STAGED in `upstream/`, NOT SUBMITTED.**
 `upstream/Wigner.lean` (Mathlib naming, Mathlib-shaped docstring, Mathlib license header)
@@ -99,7 +105,8 @@ caveats, and the re-pin off `b7db3e8`.
 1. `AdjAxis` non-vacuity is asserted in a docstring but is not a theorem of the tree. The
    arc-3 reviewer proved `¬ AdjAxis 1 cycU` in a scratch file; making that an in-tree lemma
    would turn the last load-bearing prose assertion in the ℂ row's story into a proof.
-2. The ℂ antiunitary converse (above), gated on a `PosSemidef`-under-transpose lemma.
+2. ~~The ℂ antiunitary converse~~ — **CLOSED 2026-08-08** by the cold review's refutation;
+   see 4.3 above. Left listed so the correction is visible, not silently dropped.
 3. `THEOREM-MAP.md` cites only 20 of the paper's 36 labels; 4 more have Lean counterparts
    under unlabelled names (`lem:frame-fix`, `lem:coalescence`, `lem:homog`, `prop:bridge`
    appear in `.lean` docstrings but not in the map). Adding those rows would make the map's

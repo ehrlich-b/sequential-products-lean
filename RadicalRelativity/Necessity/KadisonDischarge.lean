@@ -23,9 +23,13 @@ input (van Imhoff–Roelands / Kadison rigidity), the single hypothesis
 `∃ U, UᴴU = 1 ∧ (Φ = Ad_U ∨ Φ = Ad_U ∘ ᵗ)`.  This was always what the argument
 established (rank-ones span, so agreement on them is equality of maps) but the
 witness used to be discarded inside the proof; now it is in the statement, and
-`orderAuto_preservesJordan` is the corollary the chain consumes.  Non-vacuity of the
-unitary branch is checked (`unitaryConj_orderAuto`); the antiunitary branch's converse
-is deliberately not packaged, and says so at the point of statement.
+`orderAuto_preservesJordan` is the corollary the chain consumes.
+
+**And the classification is EXACT.**  Both branches of the conclusion are realized:
+`unitaryConj_orderAuto` and `antiunitaryConj_orderAuto`, combined in
+`orderAuto_classification_realized`.  So the order-automorphism group of `H_N(ℂ)` is
+exactly `{Ad_U, Ad_U ∘ ᵗ : UᴴU = 1}`, matching what `orderAutoR_eq_orthConj` +
+`orthConj_orderAuto` give over ℝ.
 
 The chain, all machine-checked in this development except the disclosed
 vendored rigidity theorem:
@@ -407,15 +411,20 @@ theorem orderAuto_classification
       Or.inr (eq_unitaryConj_comp_transposeMap_of_rayMap_eq_projMap_conj
         Φ hΦ hunital hsurj e he)⟩
 
-/-! ## Non-vacuity of the classification: the unitary branch really is realized
+/-! ## The converse, so the ℂ classification is EXACT — both branches
 
 `orderAuto_classification` would say little if no map of the classified form were a unital
-order-automorphism.  The unitary branch is checked here.  **The antiunitary branch's converse
-is not packaged**: `transposeMap` reflects the Loewner order too (over ℂ the transpose of a
-Hermitian PSD matrix is its entrywise conjugate, which is PSD), but that needs a
-`PosSemidef`-under-transpose lemma Mathlib does not have, and nothing in the paper or the
-master-theorem chain consumes it — so it is recorded as unproved rather than assumed.  This
-does not weaken the classification direction, which is what `orderAuto_classification` states. -/
+order-automorphism.  Both branches are checked here, so the order-automorphism group of
+`H_N(ℂ)` is characterized exactly as `{Ad_U, Ad_U ∘ ᵗ : UᴴU = 1}` rather than merely
+embedded in it.
+
+**Provenance of the antiunitary half (2026-08-08).**  An earlier version of this section
+claimed the antiunitary converse was blocked on a `PosSemidef`-under-transpose lemma
+"Mathlib does not have".  That was **false**, and a cold adversarial review refuted it with
+a compiling proof: `Matrix.posSemidef_transpose_iff` is in Mathlib
+(`LinearAlgebra/Matrix/PosDef.lean`), and the whole branch follows in a dozen lines.  The
+lesson is the one the review was run to catch: a claimed obstruction is a claim, and it
+should be grep-checked against the library before it is written down. -/
 
 /-- Unitary conjugation reflects the Loewner order, with `Ad_{Uᴴ}` as the inverse. -/
 theorem unitaryConj_le_iff {U : Matrix (Fin N) (Fin N) ℂ} (hU : Uᴴ * U = 1)
@@ -450,6 +459,62 @@ theorem unitaryConj_orderAuto {U : Matrix (Fin N) (Fin N) ℂ} (hU : Uᴴ * U = 
       ∧ unitaryConj U 1 = 1 ∧ Function.Surjective (unitaryConj U) :=
   ⟨fun x y => (unitaryConj_le_iff hU x y).symm, unitaryConj_one hU,
     unitaryConj_surjective hU⟩
+
+/-! ### The transpose is itself an order-automorphism -/
+
+/-- Transposition reflects the Loewner order: over ℂ the transpose of a Hermitian matrix is
+its entrywise conjugate, and `Matrix.posSemidef_transpose_iff` says positivity is preserved
+in both directions. -/
+theorem transposeMap_le_iff (x y : HermitianMat (Fin N) ℂ) :
+    transposeMap x ≤ transposeMap y ↔ x ≤ y := by
+  rw [HermitianMat.le_iff, HermitianMat.le_iff]
+  have h : (transposeMap y - transposeMap x).mat = ((y - x).mat)ᵀ := by
+    rw [HermitianMat.mat_sub, transposeMap_mat, transposeMap_mat, HermitianMat.mat_sub,
+      Matrix.transpose_sub]
+  rw [h, Matrix.posSemidef_transpose_iff]
+
+/-- Transposition is unital. -/
+theorem transposeMap_one : transposeMap (1 : HermitianMat (Fin N) ℂ) = 1 := by
+  ext1
+  rw [transposeMap_mat]
+  simp
+
+/-- Transposition is surjective — it is its own inverse. -/
+theorem transposeMap_surjective : Function.Surjective (transposeMap (n := Fin N)) := by
+  intro y
+  refine ⟨transposeMap y, ?_⟩
+  ext1
+  rw [transposeMap_mat, transposeMap_mat, Matrix.transpose_transpose]
+
+/-- **The antiunitary branch of the classification is realized too.**  `Ad_U ∘ transpose` is
+a unital order-automorphism for every `U` with `UᴴU = 1`. -/
+theorem antiunitaryConj_orderAuto {U : Matrix (Fin N) (Fin N) ℂ} (hU : Uᴴ * U = 1) :
+    (∀ x y : HermitianMat (Fin N) ℂ, x ≤ y ↔
+        ((unitaryConj U).comp (transposeMap (n := Fin N))) x
+          ≤ ((unitaryConj U).comp (transposeMap (n := Fin N))) y)
+      ∧ ((unitaryConj U).comp (transposeMap (n := Fin N))) 1 = 1
+      ∧ Function.Surjective ((unitaryConj U).comp (transposeMap (n := Fin N))) := by
+  refine ⟨fun x y => ?_, ?_, ?_⟩
+  · rw [LinearMap.comp_apply, LinearMap.comp_apply, unitaryConj_le_iff hU, transposeMap_le_iff]
+  · rw [LinearMap.comp_apply, transposeMap_one, unitaryConj_one hU]
+  · intro y
+    obtain ⟨z, hz⟩ := unitaryConj_surjective hU y
+    obtain ⟨w, hw⟩ := transposeMap_surjective z
+    exact ⟨w, by rw [LinearMap.comp_apply, hw, hz]⟩
+
+/-- **THE ℂ CLASSIFICATION IS EXACT.**  A unital `ℝ`-linear order-automorphism of `H_N(ℂ)`
+is `Ad_U` or `Ad_U ∘ ᵗ` for a unitary `U` (`orderAuto_classification`), and *every* such map
+is a unital order-automorphism (this theorem).  So the order-automorphism group of `H_N(ℂ)`
+is exactly `{Ad_U, Ad_U ∘ ᵗ : UᴴU = 1}` — the ℂ analogue of `orderAutoR_eq_orthConj` +
+`orthConj_orderAuto` over ℝ. -/
+theorem orderAuto_classification_realized {U : Matrix (Fin N) (Fin N) ℂ} (hU : Uᴴ * U = 1)
+    (Φ : HermitianMat (Fin N) ℂ →ₗ[ℝ] HermitianMat (Fin N) ℂ)
+    (hΦ : Φ = unitaryConj U ∨ Φ = (unitaryConj U).comp (transposeMap (n := Fin N))) :
+    (∀ x y : HermitianMat (Fin N) ℂ, x ≤ y ↔ Φ x ≤ Φ y)
+      ∧ Φ 1 = 1 ∧ Function.Surjective Φ := by
+  rcases hΦ with h | h <;> subst h
+  · exact unitaryConj_orderAuto hU
+  · exact antiunitaryConj_orderAuto hU
 
 /-! ## Discharging `ThetaPreservesJordan` -/
 

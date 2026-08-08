@@ -19,9 +19,8 @@ is what discharges the hypothesis the whole real row was conditional on.
 
 The classification is **exact**, not one-sided: `orthConj_orderAuto` proves the converse
 (orthogonal conjugation *is* a unital order-automorphism), so the order-automorphism group of
-`H_N(ℝ)` is exactly `{Ad_O : OᵀO = 1}`.  Over ℂ only the unitary branch's converse is
-packaged, because the antiunitary branch needs a `PosSemidef`-under-transpose lemma Mathlib
-lacks.
+`H_N(ℝ)` is exactly `{Ad_O : OᵀO = 1}`.  The ℂ lane is exact too, in both branches
+(`KadisonDischarge.orderAuto_classification_realized`).
 
 **The difference from the ℂ lane.**  Both lanes prove their Wigner step inside this
 development — `Projectivization.wigner_rigidity` at ℂ, and
