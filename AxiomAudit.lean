@@ -265,6 +265,7 @@ run_cmd do
      `RadicalRelativity.Selection.NormalFormExistence,
      `RadicalRelativity.Selection.SelectorEquivalence,
      `RadicalRelativity.Selection.TwistIsotropy,
+     `RadicalRelativity.Wigner.RealWigner,
      `RadicalRelativity.Vendor.Matrix,
      `RadicalRelativity.Vendor.Isometry,
      `RadicalRelativity.Vendor.Misc,
@@ -289,7 +290,6 @@ run_cmd do
      `RadicalRelativity.Vendor.Wigner.MeasureSpace,
      `RadicalRelativity.Vendor.Wigner.FubiniStudy,
      `RadicalRelativity.Vendor.Wigner.TransitionProbability,
-     `RadicalRelativity.Vendor.Wigner.RealWigner,
      `RadicalRelativity.Vendor.Wigner.WignerRigidity]
   let missExpDisk := expectedMods.filter (fun m => !diskMods.contains m)
   let extraDisk   := diskMods.filter (fun m => !expectedMods.contains m)

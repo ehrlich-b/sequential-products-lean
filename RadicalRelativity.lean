@@ -65,12 +65,15 @@ import RadicalRelativity.Vendor.HermitianMat.Proj
 -- its axiom closure is audited alongside first-party development.
 import RadicalRelativity.Vendor.Wigner.WignerRigidity
 
--- Real Wigner/Uhlhorn, setup + easy direction: the transition probability over R, the
--- map induced by a real linear isometry, and the inclusion O(E) -> TransProbPreserving.
--- This begins the ONE theorem standing between the real row and unconditionality; the
--- complex development cannot be ported because its bulk is phase and antiunitary
--- structure, none of which exists over R.
-import RadicalRelativity.Vendor.Wigner.RealWigner
+-- FIRST-PARTY (not vendored -- moved out of Vendor/ on 2026-08-08, where it had lived
+-- only because it was written against the vendored complex development; it imports
+-- nothing vendored).  Real Wigner/Uhlhorn rigidity on RP(E), PROVED here:
+-- `exists_isometry_of_transProbPreservingR` -- every transition-probability preserving
+-- self-map of the rays is induced by a linear isometry, with NO bijectivity hypothesis.
+-- This is what makes the real row unconditional, and it is the tree's one Mathlib
+-- upstream candidate.  The complex development could not be ported: its bulk is phase
+-- and antiunitary structure, none of which exists over R.
+import RadicalRelativity.Wigner.RealWigner
 
 -- M1 order-unit layer on the concrete carrier (LEDGER 1.1): the
 -- `OrderUnitSpace (HermitianMat n 𝕜)` instance (making the abstract effect
@@ -244,10 +247,12 @@ import RadicalRelativity.Necessity.BlockInvarianceGen
 import RadicalRelativity.Necessity.BlockTransportGen
 import RadicalRelativity.Necessity.BlockChiGen
 
--- prop:real, the M4.1 capstone (in progress): over the reals the Peirce block is
+-- prop:real, the M4.1 capstone (COMPLETE): over the reals the Peirce block is
 -- one-dimensional, so the comparison character acts on each block by a single real
--- scalar which the block isometry forces to square to one.  Killing the minus sign by
--- connectedness, and hence chiTilde = id, is the remaining step.
+-- scalar which the block isometry forces to square to one.  Connectedness kills the
+-- minus sign, giving chiTilde = id (Necessity.chiTilde_eq_id, RealRigidity.lean) and
+-- hence the Luders product; real Kadison, proved here on top of first-party real
+-- Wigner, then discharges the Jordan hypothesis and the row is unconditional.
 import RadicalRelativity.Necessity.ConjTransportGen
 import RadicalRelativity.Necessity.RealRayMap
 import RadicalRelativity.Necessity.RealRankOneSpan

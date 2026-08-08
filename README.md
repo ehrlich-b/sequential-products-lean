@@ -7,7 +7,30 @@ Standalone Lean 4 development accompanying the paper
 
 This project is a self-contained extract of the paper's modules from the
 parent *Radical Relativity* Lean development. It has **zero dependency** on
-any other program code; the only external dependency is Mathlib.
+any other program code, and no build-time dependency other than Mathlib —
+but see Provenance: some of the code is third-party, vendored in.
+
+## Provenance — first-party vs vendored
+
+Of the tree's 41,135 lines, **12,409 are third-party code vendored verbatim**
+(pinned, Apache 2.0, per-file copyright headers retained). Full record,
+including the mathlib v4.32→v4.28 backport edit log and its zero-statement-change
+audit: `RadicalRelativity/Vendor/VENDOR.md`.
+
+| Vendored island | Upstream | Author(s) | Role here |
+| --- | --- | --- | --- |
+| `Vendor/*.lean`, `Vendor/HermitianMat/`, `Vendor/Tactic/` (17 modules) | `leanprover-community/physlib` @ `ad1d812` | Alex Meiburg (`HermitianMat/Proj.lean` also Leonardo A Lessa) | the M1 carrier substrate: Hermitian matrices with Loewner order, trace inner product, continuous functional calculus, Jordan product |
+| `Vendor/Wigner/` (8 modules) | `zblore/csd-lean4` @ `2287f45` | Zayn Blore | complex Wigner rigidity on `ℂP^{N-1}` — the M3 input for the ℂ row |
+
+Everything outside `RadicalRelativity/Vendor/` is first-party. In particular
+`RadicalRelativity/Wigner/RealWigner.lean` — real Wigner/Uhlhorn rigidity, which
+exists in no other proof assistant and is what makes the real row unconditional —
+is first-party; it lived under `Vendor/` until 2026-08-08 only because it was
+written against the vendored complex development, and it imports nothing vendored.
+
+Both islands are **tracked**: they sit inside the census prefix, so
+`AxiomAudit.lean` audits every vendored declaration on the same terms as
+first-party code.
 
 ## Theorem-to-file map
 
@@ -121,7 +144,10 @@ They are copied so this project stands alone; they are **not** paper content.
 **Exact statement boundary (target, not a classification proof)**
 - `RadicalRelativity/PaperA/Statement.lean`
 
-**Master theorem chain — capstone `master_chain` (12 modules including Central)**
+**Master theorem chain — abstract skeleton `master_chain` (12 modules including
+Central).** Not a capstone and not a verification of the paper's theorem: it is an
+implication quantified over the §2 interface fields. See "Axiom audit" above and
+`THEOREM-MAP.md` §3.
 - `RadicalRelativity/MasterTheorem/Interface.lean`
 - `RadicalRelativity/MasterTheorem/Coalescence.lean`
 - `RadicalRelativity/MasterTheorem/DiagonalHom.lean`
@@ -142,6 +168,22 @@ They are copied so this project stands alone; they are **not** paper content.
 - `RadicalRelativity/Selection/NormalFormExistence.lean`
 - `RadicalRelativity/Selection/SelectorEquivalence.lean`
 - `RadicalRelativity/Selection/TwistIsotropy.lean`
+
+**The rest of the tree** — where the two unconditional rows actually live. The
+lists above are the abstract layer only; they are a small minority of the 147
+modules, so the map is completed by directory rather than by file:
+
+| Directory | Modules | Role |
+| --- | --- | --- |
+| `RadicalRelativity/Hermitian/` | 11 | the concrete carrier `HermitianMat n 𝕜`: order-unit layer, extreme effects = projections, twist family, CFC continuity, sequential-product instances |
+| `RadicalRelativity/Necessity/` | 75 | the two flagship rows end to end — comparison-map instances, the ℂ twist extraction and its globalization, the ℝ rigidity, the Kadison discharges, and the capstones `complex_classification_unconditional` / `real_classification` |
+| `RadicalRelativity/RankTwo/` | 7 | rank-two moduli space, complementation/descent to `ℝP²`, separation (the classification *map* is absent — `THEOREM-MAP.md` §3) |
+| `RadicalRelativity/PaperA/` | 3 | frozen statement shapes plus the certification that the two proved rows meet them |
+| `RadicalRelativity/Wigner/` | 1 | first-party real Wigner/Uhlhorn rigidity (see Provenance) |
+| `RadicalRelativity/Vendor/` | 25 | vendored third-party islands (see Provenance) |
+
+`THEOREM-MAP.md` maps paper statements to declarations across all of these; this
+table is only a directory-level orientation.
 
 The development carries NO custom `axiom` declarations: every tracked
 declaration's axiom closure is exactly Lean's three core axioms.

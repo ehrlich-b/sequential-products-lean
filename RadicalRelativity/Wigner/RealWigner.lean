@@ -3,36 +3,54 @@ Copyright (c) 2026 Bryan Ehrlich. All rights reserved.
 Released under Apache 2.0 license.
 Authors: Bryan Ehrlich
 -/
-import RadicalRelativity.Vendor.Wigner.TransitionProbability
+import Mathlib.Analysis.InnerProductSpace.PiL2
+import Mathlib.LinearAlgebra.Projectivization.Basic
 
 set_option linter.style.longLine false
 
 /-!
-# Real Wigner/Uhlhorn: the setup and the easy direction
+# Real Wigner/Uhlhorn rigidity on `ℝP(E)` — **proved here**
 
 The complex row's Jordan property is discharged (M3) through the vendored
-`Projectivization.wigner_rigidity` on `ℂP^{N-1}`.  The **real** row currently carries
-its Jordan property as a located hypothesis because no prover has the real analogue.
-This file starts that analogue.
+`Projectivization.wigner_rigidity` on `ℂP^{N-1}`.  The **real** analogue exists in no
+prover, so this file proves it, and the real row is unconditional because of it.
+
+**`exists_isometry_of_transProbPreservingR`** (the capstone, at the end of the file):
+every transition-probability preserving self-map of the rays of a finite-dimensional
+real inner product space is `projMapR e` for a linear isometry `e`.  Note the
+hypothesis: `TransProbPreservingR f` is *only* `∀ p q, transProbR (f p) (f q) =
+transProbR p q`.  **Bijectivity is not assumed** — preservation of the transition
+probabilities alone forces the map to be induced by an isometry, hence bijective.
+
+The route (all in this file, no `sorry`, closure = Lean core):
+
+* `transProbVecR` — `|⟨ψ,φ⟩|²/(‖ψ‖²‖φ‖²)` over ℝ, with scale invariance in each slot;
+  `transProbR` — the induced function on `ℝP(E)`;
+* `TransProbPreservingR`, `projMapR` — the property and the map induced by a real
+  linear isometry; `projMapR_transProbPreservingR` — the easy inclusion
+  `O(E) → TransProbPreserving`;
+* `imageOrthonormalBasis`/`imgBasis` — the image of an orthonormal basis is one;
+* `signPattern`/`normBasis` — the global sign ambiguity fixed against an anchor ray;
+* `eq_projMapR_of_anchor` and `eq_projMapR_of_anchor_zero` — the two cases (rays with
+  and without anchor overlap, the latter by anchor-shifting), combined in
+  `eq_projMapR`, then instantiated on `stdOrthonormalBasis` for the capstone.
+
+Downstream: `Necessity.RealWignerBridge` → `Necessity.RealKadison` →
+`Necessity.RealRowUnconditional`, i.e. this theorem is what makes `real_classification`
+carry no Jordan hypothesis.
 
 Measured before writing (2026-08-06): the complex development is 3179 lines, of which
 the bulk is *phase* structure — 85 uses of `Complex.I`, 117 circle/phase references,
 179 conjugation/antiunitary references.  **None of that exists over ℝ**: there is no
 circle of gauge freedom and no antiunitary branch, only a global sign.  So the real
-theorem is not a port of that file, but it is correspondingly much shorter.
+theorem is not a port of that file, and is correspondingly much shorter.
 
-This file supplies the definitions and the **easy inclusion**
-`O(E) → TransProbPreserving`:
-
-* `transProbVecR` — `|⟨ψ,φ⟩|²/(‖ψ‖²‖φ‖²)` over ℝ, with scale invariance in each slot;
-* `transProbR` — the induced function on `ℝP(E)`;
-* `TransProbPreservingR`, `projMapR` — the property and the map induced by a real
-  linear isometry;
-* **`projMapR_transProbPreservingR`** — every orthogonal map preserves transition
-  probabilities.
-
-The converse (the rigidity) is the remaining content: a transition-probability
-preserving bijection of `ℝP(E)` is `projMapR e` for some orthogonal `e`.
+**Provenance.** First-party (Bryan Ehrlich).  It lived under `Vendor/` while it was
+being written against the vendored complex development; it depends on nothing vendored
+(the former `Vendor.Wigner.TransitionProbability` import was verified dead at
+declaration level before removal — zero island declarations, instances, or topology
+used) and was moved out on 2026-08-08.  It is the tree's one Mathlib upstream
+candidate.
 -/
 
 noncomputable section
@@ -104,7 +122,8 @@ def TransProbPreservingR (f : ℙ ℝ E → ℙ ℝ E) : Prop :=
 
 /-- **The easy inclusion `O(E) → TransProbPreserving`**: every orthogonal map induces
 a transition-probability preserving self-map of `ℝP(E)`.  (The converse — Wigner's
-theorem over ℝ — is the remaining content of this file's programme.) -/
+theorem over ℝ — is `exists_isometry_of_transProbPreservingR` at the end of this file,
+so the two together are an exact characterization.) -/
 theorem projMapR_transProbPreservingR (e : E ≃ₗᵢ[ℝ] E) :
     TransProbPreservingR (projMapR e) := by
   intro p q

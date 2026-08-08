@@ -31,10 +31,14 @@ continuity that the field-general layers already provide.
 * `chiTilde_eq_id` — hence `χ̃(r)` agrees with the identity on the frame and on every
   block, so it **is** the identity (`linearMap_eq_of_frame_blockG`).
 
-Everything is conditional on `ThetaPreservesJordanG` — real Kadison/Uhlhorn is not
-available in any prover, so on `H_n(ℝ)` the Jordan property of the comparison map is
-carried as a located hypothesis, exactly as the manuscript cites it (and exactly as
-the ℂ row stood before M3 discharged it there).
+Everything in *this file* takes `ThetaPreservesJordanG` as a hypothesis — but that
+hypothesis is **no longer carried by the row**: real Kadison/Uhlhorn, unavailable in
+any other prover, is proved in this development
+(`Projectivization.exists_isometry_of_transProbPreservingR` in `Wigner/RealWigner.lean`
+→ `Necessity.orderAutoR_preservesJordan` in `RealKadison.lean`), and
+`RealRowUnconditional.thetaPreservesJordanR_of_S2` discharges it from S2 alone.  So
+`RealRowUnconditional.real_classification` is hypothesis-free, and what is a located
+hypothesis here is a *theorem* one file downstream.
 -/
 
 noncomputable section
@@ -202,8 +206,10 @@ theorem blockHermG_real_smul (i j : n) (z : ℝ) :
 
 /-- **`prop:real`, the capstone: the comparison character on `H_n(ℝ)` is the
 identity.**  Hence `Θ_a = id` and the sequential product is the Lüders product — the
-real type admits no twist.  Conditional only on S2 and the located Jordan property
-(real Kadison being unavailable in any prover). -/
+real type admits no twist.  Conditional only on S2 and the Jordan property, and the
+latter is itself discharged one file downstream by
+`RealRowUnconditional.thetaPreservesJordanR_of_S2` (real Kadison is proved in this
+tree, in `RealKadison.lean`, on top of first-party real Wigner). -/
 theorem chiTilde_eq_id (hS2 : P.FirstArgContinuous)
     (hjord : ThetaPreservesJordanG P) (r : n → ℝ) :
     ((chiTildeG P hS2 r).val : HermitianMat n ℝ →ₗ[ℝ] HermitianMat n ℝ)

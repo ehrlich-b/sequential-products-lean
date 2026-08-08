@@ -133,19 +133,30 @@ in this development claims it.
 
 Same kind as the complex block above — proved on the concrete carrier about an
 arbitrary pinned `P : SequentialProductOn (HermitianMat n ℝ)`, no §2 field assumed —
-with **one difference that must not be glossed**: over ℝ the Jordan property of the
-comparison map is **carried, not derived**. M3's discharge routes through
-`Projectivization.wigner_rigidity`, which is intrinsically complex; the real analogue
-is real Kadison/Uhlhorn, which exists in no proof assistant. So `ThetaPreservesJordanG`
-appears as a located hypothesis, exactly as the manuscript cites van Imhoff–Roelands
-for it, and exactly as the ℂ row stood before M3 closed.
+and the Jordan property of the comparison map is **derived, not carried**.
+
+**CORRECTED 2026-08-08.** This block previously read "over ℝ the Jordan property is
+carried, not derived… real Kadison/Uhlhorn exists in no proof assistant," which was
+true when written (2026-08-06) and was already contradicted by its own table rows
+below by 08-07. The actual state: M3's ℂ discharge routes through the vendored
+`Projectivization.wigner_rigidity`, which is intrinsically complex, so the real
+analogue had to be **proved from scratch in this tree** —
+`Projectivization.exists_isometry_of_transProbPreservingR`
+(`Wigner/RealWigner.lean`, first-party, no bijectivity hypothesis) → real Kadison
+`Necessity.orderAutoR_preservesJordan` (`RealKadison.lean`) →
+`Necessity.thetaPreservesJordanR_of_S2` (`RealRowUnconditional.lean`), which supplies
+`ThetaPreservesJordanG` from S2 alone. `ThetaPreservesJordanG` is therefore a
+hypothesis of the *intermediate* declarations in `RealRigidity.lean` (row 2 of the
+table) and of nothing the row itself depends on: `real_classification` is
+unconditional. The manuscript's van Imhoff–Roelands citation for this step is, in this
+tree, a theorem.
 
 | Paper statement | Lean declaration | File |
 | --- | --- | --- |
 | `prop:real`, **real row**: `a • b = √a·b·√a` on **all** effects, no twist parameter — **UNCONDITIONAL** | `Necessity.real_classification` | `Necessity/RealRowUnconditional.lean` |
 | the same, with the eigenframe Jordan property as a hypothesis | `Necessity.sp_eq_luders_of_effect` | `Necessity/RealRigidity.lean` |
 | real Kadison rigidity: a unital order-automorphism of `H_N(ℝ)` is orthogonal conjugation | `Necessity.orderAutoR_preservesJordan` | `Necessity/RealKadison.lean` |
-| real Wigner rigidity: a transition-probability preserving ray map is induced by an isometry | `Projectivization.exists_isometry_of_transProbPreservingR` | `Vendor/Wigner/RealWigner.lean` |
+| real Wigner rigidity: a transition-probability preserving ray map is induced by an isometry | `Projectivization.exists_isometry_of_transProbPreservingR` | `Wigner/RealWigner.lean` (first-party) |
 | the same, invertible effects only | `Necessity.sp_eq_luders_of_posDef` | `Necessity/RealRigidity.lean` |
 | the comparison character is the identity (`Θ_a = id`) | `Necessity.chiTilde_eq_id` | `Necessity/RealRigidity.lean` |
 | `prop:singular` applied over ℝ | `Necessity.dense_posDef_effectsR` + `MasterTheorem.prop_singular` | `Necessity/RealRigidity.lean` |
@@ -377,14 +388,25 @@ machine-checked on the concrete carrier: `lem:twist-sufficiency` in §1.)
   not prove that a given algebra is of a particular coordinate type, that an
   operation satisfies S1–S7, that `L_a = Q_{√a}Θ_a`, that `Θ_a = id`, or any
   product equality. Its own docstring says so.
-- **The lifting step in `prop:n2-necessity`** — that a continuous homomorphism
-  `ℝ² → SO(2)` lifts through the universal cover to a linear functional. Lean
-  *assumes* `angle` is linear and proves only the factorization, so this step is
-  supplied by the paper, not checked.
-- **`lem:n2-bounded`** (boundedness) and the assembled bijection
-  `cor:qubit-classification` itself.
-  **UPDATED 2026-08-06 — `lem:n2-descent` is no longer in this section.** The
-  evenness/descent to `ℝP²` IS now machine-checked, on the concrete carrier:
+- **Rank two, all of it: `lem:n2-bounded`, `lem:n2-descent`, `lem:n2-continuity`,
+  the lifting step of `prop:n2-necessity`, and the assembled bijection
+  `cor:qubit-classification`.**
+
+  ★ **The governing statement (2026-08-08, correcting the 2026-08-06 entry that
+  removed `lem:n2-descent` from this section — that entry contradicted its own
+  footnote and the footnote was right).** NO declaration in `RankTwo/` takes a
+  `SequentialProductOn` (verify: `grep -c SequentialProductOn
+  RadicalRelativity/RankTwo/*.lean` → 0 in all seven files), and `n2_necessity` takes
+  a linear `angle` rather than a product. So the **classification map
+  `product ↦ moduli` does not exist in Lean at all.** Each rank-two lemma above is a
+  statement about that map, or about the moduli function of an *arbitrary* rank-two
+  product; at that generality none of them is machine-checked. The lifting step is
+  separately unchecked even at generator level: Lean *assumes* `angle` is linear and
+  proves only the factorization, so the universal-cover lift `ℝ² → SO(2)` ⟹ linear
+  functional is supplied by the paper.
+
+  What IS machine-checked is the *geometry those lemmas would act on*, for one
+  concrete distinguished moduli element rather than for an arbitrary product:
   `RankTwo.orthoFrame` (complementation as an involution on `ℂP¹`, well defined
   because the complement map is *conjugate*-linear), `RankTwo.tauFrame_orthoFrame` and
   `RankTwo.blochFrame_orthoFrame` (both the frame function and the Bloch map are
@@ -392,18 +414,14 @@ machine-checked on the concrete carrier: `lem:twist-sufficiency` in §1.)
   `blochFrame_continuous`/`blochFrame_surjective`, the moduli element
   `RankTwo.tauModuliRP2 : C(ℝP², ℝ)` with `tauRP2_continuous`, the bridge
   `RankTwo.tauRP2_blochFrame` (the `ℝP²` function pulls back to the frame function),
-  and `RankTwo.tauModuliRP2_nonconstant`. Files: `RankTwo/Descent.lean`,
-  `RankTwo/Bloch.lean`. `lem:n2-continuity` is likewise covered for these objects
-  (`tauFrame_continuous`, `tauRP2_continuous`).
-  ★**What remains unproved for rank two is bigger than the residue above suggests, and
-  the honest statement is this**: NO declaration in `RankTwo/` takes a
-  `SequentialProductOn` (verify: `grep -c SequentialProductOn RadicalRelativity/RankTwo/*.lean`
-  → 0 everywhere), and `n2_necessity` takes a linear `angle` rather than a product. So
-  the **classification map `product ↦ moduli` does not exist in Lean at all** — what
-  exists is the moduli space, one distinguished (nonconstant) element of it, the
-  certified descent, and the separation. Building the map needs per-frame parameter
-  extraction from an arbitrary rank-two product, and the `N ≥ 3` machinery cannot be
-  reused (`StabilizerCoupling` carries `rank_ge : 3 ≤ n`).
+  `RankTwo.tauModuliRP2_nonconstant`, and the continuity companions
+  `tauFrame_continuous`/`tauRP2_continuous`. Files: `RankTwo/Descent.lean`,
+  `RankTwo/Bloch.lean`. **Read as coverage of `lem:n2-descent`/`lem:n2-continuity`
+  this is a certified concrete example, not the lemma**: it establishes that the
+  descent-to-`ℝP²` mechanism is sound and that the moduli space is nontrivial, which
+  is exactly why building the map is the rank-two work that remains. Building it
+  needs per-frame parameter extraction from an arbitrary rank-two product, and the
+  `N ≥ 3` machinery cannot be reused (`StabilizerCoupling` carries `rank_ge : 3 ≤ n`).
 - **`mthm:omnibus`** (the finite-dimensional omnibus classification) and
   **`prop:pseudo-transfer`**.
 - **`prop:singular`** is not invoked by `master_chain` (the abstract skeleton).

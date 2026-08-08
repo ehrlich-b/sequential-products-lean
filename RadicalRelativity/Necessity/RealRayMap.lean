@@ -11,7 +11,7 @@ set_option linter.style.longLine false
 # Real rank-one projections  (the ℝ bridge to real Kadison, part 1)
 
 `prop:real` carries one hypothesis: the **Jordan property** of the comparison map, i.e. real
-Kadison.  Real Wigner rigidity (`Vendor/Wigner/RealWigner.lean`) is the classical input to
+Kadison.  Real Wigner rigidity (`Wigner/RealWigner.lean`) is the classical input to
 that, and this file starts the bridge between them.
 
 **Route decision, recorded because the alternative looks cheaper and is not.**  The ℂ lane

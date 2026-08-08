@@ -26,8 +26,10 @@ and it is worth writing down because it is the reason this step is not a boulder
 * the first case forces `v₀ = 0` by comparing `|qψ|² = ψ·qψ = 1` with `|ψ|² + |v₀|²`, so
   `q = ψψᵀ`; the second gives `q = 0`.
 
-This file supplies the definition and the engine (`quadForm_isProjection`, plus the
-nonvanishing of a rank-one); the two-case argument above is the remaining step.
+This file supplies the definition, the engine (`quadForm_isProjection`, plus the
+nonvanishing of a rank-one), **and the two-case argument itself** — `rankOneR_isAtom`
+below, with the converse `IsAtomProjectionR.exists_rankOne`, so atoms and rank-one
+projections coincide over ℝ.
 -/
 
 noncomputable section

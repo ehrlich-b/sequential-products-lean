@@ -34,11 +34,21 @@ prefix, so `AxiomAudit.lean` Layer 1 covers every vendored declaration
 module manifest pins the vendored surface. Upstream was grep-verified
 sorry-free and axiom-free in this closure before vendoring.
 
+> **UPDATE 2026-08-08 (annotation, not a rewrite).** "The one disclosed axiom"
+> above was true when written (2026-08-04) and is now stale in the *tightening*
+> direction: `Selection.aczel_continuous_multiplicative` was discharged into a
+> theorem on 2026-08-05 (`RadicalRelativity/Necessity/OneParameter.lean`), so
+> the gate is now closure ⊆ core alone and **custom axioms exactly `[]`**. The
+> census is likewise no longer 44 modules (see the drift-log gate line below):
+> the tracked surface has grown to 148. Both numbers below are preserved as the
+> historical record of the backport pass, not as current gate values.
+
 ### Drift-edit log (v4.32 → v4.28 backport, 2026-08-04)
 
 All edits are proof-side only — **zero statement changes** across all 17 files.
-Gates verified after the pass: `lake build` green (2976 jobs, no errors; two
-style-lint *warnings* whose message text contains the word "error"), audit
+Gates verified after the pass (values as of 2026-08-04; superseded — see the
+annotation above): `lake build` green (2976 jobs, no errors; two style-lint
+*warnings* whose message text contains the word "error"), audit
 Census PASS (44 modules, custom axioms exactly
 `[Selection.aczel_continuous_multiplicative]`). The `sorry` tokens in
 `Misc.lean` sit inside a `/- -/` block quoting a Zulip-tracked mathlib diamond
@@ -117,6 +127,12 @@ UNAUDITED.
 `RadicalRelativity/Vendor/Wigner/…`): Topology, Unitary, UnitaryCompact,
 UnitaryHaar, MeasureSpace, FubiniStudy, TransitionProbability,
 WignerRigidity (≈ 4.8kL).
+
+**Not in this island:** `RealWigner.lean` (real Wigner/Uhlhorn rigidity) is
+first-party, has no upstream, and imports nothing vendored. It sat in this
+directory from 2026-08-06 to 2026-08-08 only because it was drafted against the
+complex development; it now lives at `RadicalRelativity/Wigner/RealWigner.lean`.
+Anyone diffing this tree against a SHA at or before `ba317b8` will see the move.
 
 **Edits applied at vendor time (2026-08-05), each mechanical:**
 1. Module-system strip: the `module` header line deleted, `public import X` →

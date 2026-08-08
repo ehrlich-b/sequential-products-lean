@@ -4,14 +4,14 @@ Released under Apache 2.0 license.
 Authors: Bryan Ehrlich
 -/
 import RadicalRelativity.Necessity.RealProjectionOrder
-import RadicalRelativity.Vendor.Wigner.RealWigner
+import RadicalRelativity.Wigner.RealWigner
 
 set_option linter.style.longLine false
 
 /-!
 # The bridge to real Wigner rigidity  (the ℝ bridge to real Kadison, part 5e)
 
-Real Wigner (`Vendor/Wigner/RealWigner.lean`) speaks about `EuclideanSpace ℝ (Fin N)` and its
+Real Wigner (`Wigner/RealWigner.lean`) speaks about `EuclideanSpace ℝ (Fin N)` and its
 inner product; the Kadison side speaks about `Fin N → ℝ` and `dotProduct`.  This file identifies
 the two, so that `tprobR_preserved` becomes exactly the `TransProbPreservingR` hypothesis of
 `exists_isometry_of_transProbPreservingR`.

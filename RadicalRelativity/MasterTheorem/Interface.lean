@@ -192,8 +192,18 @@ imported vdW/FK facts; the van Imhoff–Roelands Jordan-automorphism conclusion 
 Jordan algebra `J` of rank `n ≥ 3` carrying a norm-continuous S1–S7 sequential
 product, presented through van de Wetering's comparison map `Θ_a` and its cited
 properties. A concrete simple EJA with a sequential product is *intended* to furnish
-one of these — that instantiation is the paper's analytic work; **no concrete instance
-is constructed in this tree** — and the master-theorem chain consumes it.
+one of these — that instantiation is the paper's analytic work — and the
+master-theorem chain consumes it.
+
+**Concrete instances exist in this tree** (2026-08-05, superseding the earlier
+docstring's "no concrete instance is constructed here"): `Necessity.comparisonSetupG`
+(`Necessity/ComparisonInstanceGen.lean`) builds one on `H_N(𝕜)` for `𝕜 ∈ {ℝ, ℂ}` and
+`Necessity.comparisonSetup` (`Necessity/ComparisonInstance.lean`) the ℂ specialization,
+from an S1–S7 product with S2; every field is discharged by a machine-checked theorem
+except `Θ_jordan`, which enters as the hypothesis `ThetaPreservesJordanG P` — itself
+now discharged for both flagship rows (ℂ: `Necessity.KadisonDischarge`; ℝ:
+`Necessity.RealKadison`). So the vacuity worry below is answered for the intended
+algebras, not merely acknowledged.
 
 **Vacuity honesty (adversarial review, 2026-07-15).** The field names carry the
 *intended* semantics (frame, cone, invertibles); the fields themselves impose no
