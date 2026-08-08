@@ -50,6 +50,30 @@ three kinds, and only the first is conditional on §2:
 | `thm:qubit-boundary`(iii), frame-dependence pair (V9) | `RankTwo.sp_tau_had_is_luders`, `RankTwo.sp_tau_std_is_unit_twist` | `MasterTheorem/RankTwo.lean` |
 | `lem:twist-sufficiency` — every twist product satisfies S1–S7 on `H_n(ℂ)`, packaged per `t`; S2 holds in the carried norm AND (ε–δ, `twistSeq_continuousAt_ouNorm`) in the order-unit norm — the norm caveat is discharged for this row | `HermitianMat.twistSequentialProductCore`, `HermitianMat.twistSequentialProduct` | `Hermitian/Sequential.lean` |
 
+### `cor:selectors` clause (ii) — machine-checked at article generality (2026-08-08)
+
+`Necessity.selector_traceSymm` (`Necessity/ComplexRowUnconditional.lean`): for an S1–S7
+product with S2 on `H_N(ℂ)`, `N ≥ 3`, trace-form symmetry `⟪a·b, c⟫ = ⟪b, a·c⟫` on
+effects forces the Lüders product, stated both as `twistSeq 0` and (in
+`selector_traceSymm_luders`) as `b.conj √a`. Hypotheses are exactly the article's; closure
+is Lean core. Supporting lemmas, also new: `inner_twistSeq_left` (the twist product's trace
+adjoint flips `t`, by trace cyclicity plus `twistFactor_conjTranspose`) and
+`eq_of_inner_effect_eq` (effects are trace-form separating, from `span_isEffect_eq_top` and
+definiteness). The proof is a corollary of the classification's `∃!`: trace symmetry makes
+`-t` a second representing parameter, so `-t = t`.
+
+**Clauses (i) and (iii) are not proved, and the row stays PARTIAL.** Banked with the
+remainder measured rather than guessed: clause (iii) — covariance under every unital order
+automorphism, for which the article notes the transpose suffices — is blocked on exactly one
+absent lemma, `(cfc f a)ᵀ = cfc f (aᵀ)`, i.e. that transposition commutes with the real
+functional calculus. Nothing in this tree has it, and the route is written out in the
+module docstring (`StarAlgHomClass.map_cfc` applied to entrywise complex conjugation, which
+is an ℝ-star-algebra hom of `Matrix n n ℂ` since conjugation does not reverse products;
+build it from `AlgHom.mapMatrix Complex.conjAe.toAlgHom` with a `map_star'` field, and use
+`aᵀ = conj a` for Hermitian `a`). With that lemma, `transposeMap (twistSeq t a b) =
+twistSeq (-t) (transposeMap a) (transposeMap b)` and clause (iii) closes by the same
+uniqueness step. Clause (i) additionally needs the coherence-block action on `H_N(ℂ)`.
+
 ### `lem:aone` — machine-checked at full abstract generality (recorded 2026-08-08)
 
 ★ **This row was carried as "no Lean counterpart" and that was wrong.**

@@ -55,7 +55,8 @@ pre-registered permanent import. Read the count with `THEOREM-MAP.md`, never ins
 
 **Baseline at manifest creation: 5 FORMALIZED, 17 PARTIAL, 14 ABSENT** — immediately
 corrected to **6 / 19 / 11** by the audit the manifest itself provoked (2026-08-08, rung
-5.1): three rows had been carried as ABSENT while Lean declarations for them existed.
+5.1), then to **6 / 20 / 10** when `cor:selectors` clause (ii) was proved: three rows had
+been carried as ABSENT while Lean declarations for them existed.
 `lem:aone` is FORMALIZED and had been since the S1–S7 derived-lemma layer was written;
 `lem:span` and `prop:pseudo-transfer` are PARTIAL on the concrete carrier. **No proof was
 written for those three corrections — the tree was undercounted.** The lesson is the
@@ -107,7 +108,7 @@ assigned; `—` = not targeted this arc; `ext` = cited external result, out of s
 | 33 | `lem:n2-continuity` | 1820 | lemma | The ordered-frame parameter $\widetilde t$ is continuous on $S^2$. | PARTIAL (continuity of the frame function and of the $\mathbb{RP}^2$ moduli element for one concrete distinguished element; an arbitrary product's moduli function open) | 5.3 |
 | 34 | `lem:n2-descent` | 1852 | lemma | $\widetilde t(-n)=\widetilde t(n)$ — the two sign changes cancel — so the frame parameter descends to a single continuous bounded $t:\mathbb{RP}^2\to\mathbb{R}$ with no residual line-bundle twist. | PARTIAL (complementation involution, invariance of frame function and Bloch map, and the $\mathbb{RP}^2$ bridge, for that same concrete element; descent for an arbitrary product open) | 5.3 |
 | 35 | `cor:qubit-classification` | 1888 | corollary | $t\mapsto\circ_t$ is a bijection from $C(\mathbb{RP}^2,\mathbb{R})$ onto the norm-continuous S1–S7 products on $\Mnsa{2}$. | ABSENT (the classification map does not exist in Lean) | 5.3 |
-| 36 | `cor:selectors` | 1995 | corollary | On $H_n(\mathbb{C})$, $n\geq3$, the complex-type product is Lüders ($t=0$) if any of: (i) Peirce exchange covariance, (ii) trace-form symmetry, (iii) covariance under every unital order automorphism (the transpose suffices on $\Mnsa{n}$). | ABSENT | 5.1 |
+| 36 | `cor:selectors` | 1995 | corollary | On $H_n(\mathbb{C})$, $n\geq3$, the complex-type product is Lüders ($t=0$) if any of: (i) Peirce exchange covariance, (ii) trace-form symmetry, (iii) covariance under every unital order automorphism (the transpose suffices on $\Mnsa{n}$). | PARTIAL — **clause (ii) proved 2026-08-08 at the article's own generality**: `Necessity.selector_traceSymm` / `selector_traceSymm_luders` ($N\geq3$, S1–S7, S2, no other hypothesis). Clauses (i) and (iii) open; (iii) needs exactly one missing lemma, $(\mathrm{cfc}\,f\,a)^{\mathsf T}=\mathrm{cfc}\,f\,(a^{\mathsf T})$, recipe recorded in `ComplexRowUnconditional.lean` | 5.1 |
 
 ---
 

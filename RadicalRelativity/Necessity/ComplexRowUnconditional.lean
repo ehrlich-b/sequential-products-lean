@@ -123,4 +123,96 @@ theorem complex_classification_sharp (hN : 3 ≤ N) (t t' : ℝ) :
   · intro h a b _ _
     rw [h, twistProductOn_sp]
 
+/-! ## `cor:selectors`, clause (ii): trace-form symmetry selects the Lüders product
+
+The article's `cor:selectors` gives three sufficient conditions for the classified
+complex-type product to be the Lüders product (`t = 0`).  Clause (ii) is trace-form
+symmetry, `⟪a · b, c⟫ = ⟪b, a · c⟫`, and it is proved here at the article's own
+generality — `H_N(ℂ)` with `N ≥ 3`, an S1–S7 product, and S2, exactly the hypotheses
+of the classification it consumes.
+
+The mechanism is that the twist product's *own* trace adjoint flips the twist:
+`⟪a^{1/2+it} b a^{1/2-it}, c⟫ = ⟪b, a^{1/2-it} c a^{1/2+it}⟫` by cyclicity of the
+trace (`inner_twistSeq_left`).  So trace symmetry says the product is represented by
+`-t` as well as by `t`, and the `∃!` of `complex_classification_unconditional` closes
+it: `-t = t`.  No new analysis is involved; the selector is a corollary of uniqueness.
+
+**Clauses (i) and (iii) are NOT proved here** — see `THEOREM-MAP.md`.  Clause (iii)
+(covariance under every unital order automorphism; the article notes the transpose
+suffices) needs one missing ingredient, and only one: that transposition commutes with
+the real functional calculus, `(cfc f a)ᵀ = cfc f (aᵀ)`.  Nothing in this tree has it.
+The route is `StarAlgHomClass.map_cfc` (Mathlib) applied to entrywise complex
+conjugation — which is an ℝ-star-algebra hom of `Matrix n n ℂ` because conjugation
+does *not* reverse products and `star (conj A) = conj (star A)` — built from
+`AlgHom.mapMatrix Complex.conjAe.toAlgHom` plus a `map_star'` field; for Hermitian `a`,
+`aᵀ = conj a`.  With that lemma, `transposeMap (twistSeq t a b) = twistSeq (-t)
+(transposeMap a) (transposeMap b)` and clause (iii) closes by the same uniqueness step
+used below.  Clause (i) additionally needs the coherence-block action on `H_N(ℂ)`. -/
+
+/-- The twist product's **trace adjoint flips the twist**: conjugating the left slot by
+`a^{1/2+it}` is adjoint, for the trace form, to conjugating the right slot by
+`a^{1/2-it}`.  Pure cyclicity of the trace, with
+`twistFactor_conjTranspose : (a^{1/2+it})ᴴ = a^{1/2-it}` supplying the sign flip. -/
+theorem inner_twistSeq_left {n : Type*} [Fintype n] [DecidableEq n]
+    (t : ℝ) (a b c : HermitianMat n ℂ) :
+    inner ℝ (HermitianMat.twistSeq t a b) c
+      = inner ℝ b (HermitianMat.twistSeq (-t) a c) := by
+  rw [HermitianMat.inner_eq_re_trace, HermitianMat.inner_eq_re_trace,
+    HermitianMat.twistSeq_mat, HermitianMat.twistSeq_mat,
+    HermitianMat.twistFactor_conjTranspose, HermitianMat.twistFactor_conjTranspose, neg_neg]
+  congr 1
+  simp only [Matrix.mul_assoc]
+  rw [Matrix.trace_mul_comm]
+  simp only [Matrix.mul_assoc]
+
+/-- **The effects are trace-form separating.**  Two elements with the same trace pairing
+against every effect are equal: the effects span (`span_isEffect_eq_top`), so the pairing
+agrees everywhere, and the trace form is definite. -/
+theorem eq_of_inner_effect_eq {n : Type*} [Fintype n] [DecidableEq n]
+    {z w : HermitianMat n ℂ}
+    (h : ∀ b : HermitianMat n ℂ, IsEffect b → inner ℝ b z = inner ℝ b w) : z = w := by
+  have hall : ∀ x : HermitianMat n ℂ, inner ℝ x z = inner ℝ x w := by
+    intro x
+    have hx : x ∈ Submodule.span ℝ {b : HermitianMat n ℂ | IsEffect b} := by
+      rw [span_isEffect_eq_top]; exact Submodule.mem_top
+    induction hx using Submodule.span_induction with
+    | mem y hy => exact h y hy
+    | zero => simp
+    | add y y' _ _ hy hy' => rw [inner_add_left, inner_add_left, hy, hy']
+    | smul r y _ hy => rw [real_inner_smul_left, real_inner_smul_left, hy]
+  have h0 : inner ℝ (z - w) (z - w) = (0 : ℝ) := by
+    rw [inner_sub_right, hall (z - w), sub_self]
+  exact sub_eq_zero.mp (inner_self_eq_zero.mp h0)
+
+/-- **`cor:selectors` clause (ii)** — trace-form symmetry selects the Lüders product.
+For an S1–S7 product with S2 on `H_N(ℂ)`, `N ≥ 3`, if `⟪a · b, c⟫ = ⟪b, a · c⟫` on
+effects then the product is `twistSeq 0`, i.e. `a · b = √a · b · √a`. -/
+theorem selector_traceSymm (hN : 3 ≤ N)
+    (P : SequentialProductOn (HermitianMat (Fin N) ℂ)) (hS2 : P.FirstArgContinuous)
+    (hsym : ∀ a b c : HermitianMat (Fin N) ℂ, IsEffect a → IsEffect b → IsEffect c →
+      inner ℝ (P.sp a b) c = inner ℝ b (P.sp a c)) :
+    ∀ a b : HermitianMat (Fin N) ℂ, IsEffect a → IsEffect b →
+      P.sp a b = HermitianMat.twistSeq 0 a b := by
+  obtain ⟨t, ht, huniq⟩ := complex_classification_unconditional hN P hS2
+  have hneg : ∀ a b : HermitianMat (Fin N) ℂ, IsEffect a → IsEffect b →
+      P.sp a b = HermitianMat.twistSeq (-t) a b := by
+    intro a c ha hc
+    rw [ht a c ha hc]
+    refine eq_of_inner_effect_eq (fun b hb => ?_)
+    rw [← inner_twistSeq_left, ← ht a b ha hb, hsym a b c ha hb hc, ht a c ha hc]
+  have ht0 : t = 0 := by have := huniq (-t) hneg; linarith
+  intro a b ha hb
+  rw [ht a b ha hb, ht0]
+
+/-- The same selector, stated with the Lüders product written out as
+`b.conj √a` rather than as `twistSeq 0`. -/
+theorem selector_traceSymm_luders (hN : 3 ≤ N)
+    (P : SequentialProductOn (HermitianMat (Fin N) ℂ)) (hS2 : P.FirstArgContinuous)
+    (hsym : ∀ a b c : HermitianMat (Fin N) ℂ, IsEffect a → IsEffect b → IsEffect c →
+      inner ℝ (P.sp a b) c = inner ℝ b (P.sp a c)) :
+    ∀ a b : HermitianMat (Fin N) ℂ, IsEffect a → IsEffect b →
+      P.sp a b = b.conj ((a.cfc Real.sqrt) : Matrix (Fin N) (Fin N) ℂ) := by
+  intro a b ha hb
+  rw [selector_traceSymm hN P hS2 hsym a b ha hb, HermitianMat.twistSeq_zero]
+
 end Necessity
