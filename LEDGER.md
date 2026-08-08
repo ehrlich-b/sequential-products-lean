@@ -13,6 +13,119 @@ interface structure instantiated on the intended algebras.
 
 ---
 
+## ★★ ARC-4 ORDERS (2026-08-08, Fable handoff — Bryan funded a second 18h Opus arc)
+
+**Provenance.** Tri-agent adversarial audit 2026-08-08 (isolated cold agents:
+coverage, upstream, holistic skeptic; all reviewed frozen `ba317b8`; key claims
+re-verified at source by the orchestrator). Verdicts that bind this arc:
+
+- **"Fully formalized" is FALSE and must never appear in prose: 5 of 36
+  numbered results in main.tex FORMALIZED, 17 PARTIAL, 14 ABSENT.** What IS
+  banked survived a hostile audit untouched: both flagship rows unconditional,
+  Lean-core closure re-verified by the auditor's own scratch probes, zero live
+  sorry, zero axiom declarations tree-wide.
+- **The campaign's original target (this file's "Target restated," all four
+  rows + omnibus) is SUPERSEDED — unreachable on any controlled timeline**
+  (ℍ needs quaternionic Wigner, 𝕆 needs octonions; neither exists in any
+  prover). No new rows. Marginal Lean toward the old target ≈ 0.
+- **Every disclosure surface understates the tree** (paper pins `b7db3e8` =
+  07-19 skeleton, 27 files; supplementary claims two `axiom` declarations that
+  are now theorems). All overstatement risk is internal; all public staleness
+  is in the understating direction.
+- **Upstream: one clear YES (real Wigner, S-friction), real Kadison behind it
+  (M).** A third of the tree (12,409 L) is Meiburg's/Blore's, both already on
+  their own Mathlib tracks — not ours to PR. ITP/CPP paper: skip.
+
+**ARC-4 GOAL: convert the verified asset into a truthful, sharper, ship-ready
+one.** Six items, in order. All commits LOCAL. Outward actions (push, PR
+submission, manuscript edits, sync.sh) remain Bryan-gated and OUT OF SCOPE.
+
+### 4.1 Truth sweep (docs only; ~3h)
+- `Vendor/Wigner/RealWigner.lean:14-33` — header still says the rigidity is
+  unproved and needs a bijection; the file proves the full theorem at :1041
+  with no bijectivity hypothesis. Rewrite.
+- `Necessity/RealRigidity.lean:35-38` — "real Kadison/Uhlhorn is not available
+  in any prover" is FALSE in this tree (`RealKadison.orderAutoR_preservesJordan`,
+  discharged into the row via `RealRowUnconditional.thetaPreservesJordanR_of_S2`).
+- `MasterTheorem/Interface.lean:195` — "no concrete instance is constructed in
+  this tree" is FALSE since `Necessity.comparisonSetup`
+  (`ComparisonInstance.lean:363`, 08-05).
+- `THEOREM-MAP.md:~380-395` — the n2-descent entry contradicts its own ★ note:
+  descent is machine-checked for the CONCRETE Bloch example only; the
+  classification map does not exist (`grep -c SequentialProductOn RankTwo/*.lean`
+  = 0 across all seven files, verified). Make the ★ note's reading govern the row.
+- `README.md` — add a Vendor/provenance section pointing at
+  `RadicalRelativity/Vendor/VENDOR.md` and naming Meiburg (physlib @ `ad1d812`),
+  Blore (csd-lean4 @ `2287f45`), Lessa (`Proj.lean`); grep for any residual
+  "capstone" billing of `master_chain` and align with THEOREM-MAP §3.
+- `Vendor/VENDOR.md:31-45` — "the one disclosed axiom" / census-44 lines are
+  stale; annotate (axiom discharged 08-05, `Necessity/OneParameter.lean:220`;
+  custom axioms now exactly []). Annotate, don't rewrite history.
+- **De-vendor RealWigner**: move `Vendor/Wigner/RealWigner.lean` (Bryan's
+  copyright, misfiled) to `RadicalRelativity/Wigner/RealWigner.lean`; drop its
+  only import (`Vendor.Wigner.TransitionProbability` — VERIFIED dead at
+  declaration level: zero island declarations, zero instances, zero
+  topology/measure used; the one grep hit is docstring prose) and let the
+  compiler dictate the replacement Mathlib imports. Update root imports,
+  `AxiomAudit.lean` manifest (module rename), and every importer
+  (grep `Vendor.Wigner.RealWigner`).
+
+### 4.2 S2 order-unit-norm bridge (~2h)
+The auditor's one real fidelity gap: `FirstArgContinuous` is `ContinuousOn` in
+the CARRIED norm; the paper's S2 is the ORDER-UNIT norm. The two-sided bound
+(`ouNorm ≤ ‖·‖ ≤ √(card n)·ouNorm`, `Hermitian/OrderUnit.lean`) is proved but
+never converted into a `ContinuousOn` equivalence. Prove the bridge (equivalent
+norms ⇒ same topology ⇒ same `ContinuousOn`) and add wrapper capstones
+(`real_classification_ouNorm`, `complex_classification_unconditional_ouNorm`)
+whose hypothesis is order-unit-norm continuity verbatim. `twistSeq_continuousAt_ouNorm`
+already exists as material. New module → root import + AxiomAudit manifest.
+
+### 4.3 Expose the Kadison classifications (~4-5h)
+Both proofs derive the classification internally and discard it, exposing only
+`PreservesJordan`. State it: ℝ (`Necessity/RealKadison.lean`) — ∃ orthogonal U,
+Φ = Ad_U; ℂ (`Necessity/KadisonDischarge.lean`, rewire
+`preservesJordan_of_rayMap_eq_projMap`/`_conj` at :159/:223 to surface the
+witness from `rayMap_dichotomy` :102) — ∃ unitary U, Φ = Ad_U ∨ Φ = Ad_U∘transpose.
+Converse witnesses already exist (`JordanWitness.lean:59,111,126`,
+`RealJordanWitness.lean:61`) — package the iff if cheap. Strengthens the banked
+theorem AND is the statement shape Mathlib demands. If a genuine wall: bank the
+measured remainder here and move on.
+
+### 4.4 Real-Wigner PR package (staged at the gate; ~3-4h)
+On the de-vendored file: Mathlib-idiom rename pass (kill the `R` suffixes),
+longline fixes, standalone PR-shaped copy + PR description in `upstream/`
+(new dir, in-repo). MUST include collision check against Mathlib master and
+`zblore/csd-lean4` and `leanprover-community/physlib` (read-only web/GitHub —
+Blore's `WignerRigidity.lean:190-195` self-stages the ℂ side; his header cites
+a v4.33 `Projectivization/Topology.lean` that may have landed). Prepared answer
+for the inevitable reviewer question "unify over RCLike": over ℝ there is no
+antiunitary branch; the ℂ case belongs to its own author. NO submission — the
+package parks at Bryan's gate.
+
+### 4.5 Supplementary §S1/§S3 rewrite DRAFT (~3h)
+Staged in the BLOG repo as `research/paperA-supplementary-rewrite-draft.md`
+(draft, NOT applied — `main.tex`/`supplementary.tex` are Bryan-gated). Contents:
+corrected "What Is Machine-Checked" + "Lean skeleton" sections against the
+arc-4 final SHA; the honest 5/17/14 coverage table; axiom-claims corrections
+(zero axioms; Aczél + BGW now theorems; vIR DERIVED for both rows); re-pin
+instruction (fresh frozen tag replacing `b7db3e8`); the auditor's fidelity
+caveats stated once each (OrderUnitSpace `archimedean` = boundedness;
+`AdjAxis` ≠ the paper's frame graph, discharges the same residue; `sp_effect`
+as field). Never "fully formalized."
+
+### 4.6 Compaction + gates + cold review (~1h)
+Compact this file's M1–M7 history (keep top blocks, six-targets table, arc
+records; archive the rest — THEOREM-MAP is the asset). Full gates after 4.1–4.3:
+`lake build` green + `AxiomAudit` custom axioms exactly `[]`. Freeze a SHA and
+run ONE isolated cold review over the 4.2 + 4.3 diffs (machine-checked probes
+allowed, scratchpad only). Bank everything; single-sentence local commits.
+
+**OUT OF SCOPE (do not relitigate):** ℍ/𝕆 rows, rank-two classification map,
+`prop:central` discharge, `mthm:omnibus`, any manuscript edit, any push/PR
+submission, T1/T2 (PARKED), the frozen tag `paperA-jpa-submitted`.
+
+---
+
 ## ★★ ARC-3 RESULT (2026-08-07) — **THE ℂ ROW IS HYPOTHESIS-FREE. GOAL MET.**
 
 `Necessity.complex_classification_unconditional` (`Necessity/ComplexRowUnconditional.lean`)
