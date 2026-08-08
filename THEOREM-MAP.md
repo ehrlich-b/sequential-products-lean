@@ -243,10 +243,30 @@ pin does establish.  **On the concrete carrier this caveat is now discharged**
 `norm_le_sqrt_card_mul_ouNorm`, `Hermitian/OrderUnit.lean`), and
 `twistSeq_continuousAt_ouNorm` (`Hermitian/Sequential.lean`) states first-argument
 ε–δ continuity of the twist product *in the order-unit norm itself* — the paper's
-literal (S2) for `lem:twist-sufficiency`.  The remaining caveat is generic-interface
-only: the abstract `OrderUnitSpace` still never identifies its carried norm with
-the order-unit norm, which matters for the *necessity* direction's S2 hypothesis,
-not for the sufficiency row.
+literal (S2) for `lem:twist-sufficiency`.
+
+**CLOSED for the necessity direction too, 2026-08-08 (LEDGER 4.2).** What remained
+was the *necessity* rows' S2 hypothesis: a two-sided comparison of norms is not by
+itself a statement about `ContinuousOn`, and `ContinuousOn` cannot express
+"continuous in the order-unit norm" at all, because the carrier has exactly one
+`TopologicalSpace` instance and it is the Frobenius one. So the order-unit
+hypothesis is written out in ε–δ form against `ouNorm` on both sides of the map —
+which is how the manuscript states (S2) — and proved equivalent:
+
+| Paper statement | Lean declaration | File |
+| --- | --- | --- |
+| (S2) as the manuscript states it: ε–δ first-argument continuity on effects in `‖·‖_e` | `HermitianMat.ContinuousOnOu`, `Necessity.FirstArgContinuousOu` | `Necessity/OrderUnitS2.lean` |
+| order-unit-norm continuity ⟺ `ContinuousOn` on the concrete carrier | `HermitianMat.continuousOnOu_iff_continuousOn`, `Necessity.firstArgContinuousOu_iff` | `Necessity/OrderUnitS2.lean` |
+| `mthm:master` real row, S2 in the order-unit norm | `Necessity.real_classification_ouNorm` | `Necessity/OrderUnitS2.lean` |
+| `mthm:master` complex row, S2 in the order-unit norm | `Necessity.complex_classification_unconditional_ouNorm` | `Necessity/OrderUnitS2.lean` |
+
+Both `_ouNorm` capstones have the same conclusions and the same closure (Lean core)
+as the rows they wrap; the only change is that no prose argument about which norm
+(S2) refers to is load-bearing any more. The residual caveat is now *only* about the
+abstract interface: generic `OrderUnitSpace` still never identifies its carried norm
+with the order-unit norm, so the bridge is a theorem about `HermitianMat n 𝕜`
+(where the sandwich is available), not about the abstract class. Since both flagship
+rows live on that concrete carrier, no row depends on the abstract gap.
 
 ### M1 carrier layer (supporting infrastructure, no paper labels)
 

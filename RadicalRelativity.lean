@@ -269,6 +269,14 @@ import RadicalRelativity.Necessity.RealKadison
 import RadicalRelativity.Necessity.RealRigidity
 import RadicalRelativity.Necessity.RealRowUnconditional
 
+-- ARC-4 (LEDGER 4.2): S2 in the ORDER-UNIT norm.  FirstArgContinuous is ContinuousOn in
+-- the norm the carrier HAS (Frobenius); the manuscript's S2 is continuity in the
+-- order-unit norm.  ContinuousOnOu writes the latter out in epsilon-delta form (the only
+-- way to say it -- the carrier has a single topology instance), the sandwich
+-- ouNorm <= ||.|| <= sqrt(card n) * ouNorm proves the two equivalent, and both flagship
+-- rows are restated with the paper's S2 verbatim as their hypothesis.
+import RadicalRelativity.Necessity.OrderUnitS2
+
 -- M2 necessity core, tenth unit (LEDGER 2.6, chi part 1): the comparison character
 -- on the diagonal family — base-point congruence, the value law
 -- a(r) sp a(r') = a(r+r'), chi(0) = 1 through theta_base_one, and the orthant

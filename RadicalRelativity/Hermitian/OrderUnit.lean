@@ -222,7 +222,7 @@ THEOREM-MAP's (S2) literal-fidelity caveat. -/
 
 /-- Every eigenvalue is bounded by the order-unit norm in absolute value.  The
 lower bound goes through `-a` and the eigenvalue permutation of `cfc_eigenvalues`. -/
-theorem abs_eigenvalues_le_ouNorm (a : HermitianMat n ℂ) (i : n) :
+theorem abs_eigenvalues_le_ouNorm (a : HermitianMat n 𝕜) (i : n) :
     |a.H.eigenvalues i| ≤ ouNorm a := by
   rw [abs_le]
   constructor
@@ -240,7 +240,7 @@ theorem abs_eigenvalues_le_ouNorm (a : HermitianMat n ℂ) (i : n) :
 
 /-- **The reverse norm comparison**: the carried (Frobenius) norm is at most
 `√(card n)` times the order-unit norm. -/
-theorem norm_le_sqrt_card_mul_ouNorm (a : HermitianMat n ℂ) :
+theorem norm_le_sqrt_card_mul_ouNorm (a : HermitianMat n 𝕜) :
     ‖a‖ ≤ Real.sqrt (Fintype.card n) * ouNorm a := by
   have hsq : ‖a‖ ^ 2 ≤ (Fintype.card n : ℝ) * ouNorm a ^ 2 := by
     rw [norm_eq_sum_eigenvalues_sq]
