@@ -71,6 +71,8 @@ vendored `Projectivization.wigner_rigidity`).
 | `lem:frame-connectivity`: any two frames are joined by an axis-adjacency walk | `Necessity.adjAxis_connected` | `Necessity/UnitaryGeneration.lean` |
 | every unitary is a product of three axis-fixing unitaries (`N ≥ 3`) | `Necessity.exists_axisFixing_factor` | `Necessity/UnitaryGeneration.lean` |
 | the twist form at an arbitrary frame (frame a free parameter) | `Necessity.sp_eq_twistSeq_frame` | `Necessity/FrameConstancy.lean` |
+| **non-vacuity**: the hypothesis class is inhabited | `Necessity.twistProductOn_classified` | `Necessity/ComplexRowUnconditional.lean` |
+| **sharpness**: the capstone recovers `t` on `twistProductOn t` | `Necessity.complex_classification_sharp` | `Necessity/ComplexRowUnconditional.lean` |
 | the per-frame parameter is unique, so `frameTwist` is an invariant of the frame | `Necessity.frameTwist_unique` | `Necessity/ComplexResidue.lean` |
 | the same, invertible effects only, one global `t` | `Necessity.sp_eq_twistSeq_of_frameGraph` | `Necessity/ComplexMaster.lean` |
 | `prop:singular` **applied** (invertible ⟹ all effects) | `Necessity.sp_eq_twistSeq_of_effect` | `Necessity/ComplexClassification.lean` |
@@ -110,6 +112,14 @@ Prefer `complex_classification_unconditional` when citing the row. The discharge
   supported on one axis fixes that axis. A reflection `1 − 2ww*/⟪w,w⟫` fixes every axis its
   vector misses, which is what makes it usable as an adjacency step; `N ≥ 3` is exactly what
   frees the axis the second reflection must miss.
+
+**Two vacuity questions are answered in the tree, not by argument.** A theorem quantified over a
+hypothesis class says nothing if the class is empty, and a theorem producing a parameter says
+little if the parameter need not be the intended one. `twistProductOn_classified` instantiates
+the capstone at M1's twist product, so `3 ≤ N` + S1–S7 + S2 are demonstrably simultaneously
+satisfiable; `complex_classification_sharp` shows the unique parameter returned for
+`twistProductOn t` is `t` itself. This is the same discipline that closed the OpCommute
+vacuity-escape class: construct the witness rather than assert the non-emptiness.
 
 **Superseded claim, do not restore.** The prior entry read that the residue is
 "sufficient, not proved equivalent — write 'suffices for', not 'equivalent to'". That
