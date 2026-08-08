@@ -13,6 +13,86 @@ interface structure instantiated on the intended algebras.
 
 ---
 
+## ★★ ARC-5 ORDERS (2026-08-08, Fable design pass — the coverage ladder). READ THIS FIRST.
+
+**The question that produced this arc:** Bryan asked what it would take to reach 36/36 of
+the paper's numbered results in Lean, and what the concerns are with setting exactly that
+goal.
+
+**Decision record — literal 36/36 REJECTED as the goal (do not re-litigate).** Verified at
+source: the final ticks are FIVE separate research-scale programs, four of them other
+people's mathematics: `thm:vdw1` (van de Wetering's Jordan representation theorem — the
+paper's central import); **JvNW hiding inside `mthm:master`/`mthm:omnibus`** (both are
+stated over an abstract simple EJA, so "one theorem at article generality" needs the
+Jordan–von Neumann–Wigner classification — the campaign's pre-registered PERMANENT import,
+see the target restated above: "Lean core + at most JvNW as disclosed import");
+`prop:bridge` (cited external); `prop:theta` at vIR's JB-algebra generality; and the Albert
+row's M2 machinery (unscoped since the 08-04 memo — the octonions themselves are NOT the
+wall, see the H₃(𝕆) correction below). **Interior honest ceiling ≈ 26–28 of 36.** A 36/36
+chased through located hypotheses or disclosed axioms would trade the census (`custom
+axioms exactly []`) — the asset's entire distinguishing value — for a number. The count is
+a LaTeX artifact (43 environments minus 7 remarks); the census and THEOREM-MAP are the
+product.
+
+**EJA-first also REJECTED for this arc.** The abstract-generality gaps an EJA layer closes
+are supporting-lemma rows, not headline rows; several "abstract" rows (`lem:span`,
+`lem:normality`, `lem:cone-ext`) are stated at ORDER-UNIT-SPACE generality, which the
+skeleton already carries — no EJA needed. The EJA/Peirce/symmetric-cone layer remains what
+the 07-19 scouting memo said: the high-leverage **Mathlib-upstream** project, run as its
+own initiative later, never welded to this paper's count (it also drags toward JvNW).
+
+**THE LADDER (execute in order; on a genuine wall, bank the measured remainder HERE and
+continue with the next item — the ARC-4 rule):**
+
+* **5.0 Freeze the denominator.** `STATEMENT-MANIFEST.md` in this repo: the 36 labels with
+  their current statements (one line each) pinned to the main.tex of frozen tag
+  `paperA-jpa-submitted` @ blog `035c337` + today's working copy. Coverage claims cite the
+  manifest, so a future renumbering can't silently move the target. No manuscript edit.
+* **5.1 Small-lemma tier (~9 rows, machinery in hand).** `lem:aone` (three lines from
+  S1/S3/S4/S6); `lem:span`, `lem:normality`, `lem:cone-ext` at their OUS generality;
+  `prop:pseudo-transfer`; `lem:orientation` (Im tr(xyz), self-contained at n=3);
+  `cor:selectors`; `lem:homog` remaining clauses; `lem:frame-fix` general statement.
+* **5.2 Caveat + hygiene closure.** (a) `AdjAxis` non-vacuity as an in-tree theorem (the
+  arc-3 reviewer's scratch proof of `¬ AdjAxis 1 cycU`). (b) Upgrade `lem:adjacent` +
+  `lem:frame-connectivity` to the ARTICLE'S adjacency (rank-two-block rotation sharing the
+  spectator atoms p₃…p_n — verified at main.tex:1269; plausibly reachable by chaining the
+  existing axis-adjacency machinery; if it resists, bank and move on — the caveat is
+  already honestly stated). (c) THEOREM-MAP: add the four unlabeled rows (`lem:frame-fix`,
+  `lem:coalescence`, `lem:homog`, `prop:bridge`).
+* **5.3 THE BOULDER — the rank-two classification map** (the title's SECOND claim, "and
+  the Complex Qubit", currently absent as a map). Build `product ↦ moduli` taking an
+  arbitrary S1–S7+S2 product on M₂(ℂ)ˢᵃ as input; closes en bloc: `prop:n2-necessity`
+  lifting (prove the angle map linear, don't assume it), `lem:n2-bounded`,
+  `lem:n2-continuity`, `lem:n2-descent` (arbitrary product), `prop:n2-sufficiency`,
+  `thm:qubit-boundary` bundling, `cor:qubit-classification`. **Pre-registered wall:**
+  continuity/canonicity of the frame-function extraction from the block normal form.
+  Fallback: bank the explicit-selection version with the gap recorded in THEOREM-MAP.
+* **5.4 The differential trio.** `lem:homomorphism` (differentiate Θ in the matrix
+  argument; prove `dχAdd` IS its derivative — the development currently *begins after*
+  this transition), `lem:coalescence` identification, `prop:stabilizers` construction.
+  Wall: Fréchet machinery on the carrier (a normed space, so Mathlib `fderiv` applies).
+  Fallback: pointwise-derivative version, banked.
+* **5.5 STRETCH — the ℍ row.** Route per the 08-06 correction: `H_n(ℍ) ↪ H_{2n}(ℂ)` as
+  fixed points of a conjugate-linear involution (ℍ is not `RCLike`; that, not missing
+  quaternions, is the blocker). Quaternionic Wigner may fall to the RealWigner rank-one
+  technique. This is plausibly its own arc; any progress banks.
+
+**Constraints (welded, not advisory):** a result counts FORMALIZED only with no located
+hypothesis standing in for a cited result, at the article's own generality; custom axioms
+stay exactly `[]` and the census+manifest run green at every commit; the THEOREM-MAP row
+updates in the same commit as each proof; never write "fully formalized"; all commits
+LOCAL (public repo, push Bryan-gated, NEVER sync.sh); manuscript, `upstream/` submission,
+and everything outward untouched; T1/T2 PARKED; JMP RESERVED; frozen tags never touched.
+End of arc: ONE isolated cold review of the arc's diffs against a frozen tag (ARC-4
+pattern — it earned its keep), then compact this ledger's arc narrative.
+
+**Expected movement if no wall bites:** 5/36 → ~14 after 5.1–5.2 → ~21 after 5.3 → ~24
+after 5.4; the stretch adds ~1 plus a first-party quaternionic Wigner. Unlike ARC-4 (six
+bounded refactors, one hour), 5.3 and 5.4 are NEW MATHEMATICS in Lean — expect walls, use
+the fallbacks, report the remainder honestly.
+
+---
+
 ## ★★ ARC-4 RESULT (2026-08-08) — **the asset is truthful, sharper, and PR-staged. All six items landed.**
 
 Gates at the end of the arc: `lake build` green at **3106 jobs**; `AxiomAudit.lean`
