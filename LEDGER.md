@@ -19,11 +19,18 @@ Gates at the end of the arc: `lake build` green at **3106 jobs**; `AxiomAudit.le
 PASS at **149 tracked modules** (== frozen 149-name manifest); **custom axioms exactly
 `[]`**; every tracked persisted declaration's closure ⊆ {`propext`, `Classical.choice`,
 `Quot.sound`}. All commits LOCAL. Frozen tags: `paperA-arc4-review` @ `7cdf690` (the state
-the cold review read) and **`paperA-arc4` @ `0e1c366`** (the arc's final state, after the
+the cold review read) and **`paperA-arc4` @ `53b32ee`** (the arc's final state, after the
 review-driven fix below).
 
 Commits: `8727fff` (4.1) · `0d2fec9` (4.2) · `3f89c8f` (4.3) · `7cdf690` (4.4) ·
-`f4deb30` (4.6 compaction) · `0e1c366` (4.6 review fix); blog `fb65b07` (4.5).
+`f4deb30` (4.6 compaction) · `0e1c366` (4.6 review fix) · `53b32ee` (4.6 review record);
+blog `fb65b07` (4.5) · `f1a79b6` · `12e7c24`.
+
+**The tree carries zero `sorry`.** The only two occurrences of the token live inside a
+comment block in `Vendor/Misc.lean` (illustrative code for what those declarations should
+become once a Mathlib `ConditionallyCompleteLattice` diamond is fixed) — they are not
+declarations and reach no proof. Soundness of the tree and *coverage of the article* are
+different questions: see the coverage count below.
 
 **4.6 cold review — RAN, and it earned its keep.** One isolated adversarial reviewer, given
 the frozen SHA and told to write its own Lean probes. It confirmed the 4.2/4.3 diffs on every
