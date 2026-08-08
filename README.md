@@ -32,10 +32,44 @@ lake build           # builds the paper's modules (no-sorry / axiom-closure gate
 - Mathlib: `v4.28.0`, pinned in `lake-manifest.json` (identical revision to the
   parent development).
 
+## The two unconditional rows
+
+Two rows of the paper's main theorem are machine-checked with **no hypotheses
+beyond the paper's own** — an S1–S7 sequential product (the
+`SequentialProductOn` fields), S2 (`FirstArgContinuous`), and a dimension
+bound. Nothing else is assumed, and no interface field is posited:
+
+```
+#check @Necessity.complex_classification_unconditional
+-- ∀ {N : ℕ}, 3 ≤ N → ∀ (P : SequentialProductOn (HermitianMat (Fin N) ℂ)),
+--   P.FirstArgContinuous →
+--     ∃! t, ∀ (a b), IsEffect a → IsEffect b → P.sp a b = HermitianMat.twistSeq t a b
+
+#check @Necessity.real_classification
+-- ∀ {N : ℕ}, 0 < N → ∀ (P : SequentialProductOn (HermitianMat (Fin N) ℝ)),
+--   P.FirstArgContinuous → ∀ {b}, IsEffect b → ∀ (a), IsEffect a →
+--     P.sp a b = (HermitianMat.conj ↑(a.cfc Real.sqrt)) b
+```
+
+Both close over Lean's three core axioms only. `PaperA/CertifiedConfiguration.lean`
+additionally shows these two rows satisfy the *frozen conclusion shapes* of
+`PaperA/Statement.lean` with the Lüders and twist reference maps instantiated
+concretely (`real_meets_ludersConclusion`,
+`complex_meets_uniqueTwistConclusion`), so for them the audited shape and the
+proved theorem are the same statement.
+
+The quaternionic and exceptional rows are **not** in this state: `H_n(ℍ)` needs
+quaternionic Wigner rigidity and `H₃(𝕆)` needs the octonions, neither of which
+exists in any proof assistant. `THEOREM-MAP.md` is the governing ledger for
+what is and is not verified; read it before reading any row here as a claim.
+
 ## Axiom audit
 
-The capstone theorem is `MasterTheorem.master_chain` (in
-`RadicalRelativity/MasterTheorem/Master.lean`). Its axiom closure is exactly
+`MasterTheorem.master_chain` (in `RadicalRelativity/MasterTheorem/Master.lean`)
+is the abstract master-theorem skeleton. It is **not** a verification of the
+paper's theorem: it is an implication quantified over the §2 interface fields,
+so its clean closure certifies that no step between the cited inputs is
+unsound, not that those inputs are discharged. Its axiom closure is exactly
 Lean's three core axioms:
 
 ```
@@ -44,7 +78,11 @@ Lean's three core axioms:
 --   [propext, Classical.choice, Quot.sound]
 ```
 
-No custom `axiom` declarations appear in the `master_chain` import tree.
+No custom `axiom` declarations appear in the `master_chain` import tree — nor
+anywhere in the tracked tree: `AxiomAudit.lean` enforces, over every persisted
+declaration of every tracked module, that the closure is a subset of
+`{propext, Classical.choice, Quot.sound}` and that the custom-axiom list is
+empty.
 
 ## SymPy cross-check
 
