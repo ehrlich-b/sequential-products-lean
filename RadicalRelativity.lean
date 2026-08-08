@@ -257,6 +257,7 @@ import RadicalRelativity.Necessity.RealProjectionOrder
 import RadicalRelativity.Necessity.RealWignerBridge
 import RadicalRelativity.Necessity.ComplexResidue
 import RadicalRelativity.Necessity.FrameConstancy
+import RadicalRelativity.Necessity.UnitaryGeneration
 import RadicalRelativity.Necessity.RealInducedMap
 import RadicalRelativity.Necessity.RealKadison
 import RadicalRelativity.Necessity.RealRigidity
