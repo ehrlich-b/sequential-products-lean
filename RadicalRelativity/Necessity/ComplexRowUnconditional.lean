@@ -26,6 +26,20 @@ The hypothesis list is now exactly the paper's: an S1–S7 product, S2, and `N �
 Lean core alone (`propext`, `Classical.choice`, `Quot.sound`), as it already was for the
 conditional form — what changed is not the axiom closure but the *carried hypotheses*.
 
+**The `Adj := True` step is not circular, and the ordering is what makes it so.**  A reader who
+sees `complex_classification_of_frameTwistConst` instantiate the adjacency trivially may suspect
+connectivity has been assumed away.  It has not: constancy of `frameTwist` is established
+*first* and independently, from the genuine `AdjAxis` walk (`frameTwistConst` below, resting on
+`adjAxis_connected`, which is proved from a Householder factorization and is *false* for a
+trivial relation — `AdjAxis` does not hold of all pairs).  Only afterwards is the capstone reused
+with the cheapest possible adjacency, at which point the frame graph plays no role because the
+conclusion it would have delivered is already in hand.
+
+**What `a^{1/2+it}` means at singular `a`.**  `twistFactor` is the continuous functional calculus
+of `x ↦ √x·cos(t log x)` and `x ↦ √x·sin(t log x)`.  Under Lean's convention `Real.log 0 = 0`
+these vanish at `0`, so the factor is `0` on `a`'s kernel — the intended continuous extension of
+`a^{1/2+it}`, which is what makes the singular case meaningful at all.
+
 Both flagship rows of `mthm:master` are now hypothesis-free: this one and
 `RealRowUnconditional.real_classification`.
 -/

@@ -22,8 +22,15 @@ provides.  The per-frame theorem then computes `P.sp a_x b` twice, once with `fr
 and once with `frameTwist G`, so the two twist products agree at `a_x` for every effect `b`.
 Reading the `(m, m')` entry against the pair projection turns that into agreement of the
 characters `x ↦ e^{i t x}` on an interval, and `real_character_unique` finishes with no
-`2π` ambiguity — which is why the family, and not a single base point, is the object being
-compared.
+`2π` ambiguity.
+
+Why the family and not a single base point: **one phase equation cannot pin `t`.** The probe
+used here reads a single entry, giving `e^{i t₁ Δ} = e^{i t₂ Δ}` with `Δ` the spectral gap,
+which determines `t₁ − t₂` only modulo `2π/Δ`; running `x` over an interval removes the
+ambiguity.  This is a statement about *this* probe, not a mathematical necessity — for
+`N ≥ 3` a single base point with incommensurable gaps, read at two index pairs, would also
+force exactness.  The scaled family is chosen because it is cheap and because the two-level
+spectrum is exactly what an axis adjacency preserves.
 
 * `sp_eq_twistSeq_frame` — **the workhorse.**  At any frame `U` and any nonpositive
   diagonal family, the product is the twist with parameter `frameTwist U`.  This is
