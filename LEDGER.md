@@ -56,6 +56,17 @@ instantiated, exactly as the attack plan called for):
   square roots opaquely via `obtain ⟨b, hbne, hb⟩`).
 * `frameTwistConst` needs `intro F G` + explicit `(Adj := …) (t := …)`; term-mode with
   implicit unification times out at `whnf` on `frameTwist`'s `Classical.choose` body.
+* ★ **A prediction in the ORDERS below was WRONG, and the record must not imply otherwise.**
+  The orders said `frameTwist_unique` (built 08-06) would be the tool that ties the transported
+  parameter to `frameTwist` "without fighting `choose`". **It is not used at all** — verified by
+  grep: nothing outside its own definition site references it. The reason is that the winning
+  route compares PRODUCT VALUES (`twistSeq t_F a b = twistSeq t_G a b`, then strip the
+  conjugation and probe) rather than comparing stabilizer couplings, so `choose` never had to
+  be fought: `frameTwist_spec` is applied at each frame separately and the two conclusions are
+  chained through `P.sp a b`. `frameTwist_unique` remains a true and worthwhile theorem — it is
+  what makes `frameTwist` an invariant rather than a choice artefact — but it is **not
+  load-bearing for the unconditional capstone**, and anyone budgeting future work should not
+  assume the coupling-comparison route was the one that worked.
 
 **Item 7.3 (statement layer) — also DONE for the ℝ and ℂ rows.**
 `RadicalRelativity/PaperA/CertifiedConfiguration.lean`: both reference maps instantiated
