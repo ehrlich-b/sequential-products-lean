@@ -38,7 +38,13 @@ instantiated, exactly as the attack plan called for):
   `house_mulVec_align`; `exists_alignTarget`; `exists_align_off_axis`;
   `exists_clear_column`; **`exists_axisFixing_factor`**; **`adjAxis_connected`**.
 * `Necessity/ComplexRowUnconditional.lean` — **`frameTwistConst`**,
-  **`complex_classification_unconditional`**.
+  **`complex_classification_unconditional`**, plus two **in-tree non-vacuity certificates**:
+  `twistProductOn_classified` (the hypothesis class is inhabited — `3 ≤ N` + S1-S7 + S2 are
+  simultaneously satisfiable, witnessed by M1's twist product, so the row is not vacuous) and
+  `complex_classification_sharp` (run the capstone on `twistProductOn t` and the unique
+  parameter it returns is `t` itself — the twist family is faithfully parameterized and the
+  `∃!` is not met by some unrelated value). These answer the vacuity question *in the tree*
+  rather than by argument, which is the same discipline that killed the OpCommute escape class.
 
 **Design decisions that mattered, for anyone extending this:**
 * Adjacency was defined as "`F* G` fixes a coordinate axis" (`AdjAxis`), NOT as the general
