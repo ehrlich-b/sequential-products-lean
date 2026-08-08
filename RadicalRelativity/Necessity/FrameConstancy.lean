@@ -399,6 +399,100 @@ theorem n2_sp_eq_twistSeq_frame (hS2 : P.FirstArgContinuous)
     (unitaryGroup_mul_conjTranspose U) ha (n2FrameTwist P hS2 U)
     (fun _b' hb' => n2_sp_eq_twistSeq _ (conjProduct_firstArgContinuous P _ _ hS2) hr hb') hb
 
+/-- **The `(U, r)` form covers every invertible effect**, which is how the article states
+`prop:n2-necessity`.  The spectral theorem (`eq_adU_diagFamily`) writes a positive-definite
+effect as `Ad_U (diagFamily r)` with `r` the logarithms of its eigenvalues, and those are
+nonpositive because the eigenvalues of an effect are at most one — so the restriction to
+nonpositive `r` is not a restriction at all.
+
+Added after the arc-5 cold review pointed out that the section proved this but never said
+it, so a reader could not see that the `(U, r)` parametrization is exhaustive. -/
+theorem n2_every_posDef_effect (hS2 : P.FirstArgContinuous)
+    {a b : HermitianMat (Fin 2) ℂ} (ha : IsEffect a) (hbd : (a.mat).PosDef)
+    (hb : IsEffect b) :
+    P.sp a b = HermitianMat.twistSeq (n2FrameTwist P hS2 a.H.eigenvectorUnitary) a b :=
+  n2_sp_eq_twistSeq_frame P hS2 _
+    (fun i => log_eigenvalues_nonpos ha hbd i) (eq_adU_diagFamily hbd) hb
+
+/-! ### The frame-reversal clause of `lem:n2-descent`, for an arbitrary product
+
+Reversing an ordered frame means swapping the two columns of `U`.  The frame function is
+invariant under that, so it is a function of the *unordered* frame — which is the first of the
+three things `lem:n2-descent` needs (the others, boundedness and continuity, remain open).
+
+This was banked as remaining boulder work and it should not have been: the arc-5 cold review
+produced it in ~35 lines from `n2_sp_eq_twistSeq_frame` plus pre-existing machinery, and it is
+adopted here with that provenance. The mechanism is that the swap carries the two-level
+spectrum `axisSplit 1` to `axisSplit 0`, so a single base point is diagonal in both the frame
+of `U` and the frame of `U * swap`; `twist_param_unique_of_scaled` then pins the two
+parameters to each other exactly, over an interval, with no `2π` ambiguity. -/
+
+/-- The swap of the two coordinates. -/
+def swapMat : Matrix (Fin 2) (Fin 2) ℂ := Matrix.of fun k l => if k = l then 0 else 1
+
+theorem swapMat_unitary : swapMat ∈ Matrix.unitaryGroup (Fin 2) ℂ := by
+  rw [Matrix.mem_unitaryGroup_iff']
+  ext k l
+  fin_cases k <;> fin_cases l <;>
+    simp [swapMat, Matrix.mul_apply, Fin.sum_univ_two, Matrix.star_eq_conjTranspose,
+      Matrix.conjTranspose_apply]
+
+/-- Frame reversal, as an element of `U(2)`. -/
+def swapU : Matrix.unitaryGroup (Fin 2) ℂ := ⟨swapMat, swapMat_unitary⟩
+
+/-- Conjugating a two-level diagonal family by the swap exchanges the two exponents. -/
+theorem adU_swap_diagFamily (x : ℝ) :
+    adU swapMat (diagFamily (x • axisSplit (1 : Fin 2)))
+      = diagFamily (x • axisSplit (0 : Fin 2)) := by
+  ext1
+  rw [adU_apply, HermitianMat.conj_apply_mat, diagFamily_mat, diagFamily_mat]
+  ext p q
+  fin_cases p <;> fin_cases q <;>
+    simp [swapMat, Matrix.mul_apply, Fin.sum_univ_two, Matrix.diagonal, axisSplit,
+      Matrix.conjTranspose_apply]
+
+theorem axisSplit_smul_nonpos (m : Fin 2) {x : ℝ} (hx : 0 < x) :
+    ∀ k, (x • axisSplit m) k ≤ 0 := by
+  intro k
+  simp only [Pi.smul_apply, smul_eq_mul, axisSplit]
+  by_cases hk : k = m
+  · rw [if_pos hk]; linarith
+  · rw [if_neg hk, mul_zero]
+
+/-- **`lem:n2-descent`, frame-reversal clause, for an ARBITRARY product**: the rank-two frame
+function does not see the order of the frame. -/
+theorem n2FrameTwist_reverse (hS2 : P.FirstArgContinuous)
+    (U : Matrix.unitaryGroup (Fin 2) ℂ) :
+    n2FrameTwist P hS2 (U * swapU) = n2FrameTwist P hS2 U := by
+  refine twist_param_unique_of_scaled (N := 2) (i := 0) (j := 1) (by decide)
+    (u := 0) (v := 1) zero_lt_one (s := axisSplit (0 : Fin 2)) (by simp [axisSplit]) ?_
+  intro x hx
+  have hxpos : (0 : ℝ) < x := hx.1
+  have hbase : adU ((U * swapU : Matrix.unitaryGroup (Fin 2) ℂ) :
+        Matrix (Fin 2) (Fin 2) ℂ) (diagFamily (x • axisSplit (1 : Fin 2)))
+      = adU (U : Matrix (Fin 2) (Fin 2) ℂ) (diagFamily (x • axisSplit (0 : Fin 2))) := by
+    rw [← adU_swap_diagFamily x]
+    ext1
+    simp only [adU_apply, HermitianMat.conj_apply_mat, Submonoid.coe_mul]
+    show ((U : Matrix (Fin 2) (Fin 2) ℂ) * swapMat) * _
+        * ((U : Matrix (Fin 2) (Fin 2) ℂ) * swapMat)ᴴ
+      = (U : Matrix (Fin 2) (Fin 2) ℂ) * (swapMat * _ * swapMatᴴ)
+        * (U : Matrix (Fin 2) (Fin 2) ℂ)ᴴ
+    rw [Matrix.conjTranspose_mul]
+    simp only [Matrix.mul_assoc]
+  refine twistSeq_eq_of_adU (U := (U : Matrix (Fin 2) (Fin 2) ℂ))
+    (unitaryGroup_conjTranspose_mul U) (unitaryGroup_mul_conjTranspose U) ?_
+    (pairProj_isEffect (i := (0 : Fin 2)) (j := 1) (by decide))
+  intro c hc
+  have h1 := n2_sp_eq_twistSeq_frame P hS2 (U * swapU) (axisSplit_smul_nonpos 1 hxpos)
+    (a := adU ((U * swapU : Matrix.unitaryGroup (Fin 2) ℂ) : Matrix (Fin 2) (Fin 2) ℂ)
+      (diagFamily (x • axisSplit (1 : Fin 2)))) rfl hc
+  have h2 := n2_sp_eq_twistSeq_frame P hS2 U (axisSplit_smul_nonpos 0 hxpos)
+    (a := adU (U : Matrix (Fin 2) (Fin 2) ℂ)
+      (diagFamily (x • axisSplit (0 : Fin 2)))) rfl hc
+  rw [hbase] at h1
+  rw [← h1, h2]
+
 end RankTwoExtraction
 
 /-! ## The article's own frame adjacency

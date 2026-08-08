@@ -518,11 +518,11 @@ theorem adjBlock_one_house_pair (hN : 3 ≤ N) :
       rw [this]; ring
     · have : pairVec i j l = 0 := by simp [pairVec, hl.1, hl.2]
       rw [this]; simp
-  · show house (pairVec i j) ≠ 1
+  · change house (pairVec i j) ≠ 1
     intro hone
     have hentry := congrFun (congrFun hone i) j
     rw [house_apply, Matrix.one_apply_ne hij, nrm2_pairVec hij] at hentry
-    simp only [pairVec, if_true, Matrix.one_apply_ne hij] at hentry
+    simp only [pairVec, if_true] at hentry
     norm_num at hentry
 
 /-- **The non-vacuity of the connectivity theorem, stated as such.**  `AdjAxis` is a proper

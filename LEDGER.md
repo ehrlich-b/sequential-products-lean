@@ -89,18 +89,27 @@ continue with the next item — the ARC-4 rule):**
   `not_adjAxis_one_house`): the Householder reflection in the all-ones direction has every
   off-diagonal entry `-2/N`, so it fixes no axis. The caveat that said this was "asserted in a
   docstring but is not itself a theorem" is retired.
-  (b) **HALF DONE, and the order conflated two rows.** `lem:adjacent` is now proved at the
-  ARTICLE'S adjacency: `Necessity.AdjBlock` is that relation in unitary coordinates (`F*G`
-  diagonal outside one index pair), and `adjAxis_of_adjBlock` bridges to the existing engine —
-  at rank `n ≥ 3` a two-element block cannot exhaust the indices, so an article-adjacent pair
-  shares a whole axis. Row moves to FORMALIZED, and the relation is pinned from both sides
-  (`adjBlock_one_house_pair` gives a pair with `F ≠ G`; `not_adjAxis_one_house` gives
-  non-totality). ★ **But `lem:frame-connectivity` does NOT come with it, contrary to this
-  order's wording.** `AdjBlock` is *strictly finer* than `AdjAxis` (all but two axes fixed vs.
-  some axis fixed), so connectivity for the article's graph is strictly *stronger* than
-  `adjAxis_connected` and needs every unitary to factor into rank-two block rotations — a
-  Givens/Jacobi decomposition — where the tree has three axis-fixing Householder factors.
-  Banked with that as the measured remainder.
+  (b) **RELABELLED after the cold review: this was an UNDERCOUNTED ROW, not new mathematics.**
+  `lem:adjacent` is FORMALIZED, but its honest witness is **`frameTwistConst`**, already in the
+  tree at tag `paperA-arc4`, which proves `frameTwist` constant across *all* frames — so the
+  article's adjacent-frame case follows for any relation whatsoever. The reviewer compiled the
+  conclusion of `frameTwist_eq_of_adjBlock` with the hypothesis **deleted**, and again with an
+  arbitrary relation in its place. So this row belongs beside `lem:aone` (carried as unproved
+  while a proof existed), *not* beside `cor:selectors`(ii) or the rank-two extraction. The
+  commit message ("Close lem:adjacent at the article's own frame adjacency") overstates;
+  `THEOREM-MAP.md` governs and now says so. `AdjBlock`, `adjAxis_of_adjBlock` and
+  `frameTwist_eq_of_adjBlock` stay as documentation of the article's relation in the tree's
+  coordinates; they add no provable content.
+  ★ **The fidelity note written to justify the row was FALSE.** It said "`AdjBlock` is a
+  *superset* of the article's relation, which makes the theorem stronger". Refuted by compiled
+  counterexample: the 3-cycle permutation of the standard basis of `ℂ³` has *literally the
+  standard frame* as its Jordan frame, yet fails `AdjBlock` — because `AdjBlock` forbids
+  relabelling the shared atoms while the article's frames are **unordered** sets of atoms
+  (verified at source, `main.tex`:1269–1273). `AdjBlock` is a relation on *labelled* frames,
+  neither a superset nor a subset. Never repeat the superset claim.
+  `lem:frame-connectivity` remains open and that reason stands: `AdjBlock` is strictly finer
+  than `AdjAxis`, so connectivity for it is strictly stronger and needs a Givens/Jacobi
+  factorization into rank-two block rotations.
   (c) **DONE.** `THEOREM-MAP.md` §3b now carries rows for `lem:homog`, `lem:cone-ext`,
   `lem:frame-fix`, and `prop:bridge`, so the map covers all 36 like the manifest does.
 * **5.3 THE BOULDER — the rank-two classification map. THE INPUT NOW EXISTS (2026-08-08);
@@ -131,9 +140,20 @@ continue with the next item — the ARC-4 rule):**
   and frame-reversal invariance/`ℝP²`-descent (`lem:n2-descent`) **of that function**, plus
   `prop:n2-sufficiency` for the reverse direction, before `cor:qubit-classification`
   assembles. Those three are now statements about a function that exists, which they were
-  not this morning. `prop:n2-necessity` stays PARTIAL for a presentational reason only: the
-  article's conclusion is about `Θ_a|_{W_n}` with frames indexed by `n ∈ S²`, Lean's is the
-  equivalent product-level identity with frames indexed by `U ∈ U(2)`.
+  not this morning.
+  ★ **Corrected by the cold review: "presentational only" was wrong.** Two real gaps remain in
+  `prop:n2-necessity` — `U(2) → S²` is a quotient by the diagonal-phase fibre and nothing proves
+  `n2FrameTwist` constant on those fibres, so Lean does not yet have a function of the *ordered
+  frame*; and the equivalence between the article's `Θ_a|_{W_n}` form and Lean's product-level
+  identity is the route, not a proved statement.
+  **Two theorems adopted from the review, both now in the tree:** `n2_every_posDef_effect` (the
+  `(U, r)` form covers **every invertible effect**, via the spectral theorem — the section proved
+  this but never said it) and ★ **`n2FrameTwist_reverse`**, the **frame-reversal clause of
+  `lem:n2-descent` for an arbitrary product**: `n2FrameTwist (U * swapU) = n2FrameTwist U`, so
+  the frame function is order-blind and is a function of the *unordered* frame. That clause had
+  been banked as remaining boulder work and was mispriced — it is ~35 lines given what landed.
+  Open rank-two work is now **boundedness and continuity** of the frame function, plus
+  `prop:n2-sufficiency`.
   **Lesson banked:** the old entry inferred "the classification map does not exist in Lean at
   all" from `grep -c SequentialProductOn RadicalRelativity/RankTwo/*.lean` → 0. The grep was
   accurate; the inference was wrong, because the map got built in `Necessity/`. Scoping an
@@ -181,7 +201,57 @@ missing).
 
 Commits: `6f2442a` (5.0) · `51cfbb9` (coverage corrections) · `287cff3` (selector ii) ·
 `4e12d84` (abstract span + AdjAxis non-vacuity) · `88aba62` (article adjacency) · `9248f3d`
-(5.2 close + 5.1 repricing); blog `650aa12` · `326aedb` · `8900e4b` · `168e9a7`.
+(5.2 close + 5.1 repricing) · `5e3e3e5` (5.3 rank-two extraction); blog `650aa12` · `326aedb` ·
+`8900e4b` · `168e9a7` · `174e3ff` · `2d2c6cc`.
+
+## ARC-5 COLD REVIEW — RAN, and it earned its keep twice over
+
+One isolated adversarial reviewer, given frozen tag `paperA-arc5-review` @ `5e3e3e5`, read-only,
+told to write its own Lean probes and to refute rather than confirm. It compiled six probe files
+and re-ran both gates itself. Outcome:
+
+**CONFIRMED, by its own compiled probes, not by reading:**
+* `selector_traceSymm` — and it went further than asked: it proved the Lüders product *satisfies*
+  trace symmetry (class inhabited), that the selector returns `t = 0` on it, and **that for
+  `t ≠ 0` the twist product provably does NOT satisfy trace symmetry** — so the hypothesis is
+  genuinely selective. That sharpness check was not in the orders and should have been.
+* `adjAxis_not_total`, the abstract `lem:span` proof, `cornerJ2_all`, `n2_tval_eq`, and the
+  arithmetic 7 + 19 + 10 = 36 against the manifest row by row.
+* ★ **The crown probe on rung 5.3: `n2FrameTwist (twistProductOn t) U = t` for every `U`.** The
+  extraction returns the *expected* parameter — no sign error, no factor of two, no frame
+  confusion. This is the strongest available confirmation that `n2FrameTwist` is the right map and
+  that its hypothesis class is inhabited at `N = 2`.
+* `lem:aone` FORMALIZED — it read all nine fields of `SequentialProductCore` to confirm
+  `sp a ousUnit = a` is not among them, i.e. genuinely derived rather than restated.
+
+**REFUTED, both by compiled counterexample, both mine, both now corrected above:**
+1. `lem:adjacent`'s adjacency hypothesis is **inert** (`frameTwistConst` already gave global
+   constancy at the previous tag) — so 5.2(b) was an undercounted row, not new mathematics.
+2. The "`AdjBlock` is a superset of the article's relation" fidelity note is **false** (3-cycle
+   counterexample; the article's frames are unordered).
+
+**OVERSTATED, corrected:** "full order-unit-space generality" for `lem:span` (the *interface*
+extends `NormedAddCommGroup`, so the statement presupposes a norm even though the proof never
+touches one); "presentational reason only" for `prop:n2-necessity` (the `U(2) → S²` phase fibre is
+a real gap).
+
+**MISPRICED IN THE CHEAP DIRECTION — and it just did the work:** the frame-reversal clause of
+`lem:n2-descent` was banked as boulder work; the reviewer proved it for an arbitrary product in
+~35 lines. Adopted as `n2FrameTwist_reverse`, with `n2_every_posDef_effect` alongside it.
+
+**Three same-file contradictions found — the project's documented failure mode, and this diff
+created them** (a summary cell and a note in the same file that cannot both be true):
+`THEOREM-MAP.md`'s rank-two summary still said the extraction "remains" 60 lines below the
+correction saying it exists; `LEDGER.md`'s `cor:qubit-classification` cell still said the map was
+ABSENT; and `THEOREM-MAP.md` §3 ("no Lean counterpart") still listed `lem:n2-descent` and
+`lem:n2-continuity`, which the manifest rates PARTIAL — taken literally the *governing* file
+implied 7/17/12 against the manifest's 7/19/10. All three fixed. Plus two lint warnings the
+reviewer caught in `adjBlock_one_house_pair`, also fixed.
+
+**Could not check, flagged honestly:** the reviewer had no access to the blog repo, so every
+"at the article's own generality" judgement it saw rested on the manifest's paraphrases. It asked
+for finding 2 above to be re-checked against `main.tex`:1269 directly — **done, at source, and
+the reviewer was right.**
 
 **Rungs 5.4 (differential trio) and 5.5 (ℍ row) NOT STARTED.** They remain as written above.
 5.4's `lem:homomorphism` is worth re-checking against the same lesson that just paid off
@@ -634,7 +704,7 @@ write "fully formalized". Itemization: blog `research/paperA-supplementary-rewri
 | `H_n(ℝ)` | **MACHINE-CHECKED, HYPOTHESIS-FREE (2026-08-07)** — `a•b = √a·b·√a` on ALL effects, no twist; Jordan hypothesis DISCHARGED by real Kadison proved in-tree, now stated as the full **classification** (`orderAutoR_eq_orthConj`, exact — converse packaged). **08-08: also stated with S2 in the ORDER-UNIT norm** (`real_classification_ouNorm`) | `Necessity.real_classification` |
 | `H_n(ℍ)` | **FOUNDATION COMPLETE + `Q_{√a}` restricts** (carrier, order-unit, unital Jordan subalgebra, positivity, cfc-closure, `quatQuadRepEquiv`); **NOT a short lane — see the carrier-genericity finding in `LEDGER-ARCHIVE-M1-M7.md`** | `QuatCarrier`, `quatQuadRepEquiv` |
 | `H₃(𝕆)` | **ABSENT, not blocked** (row corrected 08-08 — see below). Octonions are BUILT and sorry-free in the sibling project `~/repos/research/lean/`, same toolchain; the scary Yokota/triality import was re-scoped to an elementary argument by `ALBERT-KERNEL-MEMO.md` on 08-04, and **its one computational input `nucleus(𝕆) = ℝ` is now PROVED** (08-08). Remaining: the model, (I)/(II), and M2-for-Albert (unscoped) | `lean/…/Octonions.lean`, `Octonion.nucleus_real` (both out-of-tree) |
-| `cor:qubit-classification` | moduli space + one nonconstant element + certified `ℂP¹→ℝP²` descent + separation; **classification map `product ↦ moduli` ABSENT** | `RankTwo.tauModuliRP2`, `RankTwo.tauRP2_blochFrame` |
+| `cor:qubit-classification` | moduli space + one nonconstant element + certified `ℂP¹→ℝP²` descent + separation; **the classification map's INPUT now exists (2026-08-08, see rung 5.3): `Necessity.n2FrameTwist` extracts the frame function from an arbitrary product, `n2FrameTwist_reverse` proves it order-blind. The bijection is still not assembled — boundedness and continuity of that function, plus `prop:n2-sufficiency`, remain** | `RankTwo.tauModuliRP2`, `RankTwo.tauRP2_blochFrame`, `Necessity.n2FrameTwist` |
 | `mthm:omnibus` | **carrier + BOTH assembly halves** (sufficiency `prod`, determination `sp_eq_of_prod_eq`); conditional on the SPLITTING (`prop:central`, paper proof) | `SequentialProductOn.prod` |
 
 ★★**`H₃(𝕆)` ROW CORRECTED 2026-08-08 — "BLOCKED, octonions exist in no prover" was FALSE.**

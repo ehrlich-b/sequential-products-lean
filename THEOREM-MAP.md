@@ -50,28 +50,42 @@ three kinds, and only the first is conditional on §2:
 | `thm:qubit-boundary`(iii), frame-dependence pair (V9) | `RankTwo.sp_tau_had_is_luders`, `RankTwo.sp_tau_std_is_unit_twist` | `MasterTheorem/RankTwo.lean` |
 | `lem:twist-sufficiency` — every twist product satisfies S1–S7 on `H_n(ℂ)`, packaged per `t`; S2 holds in the carried norm AND (ε–δ, `twistSeq_continuousAt_ouNorm`) in the order-unit norm — the norm caveat is discharged for this row | `HermitianMat.twistSequentialProductCore`, `HermitianMat.twistSequentialProduct` | `Hermitian/Sequential.lean` |
 
-### `lem:adjacent` — closed at the ARTICLE'S adjacency (2026-08-08)
+### `lem:adjacent` — FORMALIZED, but it was an UNDERCOUNTED ROW, not new mathematics
 
-`Necessity.frameTwist_eq_of_adjBlock` (`Necessity/FrameConstancy.lean`). The caveat that this
-row was proved only for a *different* adjacency relation is discharged.
+★★ **Corrected 2026-08-08 by the arc-5 cold review, which refuted the first version of this
+entry twice over. Read this, not the commit message.**
 
-`AdjBlock F G` is the article's relation written in the unitary coordinates the tree uses:
-`F*G` is diagonal outside one index pair `{i,j}`, i.e. the frames differ by a rotation inside
-that rank-two block and share every other atom. `adjAxis_of_adjBlock` is the bridge — at rank
-`n ≥ 3` a two-element pair cannot exhaust `Fin N`, so an article-adjacent pair shares at least
-one whole coordinate axis, which is `AdjAxis` — and the existing
-`frameTwist_eq_of_adjAxis` then supplies the conclusion.
+The row is FORMALIZED. Its honest witness is **`frameTwistConst`**
+(`Necessity/ComplexRowUnconditional.lean`), which was **already in the tree at tag
+`paperA-arc4`** and states that `frameTwist` is constant across *all* frames:
+`∀ F G, frameTwist hN P hS2 F = frameTwist hN P hS2 G`. The article's `lem:adjacent` asks only
+for equality across *adjacent* frames, so it is an immediate consequence — for any adjacency
+relation whatsoever. The reviewer compiled exactly that: the conclusion of
+`frameTwist_eq_of_adjBlock` with the hypothesis **deleted**, and again with an arbitrary
+relation substituted. So this row belongs with `lem:aone` — a row carried as unproved while a
+proof existed — and **not** with `cor:selectors`(ii) or the rank-two extraction, which are new
+proofs. The arc-5 commit message for it overstates; this ledger governs.
 
-Fidelity note: a Jordan frame determines its unitary only up to column phases, and `AdjBlock`
-allows the 2×2 block to be an arbitrary 2×2 unitary, so it also admits pure phase changes,
-which do not move the frame at all. `AdjBlock` is therefore a *superset* of the article's
-relation, which makes the theorem stronger, not weaker. Outside the block `F*G` is diagonal,
-so each remaining atom is genuinely preserved — that is the "sharing `p₃…p_n`" clause.
+`AdjBlock` and `frameTwist_eq_of_adjBlock` remain in the tree as documentation of what the
+article's relation is in the tree's coordinates, and `adjAxis_of_adjBlock` (at rank `n ≥ 3` a
+two-element block cannot exhaust `Fin N`, so an article-adjacent pair shares a whole coordinate
+axis) is a true and mildly useful bridge. But they add no provable content.
 
-The relation is pinned from both sides so neither failure mode is open:
-`adjBlock_one_house_pair` exhibits an article-adjacent pair with `F ≠ G` (the Householder
-reflection whose axis is supported on the block), and `not_adjAxis_one_house` shows the
-coarser relation is already not total.
+★ **The fidelity note that was here — "`AdjBlock` is therefore a *superset* of the article's
+relation, which makes the theorem stronger, not weaker" — is FALSE, and was refuted by a
+compiled counterexample.** The reviewer exhibited the 3-cycle permutation of the standard basis
+of `ℂ³`: its Jordan frame is *literally the standard frame* (`cyc_frame_is_standard`: every atom
+maps to an atom of the same frame), yet `¬ AdjBlock 1 ⟨cyc, _⟩`. `AdjBlock` requires the
+connecting unitary to be diagonal outside one index pair, which forbids **relabelling** the
+shared atoms — while the article's frames are *unordered* sets of atoms (verified at source,
+`main.tex`:1269–1273: "frames differing by a rotation inside a rank-two block … and **sharing
+the atoms** `p₃,…,p_n`") and its `t_F` is a function of the unordered frame. So `AdjBlock` is
+neither a superset nor a subset of the article's relation: it is a relation on *labelled*
+frames. Do not repeat the superset claim.
+
+The relation is still pinned from both sides, which is worth keeping:
+`adjBlock_one_house_pair` exhibits a pair with `F ≠ G` satisfying it, and
+`not_adjAxis_one_house` shows the coarser relation is not total.
 
 ★ **`lem:frame-connectivity` does NOT come along with it, and the ARC-5 orders were wrong to
 pair them.** `AdjBlock` is *strictly finer* than `AdjAxis`: the former fixes all but two axes,
@@ -315,7 +329,7 @@ associating with every pair forces all seven imaginary coordinates to vanish, i.
 `nucleus(𝕆) = ℝ·1`. Axioms `[propext, Classical.choice, Quot.sound]`, no `native_decide`,
 that project's `lake build` green at 2862 jobs. **It is OUT-OF-TREE**: it lives in the
 `lean/` project, not in `twist-normal-form-lean/`, so it is outside this campaign's census
-and manifest and contributes nothing to the 5/36 coverage count until ported.
+and manifest and contributes nothing to the coverage count (7/36 as of 2026-08-08) until ported.
 
 The supporting field-general infrastructure (of independent interest, all
 `RCLike 𝕜`): `HermitianMat.sqrt_mul_of_commute` (square roots multiply on commuting
@@ -541,8 +555,14 @@ machine-checked on the concrete carrier: `lem:twist-sufficiency` in §1.)
   not prove that a given algebra is of a particular coordinate type, that an
   operation satisfies S1–S7, that `L_a = Q_{√a}Θ_a`, that `Θ_a = id`, or any
   product equality. Its own docstring says so.
-- **Rank two: `lem:n2-bounded`, `lem:n2-descent`, `lem:n2-continuity`, and the assembled
-  bijection `cor:qubit-classification`.** (The lifting step of `prop:n2-necessity` was on
+- **Rank two: `lem:n2-bounded` and the assembled bijection `cor:qubit-classification`.**
+  ★ `lem:n2-descent` and `lem:n2-continuity` were listed here and have been MOVED OUT
+  (2026-08-08): this section's heading is "no Lean counterpart", and both have one —
+  `STATEMENT-MANIFEST.md` rows 33/34 rate them PARTIAL against ten named declarations, and
+  as of the arc-5 cold review `lem:n2-descent`'s **frame-reversal clause is proved for an
+  arbitrary product** (`Necessity.n2FrameTwist_reverse`). Leaving them here made this file —
+  the one the manifest designates as governing — imply a count of 7/17/12 against the
+  manifest's 7/19/10. The manifest's rating is the correct one. (The lifting step of `prop:n2-necessity` was on
   this list and has come off it — see the correction below.)
 
   ★★ **SUPERSEDED IN PART, 2026-08-08 (ARC-5 rung 5.3).** The entry below read: "the
@@ -603,9 +623,12 @@ machine-checked on the concrete carrier: `lem:twist-sufficiency` in §1.)
   `RankTwo/Bloch.lean`. **Read as coverage of `lem:n2-descent`/`lem:n2-continuity`
   this is a certified concrete example, not the lemma**: it establishes that the
   descent-to-`ℝP²` mechanism is sound and that the moduli space is nontrivial, which
-  is exactly why building the map is the rank-two work that remains. Building it
-  needs per-frame parameter extraction from an arbitrary rank-two product, and the
-  `N ≥ 3` machinery cannot be reused (`StabilizerCoupling` carries `rank_ge : 3 ≤ n`).
+is exactly why building the map was the rank-two work that remained. **SUPERSEDED
+  2026-08-08 — see the ★★ correction above: the per-frame extraction from an arbitrary
+  rank-two product now exists (`Necessity.n2FrameTwist`, `n2_sp_eq_twistSeq_frame`,
+  `n2FrameTwist_reverse`), and the `StabilizerCoupling` `rank_ge : 3 ≤ n` worry did not
+  bite because none of the needed machinery was rank-gated.** What remains of this row is
+  boundedness and continuity of that function, plus `prop:n2-sufficiency`.
 - **`mthm:omnibus`** (the finite-dimensional omnibus classification).
 - ~~**`prop:pseudo-transfer`**~~ — **CORRECTED 2026-08-08.** Not "no counterpart":
   `Necessity/PseudoInverse.lean` proves it on the concrete carrier in *normalized* form.
