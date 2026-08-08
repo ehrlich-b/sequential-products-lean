@@ -44,10 +44,21 @@ own initiative later, never welded to this paper's count (it also drags toward J
 **THE LADDER (execute in order; on a genuine wall, bank the measured remainder HERE and
 continue with the next item — the ARC-4 rule):**
 
-* **5.0 Freeze the denominator.** `STATEMENT-MANIFEST.md` in this repo: the 36 labels with
-  their current statements (one line each) pinned to the main.tex of frozen tag
-  `paperA-jpa-submitted` @ blog `035c337` + today's working copy. Coverage claims cite the
-  manifest, so a future renumbering can't silently move the target. No manuscript edit.
+* **5.0 Freeze the denominator — DONE 2026-08-08.** `STATEMENT-MANIFEST.md` exists: all 36
+  labels, one-line statements, per-row status and rung target, pinned to `main.tex` blob
+  **`205fdf5a`** — which is *byte-identical* at frozen tag `paperA-jpa-submitted` (blog
+  `035c337`) and in today's working copy, so the manifest pins one object, not two. The
+  36 = 43 environments − 7 remarks derivation is written out and reproducible from a single
+  grep. Coverage claims now cite the manifest, so a renumbering can't silently move the
+  target. It also computes the ceiling arithmetic: 6 rows are outside this arc by design
+  (2 cited external, 2 needing JvNW, 1 needing vIR at JB generality, 1 needing Albert M2)
+  ⟹ interior ceiling **30**, realistic **26–28**. No manuscript edit. Side finding, fixed
+  in the same pass: the staged supplementary rewrite (blog
+  `research/paperA-supplementary-rewrite-draft.md`) still asserted "the octonions do not
+  exist in any prover" in two places and "exists in no other proof assistant" for real
+  Wigner — the retracted absence claims, sitting in text staged to enter the manuscript.
+  Rewritten with their scope attached ("absent from Mathlib, checked 2026-08-08") and the
+  ℍ/𝕆 rows changed from "cannot be" to "not built; not known to be out of reach".
 * **5.1 Small-lemma tier (~9 rows, machinery in hand).** `lem:aone` (three lines from
   S1/S3/S4/S6); `lem:span`, `lem:normality`, `lem:cone-ext` at their OUS generality;
   `prop:pseudo-transfer`; `lem:orientation` (Im tr(xyz), self-contained at n=3);
