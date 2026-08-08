@@ -288,4 +288,74 @@ theorem frameTwist_eq_of_adjAxis (hN : 3 ≤ N)
   rw [← sp_eq_twistSeq_frame hN P hS2 F hr rfl hc,
     sp_eq_twistSeq_frame hN P hS2 G hr hGdiag hc]
 
+/-! ## The article's own frame adjacency
+
+`AdjAxis` is not the relation `lem:adjacent` and `lem:frame-connectivity` are stated with.
+The article's frames are adjacent when they **differ by a rotation inside a single rank-two
+block** `q = p₁ + p₂ = p'₁ + p'₂` and **share the remaining atoms** `p₃, …, p_n`
+(`main.tex`, `lem:adjacent`).  In the unitary coordinates used here that says the connecting
+unitary `F*G` is diagonal outside one pair of indices: every off-diagonal entry `(k,l)`
+vanishes unless *both* `k` and `l` lie in the distinguished pair.
+
+`AdjBlock` below is that relation, and `adjAxis_of_adjBlock` is the observation that closes
+`lem:adjacent` at the article's own generality: at rank `n ≥ 3` a two-element pair cannot
+exhaust the indices, so an article-adjacent pair of frames shares at least one whole
+coordinate axis, which is exactly `AdjAxis`.  Hence `frameTwist_eq_of_adjBlock`.
+
+**`AdjBlock` is strictly finer than `AdjAxis`, and this direction is the only free one.**
+`AdjAxis` asks that *some* axis be fixed; `AdjBlock` asks that *all but two* be.  So
+connectivity for the article's graph (`lem:frame-connectivity`) does **not** follow from
+`adjAxis_connected` — it is a strictly stronger statement, needing every unitary to
+factor into rank-two block rotations (a Givens/Jacobi decomposition) rather than into the
+three axis-fixing Householder factors `exists_axisFixing_factor` provides.  That row stays
+open; see `THEOREM-MAP.md`. -/
+
+/-- **The article's frame adjacency.**  `F` and `G` differ by a rotation inside the rank-two
+block on indices `i ≠ j` and agree on every other atom: `F*G` is diagonal outside `{i, j}`,
+i.e. an off-diagonal entry `(k,l)` can be nonzero only when `k` and `l` both lie in
+`{i, j}`. -/
+def AdjBlock (F G : Matrix.unitaryGroup (Fin N) ℂ) : Prop :=
+  ∃ i j : Fin N, i ≠ j ∧ ∀ k l : Fin N, k ≠ l →
+    ((k ≠ i ∧ k ≠ j) ∨ (l ≠ i ∧ l ≠ j)) →
+    ((F : Matrix (Fin N) (Fin N) ℂ)ᴴ * (G : Matrix (Fin N) (Fin N) ℂ)) k l = 0
+
+/-- At rank `n ≥ 3` a pair of indices cannot exhaust `Fin N`, so some axis lies outside the
+distinguished block. -/
+theorem exists_notMem_pair (hN : 3 ≤ N) {i j : Fin N} :
+    ∃ m : Fin N, m ≠ i ∧ m ≠ j := by
+  by_contra hcon
+  push_neg at hcon
+  have hsub : (Finset.univ : Finset (Fin N)) ⊆ {i, j} := by
+    intro x _
+    rcases eq_or_ne x i with h | h
+    · exact h ▸ Finset.mem_insert_self i {j}
+    · exact Finset.mem_insert_of_mem (Finset.mem_singleton.mpr (hcon x h))
+  have h1 : (Finset.univ : Finset (Fin N)).card ≤ ({i, j} : Finset (Fin N)).card :=
+    Finset.card_le_card hsub
+  have h2 : ({i, j} : Finset (Fin N)).card ≤ 2 :=
+    le_trans (Finset.card_insert_le _ _) (by simp)
+  rw [Finset.card_univ, Fintype.card_fin] at h1
+  omega
+
+/-- **The article's adjacency implies axis adjacency** (`n ≥ 3`).  Article-adjacent frames
+share all but two atoms, hence at least one; that shared axis witnesses `AdjAxis`. -/
+theorem adjAxis_of_adjBlock (hN : 3 ≤ N) {F G : Matrix.unitaryGroup (Fin N) ℂ}
+    (h : AdjBlock F G) : AdjAxis F G := by
+  obtain ⟨i, j, _, hFG⟩ := h
+  obtain ⟨m, hmi, hmj⟩ := exists_notMem_pair (i := i) (j := j) hN
+  refine ⟨m, fun k l hkl hm => ?_⟩
+  rcases hm with hk | hl
+  · exact hFG k l hkl (Or.inl ⟨hk ▸ hmi, hk ▸ hmj⟩)
+  · exact hFG k l hkl (Or.inr ⟨hl ▸ hmi, hl ▸ hmj⟩)
+
+/-- **`lem:adjacent` at the article's own adjacency relation.**  Frames differing by a
+rotation inside one rank-two block, and sharing the remaining atoms, carry the same twist
+parameter. -/
+theorem frameTwist_eq_of_adjBlock (hN : 3 ≤ N)
+    (P : SequentialProductOn (HermitianMat (Fin N) ℂ))
+    (hS2 : P.FirstArgContinuous) {F G : Matrix.unitaryGroup (Fin N) ℂ}
+    (hadj : AdjBlock F G) :
+    frameTwist hN P hS2 F = frameTwist hN P hS2 G :=
+  frameTwist_eq_of_adjAxis hN P hS2 (adjAxis_of_adjBlock hN hadj)
+
 end Necessity

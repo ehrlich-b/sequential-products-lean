@@ -482,6 +482,49 @@ theorem not_adjAxis_one_house (hN : 2 ≤ N) :
   · rw [Complex.ofReal_eq_zero, inv_eq_zero, Nat.cast_eq_zero] at h
     omega
 
+/-- A Householder axis supported on the pair `{i, j}`: the reflection it generates acts
+inside the `(i,j)` block and fixes every other coordinate axis. -/
+def pairVec {N : ℕ} (i j : Fin N) : Fin N → ℂ := fun k => if k = i ∨ k = j then 1 else 0
+
+theorem nrm2_pairVec {i j : Fin N} (hij : i ≠ j) : nrm2 (pairVec i j) = 2 := by
+  classical
+  rw [nrm2]
+  rw [Finset.sum_eq_add_of_mem i j (Finset.mem_univ i) (Finset.mem_univ j) hij
+    (fun k _ hk => ?_)]
+  · norm_num [pairVec]
+  · simp only [Finset.mem_insert, Finset.mem_singleton, not_or] at hk
+    simp [pairVec, hk.1, hk.2]
+
+/-- **`AdjBlock` has content beyond reflexivity**: the identity frame is article-adjacent to
+a *different* frame, namely the Householder reflection whose axis is supported on the block.
+Together with `adjAxis_of_adjBlock` and `not_adjAxis_one_house` this pins the relation from
+both sides — it is neither empty nor total. -/
+theorem adjBlock_one_house_pair (hN : 3 ≤ N) :
+    ∃ G : Matrix.unitaryGroup (Fin N) ℂ,
+      AdjBlock (1 : Matrix.unitaryGroup (Fin N) ℂ) G ∧
+        (G : Matrix (Fin N) (Fin N) ℂ) ≠ 1 := by
+  have h0 : (0 : ℕ) < N := by omega
+  have h1 : (1 : ℕ) < N := by omega
+  set i : Fin N := ⟨0, h0⟩ with hi
+  set j : Fin N := ⟨1, h1⟩ with hj
+  have hij : i ≠ j := by
+    rw [hi, hj]; simp
+  refine ⟨⟨house (pairVec i j), house_mem_unitaryGroup _⟩, ⟨i, j, hij, ?_⟩, ?_⟩
+  · intro k l hkl hout
+    simp only [Submonoid.coe_one, Matrix.conjTranspose_one, Matrix.one_mul]
+    rw [house_apply, Matrix.one_apply_ne hkl, nrm2_pairVec hij]
+    rcases hout with hk | hl
+    · have : pairVec i j k = 0 := by simp [pairVec, hk.1, hk.2]
+      rw [this]; ring
+    · have : pairVec i j l = 0 := by simp [pairVec, hl.1, hl.2]
+      rw [this]; simp
+  · show house (pairVec i j) ≠ 1
+    intro hone
+    have hentry := congrFun (congrFun hone i) j
+    rw [house_apply, Matrix.one_apply_ne hij, nrm2_pairVec hij] at hentry
+    simp only [pairVec, if_true, Matrix.one_apply_ne hij] at hentry
+    norm_num at hentry
+
 /-- **The non-vacuity of the connectivity theorem, stated as such.**  `AdjAxis` is a proper
 subrelation of the total relation on frames, so `adjAxis_connected` asserts something. -/
 theorem adjAxis_not_total (hN : 2 ≤ N) :

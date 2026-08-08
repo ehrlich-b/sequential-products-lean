@@ -50,6 +50,37 @@ three kinds, and only the first is conditional on §2:
 | `thm:qubit-boundary`(iii), frame-dependence pair (V9) | `RankTwo.sp_tau_had_is_luders`, `RankTwo.sp_tau_std_is_unit_twist` | `MasterTheorem/RankTwo.lean` |
 | `lem:twist-sufficiency` — every twist product satisfies S1–S7 on `H_n(ℂ)`, packaged per `t`; S2 holds in the carried norm AND (ε–δ, `twistSeq_continuousAt_ouNorm`) in the order-unit norm — the norm caveat is discharged for this row | `HermitianMat.twistSequentialProductCore`, `HermitianMat.twistSequentialProduct` | `Hermitian/Sequential.lean` |
 
+### `lem:adjacent` — closed at the ARTICLE'S adjacency (2026-08-08)
+
+`Necessity.frameTwist_eq_of_adjBlock` (`Necessity/FrameConstancy.lean`). The caveat that this
+row was proved only for a *different* adjacency relation is discharged.
+
+`AdjBlock F G` is the article's relation written in the unitary coordinates the tree uses:
+`F*G` is diagonal outside one index pair `{i,j}`, i.e. the frames differ by a rotation inside
+that rank-two block and share every other atom. `adjAxis_of_adjBlock` is the bridge — at rank
+`n ≥ 3` a two-element pair cannot exhaust `Fin N`, so an article-adjacent pair shares at least
+one whole coordinate axis, which is `AdjAxis` — and the existing
+`frameTwist_eq_of_adjAxis` then supplies the conclusion.
+
+Fidelity note: a Jordan frame determines its unitary only up to column phases, and `AdjBlock`
+allows the 2×2 block to be an arbitrary 2×2 unitary, so it also admits pure phase changes,
+which do not move the frame at all. `AdjBlock` is therefore a *superset* of the article's
+relation, which makes the theorem stronger, not weaker. Outside the block `F*G` is diagonal,
+so each remaining atom is genuinely preserved — that is the "sharing `p₃…p_n`" clause.
+
+The relation is pinned from both sides so neither failure mode is open:
+`adjBlock_one_house_pair` exhibits an article-adjacent pair with `F ≠ G` (the Householder
+reflection whose axis is supported on the block), and `not_adjAxis_one_house` shows the
+coarser relation is already not total.
+
+★ **`lem:frame-connectivity` does NOT come along with it, and the ARC-5 orders were wrong to
+pair them.** `AdjBlock` is *strictly finer* than `AdjAxis`: the former fixes all but two axes,
+the latter merely some axis. Connectivity for a finer relation is a *stronger* statement, so
+`adjAxis_connected` cannot supply it. The article's graph needs every unitary to factor into
+rank-two block rotations — a Givens/Jacobi decomposition — where the tree currently has
+`exists_axisFixing_factor`, three axis-fixing Householder factors. That row stays PARTIAL and
+the remainder is exactly the Givens decomposition.
+
 ### `lem:span` — the two load-bearing clauses, at full abstract generality (2026-08-08)
 
 `OrderUnitSpace.span_isEffect_eq_top` and `OrderUnitSpace.linearMap_eq_of_eq_on_effects`
