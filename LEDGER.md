@@ -59,17 +59,50 @@ continue with the next item — the ARC-4 rule):**
   Wigner — the retracted absence claims, sitting in text staged to enter the manuscript.
   Rewritten with their scope attached ("absent from Mathlib, checked 2026-08-08") and the
   ℍ/𝕆 rows changed from "cannot be" to "not built; not known to be out of reach".
-* **5.1 Small-lemma tier (~9 rows, machinery in hand).** `lem:aone` (three lines from
-  S1/S3/S4/S6); `lem:span`, `lem:normality`, `lem:cone-ext` at their OUS generality;
-  `prop:pseudo-transfer`; `lem:orientation` (Im tr(xyz), self-contained at n=3);
-  `cor:selectors`; `lem:homog` remaining clauses; `lem:frame-fix` general statement.
-* **5.2 Caveat + hygiene closure.** (a) `AdjAxis` non-vacuity as an in-tree theorem (the
-  arc-3 reviewer's scratch proof of `¬ AdjAxis 1 cycU`). (b) Upgrade `lem:adjacent` +
-  `lem:frame-connectivity` to the ARTICLE'S adjacency (rank-two-block rotation sharing the
-  spectator atoms p₃…p_n — verified at main.tex:1269; plausibly reachable by chaining the
-  existing axis-adjacency machinery; if it resists, bank and move on — the caveat is
-  already honestly stated). (c) THEOREM-MAP: add the four unlabeled rows (`lem:frame-fix`,
-  `lem:coalescence`, `lem:homog`, `prop:bridge`).
+* **5.1 Small-lemma tier — PARTLY DONE 2026-08-08, and the rung was mis-billed.** Landed:
+  `lem:span`'s two load-bearing clauses at **full abstract order-unit generality**
+  (`OrderUnitSpace.span_isEffect_eq_top`, `linearMap_eq_of_eq_on_effects`) — proved from
+  order-unit boundedness alone, avoiding the article's norm route, which this interface
+  cannot express; and `cor:selectors` **clause (ii)** at the article's own generality
+  (`Necessity.selector_traceSymm`: trace-form symmetry makes `-t` a second representing
+  parameter, so the classification's `∃!` forces `t = 0`). Also, and for free: the audit
+  that writing 5.0 forced found **three rows carried as ABSENT that were already covered** —
+  `lem:aone` was FORMALIZED all along (`SequentialProduct.sp_unit_right`, abstract, the
+  article's own S1/S3/S4/S6 route), `lem:span` and `prop:pseudo-transfer` were PARTIAL. The
+  coverage table drifts in *both* directions; every row now names a declaration or says
+  ABSENT.
+  **★ The mis-billing, banked: "machinery in hand" is false for the abstract sub-tier.**
+  `lem:homog`(ii) and `lem:cone-ext` are stated by the article at EJA generality, so the
+  concrete-carrier proofs cannot close them — and the concrete proof runs through
+  `sp_smul_of_mem_unitInterval`, whose last step is an ε-squeeze that **is the Archimedean
+  property**, which `OrderUnitSpace` does not carry (its `archimedean` field is boundedness
+  only). Generalizing is therefore not a variable-block change; it needs Archimedean supplied
+  as an explicit `Prop` (legitimate — it is part of the definition of the article's "order
+  unit space", not a stand-in for a cited result) threaded through the six-step ladder, and
+  `lem:homog`(i) *additionally* needs a positive-linear-extension construction that does not
+  exist. Full recipe in `THEOREM-MAP.md` §3b. Not attempted this arc: `lem:normality`,
+  `lem:orientation`, `lem:frame-fix` general statement, `cor:selectors` clauses (i)/(iii)
+  (clause (iii) is blocked on exactly one absent lemma, `(cfc f a)ᵀ = cfc f (aᵀ)`, recipe
+  recorded in `ComplexRowUnconditional.lean`).
+* **5.2 Caveat + hygiene closure — DONE 2026-08-08, with one order corrected.**
+  (a) **DONE.** `AdjAxis` non-vacuity is now a theorem (`Necessity.adjAxis_not_total`, witness
+  `not_adjAxis_one_house`): the Householder reflection in the all-ones direction has every
+  off-diagonal entry `-2/N`, so it fixes no axis. The caveat that said this was "asserted in a
+  docstring but is not itself a theorem" is retired.
+  (b) **HALF DONE, and the order conflated two rows.** `lem:adjacent` is now proved at the
+  ARTICLE'S adjacency: `Necessity.AdjBlock` is that relation in unitary coordinates (`F*G`
+  diagonal outside one index pair), and `adjAxis_of_adjBlock` bridges to the existing engine —
+  at rank `n ≥ 3` a two-element block cannot exhaust the indices, so an article-adjacent pair
+  shares a whole axis. Row moves to FORMALIZED, and the relation is pinned from both sides
+  (`adjBlock_one_house_pair` gives a pair with `F ≠ G`; `not_adjAxis_one_house` gives
+  non-totality). ★ **But `lem:frame-connectivity` does NOT come with it, contrary to this
+  order's wording.** `AdjBlock` is *strictly finer* than `AdjAxis` (all but two axes fixed vs.
+  some axis fixed), so connectivity for the article's graph is strictly *stronger* than
+  `adjAxis_connected` and needs every unitary to factor into rank-two block rotations — a
+  Givens/Jacobi decomposition — where the tree has three axis-fixing Householder factors.
+  Banked with that as the measured remainder.
+  (c) **DONE.** `THEOREM-MAP.md` §3b now carries rows for `lem:homog`, `lem:cone-ext`,
+  `lem:frame-fix`, and `prop:bridge`, so the map covers all 36 like the manifest does.
 * **5.3 THE BOULDER — the rank-two classification map** (the title's SECOND claim, "and
   the Complex Qubit", currently absent as a map). Build `product ↦ moduli` taking an
   arbitrary S1–S7+S2 product on M₂(ℂ)ˢᵃ as input; closes en bloc: `prop:n2-necessity`
@@ -101,6 +134,20 @@ pattern — it earned its keep), then compact this ledger's arc narrative.
 after 5.4; the stretch adds ~1 plus a first-party quaternionic Wigner. Unlike ARC-4 (six
 bounded refactors, one hour), 5.3 and 5.4 are NEW MATHEMATICS in Lean — expect walls, use
 the fallbacks, report the remainder honestly.
+
+**ACTUAL after 5.0–5.2 (2026-08-08): 5/36 → 7/36 formalized, 19 partial, 10 absent.** Short
+of the ~14 projection, and the reason is a repricing, not a shortfall in effort: the 5.1
+projection assumed the abstract sub-tier was mechanical, and it is not (the Archimedean
+finding above). Two rows moved to FORMALIZED (`lem:aone`, by audit; `lem:adjacent`, by
+proof), one row gained a clause at article generality (`cor:selectors`(ii)), one row was
+upgraded from concrete to fully abstract (`lem:span`'s two load-bearing clauses), two rows
+were corrected upward from ABSENT to PARTIAL, and two caveats were retired
+(`AdjAxis` non-vacuity; the frame-adjacency mismatch, now narrowed to `lem:frame-connectivity`
+alone). Every gate green throughout: `lake build` 3106 jobs, census 149 modules, **custom
+axioms exactly `[]`**, every new declaration's closure = the three core axioms.
+Commits: `6f2442a` (5.0) · `51cfbb9` (coverage corrections) · `287cff3` (selector ii) ·
+`4e12d84` (abstract span + AdjAxis non-vacuity) · `88aba62` (article adjacency); blog
+`650aa12` · `326aedb` · `8900e4b` · `168e9a7`.
 
 ---
 

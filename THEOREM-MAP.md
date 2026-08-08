@@ -594,6 +594,38 @@ machine-checked on the concrete carrier: `lem:twist-sufficiency` in §1.)
 - Analytic content generally: norm continuity arguments, spectral theory, and
   the singular-effect extensions live in the paper.
 
+## 3b. The four labels this map used to omit (added 2026-08-08, ARC-5 rung 5.2c)
+
+`STATEMENT-MANIFEST.md` covers all 36 numbered results; this map covered 32. The four that
+had no row anywhere, now stated:
+
+| Paper statement | Status | Where it stands |
+| --- | --- | --- |
+| `lem:homog` — positive linear extension of `L_a` (i), and first-variable homogeneity `(λa)·b = λ(a·b)` (ii) | **PARTIAL** | Clause (ii) is proved, on the concrete carrier only, as `Necessity.sp_smul_left` (`Necessity/FirstArgument.lean`), following vdW Prop. 3.9 with the σ-SEA normality passage replaced by exactly one use of S2. Clause (i) — the extension of `L_a` to a positive linear map on all of `J` — is **not** in the tree in any form. See the Archimedean note below for why clause (ii) does not generalize for free. |
+| `lem:cone-ext` — extension of the product to positive-cone first arguments | **PARTIAL** | The normalization extension exists on the concrete carrier (`Necessity.thetaNorm`, `theta_smul`). The article's statement is over an arbitrary finite-dimensional EJA, and its proof consumes `lem:homog`(ii); so this row inherits that row's Archimedean obstruction. |
+| `lem:frame-fix` — `Θ_r` fixes the frame and the diagonal, preserves each Peirce block, lies in `Stab(F)°`, hence `L_{a(r)}` is Peirce-block-diagonal | **PARTIAL** | A certificate for the *produced* setup exists inside `MasterTheorem/Master.lean`; the general statement, quantified over frames and over `r`, does not. |
+| `prop:bridge` — standard-product compatibility is exactly Jordan operator commutation | **ABSENT, by design** | A cited external result (`Wetering2018three` Props. A.1, A.3). It enters the skeleton as an interface field and the paper does not claim to reprove it. Not a target of any rung. |
+
+★ **The Archimedean note — why the abstract sub-tier of rung 5.1 is not "machinery in hand"
+(finding, 2026-08-08).** `lem:homog`(ii) and `lem:cone-ext` are stated by the article at EJA
+generality, so a concrete-carrier proof cannot close them; they need the abstract layer. But
+the concrete proof of `lem:homog`(ii) runs through
+`Necessity.sp_smul_of_mem_unitInterval` (`Necessity/LeftMultiplication.lean`), whose final
+step is an ε-squeeze — `∀ ε > 0, z − t•y ≤ ε•𝟙` therefore `z ≤ t•y` — and **that step is
+exactly the Archimedean property**, which this tree's `OrderUnitSpace` class does not carry:
+its `archimedean` field is order-unit *boundedness* only (the long-standing caveat 1). So
+generalizing the ladder is not a change of variable block; it requires the Archimedean
+property to be supplied, and the interface cannot be extended to carry it without breaking
+`AxiomAudit.lean` Layer 5, which freezes the printed constructor type of
+`SequentialProductCore.mk`. The clean route, when this is taken up: introduce Archimedean as
+an explicit `Prop` hypothesis (it is part of the *definition* of the article's "order unit
+space", not a located stand-in for a cited result, so a row proved under it still counts as
+formalized at the article's generality) and thread it through the six-step ladder. Then
+`lem:homog`(i) still needs the positive-linear-extension construction, which does not exist.
+Contrast `lem:span`, whose two load-bearing clauses were proved at abstract generality
+*without* Archimedean — see §1 — because the article's norm route is avoidable there and
+here it is not.
+
 ## 4. SymPy labels
 
 **Label convention.** The manuscript cites these checks as `V1`–`V10`; the script
