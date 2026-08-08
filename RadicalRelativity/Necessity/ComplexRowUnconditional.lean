@@ -77,4 +77,36 @@ theorem complex_classification_unconditional (hN : 3 ≤ N)
       P.sp a b = HermitianMat.twistSeq t a b :=
   complex_classification_of_frameTwistConst hN P hS2 (frameTwistConst hN P hS2)
 
+/-! ## Non-vacuity, certified in-tree
+
+A theorem quantified over a hypothesis class says nothing if the class is empty, and a theorem
+producing a parameter says little if the parameter need not be the intended one.  Both are
+checked here against a known member of the class.
+-/
+
+/-- **The hypothesis class is inhabited.**  M1's twist product with parameter `t` is an S1–S7
+product with S2 on `H_N(ℂ)`, so the capstone applies to it: `3 ≤ N`, `SequentialProductOn`, and
+`FirstArgContinuous` are simultaneously satisfiable, and the row is not vacuous. -/
+theorem twistProductOn_classified (hN : 3 ≤ N) (t : ℝ) :
+    ∃! t' : ℝ, ∀ a b : HermitianMat (Fin N) ℂ, IsEffect a → IsEffect b →
+      (twistProductOn t).sp a b = HermitianMat.twistSeq t' a b :=
+  complex_classification_unconditional hN (twistProductOn t)
+    (twistProductOn_firstArgContinuous t)
+
+/-- **The recovered parameter is the intended one.**  Run the capstone on the twist product with
+parameter `t` and the unique `t'` it returns is `t` itself.  So the classification is sharp: the
+twist family is faithfully parameterized, and the `∃!` is not satisfied by some unrelated
+value. -/
+theorem complex_classification_sharp (hN : 3 ≤ N) (t t' : ℝ) :
+    (∀ a b : HermitianMat (Fin N) ℂ, IsEffect a → IsEffect b →
+        (twistProductOn t).sp a b = HermitianMat.twistSeq t' a b)
+      ↔ t' = t := by
+  constructor
+  · intro h
+    refine (twist_param_unique (N := N) (by omega) (fun a b ha hb => ?_)).symm
+    rw [← twistProductOn_sp t a b]
+    exact h a b ha hb
+  · intro h a b _ _
+    rw [h, twistProductOn_sp]
+
 end Necessity
