@@ -75,6 +75,52 @@ REJECTED (rationale in the ARC-5 block below); the six by-design-external rows a
   quaternions — Mathlib has them); quaternionic Wigner may fall to the `RealWigner`
   rank-one technique. Bank freely; this rung is allowed to end as a measured remainder.
 
+### ARC-6 EXECUTION RECORD (append per rung; the orders above stay as written)
+
+**6.0 audit — DONE 2026-08-08, and it repriced the arc's biggest row before a line was
+written.** Two verdicts:
+* ★★ **`lem:homomorphism` was ABSENT for a false reason.** §2 of `THEOREM-MAP.md` said "Lean
+  neither differentiates `Θ` nor proves `dχAdd` is its derivative"; that describes the
+  *abstract skeleton* and was generalized to the whole tree. In fact `chiTilde` constructs the
+  character by the article's own `min(x,0)` decomposition and `chiTilde_eq_exp` **proves** the
+  real-linear differential exists and is unique, via `multiParameter_eq_exp` — no Lie theory,
+  and needing only line continuity where the article assumes joint. Only the hyperplane
+  factorization was genuinely missing, and rung 6.2 closed it the same day (below). §3's
+  summary line "the construction of the comparison character and its differential from `Θ_a`"
+  was removed for the same reason. Row: ABSENT → **PARTIAL**; detail in `THEOREM-MAP.md` §3c.
+* **`lem:simple-bridge` priced per clause: it is ~3/4 cited.** The article's own proof assigns
+  (i) to vdW Thm. A.6, (iii) to vdW Props. 4.19–4.20, (iv) to a vdW remark. Only (ii) is
+  interior (the Jordan spectral theorem). Honest target = clause (ii) on the concrete carrier.
+  This is the row the ceiling arithmetic flagged for honest pricing.
+
+**6.1 rank-two lane — (a) CLOSED; (b)(c) BANKED with a named, available enabler.**
+* **(a) DONE.** `n2FrameTwist_mul_diagonal` closes the `U(2) → S²` diagonal-phase-fibre gap
+  the arc-5 cold review identified, so the frame function is a function of the ordered frame,
+  and with `n2FrameTwist_reverse` of the *unordered* frame — a point of `ℝP²`. Both fall out
+  of one new engine, `n2FrameTwist_eq_of_base_eq` (same base points ⟹ same parameter), plus
+  `diagonal_conj_diagFamily`. `Necessity/FrameConstancy.lean`; no `2π` argument anywhere.
+* **(b)/(c) BANKED — and the orders' own suggested reordering is REFUTED.** The orders said to
+  try continuity first and take boundedness free from compactness of `U(2)`. Compactness *is*
+  in-tree (`Vendor/Wigner/UnitaryCompact.lean`, vendored, axiom-clean), so that implication
+  holds — but it runs the wrong way. Continuity needs a principal branch, which needs
+  `sM < π`, which needs the bound. So the article's order (b then c) is forced. Three distinct
+  routes to continuity were examined and all funnel through boundedness; the two that bypass
+  it fail for stated reasons (a discontinuous section of a covering need not equal a
+  continuous lift, even over the now-simply-connected `S²`; two incommensurable `δ`s pin the
+  value but not continuity). Recorded per row in `STATEMENT-MANIFEST.md` rows 32/33.
+* ★★ **The gate is one input, and it is NOT missing from Mathlib.** Both (b) and (c) reduce to
+  **operator-norm continuity of `a ↦ Θ_a` in the matrix argument** — the dependency this
+  project banked earlier as the real row's "final dependency … the functional calculus's
+  continuity in the matrix argument". Mathlib has it:
+  `Mathlib/Analysis/CStarAlgebra/ContinuousFunctionalCalculus/Continuity.lean` supplies
+  `continuousOn_cfc` (`cfc f` continuous on elements whose spectrum lies in a fixed compact
+  set), with `ContinuousAt.cfc` and `Filter.Tendsto.cfc` alongside; and this tree's carrier
+  already goes through `HermitianMat.cfc` (`Hermitian/Twist.lean`). So the remainder is
+  **ABSENT with a named route, never BLOCKED** — S2 gives `L_a` pointwise, finite dimension
+  upgrades pointwise to operator norm, and `continuousOn_cfc` gives `a ↦ Q_{a^{-1/2}}`. Cost
+  is the contradiction argument's plumbing, not a missing theorem. **This is the fourth time
+  in two arcs that "Mathlib lacks X" was wrong: grep the library before writing it.**
+
 **Review protocol (binding).** Three isolated cold reviews: after 6.1(f), after 6.3, and
 at end of arc. Each reviewer reads the diffs at source and COMPILES probes
 (inert-hypothesis tests; strongest-available probe on any new map — arc-5's was

@@ -334,6 +334,18 @@ ordered frame.  It does *not* yet prove that function bounded (`lem:n2-bounded`)
 steps and they now have an input to act on.
 -/
 
+/-- Conjugation by a diagonal unitary fixes every diagonal family: each phase cancels
+against its own conjugate, entrywise. -/
+theorem diagonal_conj_diagFamily {d : Fin N → ℂ}
+    (hd : ∀ k, d k * star (d k) = 1) (r : Fin N → ℝ) :
+    Matrix.diagonal d * (diagFamily r).mat * (Matrix.diagonal d)ᴴ = (diagFamily r).mat := by
+  rw [diagFamily_mat, Matrix.diagonal_conjTranspose, Matrix.diagonal_mul_diagonal,
+    Matrix.diagonal_mul_diagonal]
+  congr 1
+  funext k
+  show d k * (Real.exp (r k) : ℂ) * star (d k) = _
+  rw [mul_comm (d k) _, mul_assoc, hd k, mul_one]
+
 section RankTwoExtraction
 
 variable (P : SequentialProductOn (HermitianMat (Fin 2) ℂ))
@@ -492,6 +504,73 @@ theorem n2FrameTwist_reverse (hS2 : P.FirstArgContinuous)
       (diagFamily (x • axisSplit (0 : Fin 2)))) rfl hc
   rw [hbase] at h1
   rw [← h1, h2]
+
+/-! ### The diagonal-phase fibre, and why the frame function is a function of the frame
+
+`n2FrameTwist` takes a *unitary*, but `prop:n2-necessity` is about the ordered frame it
+presents.  Two unitaries present the same ordered frame exactly when they differ by a
+diagonal unitary on the right — each column is rescaled by a phase, which changes no
+spectral projection.  `n2FrameTwist_mul_diagonal` says the frame function does not see
+that, closing the `U(2) → S²` gap the arc-5 cold review identified; with
+`n2FrameTwist_reverse` (order-blindness) the function descends to the *unordered* frame,
+i.e. to a point of `ℝP²`.
+
+Both come from one engine, `n2FrameTwist_eq_of_base_eq`: the parameter is pinned by the
+products it represents, so any two unitaries presenting the same base points are
+indistinguishable to it.  No `2π` bookkeeping enters, because
+`twist_param_unique_of_scaled` pins the two parameters over a whole interval of scales. -/
+
+/-- **The frame function only sees the base points.**  If `V` and `U` send a one-parameter
+family of two-level spectra to the *same* base point, they carry the same twist parameter. -/
+theorem n2FrameTwist_eq_of_base_eq (hS2 : P.FirstArgContinuous)
+    (U V : Matrix.unitaryGroup (Fin 2) ℂ) (m m' : Fin 2)
+    (hs : (axisSplit m) (0 : Fin 2) ≠ (axisSplit m) 1)
+    (hbase : ∀ x : ℝ, 0 < x →
+      adU (V : Matrix (Fin 2) (Fin 2) ℂ) (diagFamily (x • axisSplit m'))
+        = adU (U : Matrix (Fin 2) (Fin 2) ℂ) (diagFamily (x • axisSplit m))) :
+    n2FrameTwist P hS2 V = n2FrameTwist P hS2 U := by
+  refine twist_param_unique_of_scaled (N := 2) (i := 0) (j := 1) (by decide)
+    (u := 0) (v := 1) zero_lt_one (s := axisSplit m) hs ?_
+  intro x hx
+  have hxpos : (0 : ℝ) < x := hx.1
+  refine twistSeq_eq_of_adU (U := (U : Matrix (Fin 2) (Fin 2) ℂ))
+    (unitaryGroup_conjTranspose_mul U) (unitaryGroup_mul_conjTranspose U) ?_
+    (pairProj_isEffect (i := (0 : Fin 2)) (j := 1) (by decide))
+  intro c hc
+  have h1 := n2_sp_eq_twistSeq_frame P hS2 V (axisSplit_smul_nonpos m' hxpos)
+    (a := adU (V : Matrix (Fin 2) (Fin 2) ℂ) (diagFamily (x • axisSplit m'))) rfl hc
+  have h2 := n2_sp_eq_twistSeq_frame P hS2 U (axisSplit_smul_nonpos m hxpos)
+    (a := adU (U : Matrix (Fin 2) (Fin 2) ℂ) (diagFamily (x • axisSplit m))) rfl hc
+  rw [hbase x hxpos] at h1
+  rw [← h1, h2]
+
+/-- **The `U(2) → S²` fibre gap, closed.**  Right multiplication by a diagonal unitary
+rescales each frame vector by a phase, leaving every spectral projection — hence the frame —
+unchanged, and the frame function does not see it. -/
+theorem n2FrameTwist_mul_diagonal (hS2 : P.FirstArgContinuous)
+    (U D : Matrix.unitaryGroup (Fin 2) ℂ) {d : Fin 2 → ℂ}
+    (hD : (D : Matrix (Fin 2) (Fin 2) ℂ) = Matrix.diagonal d) :
+    n2FrameTwist P hS2 (U * D) = n2FrameTwist P hS2 U := by
+  have hdu : ∀ k, d k * star (d k) = 1 := by
+    have h := unitaryGroup_mul_conjTranspose D
+    rw [hD, Matrix.diagonal_conjTranspose, Matrix.diagonal_mul_diagonal] at h
+    intro k
+    have hk := congrFun (congrFun h k) k
+    simpa using hk
+  refine n2FrameTwist_eq_of_base_eq P hS2 U (U * D) 0 0 (by simp [axisSplit]) ?_
+  intro x _
+  ext1
+  simp only [adU_apply, HermitianMat.conj_apply_mat, Submonoid.coe_mul, hD]
+  rw [Matrix.conjTranspose_mul]
+  calc (U : Matrix (Fin 2) (Fin 2) ℂ) * Matrix.diagonal d
+        * (diagFamily (x • axisSplit (0 : Fin 2))).mat
+        * ((Matrix.diagonal d)ᴴ * (U : Matrix (Fin 2) (Fin 2) ℂ)ᴴ)
+      = (U : Matrix (Fin 2) (Fin 2) ℂ)
+        * (Matrix.diagonal d * (diagFamily (x • axisSplit (0 : Fin 2))).mat
+          * (Matrix.diagonal d)ᴴ)
+        * (U : Matrix (Fin 2) (Fin 2) ℂ)ᴴ := by simp only [Matrix.mul_assoc]
+    _ = (U : Matrix (Fin 2) (Fin 2) ℂ) * (diagFamily (x • axisSplit (0 : Fin 2))).mat
+        * (U : Matrix (Fin 2) (Fin 2) ℂ)ᴴ := by rw [diagonal_conj_diagFamily hdu]
 
 end RankTwoExtraction
 
