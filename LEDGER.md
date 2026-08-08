@@ -3283,8 +3283,14 @@ green at 3090 jobs, census 133, custom axioms exactly [].
   the proved theorem are the SAME statement, which is the whole point of the boundary.
   `Statement.lean`'s now-false "the concrete reference maps do not yet exist" paragraph was
   corrected in place (docstring only — no printed type changed, so no audit pin moved).
+  README updated the same day: it now names the two unconditional row capstones with their
+  `#check` output, and no longer calls the abstract `master_chain` skeleton "the capstone
+  theorem" (it says explicitly that a clean closure over quantified interface fields is not a
+  verification of the paper's theorem).
   **Still open in 7.3:** the ℍ and 𝕆 rows have no theorems to point at, so their shapes
-  remain shapes; README and the paper's §App/disclosure paragraph are NOT yet rewritten.
+  remain shapes; the paper's §App + disclosure paragraph are NOT yet rewritten (that is a
+  manuscript edit in `landing/papers/twist-normal-form/`, Bryan-gated, and it should be done
+  in one pass when the next venue is chosen).
 - **7.4 Full audit re-elaboration** at every milestone boundary, not just M7
   (`lake env lean AxiomAudit.lean`; never truncate its output — tail-truncation
   hid a real failure on 2026-08-04 day 1).
