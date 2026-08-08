@@ -54,8 +54,13 @@ instantiated, exactly as the attack plan called for):
 * Connectivity went through **Householder reflections**, not Givens rotations. A reflection
   whose vector has one zero coordinate is automatically axis-fixing, so an *arbitrary*
   reflection can be an adjacency step; that turns the plan's "~150-300 line elementary
-  induction" into a fixed 2-step column clear with no induction at all. `N ≥ 3` enters exactly
-  once: it frees the axis the second reflection's vector must miss.
+  induction" into a fixed 2-step column clear with no induction at all. Within the NEW material
+  `N ≥ 3` is needed in exactly one place — it frees the axis the second reflection's vector must
+  miss (three distinct indices in `exists_clear_column`). Precision: the row as a whole needs
+  `N ≥ 3` for a second, PRE-EXISTING reason as well, namely the per-frame theorem
+  `complex_perFrame_unconditional`, which is the paper's own rank-≥3 hypothesis. So do not read
+  "enters exactly once" as "the ℂ row would work at `N = 2` but for connectivity" — it would
+  not, and rank two is a genuinely different theorem (`cor:qubit-classification`).
 * Two `rw`-nesting traps cost time and will recur: rewriting `v` inside a term that also
   *defines* the reflection vector (fixed by proving linearity as a separate `have` instead of
   rewriting `v`), and `rw [← hsp]` reaching inside `√(normSq …)` (fixed by obtaining the
