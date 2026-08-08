@@ -18,10 +18,22 @@ interface structure instantiated on the intended algebras.
 Gates at the end of the arc: `lake build` green at **3106 jobs**; `AxiomAudit.lean`
 PASS at **149 tracked modules** (== frozen 149-name manifest); **custom axioms exactly
 `[]`**; every tracked persisted declaration's closure ⊆ {`propext`, `Classical.choice`,
-`Quot.sound`}. All commits LOCAL. Frozen review tag `paperA-arc4-review`.
+`Quot.sound`}. All commits LOCAL. Frozen tags: `paperA-arc4-review` @ `7cdf690` (the state
+the cold review read) and **`paperA-arc4` @ `0e1c366`** (the arc's final state, after the
+review-driven fix below).
 
 Commits: `8727fff` (4.1) · `0d2fec9` (4.2) · `3f89c8f` (4.3) · `7cdf690` (4.4) ·
-blog `fb65b07` (4.5).
+`f4deb30` (4.6 compaction) · `0e1c366` (4.6 review fix); blog `fb65b07` (4.5).
+
+**4.6 cold review — RAN, and it earned its keep.** One isolated adversarial reviewer, given
+the frozen SHA and told to write its own Lean probes. It confirmed the 4.2/4.3 diffs on every
+vector it checked — round-tripping both `_ouNorm` rows back to the originals, composing each
+converse into its forward theorem, showing `ContinuousOnOu` on `univ` forces genuine global
+continuity (so it is not satisfiable by a pathological map), showing the `√(card n)` factor
+is *necessary* (`‖1‖ = √2 > 1 = ouNorm 1` on `H_2(ℝ)`) and *optimal*, checking that the
+refactored Jordan capstones still prove their pre-refactor statements verbatim, and
+exhibiting `O = !![2]` to show the orthogonality hypothesis in `orthConj_one` is
+load-bearing rather than a `simp` artifact. **And it found one real defect** — see 4.3.
 
 **4.1 Truth sweep — DONE, and it found more than the orders listed.** Six stale
 docstrings, not four: the four named plus `RealRigidity.lean:209` ("real Kadison being
