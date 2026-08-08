@@ -27,11 +27,17 @@ The exact S1--S7 data are the root typeclass `SequentialProduct`:
 * `SequentialProduct.sp_continuous_left` is S2, continuity of
   `a ↦ a & b` on the effect interval in the norm topology.
 
-The concrete EJA reference maps `Q_{√a}` and
-`a^(1/2+it) b a^(1/2-it)` do not yet exist in this development.  Consequently
-they are parameters below.  Replacing those parameters by concrete definitions
-and proving the resulting propositions is future work beyond the scope of the
-released conditional skeleton, which the paper's appendix discloses as such.
+The reference maps `Q_{√a}` and `a^(1/2+it) b a^(1/2-it)` are parameters below, so that this
+module stays a pure statement-fidelity boundary with no mathematical content of its own.
+
+**They are no longer only parameters (2026-08-07).**  `PaperA/CertifiedConfiguration.lean`
+instantiates both concretely — `ludersRefR` (conj-Lüders on `H_N(ℝ)`) and `twistRefC`
+(`HermitianMat.twistSeq` on `H_N(ℂ)`), each with effect closure proved — and discharges the two
+propositions from the proved rows: `real_meets_ludersConclusion` and
+`complex_meets_uniqueTwistConclusion`.  So for the ℝ and ℂ rows the frozen shape and the proved
+theorem are now the same statement.  The remaining rows of `mthm:master` (`H_n(ℍ)`, `H₃(𝕆)`)
+are not proved, and for them these definitions remain exactly what the paragraph above says
+they are: shapes, not evidence.
 -/
 
 noncomputable section

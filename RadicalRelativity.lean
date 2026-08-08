@@ -588,3 +588,4 @@ import RadicalRelativity.PaperA.Statement
 -- anonymous `example`s) so the axiom census in AxiomAudit.lean visits them: a
 -- `sorry` or stray axiom substituted for any pin's direct proof fails the census.
 import RadicalRelativity.PaperA.AuditPins
+import RadicalRelativity.PaperA.CertifiedConfiguration
