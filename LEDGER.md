@@ -13,7 +13,106 @@ interface structure instantiated on the intended algebras.
 
 ---
 
-## ★★ ARC-5 ORDERS (2026-08-08, Fable design pass — the coverage ladder). READ THIS FIRST.
+## ★★ ARC-6 ORDERS (2026-08-08, Fable design pass — the big-chunk climb). READ THIS FIRST.
+
+**Sizing:** this is a ~24-hour-of-work campaign, set as ONE goal on purpose. Do not stop at
+rung boundaries to report; continue until the ladder is exhausted or every remaining item
+is banked with a measured wall. Every decision needed is pre-made below; anything
+Bryan-gated is out of scope by definition, so there is nothing to ask mid-arc.
+
+**Standing decision records — do not re-litigate:** literal 36/36 REJECTED and EJA-first
+REJECTED (rationale in the ARC-5 block below); the six by-design-external rows are
+`thm:vdw1` + `prop:bridge` (cited), `mthm:master`/`mthm:omnibus` one-theorem form (JvNW),
+`prop:theta` at vIR generality, `thm:albert` (Albert M2). Interior ceiling 30, realistic
+26–28. The count is an OUTPUT, not a quota — the census (`custom axioms exactly []`) and
+`THEOREM-MAP.md` are the product. Baseline at these orders: **7 / 19 / 10** per
+`STATEMENT-MANIFEST.md`; the denominator stays pinned to blob `205fdf5a` — never re-pin.
+
+**THE LADDER (in order; the wall protocol below governs every rung):**
+
+* **6.0 Audit before build.** Two of arc-5's seven FORMALIZED rows were undercounted rows,
+  not new proofs. Before any new proof this arc, for every row targeted below: (a) grep the
+  WHOLE tree for the *ingredients*, not the assembled statement; (b) run the
+  inert-hypothesis test on the nearest existing declaration (compile the conclusion with
+  the hypothesis deleted). Specifically: re-price `lem:homomorphism` by reading what
+  `chiTilde_eq_exp_dChi` actually proves (it exists and feeds `dChi_kills_corner`, so
+  "Lean never differentiates Θ" may be another directory-scoped absence claim), and price
+  `lem:simple-bridge` clause by clause (attempt later only the clauses this audit shows
+  cheap). Verdicts recorded in `THEOREM-MAP.md` in one commit.
+* **6.1 Close the rank-two lane — the crown.** In order: (a) diagonal-phase-fibre
+  constancy of `n2FrameTwist` (the `U(2) → S²` gap in `prop:n2-necessity`);
+  (b) `lem:n2-bounded`; (c) `lem:n2-continuity` — check Mathlib for topology/compactness
+  instances on `Matrix.unitaryGroup` before hand-rolling anything, and if continuity plus
+  compactness gives (b) for free, take that order; (d) the remaining descent clause of
+  `lem:n2-descent` (a continuous function on `ℝP²`); (e) `prop:n2-sufficiency` —
+  generalize the constant-`t` machinery of `lem:twist-sufficiency` to continuous
+  `t : ℝP² → ℝ`, reusing the τ-family partials already banked under `thm:qubit-boundary`;
+  (f) assemble `cor:qubit-classification` as the bijection; (g) discharge
+  `thm:qubit-boundary`'s bundled S1–S7 clause as an instantiation of (e).
+  ★ CHECKPOINT REVIEW after (f) — see the review protocol.
+* **6.2 The differential trio.** `lem:homomorphism` (the carrier is a normed space, so
+  Mathlib `fderiv` applies; pre-registered fallback = the pointwise-derivative version,
+  banked as PARTIAL with the delta named), then `lem:coalescence` (identify the in-tree
+  shadow WITH the article's differential — the identification is the open part, not the
+  shadow), then `prop:stabilizers` (construct the representation from Θ; ℂ row first — it
+  is the one the flagships consume; the ℝ/ℍ/𝕆 rows are bankable).
+* **6.3 The abstract tier.** Supply the Archimedean property as an explicit `Prop`/mixin —
+  NOT a change to `SequentialProductCore.mk` (`AxiomAudit.lean` Layer 5 freezes the
+  printed constructor type). Then: abstract `lem:homog`(ii), abstract `lem:cone-ext`, and
+  divide the `pseudoInvCoef` out of `prop:pseudo-transfer` to reach the article's
+  `a·a⁻¹ = 𝟙` form. `lem:homog`(i) needs a positive-linear-extension construction:
+  attempt it, bank on resistance. ★ CHECKPOINT REVIEW after this rung.
+* **6.4 The caveat sweep, in yield order.** `cor:selectors`(iii) — exactly one missing
+  lemma, `(cfc f a)ᵀ = cfc f (aᵀ)`, recipe recorded in `ComplexRowUnconditional.lean` —
+  then clause (i); `lem:normality` (f.d. order-unit space, S1+S2 ⟹ vdW-normal);
+  `lem:frame-fix` general statement; `lem:frame-connectivity` via a Givens/Jacobi
+  factorization into rank-two block rotations (`AdjBlock` is strictly finer than
+  `AdjAxis` — the three Householder factors in the tree do NOT suffice); `lem:orientation`;
+  `prop:central`'s summand inheritance + converse assembly; any `lem:simple-bridge`
+  clauses that 6.0 priced cheap.
+* **6.5 The ℍ row — stretch.** `thm:quaternionic` via `H_n(ℍ) ↪ H_{2n}(ℂ)` as the fixed
+  points of a conjugate-linear involution (the blocker is ℍ ∉ `RCLike`, not missing
+  quaternions — Mathlib has them); quaternionic Wigner may fall to the `RealWigner`
+  rank-one technique. Bank freely; this rung is allowed to end as a measured remainder.
+
+**Review protocol (binding).** Three isolated cold reviews: after 6.1(f), after 6.3, and
+at end of arc. Each reviewer reads the diffs at source and COMPILES probes
+(inert-hypothesis tests; strongest-available probe on any new map — arc-5's was
+`n2FrameTwist (twistProductOn t) U = t`); ≤3 fix loops per review; every finding verified
+at source before applying OR rejecting (reviewers have been confidently wrong in both
+directions, and so have I — twice each, last arc). After every fix round, one diff-audit
+pass: read the sentence after every inserted clause, grep each corrected file for the
+claim being corrected, and rewrite EVERY summary instance (the fix-the-row rule; six
+instances on record). Sub-agents for stuck proofs (repair/golf) are authorized; their
+output goes through the same at-source verification.
+
+**Gates per commit — all of them, every commit:** `lake build` green from
+`/Users/ehrlich/repos/research/twist-normal-form-lean` (cwd matters: elsewhere `lake env
+lean` resolves the wrong toolchain); `AxiomAudit.lean` census PASS with custom axioms
+exactly `[]`; `#print axioms` on each new named result = `[propext, Classical.choice,
+Quot.sound]`; `THEOREM-MAP.md` and `STATEMENT-MANIFEST.md` row updates in the SAME commit
+as the proof they describe; single-sentence commit messages.
+
+**Wall protocol:** a target that resists three genuinely distinct strategies gets its
+measured remainder banked HERE — a named missing lemma or a named obstruction, ABSENT vs
+BLOCKED vocabulary per the manifest — and the ladder continues. Absence claims carry
+their scope and date, always.
+
+**Hard boundaries:** all commits LOCAL (the repo is public; never push, never `sync.sh`);
+`main.tex`/`supplementary.tex` and everything outward-facing untouched (frozen tags
+inviolate; the supplementary APPLICATION and the Mathlib PR decision stay Bryan-gated);
+never claim "fully formalized"; a row counts FORMALIZED only with no located hypothesis
+at the article's own generality. Field hazards from arc-5, pre-paid so they cost zero
+time now: `fin_cases` produces atoms `rw` cannot match — use `by decide` case
+enumeration; one-sided rewrites need `conv_lhs`; the guardrail blocks `git checkout --` —
+use `git stash push -- <abs path>`; destructive ops take absolute paths only.
+
+**Expected landing, for calibration only:** a full-yield arc ends in the high teens
+FORMALIZED of 36. The number is not the deliverable; the per-row honesty is.
+
+---
+
+## ARC-5 ORDERS (2026-08-08, Fable design pass — the coverage ladder). EXECUTED through 5.3 + cold review 2026-08-08; 5.4/5.5 carried into ARC-6 above; superseded as campaign SSOT.
 
 **The question that produced this arc:** Bryan asked what it would take to reach 36/36 of
 the paper's numbered results in Lean, and what the concerns are with setting exactly that
