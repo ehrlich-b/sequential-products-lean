@@ -1,56 +1,65 @@
 /-
 Copyright (c) 2026 Bryan Ehrlich. All rights reserved.
-Released under Apache 2.0 license.
+Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Bryan Ehrlich
 -/
 import Mathlib.Analysis.InnerProductSpace.PiL2
 import Mathlib.LinearAlgebra.Projectivization.Basic
 
-set_option linter.style.longLine false
-
 /-!
-# Real Wigner/Uhlhorn rigidity on `ℝP(E)` — **proved here**
+# Wigner's theorem over the reals
 
-The complex row's Jordan property is discharged (M3) through the vendored
-`Projectivization.wigner_rigidity` on `ℂP^{N-1}`.  The **real** analogue exists in no
-prover, so this file proves it, and the real row is unconditional because of it.
+For a finite-dimensional real inner product space `E`, every self-map of the projective
+space `ℙ ℝ E` preserving the transition probability
+`transProb p q = ⟪p.rep, q.rep⟫² / (‖p.rep‖²‖q.rep‖²)` is induced by a linear isometry.
+This is the real case of Wigner's theorem, in the Uhlhorn form: only preservation of the
+transition probability is assumed, not linearity, and **not bijectivity** — bijectivity is
+a conclusion, since the induced isometry is invertible.
 
-**`exists_isometry_of_transProbPreservingR`** (the capstone, at the end of the file):
-every transition-probability preserving self-map of the rays of a finite-dimensional
-real inner product space is `projMapR e` for a linear isometry `e`.  Note the
-hypothesis: `TransProbPreservingR f` is *only* `∀ p q, transProbR (f p) (f q) =
-transProbR p q`.  **Bijectivity is not assumed** — preservation of the transition
-probabilities alone forces the map to be induced by an isometry, hence bijective.
+## Main definitions
 
-The route (all in this file, no `sorry`, closure = Lean core):
+* `Projectivization.transProbVec` — the transition probability of two vectors,
+  `⟪ψ, φ⟫² / (‖ψ‖² ‖φ‖²)`, invariant under nonzero scaling in each slot.
+* `Projectivization.transProb` — the induced function on pairs of rays.
+* `Projectivization.TransProbPreserving` — the predicate that a self-map of `ℙ ℝ E`
+  preserves `transProb`.
+* `Projectivization.projMap` — the self-map of `ℙ ℝ E` induced by a linear isometry
+  equivalence of `E`.
 
-* `transProbVecR` — `|⟨ψ,φ⟩|²/(‖ψ‖²‖φ‖²)` over ℝ, with scale invariance in each slot;
-  `transProbR` — the induced function on `ℝP(E)`;
-* `TransProbPreservingR`, `projMapR` — the property and the map induced by a real
-  linear isometry; `projMapR_transProbPreservingR` — the easy inclusion
-  `O(E) → TransProbPreserving`;
-* `imageOrthonormalBasis`/`imgBasis` — the image of an orthonormal basis is one;
-* `signPattern`/`normBasis` — the global sign ambiguity fixed against an anchor ray;
-* `eq_projMapR_of_anchor` and `eq_projMapR_of_anchor_zero` — the two cases (rays with
-  and without anchor overlap, the latter by anchor-shifting), combined in
-  `eq_projMapR`, then instantiated on `stdOrthonormalBasis` for the capstone.
+## Main results
 
-Downstream: `Necessity.RealWignerBridge` → `Necessity.RealKadison` →
-`Necessity.RealRowUnconditional`, i.e. this theorem is what makes `real_classification`
-carry no Jordan hypothesis.
+* `Projectivization.projMap_transProbPreserving` — the easy inclusion: every linear
+  isometry equivalence induces a transition-probability preserving map.
+* `Projectivization.exists_isometry_of_transProbPreserving` — **Wigner's theorem over ℝ**:
+  conversely, every transition-probability preserving self-map of `ℙ ℝ E` is `projMap e`
+  for some `e : E ≃ₗᵢ[ℝ] E`. Together with the previous result this is an exact
+  characterization.
 
-Measured before writing (2026-08-06): the complex development is 3179 lines, of which
-the bulk is *phase* structure — 85 uses of `Complex.I`, 117 circle/phase references,
-179 conjugation/antiunitary references.  **None of that exists over ℝ**: there is no
-circle of gauge freedom and no antiunitary branch, only a global sign.  So the real
-theorem is not a port of that file, and is correspondingly much shorter.
+## Implementation notes
 
-**Provenance.** First-party (Bryan Ehrlich).  It lived under `Vendor/` while it was
-being written against the vendored complex development; it depends on nothing vendored
-(the former `Vendor.Wigner.TransitionProbability` import was verified dead at
-declaration level before removal — zero island declarations, instances, or topology
-used) and was moved out on 2026-08-08.  It is the tree's one Mathlib upstream
-candidate.
+The proof is elementary and self-contained: no projective topology, no measure theory, and
+no functional analysis beyond the finite-dimensional inner-product API. The structure is
+
+1. the image of an orthonormal basis is an orthonormal basis (`imageOrthonormalBasis`,
+   `imgBasis`), because `transProb = 0` is orthogonality and `transProb = 1` is equality
+   of rays;
+2. the residual sign freedom in each image basis vector is fixed against an anchor index
+   (`signPattern`, `normBasis`), using the two-slot rays `b i₀ + b i` to compare signs;
+3. an arbitrary ray is matched coordinatewise, splitting on whether it meets the anchor
+   (`eq_projMap_of_anchor`) or is orthogonal to it (`eq_projMap_of_anchor_zero`, handled by
+   shifting the anchor); `eq_projMap` combines them and the main theorem instantiates it on
+   `stdOrthonormalBasis`.
+
+Over `ℝ` there is no phase freedom and no antiunitary alternative, so the conclusion is a
+single isometry rather than a dichotomy. This is what makes the real case markedly shorter
+than the complex one, and why the two are not instances of a common `RCLike` statement: the
+complex conclusion carries an extra branch that has no real counterpart.
+
+## References
+
+* [E. P. Wigner, *Group Theory and its Application to the Quantum Mechanics of Atomic
+  Spectra*][wigner1959]
+* [U. Uhlhorn, *Representation of symmetry transformations in quantum mechanics*][uhlhorn1963]
 -/
 
 noncomputable section
@@ -64,12 +73,12 @@ variable {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E]
 /-! ## Transition probability over ℝ -/
 
 /-- The real transition probability of two vectors. -/
-def transProbVecR (ψ φ : E) : ℝ :=
+def transProbVec (ψ φ : E) : ℝ :=
   ‖(inner ℝ ψ φ : ℝ)‖ ^ 2 / (‖ψ‖ ^ 2 * ‖φ‖ ^ 2)
 
-theorem transProbVecR_smul_left (c : ℝ) (hc : c ≠ 0) (ψ φ : E) :
-    transProbVecR (c • ψ) φ = transProbVecR ψ φ := by
-  unfold transProbVecR
+theorem transProbVec_smul_left (c : ℝ) (hc : c ≠ 0) (ψ φ : E) :
+    transProbVec (c • ψ) φ = transProbVec ψ φ := by
+  unfold transProbVec
   rw [inner_smul_left, norm_mul, norm_smul, mul_pow, mul_pow]
   rcases eq_or_ne ψ 0 with hψ | hψ
   · simp [hψ]
@@ -82,9 +91,9 @@ theorem transProbVecR_smul_left (c : ℝ) (hc : c ≠ 0) (ψ φ : E) :
       rw [h4]
       field_simp
 
-theorem transProbVecR_smul_right (c : ℝ) (hc : c ≠ 0) (ψ φ : E) :
-    transProbVecR ψ (c • φ) = transProbVecR ψ φ := by
-  unfold transProbVecR
+theorem transProbVec_smul_right (c : ℝ) (hc : c ≠ 0) (ψ φ : E) :
+    transProbVec ψ (c • φ) = transProbVec ψ φ := by
+  unfold transProbVec
   rw [inner_smul_right, norm_mul, norm_smul, mul_pow, mul_pow]
   rcases eq_or_ne ψ 0 with hψ | hψ
   · simp [hψ]
@@ -96,64 +105,64 @@ theorem transProbVecR_smul_right (c : ℝ) (hc : c ≠ 0) (ψ φ : E) :
       field_simp
 
 /-- The transition probability of two points of `ℝP(E)`. -/
-def transProbR (p q : ℙ ℝ E) : ℝ := transProbVecR p.rep q.rep
+def transProb (p q : ℙ ℝ E) : ℝ := transProbVec p.rep q.rep
 
 /-! ## Orthogonal maps preserve it -/
 
 /-- A real linear isometry preserves the vector-level transition probability. -/
-theorem transProbVecR_isometry (e : E ≃ₗᵢ[ℝ] E) (ψ φ : E) :
-    transProbVecR (e ψ) (e φ) = transProbVecR ψ φ := by
-  unfold transProbVecR
+theorem transProbVec_isometry (e : E ≃ₗᵢ[ℝ] E) (ψ φ : E) :
+    transProbVec (e ψ) (e φ) = transProbVec ψ φ := by
+  unfold transProbVec
   rw [e.inner_map_map, e.norm_map, e.norm_map]
 
 /-- The map on `ℝP(E)` induced by a real linear isometry. -/
-def projMapR (e : E ≃ₗᵢ[ℝ] E) : ℙ ℝ E → ℙ ℝ E :=
+def projMap (e : E ≃ₗᵢ[ℝ] E) : ℙ ℝ E → ℙ ℝ E :=
   Projectivization.map e.toLinearEquiv.toLinearMap e.injective
 
 @[simp]
-theorem projMapR_mk (e : E ≃ₗᵢ[ℝ] E) (v : E) (hv : v ≠ 0) :
-    projMapR e (Projectivization.mk ℝ v hv)
+theorem projMap_mk (e : E ≃ₗᵢ[ℝ] E) (v : E) (hv : v ≠ 0) :
+    projMap e (Projectivization.mk ℝ v hv)
       = Projectivization.mk ℝ (e v) (by simpa using hv) :=
   Projectivization.map_mk _ _ _ _
 
 /-- Transition-probability preservation, over ℝ. -/
-def TransProbPreservingR (f : ℙ ℝ E → ℙ ℝ E) : Prop :=
-  ∀ p q, transProbR (f p) (f q) = transProbR p q
+def TransProbPreserving (f : ℙ ℝ E → ℙ ℝ E) : Prop :=
+  ∀ p q, transProb (f p) (f q) = transProb p q
 
 /-- **The easy inclusion `O(E) → TransProbPreserving`**: every orthogonal map induces
 a transition-probability preserving self-map of `ℝP(E)`.  (The converse — Wigner's
-theorem over ℝ — is `exists_isometry_of_transProbPreservingR` at the end of this file,
+theorem over ℝ — is `exists_isometry_of_transProbPreserving` at the end of this file,
 so the two together are an exact characterization.) -/
-theorem projMapR_transProbPreservingR (e : E ≃ₗᵢ[ℝ] E) :
-    TransProbPreservingR (projMapR e) := by
+theorem projMap_transProbPreserving (e : E ≃ₗᵢ[ℝ] E) :
+    TransProbPreserving (projMap e) := by
   intro p q
-  unfold transProbR
-  -- both `(projMapR e p).rep` and `e p.rep` represent the same point, so they are
-  -- proportional; `transProbVecR` only sees the ray
-  obtain ⟨a, ha⟩ : ∃ a : ℝˣ, (projMapR e p).rep = a • e p.rep := by
-    have h : projMapR e p = Projectivization.mk ℝ (e p.rep) (by simpa using p.rep_nonzero) := by
+  unfold transProb
+  -- both `(projMap e p).rep` and `e p.rep` represent the same point, so they are
+  -- proportional; `transProbVec` only sees the ray
+  obtain ⟨a, ha⟩ : ∃ a : ℝˣ, (projMap e p).rep = a • e p.rep := by
+    have h : projMap e p = Projectivization.mk ℝ (e p.rep) (by simpa using p.rep_nonzero) := by
       conv_lhs => rw [← p.mk_rep]
-      rw [projMapR_mk]
+      rw [projMap_mk]
     rw [h]
     exact Projectivization.exists_smul_eq_mk_rep ℝ (e p.rep) (by simpa using p.rep_nonzero)
       |>.imp fun a ha => ha.symm
-  obtain ⟨b, hb⟩ : ∃ b : ℝˣ, (projMapR e q).rep = b • e q.rep := by
-    have h : projMapR e q = Projectivization.mk ℝ (e q.rep) (by simpa using q.rep_nonzero) := by
+  obtain ⟨b, hb⟩ : ∃ b : ℝˣ, (projMap e q).rep = b • e q.rep := by
+    have h : projMap e q = Projectivization.mk ℝ (e q.rep) (by simpa using q.rep_nonzero) := by
       conv_lhs => rw [← q.mk_rep]
-      rw [projMapR_mk]
+      rw [projMap_mk]
     rw [h]
     exact Projectivization.exists_smul_eq_mk_rep ℝ (e q.rep) (by simpa using q.rep_nonzero)
       |>.imp fun b hb => hb.symm
   rw [ha, hb]
   simp only [Units.smul_def]
-  rw [transProbVecR_smul_left (a : ℝ) a.ne_zero, transProbVecR_smul_right (b : ℝ) b.ne_zero,
-    transProbVecR_isometry]
+  rw [transProbVec_smul_left (a : ℝ) a.ne_zero, transProbVec_smul_right (b : ℝ) b.ne_zero,
+    transProbVec_isometry]
 
 /-! ## Step 1 of the rigidity: orthogonality is preserved -/
 
-theorem transProbVecR_eq_zero_iff {ψ φ : E} (hψ : ψ ≠ 0) (hφ : φ ≠ 0) :
-    transProbVecR ψ φ = 0 ↔ (inner ℝ ψ φ : ℝ) = 0 := by
-  unfold transProbVecR
+theorem transProbVec_eq_zero_iff {ψ φ : E} (hψ : ψ ≠ 0) (hφ : φ ≠ 0) :
+    transProbVec ψ φ = 0 ↔ (inner ℝ ψ φ : ℝ) = 0 := by
+  unfold transProbVec
   have h1 : ‖ψ‖ ≠ 0 := norm_ne_zero_iff.mpr hψ
   have h2 : ‖φ‖ ≠ 0 := norm_ne_zero_iff.mpr hφ
   rw [div_eq_zero_iff]
@@ -167,26 +176,26 @@ theorem transProbVecR_eq_zero_iff {ψ φ : E} (hψ : ψ ≠ 0) (hφ : φ ≠ 0) 
     rw [h]
     simp
 
-/-- `transProbR p q = 0` exactly when the rays are orthogonal. -/
-theorem transProbR_eq_zero_iff (p q : ℙ ℝ E) :
-    transProbR p q = 0 ↔ (inner ℝ p.rep q.rep : ℝ) = 0 :=
-  transProbVecR_eq_zero_iff p.rep_nonzero q.rep_nonzero
+/-- `transProb p q = 0` exactly when the rays are orthogonal. -/
+theorem transProb_eq_zero_iff (p q : ℙ ℝ E) :
+    transProb p q = 0 ↔ (inner ℝ p.rep q.rep : ℝ) = 0 :=
+  transProbVec_eq_zero_iff p.rep_nonzero q.rep_nonzero
 
 /-- **Step 1 of the rigidity**: a transition-probability preserving map preserves
 orthogonality of rays.  This is the input to the basis argument — an orthonormal basis
 is carried to a family of pairwise-orthogonal rays. -/
-theorem TransProbPreservingR.orthogonal {f : ℙ ℝ E → ℙ ℝ E}
-    (hf : TransProbPreservingR f) {p q : ℙ ℝ E}
+theorem TransProbPreserving.orthogonal {f : ℙ ℝ E → ℙ ℝ E}
+    (hf : TransProbPreserving f) {p q : ℙ ℝ E}
     (hpq : (inner ℝ p.rep q.rep : ℝ) = 0) :
     (inner ℝ (f p).rep (f q).rep : ℝ) = 0 := by
-  rw [← transProbR_eq_zero_iff, hf p q, transProbR_eq_zero_iff]
+  rw [← transProb_eq_zero_iff, hf p q, transProb_eq_zero_iff]
   exact hpq
 
 /-- And conversely: orthogonality of the images forces orthogonality of the sources. -/
-theorem TransProbPreservingR.orthogonal_iff {f : ℙ ℝ E → ℙ ℝ E}
-    (hf : TransProbPreservingR f) (p q : ℙ ℝ E) :
+theorem TransProbPreserving.orthogonal_iff {f : ℙ ℝ E → ℙ ℝ E}
+    (hf : TransProbPreserving f) (p q : ℙ ℝ E) :
     (inner ℝ (f p).rep (f q).rep : ℝ) = 0 ↔ (inner ℝ p.rep q.rep : ℝ) = 0 := by
-  rw [← transProbR_eq_zero_iff, ← transProbR_eq_zero_iff, hf p q]
+  rw [← transProb_eq_zero_iff, ← transProb_eq_zero_iff, hf p q]
 
 /-! ## Step 2: an orthonormal basis goes to an orthonormal family -/
 
@@ -206,8 +215,8 @@ theorem inner_rep_eq_zero_iff {v w : E} (hv : v ≠ 0) (hw : w ≠ 0) :
 orthonormal family to pairwise-orthogonal rays.  Normalizing the representatives then
 gives an orthonormal family — and in finite dimension, with as many members as the
 dimension, an orthonormal basis, which is the candidate isometry's data. -/
-theorem TransProbPreservingR.image_pairwise_orthogonal {ι : Type*}
-    {f : ℙ ℝ E → ℙ ℝ E} (hf : TransProbPreservingR f) {v : ι → E}
+theorem TransProbPreserving.image_pairwise_orthogonal {ι : Type*}
+    {f : ℙ ℝ E → ℙ ℝ E} (hf : TransProbPreserving f) {v : ι → E}
     (hv : ∀ i, v i ≠ 0) (horth : ∀ i j, i ≠ j → (inner ℝ (v i) (v j) : ℝ) = 0)
     (i j : ι) (hij : i ≠ j) :
     (inner ℝ (f (Projectivization.mk ℝ (v i) (hv i))).rep
@@ -217,8 +226,8 @@ theorem TransProbPreservingR.image_pairwise_orthogonal {ι : Type*}
   exact horth i j hij
 
 /-- The normalized representatives of the image rays form an orthonormal family. -/
-theorem TransProbPreservingR.image_orthonormal {ι : Type*}
-    {f : ℙ ℝ E → ℙ ℝ E} (hf : TransProbPreservingR f) {v : ι → E}
+theorem TransProbPreserving.image_orthonormal {ι : Type*}
+    {f : ℙ ℝ E → ℙ ℝ E} (hf : TransProbPreserving f) {v : ι → E}
     (hv : ∀ i, v i ≠ 0) (horth : ∀ i j, i ≠ j → (inner ℝ (v i) (v j) : ℝ) = 0) :
     Orthonormal ℝ (fun i => ‖(f (Projectivization.mk ℝ (v i) (hv i))).rep‖⁻¹ •
       (f (Projectivization.mk ℝ (v i) (hv i))).rep) := by
@@ -238,9 +247,9 @@ theorem TransProbPreservingR.image_orthonormal {ι : Type*}
 `transProb(ψ, φ) = ⟨ψ,φ⟩²/‖ψ‖²`.  Over ℝ there is no modulus to take — the numerator
 is literally the square of the coordinate, which is why the rigidity's residual freedom
 is a sign rather than a phase. -/
-theorem transProbVecR_of_norm_one {φ : E} (hφ : ‖φ‖ = 1) (ψ : E) :
-    transProbVecR ψ φ = (inner ℝ ψ φ : ℝ) ^ 2 / ‖ψ‖ ^ 2 := by
-  unfold transProbVecR
+theorem transProbVec_of_norm_one {φ : E} (hφ : ‖φ‖ = 1) (ψ : E) :
+    transProbVec ψ φ = (inner ℝ ψ φ : ℝ) ^ 2 / ‖ψ‖ ^ 2 := by
+  unfold transProbVec
   rw [hφ, one_pow, mul_one, Real.norm_eq_abs, sq_abs]
 
 /-- **Step 3, the squared-coordinate transfer.**  If `f` preserves transition
@@ -248,8 +257,8 @@ probabilities and carries the unit vector `φ` to the ray of the unit vector `φ
 for any ray `[ψ] ↦ [ψ']` the squared coordinates against `φ` and `φ'` agree after
 normalizing by the squared norms.  This is the identity the sign-fixing step consumes:
 each coordinate of the image is determined **up to sign**. -/
-theorem TransProbPreservingR.coord_sq_transfer {f : ℙ ℝ E → ℙ ℝ E}
-    (hf : TransProbPreservingR f) {ψ φ : E} (hψ : ψ ≠ 0) (hφ : φ ≠ 0)
+theorem TransProbPreserving.coord_sq_transfer {f : ℙ ℝ E → ℙ ℝ E}
+    (hf : TransProbPreserving f) {ψ φ : E} (hψ : ψ ≠ 0) (hφ : φ ≠ 0)
     (hφ1 : ‖φ‖ = 1)
     {φ' : E} (hφ'1 : ‖φ'‖ = 1)
     (hfφ : f (Projectivization.mk ℝ φ hφ) = Projectivization.mk ℝ φ' (by
@@ -265,17 +274,17 @@ theorem TransProbPreservingR.coord_sq_transfer {f : ℙ ℝ E → ℙ ℝ E}
     exact one_ne_zero hφ'1.symm
   -- the transition probability is preserved, and both sides are squared coordinates
   have hkey := hf (Projectivization.mk ℝ ψ hψ) (Projectivization.mk ℝ φ hφ)
-  unfold transProbR at hkey
+  unfold transProb at hkey
   -- rewrite each side against a unit representative
-  have hR : transProbVecR (Projectivization.mk ℝ ψ hψ).rep (Projectivization.mk ℝ φ hφ).rep
+  have hR : transProbVec (Projectivization.mk ℝ ψ hψ).rep (Projectivization.mk ℝ φ hφ).rep
       = (inner ℝ ψ φ : ℝ) ^ 2 / ‖ψ‖ ^ 2 := by
     obtain ⟨a, ha⟩ := Projectivization.exists_smul_eq_mk_rep ℝ ψ hψ
     obtain ⟨b, hb⟩ := Projectivization.exists_smul_eq_mk_rep ℝ φ hφ
     rw [← ha, ← hb]
     simp only [Units.smul_def]
-    rw [transProbVecR_smul_left (a : ℝ) a.ne_zero, transProbVecR_smul_right (b : ℝ) b.ne_zero]
-    exact transProbVecR_of_norm_one hφ1 ψ
-  have hL : transProbVecR (f (Projectivization.mk ℝ ψ hψ)).rep
+    rw [transProbVec_smul_left (a : ℝ) a.ne_zero, transProbVec_smul_right (b : ℝ) b.ne_zero]
+    exact transProbVec_of_norm_one hφ1 ψ
+  have hL : transProbVec (f (Projectivization.mk ℝ ψ hψ)).rep
         (f (Projectivization.mk ℝ φ hφ)).rep
       = (inner ℝ (f (Projectivization.mk ℝ ψ hψ)).rep φ' : ℝ) ^ 2
         / ‖(f (Projectivization.mk ℝ ψ hψ)).rep‖ ^ 2 := by
@@ -283,8 +292,8 @@ theorem TransProbPreservingR.coord_sq_transfer {f : ℙ ℝ E → ℙ ℝ E}
     obtain ⟨b, hb⟩ := Projectivization.exists_smul_eq_mk_rep ℝ φ' hφ'0
     rw [← hb]
     simp only [Units.smul_def]
-    rw [transProbVecR_smul_right (b : ℝ) b.ne_zero]
-    exact transProbVecR_of_norm_one hφ'1 _
+    rw [transProbVec_smul_right (b : ℝ) b.ne_zero]
+    exact transProbVec_of_norm_one hφ'1 _
   rw [← hL, ← hR]
   exact hkey
 
@@ -295,9 +304,9 @@ type of cardinality `finrank` is automatically a basis — so the image of an or
 basis under a transition-probability preserving map is again an orthonormal basis.  This
 is what lets the sign-fixing step (step 4) expand an image vector in the image basis and
 conclude that its coordinates vanish outside the expected slots. -/
-noncomputable def TransProbPreservingR.imageOrthonormalBasis {ι : Type*} [Fintype ι]
+noncomputable def TransProbPreserving.imageOrthonormalBasis {ι : Type*} [Fintype ι]
     [Nonempty ι]
-    [FiniteDimensional ℝ E] {f : ℙ ℝ E → ℙ ℝ E} (hf : TransProbPreservingR f)
+    [FiniteDimensional ℝ E] {f : ℙ ℝ E → ℙ ℝ E} (hf : TransProbPreserving f)
     {v : ι → E} (hv : ∀ i, v i ≠ 0)
     (horth : ∀ i j, i ≠ j → (inner ℝ (v i) (v j) : ℝ) = 0)
     (hcard : Fintype.card ι = Module.finrank ℝ E) :
@@ -342,8 +351,8 @@ theorem normalize_ne_zero {v : E} (hv : v ≠ 0) : ‖v‖⁻¹ • v ≠ 0 :=
 
 /-- **Step 4a.**  With both sides normalized, the coordinate transfers *in absolute
 value*: the squared identity of step 3 has a unique nonnegative square root. -/
-theorem TransProbPreservingR.abs_coord_transfer {f : ℙ ℝ E → ℙ ℝ E}
-    (hf : TransProbPreservingR f) {ψ φ : E} (hψ : ψ ≠ 0) (hφ : φ ≠ 0) (hφ1 : ‖φ‖ = 1)
+theorem TransProbPreserving.abs_coord_transfer {f : ℙ ℝ E → ℙ ℝ E}
+    (hf : TransProbPreserving f) {ψ φ : E} (hψ : ψ ≠ 0) (hφ : φ ≠ 0) (hφ1 : ‖φ‖ = 1)
     {φ' : E} (hφ'0 : φ' ≠ 0) (hφ'1 : ‖φ'‖ = 1)
     (hfφ : f (Projectivization.mk ℝ φ hφ) = Projectivization.mk ℝ φ' hφ'0) :
     |(inner ℝ (‖(f (Projectivization.mk ℝ ψ hψ)).rep‖⁻¹ •
@@ -365,8 +374,8 @@ normalized image of any ray has the same coordinate modulus against the normaliz
 of `φ` as the source ray has against `φ`.  Applied to an orthonormal basis `b`, with
 `b' = imageOrthonormalBasis`, this says **every coordinate of the image is `±` the
 corresponding coordinate of the source**. -/
-theorem TransProbPreservingR.abs_inner_image {f : ℙ ℝ E → ℙ ℝ E}
-    (hf : TransProbPreservingR f) {ψ φ : E} (hψ : ψ ≠ 0) (hφ : φ ≠ 0) (hφ1 : ‖φ‖ = 1) :
+theorem TransProbPreserving.abs_inner_image {f : ℙ ℝ E → ℙ ℝ E}
+    (hf : TransProbPreserving f) {ψ φ : E} (hψ : ψ ≠ 0) (hφ : φ ≠ 0) (hφ1 : ‖φ‖ = 1) :
     |(inner ℝ (‖(f (Projectivization.mk ℝ ψ hψ)).rep‖⁻¹ •
         (f (Projectivization.mk ℝ ψ hψ)).rep)
       (‖(f (Projectivization.mk ℝ φ hφ)).rep‖⁻¹ • (f (Projectivization.mk ℝ φ hφ)).rep) : ℝ)|
@@ -428,15 +437,15 @@ theorem basis_ne_zero (b : OrthonormalBasis ι ℝ E) (i : ι) : b i ≠ 0 :=
   norm_ne_zero_iff.mp (by rw [b.orthonormal.1 i]; exact one_ne_zero)
 
 /-- The image of an orthonormal basis, as an orthonormal basis on the same index type. -/
-noncomputable def TransProbPreservingR.imgBasis {f : ℙ ℝ E → ℙ ℝ E}
-    (hf : TransProbPreservingR f) (b : OrthonormalBasis ι ℝ E) : OrthonormalBasis ι ℝ E :=
+noncomputable def TransProbPreserving.imgBasis {f : ℙ ℝ E → ℙ ℝ E}
+    (hf : TransProbPreserving f) (b : OrthonormalBasis ι ℝ E) : OrthonormalBasis ι ℝ E :=
   hf.imageOrthonormalBasis (basis_ne_zero b) (fun _ _ hij => b.orthonormal.2 hij)
     (Module.finrank_eq_card_basis b.toBasis).symm
 
 /-- The bridge back to the explicit normalized family, which is the form step 4a speaks
 about. -/
-theorem TransProbPreservingR.imgBasis_apply {f : ℙ ℝ E → ℙ ℝ E}
-    (hf : TransProbPreservingR f) (b : OrthonormalBasis ι ℝ E) (i : ι) :
+theorem TransProbPreserving.imgBasis_apply {f : ℙ ℝ E → ℙ ℝ E}
+    (hf : TransProbPreserving f) (b : OrthonormalBasis ι ℝ E) (i : ι) :
     hf.imgBasis b i = ‖(f (Projectivization.mk ℝ (b i) (basis_ne_zero b i))).rep‖⁻¹ •
       (f (Projectivization.mk ℝ (b i) (basis_ne_zero b i))).rep :=
   congrFun (OrthonormalBasis.coe_mk
@@ -444,8 +453,8 @@ theorem TransProbPreservingR.imgBasis_apply {f : ℙ ℝ E → ℙ ℝ E}
 
 /-- Step 4a, phrased against the image basis: **every coordinate of the image is `±` the
 corresponding coordinate of the source.** -/
-theorem TransProbPreservingR.abs_inner_imgBasis {f : ℙ ℝ E → ℙ ℝ E}
-    (hf : TransProbPreservingR f) (b : OrthonormalBasis ι ℝ E) {ψ : E} (hψ : ψ ≠ 0) (k : ι) :
+theorem TransProbPreserving.abs_inner_imgBasis {f : ℙ ℝ E → ℙ ℝ E}
+    (hf : TransProbPreserving f) (b : OrthonormalBasis ι ℝ E) {ψ : E} (hψ : ψ ≠ 0) (k : ι) :
     |(inner ℝ (‖(f (Projectivization.mk ℝ ψ hψ)).rep‖⁻¹ •
         (f (Projectivization.mk ℝ ψ hψ)).rep) (hf.imgBasis b k) : ℝ)|
       = |(inner ℝ (‖ψ‖⁻¹ • ψ) (b k) : ℝ)| := by
@@ -455,8 +464,8 @@ theorem TransProbPreservingR.abs_inner_imgBasis {f : ℙ ℝ E → ℙ ℝ E}
 /-- **Step 4b.**  The normalized image of `b i + b j` is supported on the two image slots
 `i, j`, with both coordinate moduli equal to `‖b i + b j‖⁻¹`.  Only the relative sign of
 the two coordinates is unpinned. -/
-theorem TransProbPreservingR.image_two_slot {f : ℙ ℝ E → ℙ ℝ E}
-    (hf : TransProbPreservingR f) (b : OrthonormalBasis ι ℝ E) {i j : ι} (hij : i ≠ j)
+theorem TransProbPreserving.image_two_slot {f : ℙ ℝ E → ℙ ℝ E}
+    (hf : TransProbPreserving f) (b : OrthonormalBasis ι ℝ E) {i j : ι} (hij : i ≠ j)
     (hw : b i + b j ≠ 0) :
     ∃ a d : ℝ, |a| = ‖b i + b j‖⁻¹ ∧ |d| = ‖b i + b j‖⁻¹ ∧
       ‖(f (Projectivization.mk ℝ (b i + b j) hw)).rep‖⁻¹ •
@@ -559,8 +568,8 @@ coordinate against the image of `b i + b j` reproduces the SUM of the source's t
 coordinates, up to the same factor `‖b i + b j‖⁻¹` that `image_two_slot` produced.  With
 `|x| = |p|` and `|y| = |q|` from step 4a, this is precisely the `|x + y| = |p + q|` that
 forces a common sign. -/
-theorem TransProbPreservingR.abs_inner_two_slot {f : ℙ ℝ E → ℙ ℝ E}
-    (hf : TransProbPreservingR f) (b : OrthonormalBasis ι ℝ E) {ψ : E} (hψ : ψ ≠ 0)
+theorem TransProbPreserving.abs_inner_two_slot {f : ℙ ℝ E → ℙ ℝ E}
+    (hf : TransProbPreserving f) (b : OrthonormalBasis ι ℝ E) {ψ : E} (hψ : ψ ≠ 0)
     {i j : ι} (hij : i ≠ j) :
     |(inner ℝ (‖(f (Projectivization.mk ℝ ψ hψ)).rep‖⁻¹ • (f (Projectivization.mk ℝ ψ hψ)).rep)
         (‖(f (Projectivization.mk ℝ (b i + b j) (basis_add_ne_zero b hij))).rep‖⁻¹ •
@@ -600,10 +609,10 @@ theorem basisIsometry_apply (b c : OrthonormalBasis ι ℝ E) (i : ι) :
 omit [Nonempty ι] [FiniteDimensional ℝ E] in
 /-- The induced projective map matches the bases as RAYS — the form the classification
 statement needs. -/
-theorem projMapR_basisIsometry (b c : OrthonormalBasis ι ℝ E) (i : ι) :
-    projMapR (basisIsometry b c) (Projectivization.mk ℝ (b i) (basis_ne_zero b i))
+theorem projMap_basisIsometry (b c : OrthonormalBasis ι ℝ E) (i : ι) :
+    projMap (basisIsometry b c) (Projectivization.mk ℝ (b i) (basis_ne_zero b i))
       = Projectivization.mk ℝ (c i) (basis_ne_zero c i) := by
-  rw [projMapR_mk]
+  rw [projMap_mk]
   exact (Projectivization.mk_eq_mk_iff ℝ _ _ _ _).mpr
     ⟨1, by simp⟩
 
@@ -669,8 +678,8 @@ theorem mk_normImg (f : ℙ ℝ E → ℙ ℝ E) {ψ : E} (hψ : ψ ≠ 0) :
 of the normalized images equals that of the normalized sources.  Every specific transfer in
 this development (two-slot, three-slot) is now just a computation of the right-hand side —
 which is what makes the remaining pair-consistency argument mechanical rather than novel. -/
-theorem TransProbPreservingR.abs_inner_normImg {f : ℙ ℝ E → ℙ ℝ E}
-    (hf : TransProbPreservingR f) {ψ w : E} (hψ : ψ ≠ 0) (hw : w ≠ 0) :
+theorem TransProbPreserving.abs_inner_normImg {f : ℙ ℝ E → ℙ ℝ E}
+    (hf : TransProbPreserving f) {ψ w : E} (hψ : ψ ≠ 0) (hw : w ≠ 0) :
     |(inner ℝ (normImg f hψ) (normImg f hw) : ℝ)|
       = |(inner ℝ (‖ψ‖⁻¹ • ψ) (‖w‖⁻¹ • w) : ℝ)| := by
   have hφ0 : ‖w‖⁻¹ • w ≠ 0 := normalize_ne_zero hw
@@ -694,8 +703,8 @@ theorem inner_basis_eq_ite [DecidableEq ι] (b : OrthonormalBasis ι ℝ E) (p q
 
 /-- **Both coordinates of a two-slot image are nonzero, with modulus `‖b i + b j‖⁻¹`.**
 This is what gives the sign pattern something to be the sign OF. -/
-theorem TransProbPreservingR.abs_inner_imgBasis_pair {f : ℙ ℝ E → ℙ ℝ E}
-    (hf : TransProbPreservingR f) (b : OrthonormalBasis ι ℝ E) {i j : ι} (hij : i ≠ j) :
+theorem TransProbPreserving.abs_inner_imgBasis_pair {f : ℙ ℝ E → ℙ ℝ E}
+    (hf : TransProbPreserving f) (b : OrthonormalBasis ι ℝ E) {i j : ι} (hij : i ≠ j) :
     |(inner ℝ (normImg f (basis_add_ne_zero b hij)) (hf.imgBasis b i) : ℝ)|
       = ‖b i + b j‖⁻¹ := by
   classical
@@ -706,8 +715,8 @@ theorem TransProbPreservingR.abs_inner_imgBasis_pair {f : ℙ ℝ E → ℙ ℝ 
     inner_basis_eq_ite, inner_basis_eq_ite, if_pos rfl, if_neg (Ne.symm hij), add_zero,
     mul_one, abs_of_nonneg (inv_nonneg.mpr (norm_nonneg _))]
 
-theorem TransProbPreservingR.inner_imgBasis_pair_ne_zero {f : ℙ ℝ E → ℙ ℝ E}
-    (hf : TransProbPreservingR f) (b : OrthonormalBasis ι ℝ E) {i j : ι} (hij : i ≠ j) :
+theorem TransProbPreserving.inner_imgBasis_pair_ne_zero {f : ℙ ℝ E → ℙ ℝ E}
+    (hf : TransProbPreserving f) (b : OrthonormalBasis ι ℝ E) {i j : ι} (hij : i ≠ j) :
     (inner ℝ (normImg f (basis_add_ne_zero b hij)) (hf.imgBasis b i) : ℝ) ≠ 0 := by
   intro h
   have := hf.abs_inner_imgBasis_pair b hij
@@ -716,8 +725,8 @@ theorem TransProbPreservingR.inner_imgBasis_pair_ne_zero {f : ℙ ℝ E → ℙ 
 
 /-- The same for the second slot.  (The `(i,j)`-swapped instance of the previous lemma is
 about the vector `b j + b i`, a different term, so the right slot needs its own statement.) -/
-theorem TransProbPreservingR.abs_inner_imgBasis_pair_right {f : ℙ ℝ E → ℙ ℝ E}
-    (hf : TransProbPreservingR f) (b : OrthonormalBasis ι ℝ E) {i j : ι} (hij : i ≠ j) :
+theorem TransProbPreserving.abs_inner_imgBasis_pair_right {f : ℙ ℝ E → ℙ ℝ E}
+    (hf : TransProbPreserving f) (b : OrthonormalBasis ι ℝ E) {i j : ι} (hij : i ≠ j) :
     |(inner ℝ (normImg f (basis_add_ne_zero b hij)) (hf.imgBasis b j) : ℝ)|
       = ‖b i + b j‖⁻¹ := by
   classical
@@ -728,8 +737,8 @@ theorem TransProbPreservingR.abs_inner_imgBasis_pair_right {f : ℙ ℝ E → �
     inner_basis_eq_ite, inner_basis_eq_ite, if_neg hij, if_pos rfl, zero_add,
     mul_one, abs_of_nonneg (inv_nonneg.mpr (norm_nonneg _))]
 
-theorem TransProbPreservingR.inner_imgBasis_pair_right_ne_zero {f : ℙ ℝ E → ℙ ℝ E}
-    (hf : TransProbPreservingR f) (b : OrthonormalBasis ι ℝ E) {i j : ι} (hij : i ≠ j) :
+theorem TransProbPreserving.inner_imgBasis_pair_right_ne_zero {f : ℙ ℝ E → ℙ ℝ E}
+    (hf : TransProbPreserving f) (b : OrthonormalBasis ι ℝ E) {i j : ι} (hij : i ≠ j) :
     (inner ℝ (normImg f (basis_add_ne_zero b hij)) (hf.imgBasis b j) : ℝ) ≠ 0 := by
   intro h
   have := hf.abs_inner_imgBasis_pair_right b hij
@@ -746,8 +755,8 @@ which is the normalization the arbitrary-ray argument runs against.
 -/
 
 /-- **The sign pattern read off the pairs `(i₀, i)`.** -/
-noncomputable def TransProbPreservingR.signPattern [DecidableEq ι] {f : ℙ ℝ E → ℙ ℝ E}
-    (hf : TransProbPreservingR f) (b : OrthonormalBasis ι ℝ E) (i₀ : ι) : ι → ℝ := fun i =>
+noncomputable def TransProbPreserving.signPattern [DecidableEq ι] {f : ℙ ℝ E → ℙ ℝ E}
+    (hf : TransProbPreserving f) (b : OrthonormalBasis ι ℝ E) (i₀ : ι) : ι → ℝ := fun i =>
   if h : i₀ = i then 1 else
     ((inner ℝ (normImg f (basis_add_ne_zero b h)) (hf.imgBasis b i₀) : ℝ) *
       (inner ℝ (normImg f (basis_add_ne_zero b h)) (hf.imgBasis b i) : ℝ)) /
@@ -755,10 +764,10 @@ noncomputable def TransProbPreservingR.signPattern [DecidableEq ι] {f : ℙ ℝ
       (inner ℝ (normImg f (basis_add_ne_zero b h)) (hf.imgBasis b i) : ℝ)|
 
 /-- The pattern consists of signs, which is all `signAdjustBasis` needs. -/
-theorem TransProbPreservingR.abs_signPattern [DecidableEq ι] {f : ℙ ℝ E → ℙ ℝ E}
-    (hf : TransProbPreservingR f) (b : OrthonormalBasis ι ℝ E) (i₀ : ι) (i : ι) :
+theorem TransProbPreserving.abs_signPattern [DecidableEq ι] {f : ℙ ℝ E → ℙ ℝ E}
+    (hf : TransProbPreserving f) (b : OrthonormalBasis ι ℝ E) (i₀ : ι) (i : ι) :
     |hf.signPattern b i₀ i| = 1 := by
-  unfold TransProbPreservingR.signPattern
+  unfold TransProbPreserving.signPattern
   by_cases h : i₀ = i
   · rw [dif_pos h, abs_one]
   · rw [dif_neg h]
@@ -783,22 +792,22 @@ theorem mul_sign_mul_pos {A B : ℝ} (hAB : A * B ≠ 0) :
   exact div_pos (lt_of_le_of_ne (sq_nonneg _) (Ne.symm (pow_ne_zero 2 hAB))) (abs_pos.mpr hAB)
 
 /-- The sign-normalized image basis. -/
-noncomputable def TransProbPreservingR.normBasis [DecidableEq ι] {f : ℙ ℝ E → ℙ ℝ E}
-    (hf : TransProbPreservingR f) (b : OrthonormalBasis ι ℝ E) (i₀ : ι) :
+noncomputable def TransProbPreserving.normBasis [DecidableEq ι] {f : ℙ ℝ E → ℙ ℝ E}
+    (hf : TransProbPreserving f) (b : OrthonormalBasis ι ℝ E) (i₀ : ι) :
     OrthonormalBasis ι ℝ E :=
   signAdjustBasis (hf.imgBasis b) (hf.signPattern b i₀) (hf.abs_signPattern b i₀)
 
-theorem TransProbPreservingR.normBasis_apply [DecidableEq ι] {f : ℙ ℝ E → ℙ ℝ E}
-    (hf : TransProbPreservingR f) (b : OrthonormalBasis ι ℝ E) (i₀ k : ι) :
+theorem TransProbPreserving.normBasis_apply [DecidableEq ι] {f : ℙ ℝ E → ℙ ℝ E}
+    (hf : TransProbPreserving f) (b : OrthonormalBasis ι ℝ E) (i₀ k : ι) :
     hf.normBasis b i₀ k = hf.signPattern b i₀ k • hf.imgBasis b k :=
   signAdjustBasis_apply _ _ _ k
 
-theorem TransProbPreservingR.signPattern_self [DecidableEq ι] {f : ℙ ℝ E → ℙ ℝ E}
-    (hf : TransProbPreservingR f) (b : OrthonormalBasis ι ℝ E) (i₀ : ι) :
+theorem TransProbPreserving.signPattern_self [DecidableEq ι] {f : ℙ ℝ E → ℙ ℝ E}
+    (hf : TransProbPreserving f) (b : OrthonormalBasis ι ℝ E) (i₀ : ι) :
     hf.signPattern b i₀ i₀ = 1 := dif_pos rfl
 
-theorem TransProbPreservingR.signPattern_of_ne [DecidableEq ι] {f : ℙ ℝ E → ℙ ℝ E}
-    (hf : TransProbPreservingR f) (b : OrthonormalBasis ι ℝ E) {i₀ i : ι} (h : i₀ ≠ i) :
+theorem TransProbPreserving.signPattern_of_ne [DecidableEq ι] {f : ℙ ℝ E → ℙ ℝ E}
+    (hf : TransProbPreserving f) (b : OrthonormalBasis ι ℝ E) {i₀ i : ι} (h : i₀ ≠ i) :
     hf.signPattern b i₀ i =
       ((inner ℝ (normImg f (basis_add_ne_zero b h)) (hf.imgBasis b i₀) : ℝ) *
         (inner ℝ (normImg f (basis_add_ne_zero b h)) (hf.imgBasis b i) : ℝ)) /
@@ -807,8 +816,8 @@ theorem TransProbPreservingR.signPattern_of_ne [DecidableEq ι] {f : ℙ ℝ E �
 
 /-- **The normalization works.**  Against `normBasis`, the two coordinates of the image of
 `b i₀ + b i` have the same sign. -/
-theorem TransProbPreservingR.pair_coord_mul_pos [DecidableEq ι] {f : ℙ ℝ E → ℙ ℝ E}
-    (hf : TransProbPreservingR f) (b : OrthonormalBasis ι ℝ E) {i₀ i : ι} (h : i₀ ≠ i) :
+theorem TransProbPreserving.pair_coord_mul_pos [DecidableEq ι] {f : ℙ ℝ E → ℙ ℝ E}
+    (hf : TransProbPreserving f) (b : OrthonormalBasis ι ℝ E) {i₀ i : ι} (h : i₀ ≠ i) :
     0 < (inner ℝ (normImg f (basis_add_ne_zero b h)) (hf.normBasis b i₀ i₀) : ℝ) *
         (inner ℝ (normImg f (basis_add_ne_zero b h)) (hf.normBasis b i₀ i) : ℝ) := by
   rw [hf.normBasis_apply b i₀ i₀, hf.normBasis_apply b i₀ i, real_inner_smul_right,
@@ -832,8 +841,8 @@ theorem eq_of_abs_eq_of_mul_pos {A B : ℝ} (habs : |A| = |B|) (hpos : 0 < A * B
     nlinarith [hpos, sq_nonneg B]
 
 /-- Step 4a against the normalized basis — the sign adjustment does not change moduli. -/
-theorem TransProbPreservingR.abs_inner_normBasis [DecidableEq ι] {f : ℙ ℝ E → ℙ ℝ E}
-    (hf : TransProbPreservingR f) (b : OrthonormalBasis ι ℝ E) (i₀ : ι) {ψ : E} (hψ : ψ ≠ 0)
+theorem TransProbPreserving.abs_inner_normBasis [DecidableEq ι] {f : ℙ ℝ E → ℙ ℝ E}
+    (hf : TransProbPreserving f) (b : OrthonormalBasis ι ℝ E) (i₀ : ι) {ψ : E} (hψ : ψ ≠ 0)
     (k : ι) :
     |(inner ℝ (normImg f hψ) (hf.normBasis b i₀ k) : ℝ)|
       = |(inner ℝ (‖ψ‖⁻¹ • ψ) (b k) : ℝ)| := by
@@ -842,8 +851,8 @@ theorem TransProbPreservingR.abs_inner_normBasis [DecidableEq ι] {f : ℙ ℝ E
   exact hf.abs_inner_imgBasis b hψ k
 
 /-- **The two-slot image is symmetric in the normalized basis.** -/
-theorem TransProbPreservingR.two_slot_normBasis [DecidableEq ι] {f : ℙ ℝ E → ℙ ℝ E}
-    (hf : TransProbPreservingR f) (b : OrthonormalBasis ι ℝ E) {i₀ i : ι} (h : i₀ ≠ i) :
+theorem TransProbPreserving.two_slot_normBasis [DecidableEq ι] {f : ℙ ℝ E → ℙ ℝ E}
+    (hf : TransProbPreserving f) (b : OrthonormalBasis ι ℝ E) {i₀ i : ι} (h : i₀ ≠ i) :
     ∃ A : ℝ, |A| = ‖b i₀ + b i‖⁻¹ ∧
       normImg f (basis_add_ne_zero b h) = A • (hf.normBasis b i₀ i₀ + hf.normBasis b i₀ i) := by
   classical
@@ -872,8 +881,8 @@ theorem TransProbPreservingR.two_slot_normBasis [DecidableEq ι] {f : ℙ ℝ E 
 
 /-- **The pair transfer for an arbitrary ray.**  `sign_pair_of_abs`'s third hypothesis, in
 the normalized basis: the moduli of the coordinate SUMS agree. -/
-theorem TransProbPreservingR.abs_add_coord_transfer [DecidableEq ι] {f : ℙ ℝ E → ℙ ℝ E}
-    (hf : TransProbPreservingR f) (b : OrthonormalBasis ι ℝ E) {i₀ i : ι} (h : i₀ ≠ i)
+theorem TransProbPreserving.abs_add_coord_transfer [DecidableEq ι] {f : ℙ ℝ E → ℙ ℝ E}
+    (hf : TransProbPreserving f) (b : OrthonormalBasis ι ℝ E) {i₀ i : ι} (h : i₀ ≠ i)
     {ψ : E} (hψ : ψ ≠ 0) :
     |(inner ℝ (normImg f hψ) (hf.normBasis b i₀ i₀) : ℝ)
         + (inner ℝ (normImg f hψ) (hf.normBasis b i₀ i) : ℝ)|
@@ -904,11 +913,11 @@ equal, and `e` being an isometry turns `⟨e ψ̂, b'' k⟩` into `⟨ψ̂, b k�
 with the projective map induced by the isometry carrying `b` to the sign-normalized image
 basis.  The global sign is `ε = x_{i₀}/p_{i₀}`, and `sign_pair_of_abs` propagates it to
 every other coordinate. -/
-theorem TransProbPreservingR.eq_projMapR_of_anchor [DecidableEq ι] {f : ℙ ℝ E → ℙ ℝ E}
-    (hf : TransProbPreservingR f) (b : OrthonormalBasis ι ℝ E) (i₀ : ι)
+theorem TransProbPreserving.eq_projMap_of_anchor [DecidableEq ι] {f : ℙ ℝ E → ℙ ℝ E}
+    (hf : TransProbPreserving f) (b : OrthonormalBasis ι ℝ E) (i₀ : ι)
     {ψ : E} (hψ : ψ ≠ 0) (hanchor : (inner ℝ (‖ψ‖⁻¹ • ψ) (b i₀) : ℝ) ≠ 0) :
     f (Projectivization.mk ℝ ψ hψ)
-      = projMapR (basisIsometry b (hf.normBasis b i₀)) (Projectivization.mk ℝ ψ hψ) := by
+      = projMap (basisIsometry b (hf.normBasis b i₀)) (Projectivization.mk ℝ ψ hψ) := by
   classical
   have habsA := hf.abs_inner_normBasis b i₀ hψ i₀
   -- the global sign, defined outright
@@ -947,7 +956,7 @@ theorem TransProbPreservingR.eq_projMapR_of_anchor [DecidableEq ι] {f : ℙ ℝ
   have hez : (basisIsometry b (hf.normBasis b i₀)) ψ ≠ 0 := by
     intro h
     exact hψ ((basisIsometry b (hf.normBasis b i₀)).map_eq_zero_iff.mp h)
-  rw [← mk_normImg f hψ, projMapR_mk]
+  rw [← mk_normImg f hψ, projMap_mk]
   refine (Projectivization.mk_eq_mk_iff ℝ _ _ _ _).mpr
     ⟨Units.mk0 ((inner ℝ (normImg f hψ) (hf.normBasis b i₀ i₀) : ℝ)
         / (inner ℝ (‖ψ‖⁻¹ • ψ) (b i₀) : ℝ) * ‖ψ‖⁻¹)
@@ -967,11 +976,11 @@ proportionality.  That is the whole residual case.
 -/
 
 /-- **The residual case.**  Rays orthogonal to the anchor, by anchor-shifting. -/
-theorem TransProbPreservingR.eq_projMapR_of_anchor_zero [DecidableEq ι] {f : ℙ ℝ E → ℙ ℝ E}
-    (hf : TransProbPreservingR f) (b : OrthonormalBasis ι ℝ E) (i₀ : ι)
+theorem TransProbPreserving.eq_projMap_of_anchor_zero [DecidableEq ι] {f : ℙ ℝ E → ℙ ℝ E}
+    (hf : TransProbPreserving f) (b : OrthonormalBasis ι ℝ E) (i₀ : ι)
     {ψ : E} (hψ : ψ ≠ 0) (hanchor : (inner ℝ (‖ψ‖⁻¹ • ψ) (b i₀) : ℝ) = 0) :
     f (Projectivization.mk ℝ ψ hψ)
-      = projMapR (basisIsometry b (hf.normBasis b i₀)) (Projectivization.mk ℝ ψ hψ) := by
+      = projMap (basisIsometry b (hf.normBasis b i₀)) (Projectivization.mk ℝ ψ hψ) := by
   classical
   have hnψ : ‖ψ‖ ≠ 0 := norm_ne_zero_iff.mpr hψ
   have hu1 : ‖‖ψ‖⁻¹ • ψ‖ = 1 := norm_normalize hψ
@@ -990,8 +999,8 @@ theorem TransProbPreservingR.eq_projMapR_of_anchor_zero [DecidableEq ι] {f : �
     rw [real_inner_smul_left, hinnerχ, mul_one]
     exact inv_ne_zero hnχ
   -- the main case applies to the shifted ray
-  have hmain := hf.eq_projMapR_of_anchor b i₀ hχ hanchor'
-  rw [← mk_normImg f hχ, projMapR_mk] at hmain
+  have hmain := hf.eq_projMap_of_anchor b i₀ hχ hanchor'
+  rw [← mk_normImg f hχ, projMap_mk] at hmain
   obtain ⟨a, ha⟩ := (Projectivization.mk_eq_mk_iff ℝ _ _ _ _).mp hmain
   rw [Units.smul_def] at ha
   -- the scale of `a` is forced by both sides being unit-normalized
@@ -1034,7 +1043,7 @@ theorem TransProbPreservingR.eq_projMapR_of_anchor_zero [DecidableEq ι] {f : �
   -- and the rays agree
   have hez : (basisIsometry b (hf.normBasis b i₀)) ψ ≠ 0 := fun h =>
     hψ ((basisIsometry b (hf.normBasis b i₀)).map_eq_zero_iff.mp h)
-  rw [← mk_normImg f hψ, projMapR_mk]
+  rw [← mk_normImg f hψ, projMap_mk]
   refine (Projectivization.mk_eq_mk_iff ℝ _ _ _ _).mpr
     ⟨Units.mk0 (r⁻¹ * ‖ψ‖⁻¹) (mul_ne_zero (inv_ne_zero hr0) (inv_ne_zero hnψ)), ?_⟩
   simp only [Units.smul_def, Units.val_mk0]
@@ -1044,29 +1053,32 @@ theorem TransProbPreservingR.eq_projMapR_of_anchor_zero [DecidableEq ι] {f : �
 
 /-- **Every ray**: combining the two cases, `f` is induced by the isometry matching `b` to
 the sign-normalized image basis. -/
-theorem TransProbPreservingR.eq_projMapR [DecidableEq ι] {f : ℙ ℝ E → ℙ ℝ E}
-    (hf : TransProbPreservingR f) (b : OrthonormalBasis ι ℝ E) (i₀ : ι) (p : ℙ ℝ E) :
-    f p = projMapR (basisIsometry b (hf.normBasis b i₀)) p := by
+theorem TransProbPreserving.eq_projMap [DecidableEq ι] {f : ℙ ℝ E → ℙ ℝ E}
+    (hf : TransProbPreserving f) (b : OrthonormalBasis ι ℝ E) (i₀ : ι) (p : ℙ ℝ E) :
+    f p = projMap (basisIsometry b (hf.normBasis b i₀)) p := by
   induction p using Projectivization.ind with
   | h ψ hψ =>
     by_cases h : (inner ℝ (‖ψ‖⁻¹ • ψ) (b i₀) : ℝ) = 0
-    · exact hf.eq_projMapR_of_anchor_zero b i₀ hψ h
-    · exact hf.eq_projMapR_of_anchor b i₀ hψ h
+    · exact hf.eq_projMap_of_anchor_zero b i₀ hψ h
+    · exact hf.eq_projMap_of_anchor b i₀ hψ h
 
 end PairModuli
 
-/-- **REAL WIGNER / KADISON RIGIDITY.**  Every transition-probability preserving map on the
-rays of a finite-dimensional real inner product space is induced by a linear isometry.  This
-is the real analogue of the vendored complex Wigner theorem, and unlike that one it is proved
-here rather than imported. -/
-theorem exists_isometry_of_transProbPreservingR [FiniteDimensional ℝ E] [Nontrivial E]
-    {f : ℙ ℝ E → ℙ ℝ E} (hf : TransProbPreservingR f) :
-    ∃ e : E ≃ₗᵢ[ℝ] E, ∀ p : ℙ ℝ E, f p = projMapR e p := by
+/-- **Wigner's theorem over `ℝ`**, in Uhlhorn's form. Every transition-probability preserving
+self-map of the rays of a finite-dimensional real inner product space is induced by a linear
+isometry equivalence.
+
+Neither linearity nor bijectivity of `f` is assumed. Together with
+`projMap_transProbPreserving` this characterizes the transition-probability preserving maps
+exactly as the image of `E ≃ₗᵢ[ℝ] E`. -/
+theorem exists_isometry_of_transProbPreserving [FiniteDimensional ℝ E] [Nontrivial E]
+    {f : ℙ ℝ E → ℙ ℝ E} (hf : TransProbPreserving f) :
+    ∃ e : E ≃ₗᵢ[ℝ] E, ∀ p : ℙ ℝ E, f p = projMap e p := by
   classical
   have hpos : 0 < Module.finrank ℝ E := Module.finrank_pos
   haveI : Nonempty (Fin (Module.finrank ℝ E)) := ⟨⟨0, hpos⟩⟩
   exact ⟨basisIsometry (stdOrthonormalBasis ℝ E)
       (hf.normBasis (stdOrthonormalBasis ℝ E) ⟨0, hpos⟩),
-    hf.eq_projMapR (stdOrthonormalBasis ℝ E) ⟨0, hpos⟩⟩
+    hf.eq_projMap (stdOrthonormalBasis ℝ E) ⟨0, hpos⟩⟩
 
 end Projectivization

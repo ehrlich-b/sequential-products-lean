@@ -185,6 +185,15 @@ modules, so the map is completed by directory rather than by file:
 `THEOREM-MAP.md` maps paper statements to declarations across all of these; this
 table is only a directory-level orientation.
 
+### `upstream/` — not part of the library
+
+`upstream/` holds a PR-shaped copy of the real Wigner theorem prepared for possible
+contribution to Mathlib, plus its PR description and a collision check. It is
+**not** imported by `RadicalRelativity.lean`, `lake build` does not compile it, and
+`AxiomAudit.lean`'s census does not reach it (the census walks the
+`RadicalRelativity` prefix). Nothing there has been submitted anywhere. See
+`upstream/README.md`.
+
 The development carries NO custom `axiom` declarations: every tracked
 declaration's axiom closure is exactly Lean's three core axioms.
 (`Selection.aczel_continuous_multiplicative` was DISCHARGED into a theorem
