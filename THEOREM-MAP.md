@@ -50,6 +50,23 @@ three kinds, and only the first is conditional on §2:
 | `thm:qubit-boundary`(iii), frame-dependence pair (V9) | `RankTwo.sp_tau_had_is_luders`, `RankTwo.sp_tau_std_is_unit_twist` | `MasterTheorem/RankTwo.lean` |
 | `lem:twist-sufficiency` — every twist product satisfies S1–S7 on `H_n(ℂ)`, packaged per `t`; S2 holds in the carried norm AND (ε–δ, `twistSeq_continuousAt_ouNorm`) in the order-unit norm — the norm caveat is discharged for this row | `HermitianMat.twistSequentialProductCore`, `HermitianMat.twistSequentialProduct` | `Hermitian/Sequential.lean` |
 
+### `lem:aone` — machine-checked at full abstract generality (recorded 2026-08-08)
+
+★ **This row was carried as "no Lean counterpart" and that was wrong.**
+`SequentialProduct.sp_unit_right` (`SequentialProduct.lean`:163) states
+`IsEffect a → a & 𝟙 = a` over an arbitrary `[SequentialProductCore V]` — i.e. over any
+order-unit space with an S1, S3–S7 product — and proves it by the article's own route:
+`a·0 = 0` from S1, `0·a = 0` from S4, hence `a |' 0`, then S6a to `a |' 𝟙`, then S3.
+Closure is exactly `[propext, Classical.choice, Quot.sound]` (verified by `#print axioms`).
+S2 is *not* used, matching the article's hypothesis accounting (S1/S3/S4/S6).
+
+Two honest qualifications, neither new to this row: it inherits the tree-wide `sp_effect`
+codomain condition carried as a structure field (the standing caveat that applies equally
+to both flagship rows), and it is covered by the Layer-1 census — which visits every
+persisted declaration — but is **not** one of the Layer-2 exact-closure sentinels, so
+"pinned by `#guard_msgs`" does not apply to it. The correction was found by writing
+`STATEMENT-MANIFEST.md`, which is the argument for having written it.
+
 ### The complex row of `mthm:master`, on the concrete carrier (2026-08-06)
 
 Everything above quantifies over the §2 *interface structures*. The rows below
@@ -467,8 +484,17 @@ machine-checked on the concrete carrier: `lem:twist-sufficiency` in §1.)
   is exactly why building the map is the rank-two work that remains. Building it
   needs per-frame parameter extraction from an arbitrary rank-two product, and the
   `N ≥ 3` machinery cannot be reused (`StabilizerCoupling` carries `rank_ge : 3 ≤ n`).
-- **`mthm:omnibus`** (the finite-dimensional omnibus classification) and
-  **`prop:pseudo-transfer`**.
+- **`mthm:omnibus`** (the finite-dimensional omnibus classification).
+- ~~**`prop:pseudo-transfer`**~~ — **CORRECTED 2026-08-08.** Not "no counterpart":
+  `Necessity/PseudoInverse.lean` proves it on the concrete carrier in *normalized* form.
+  Lean's `Necessity.pseudoInv b` is the spectral inverse rescaled by
+  `pseudoInvCoef b = ∏ eigenvalues > 0` so that it lands in the effects, where the
+  article's `a⁻¹` sits in `J⁺` and is reached only through the cone extension. So Lean has
+  `sp_pseudoInv_eq_smul_one : P.sp b (pseudoInv b) = pseudoInvCoef b • 1` and
+  `sp_pseudoInv_comm`/`sp_pseudoInv_cancel`, together with the order-preservation
+  consequences the article draws (`seqLeftMul_reflectsNonneg`, `seqLeftMul_injective`).
+  What is missing is exactly the division by that positive scalar, i.e. `lem:cone-ext`.
+  Status: **PARTIAL**, not absent.
 - **`prop:singular`** is not invoked by `master_chain` (the abstract skeleton).
   **UPDATED 2026-08-06**: it IS invoked on the concrete carrier, by both finished
   rows — `Necessity.sp_eq_twistSeq_of_effect` (ℂ) via
