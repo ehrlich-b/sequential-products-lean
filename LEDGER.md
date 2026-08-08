@@ -18,10 +18,10 @@ interface structure instantiated on the intended algebras.
 `Necessity.complex_classification_unconditional` (`Necessity/ComplexRowUnconditional.lean`)
 carries exactly `{3 ≤ N, P : SequentialProductOn (HermitianMat (Fin N) ℂ), hS2}` — verified by
 `#check`, not prose — and `#print axioms` is `[propext, Classical.choice, Quot.sound]`.
-Gates after: `lake build` green 3104 jobs, `AxiomAudit` PASS at **147** tracked modules,
-custom axioms exactly `[]`.
+Gates at the end of the arc (all four units in): `lake build` green **3105 jobs**,
+`AxiomAudit` PASS at **148** tracked modules, custom axioms exactly `[]`.
 
-**What was built** (three new modules, ~600 lines, no new capstone — the existing one was
+**What was built** (three new modules, 811 lines, no new capstone — the existing one was
 instantiated, exactly as the attack plan called for):
 * `Necessity/FrameConstancy.lean` — `sp_eq_twistSeq_frame` (the workhorse: `ComplexMaster`'s
   chain with the frame a FREE parameter, not `a.H.eigenvectorUnitary` — this is the unlock,
@@ -74,8 +74,11 @@ declarations of record (`sp_eq_twistSeq_frame`, `frameTwist_eq_of_adjAxis`, `adj
 
 ## ARC-3 ORDERS (2026-08-07, Fable handoff — Bryan funded 18h of Opus and delegated scoping)
 
-*Superseded for U1/U2/U4 by the RESULT block above; retained for the scope decisions, which
-still bind, and for U5.*
+*All four units (U1, U2, U4, U5) are DONE — see the RESULT block above, which supersedes the
+attack plan below wherever they differ (notably: Householder rather than Givens for
+connectivity, and axis adjacency rather than the general splitting relation). This block is
+retained for its SCOPE DECISIONS, which still bind, and as the record of what was planned
+versus what the mathematics actually wanted.*
 
 **THE GOAL OF THIS ARC:** make the ℂ row hypothesis-free. Deliver
 `Necessity.complex_classification_unconditional` whose signature carries ONLY
@@ -147,7 +150,7 @@ sits under a dependent proof argument, look for the defeq.
 
 ## ★ STATE OF THE SIX TARGETS — as of 2026-08-07 (read this first)
 
-Tree: `lake build` green at 3104 jobs; `AxiomAudit.lean` PASS at 147 tracked modules;
+Tree: `lake build` green at 3105 jobs; `AxiomAudit.lean` PASS at 148 tracked modules;
 **custom axioms exactly `[]`**, every tracked declaration's closure ⊆
 {`propext`, `Classical.choice`, `Quot.sound`}. All commits LOCAL (repo is public;
 pushing is Bryan-gated).
