@@ -507,7 +507,7 @@ imported on `H_N(ℂ)` is that single hypothesis plus the S2 continuity field.
 | `ComparisonSetup.Θ_fix` | van de Wetering Prop. 5.5. **Stronger than the source as stated**: the field quantifies over all of `J`, the source is effect-level. On the concrete carrier the span extension IS now Lean's (`Necessity.theta_fix_general`, 2026-08-05, via `b = b⁺ − b⁻` + normalization), and so is the compatibility bridge it rides on (`Necessity.opCommute_iff_commute`: Jordan-operator commutation = matrix commutation, quarter identity `[L_a,L_b]y = ¼[[a,b],y]`) | `prop:theta` |
 | `ComparisonSetup`'s use of `aOf r` outside the negative orthant | van de Wetering's normalization extension `Θ_{λq} = Θ_q`, which defines `Θ_q` for arbitrary positive order-preserving `q` after rescaling. On the concrete carrier this is proved: `Necessity.thetaNorm` (total on PosDef points) + the 2.3 law `theta_smul` | `lem:cone-ext` |
 | comparison cocycle | van de Wetering Prop. 5.7, specialized to the commuting diagonal family — **weaker** than the source, not stronger | `prop:theta` |
-| `DiagonalHomSetup.dχAdd`, `dχAdd_cont`, differentiated coalescence | **not a rendering of one cited theorem**: these begin *after* the paper's comparison-to-differential analysis. Lean neither differentiates `Θ` nor proves `dχAdd` is its derivative | `lem:homomorphism` |
+| `DiagonalHomSetup.dχAdd`, `dχAdd_cont`, differentiated coalescence | **not a rendering of one cited theorem**: as *skeleton fields* these are hypotheses, assumed where the abstract interface needs them. **Corrected 2026-08-08 (ARC-6 rung 6.0): the old wording here — "Lean neither differentiates `Θ` nor proves `dχAdd` is its derivative" — was FALSE on the concrete carrier**, and it is the sentence that had `lem:homomorphism` carried as ABSENT. `Necessity.chiTilde_eq_exp` *proves* `∃!` real-linear `dχ` with `χ̃ = exp ∘ dχ`, from the homomorphism law (`chiTilde_add`) plus line continuity (`continuous_chiTilde_line`) via `multiParameter_eq_exp` — so on `H_n(ℂ)` the additivity and continuity these fields carry are derived, not assumed, and by a route that imports no Lie theory. See §3c | `lem:homomorphism` |
 | `IsAlbertModel.block_injective` | Yokota's triality identification of the pointwise frame stabilizer with `Spin(8)`, **plus** a standard simplicity/kernel argument (nontrivial representation of a simple Lie algebra has zero kernel). Injectivity is a composite consequence, not Yokota's literal text | `thm:albert` |
 
 NO cited result remains as an `axiom` declaration (as of 2026-08-05 the
@@ -540,11 +540,17 @@ is intended to be exhaustive; where it and the supplement's inventory differ, th
 supplement governs.
 
 **Supplied rather than derived, in addition to the interface fields of §2:** the
-construction of the comparison character and its differential from `Θ_a`; the
 operator-to-character translation on the cross-coherence space; the geometric
 two-plane frame-connectivity move; the concrete `(S2)` and invertible-density
 inputs; the remaining rank-two cocycle and compatibility cases; and the contents
-of the cited van de Wetering propositions themselves.  (The complete seven-axiom
+of the cited van de Wetering propositions themselves.
+★ **"The construction of the comparison character and its differential from `Θ_a`" was the
+first item on this list and has been REMOVED (2026-08-08, ARC-6 rung 6.0): it is false on the
+concrete carrier.** `Necessity.chiTilde` constructs the character from `Θ` by the article's
+own `min(x,0)` decomposition, `chiTilde_add` proves it a homomorphism, and
+`chiTilde_eq_exp` derives the real-linear differential — see §3c. As in the arc-5 review, the
+governing file was the one asserting the stale claim, and it was doing so in a *summary*
+position where a reader stops.  (The complete seven-axiom
 verification of the twist products — formerly on this list — is now
 machine-checked on the concrete carrier: `lem:twist-sufficiency` in §1.)
 
@@ -679,6 +685,48 @@ formalized at the article's generality) and thread it through the six-step ladde
 Contrast `lem:span`, whose two load-bearing clauses were proved at abstract generality
 *without* Archimedean — see §1 — because the article's norm route is avoidable there and
 here it is not.
+
+## 3c. `lem:homomorphism` — repriced from ABSENT, and the missing clause proved (2026-08-08, ARC-6 rungs 6.0/6.2)
+
+**The audit verdict first, because it is the more important half.** This row was carried as
+**ABSENT** on the strength of one sentence in §2 of this file: "Lean neither differentiates
+`Θ` nor proves `dχAdd` is its derivative." That sentence was **false**, and it is now
+rewritten at its own row. It described the *abstract skeleton*, where `dχAdd` is indeed a
+hypothesis field — and then generalized to the whole tree, which had already built the
+concrete analysis. This is the third instance in two arcs of an absence claim losing its
+scope; the rule stands: **an absence claim's scope travels with it, permanently.**
+
+What the tree already had, unread:
+
+| Article clause | Lean | Note |
+| --- | --- | --- |
+| `Θ` a continuous homomorphism on the negative orthant | `Necessity.thetaUnit_mul`, `thetaUnit_zero`, `continuous_thetaUnit_val` | |
+| extends to `χ : (ℝⁿ,+) → Stab(F)°` | `Necessity.chiTilde` (**constructed**), `chiTilde_add`, `chiTilde_of_nonpos` | Built by the article's *own* canonical decomposition `sᵢ(x) = min(xᵢ,0)` — literally `r ⊓ 0` |
+| real-linear differential `dχ` | `Necessity.chiTilde_eq_exp` (`∃!` linear `D` with `χ̃ = exp ∘ D`), `dChi`, `chiTilde_eq_exp_dChi` | **Proved, not imported.** The article argues "a continuous homomorphism of f.d. Lie groups is smooth"; Lean routes through `multiParameter_eq_exp` instead, so no Lie theory enters, and it needs only *line* continuity where the article assumes joint |
+| `dχ` lands in `𝔰𝔱𝔞𝔟(F)`, acting skewly on each block | `Necessity.dChi_mem_blockSkew` into `blockSkewSubmodule` (whose membership *is* block-skewness), `dChi_block_skew`, `dChiStab` | This is what makes `T_ij ∈ 𝔰𝔬(V_ij)` automatic rather than a further obligation |
+| `ρ_ij(dχ(r)) = (rᵢ − rⱼ) T_ij`, single `T_ij` | **the one genuinely missing clause** | Now proved, below |
+
+**Proved this arc (`Necessity/PhaseAnchor.lean`, all rank-free):**
+`blockHerm_cornerJ2` (a block element sits in the Peirce 2-space of `q = pᵢ + pⱼ`);
+`tvalLm_of_diag_eq` (the phase rate kills the coalesced diagonal, from
+`dChi_kills_corner`); `tvalCoef` and `tvalLm_eq_coef_mul` (the coordinate factorization
+`tvalLm(r) = (rᵢ − rⱼ)·c_ij`); `dChiEntry_eq_mul_generator`; and — matching the article's own
+phrasing — `rhoChi` with **`rhoChi_eq_smul_generator` : `ρ_ij(dχ(r)) = (rᵢ − rⱼ) • ρ_ij(dχ(eᵢ))`**.
+Closure `[propext, Classical.choice, Quot.sound]` on each.
+
+Where the article spans the hyperplane `{rᵢ = rⱼ}` by differences of coalesced orthant
+vectors, Lean takes the vanishing directly from the differentiated coalescence
+(`dChi_kills_corner` / `rhoField_dChi_coalesced`) and then factors a linear functional that
+kills a hyperplane — exact, and with no `2π` bookkeeping, the same simplification that
+replaced the universal-cover lift in the rank-two lane.
+
+**Honest status: PARTIAL, not FORMALIZED**, for one reason only — `lem:homomorphism` sits in
+the article's *general machinery* section (before the type-by-type branches) and is stated
+for a simple EJA with a Jordan frame, whereas all of the above lives on the concrete `H_n(ℂ)`
+carrier (with the `Gen` variants covering `RCLike 𝕜`). Same generality gap as `prop:theta`
+and `prop:pseudo-transfer`, and it is the *only* thing between this row and FORMALIZED. The
+secondary gap is packaging, not content: the tree never names `Stab(F)°` as a Lie group with
+an identity component, working instead with `blockSkewSubmodule` and `dChiStab`.
 
 ## 4. SymPy labels
 

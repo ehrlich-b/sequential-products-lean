@@ -191,6 +191,103 @@ theorem dChiEntry_eq (hS2 : P.FirstArgContinuous) (hjord : ThetaPreservesJordan 
   rw [h]
   rfl
 
+/-! ## The hyperplane factorization (`lem:homomorphism`, final clause)
+
+The article's `lem:homomorphism` asserts `ρ_ij(dχ(r)) = (r_i − r_j) T_ij` for a
+*single* `T_ij ∈ 𝔰𝔬(V_ij)`.  Everything upstream of this identity is already in
+the tree: `chiTilde` is the article's own canonical-representative extension of
+`Θ` from the negative orthant to all of `ℝⁿ` (`chiTilde_of_nonpos`,
+`chiTilde_add`), `chiTilde_eq_exp` *proves* — via `multiParameter_eq_exp`, from
+the homomorphism law plus line continuity, with no Lie-theoretic import — that
+it is `exp ∘ dχ` for a unique real-linear `dχ`, and `dChi_mem_blockSkew` puts
+`dχ(r)` in the block-skew algebra, which is what makes `T_ij` skew.
+
+What was missing is only the factorization itself.  The article gets it by
+showing that differences of coalesced orthant vectors span the hyperplane
+`{r_i = r_j}`; the tree gets the vanishing directly from the differentiated
+coalescence (`dChi_kills_corner`, `rhoField_dChi_coalesced`) and then factors a
+linear functional that kills a hyperplane, which is exact and needs no
+`2π` bookkeeping.  Rank-free, so it also covers the rank-two lane. -/
+
+/-- A block element lies in the Peirce 2-space of `q = p_i + p_j`. -/
+theorem blockHerm_cornerJ2 {i j : n} (z : ℂ) : cornerJ2 i j (blockHerm i j z) := by
+  apply blockElt_cornerJ2
+  intro k hki hkj
+  rw [jordanBilin_apply]
+  exact frameProj_symmMul_blockHerm_other hki hkj _
+
+/-- **The phase rate kills the coalesced diagonal**, at every rank. -/
+theorem tvalLm_of_diag_eq (hS2 : P.FirstArgContinuous) (hjord : ThetaPreservesJordan P)
+    (i j : n) {r : n → ℝ} (h : r i = r j) :
+    tvalLm P hS2 hjord i j r = 0 := by
+  rw [tvalLm_apply, dChi_kills_corner P hS2 hjord h (blockHerm_cornerJ2 (1 : ℂ))]
+  simp
+
+/-- The single generator's coefficient, independent of `r`. -/
+noncomputable def tvalCoef (hS2 : P.FirstArgContinuous)
+    (hjord : ThetaPreservesJordan P) (i j : n) : ℝ :=
+  tvalLm P hS2 hjord i j (fun k => if k = i then 1 else 0)
+
+/-- **The hyperplane factorization in coordinates**: the phase rate is
+`(r_i − r_j)` times a single constant. -/
+theorem tvalLm_eq_coef_mul (hS2 : P.FirstArgContinuous)
+    (hjord : ThetaPreservesJordan P) {i j : n} (hij : i ≠ j) (r : n → ℝ) :
+    tvalLm P hS2 hjord i j r = (r i - r j) * tvalCoef P hS2 hjord i j := by
+  set e : n → ℝ := fun k => if k = i then (1 : ℝ) else 0 with he
+  set c : ℝ := r i - r j with hc
+  have hei : e i = 1 := by simp [he]
+  have hej : e j = 0 := by simp [he, hij.symm]
+  have hsij : (r - c • e) i = (r - c • e) j := by
+    show r i - c * e i = r j - c * e j
+    rw [hei, hej, hc]; ring
+  have hsplit : r = c • e + (r - c • e) := by abel
+  rw [hsplit, map_add, tvalLm_of_diag_eq P hS2 hjord i j hsij, add_zero,
+    map_smul, smul_eq_mul]
+  rfl
+
+/-- The block entry map of `dχ(r)` is `(r_i − r_j)` times the single generator
+`z ↦ i·z` scaled by `tvalCoef`. -/
+theorem dChiEntry_eq_mul_generator (hS2 : P.FirstArgContinuous)
+    (hjord : ThetaPreservesJordan P) {i j : n} (hij : i ≠ j) (r : n → ℝ) (z : ℂ) :
+    dChiEntry P hS2 hjord r i j z
+      = ((r i - r j) * tvalCoef P hS2 hjord i j) • (Complex.I * z) := by
+  rw [dChiEntry_eq P hS2 hjord r hij z, tvalLm_eq_coef_mul P hS2 hjord hij r]
+
+/-- The article's `ρ_ij(dχ(·))`, as a linear map of `r`. -/
+noncomputable def rhoChi (hS2 : P.FirstArgContinuous)
+    (hjord : ThetaPreservesJordan P) (i j : n) :
+    (n → ℝ) →ₗ[ℝ] ((ℝ × ℝ) →ₗ[ℝ] (ℝ × ℝ)) where
+  toFun r := rhoField i j (dChiStab P hS2 hjord r)
+  map_add' r r' := by
+    rw [map_add (dChiStab P hS2 hjord), map_add]
+  map_smul' c r := by
+    have h : dChiStab P hS2 hjord (c • r) = c • dChiStab P hS2 hjord r :=
+      Subtype.ext (by
+        show dChi P hS2 hjord (c • r) = c • dChi P hS2 hjord r
+        exact map_smul _ _ _)
+    rw [h, map_smul]
+    rfl
+
+/-- **`lem:homomorphism`, the article's block-representation identity, at every
+rank**: `ρ_ij(dχ(r)) = (r_i − r_j) • T_ij` for the single generator
+`T_ij = ρ_ij(dχ(e_i))`, which lies in `𝔰𝔬(V_ij)` because `dχ` lands in
+`blockSkewSubmodule` by construction (`dChi_mem_blockSkew`). -/
+theorem rhoChi_eq_smul_generator (hS2 : P.FirstArgContinuous)
+    (hjord : ThetaPreservesJordan P) {i j : n} (hij : i ≠ j) (r : n → ℝ) :
+    rhoChi P hS2 hjord i j r
+      = (r i - r j) • rhoChi P hS2 hjord i j (fun k => if k = i then 1 else 0) := by
+  set e : n → ℝ := fun k => if k = i then (1 : ℝ) else 0 with he
+  set c : ℝ := r i - r j with hc
+  have hei : e i = 1 := by simp [he]
+  have hej : e j = 0 := by simp [he, hij.symm]
+  have hsij : (r - c • e) i = (r - c • e) j := by
+    show r i - c * e i = r j - c * e j
+    rw [hei, hej, hc]; ring
+  have hvanish : rhoChi P hS2 hjord i j (r - c • e) = 0 :=
+    rhoField_dChi_coalesced P hS2 hjord i j (r - c • e) hsij
+  have hsplit : r = c • e + (r - c • e) := by abel
+  rw [hsplit, map_add, hvanish, add_zero, map_smul]
+
 /-! ## The phase cocycle -/
 
 /-- **The phase cocycle** `t_{ik}(r) = t_{ij}(r) + t_{jk}(r)`: the Leibniz rule
