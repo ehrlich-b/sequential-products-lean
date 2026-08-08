@@ -50,6 +50,42 @@ three kinds, and only the first is conditional on §2:
 | `thm:qubit-boundary`(iii), frame-dependence pair (V9) | `RankTwo.sp_tau_had_is_luders`, `RankTwo.sp_tau_std_is_unit_twist` | `MasterTheorem/RankTwo.lean` |
 | `lem:twist-sufficiency` — every twist product satisfies S1–S7 on `H_n(ℂ)`, packaged per `t`; S2 holds in the carried norm AND (ε–δ, `twistSeq_continuousAt_ouNorm`) in the order-unit norm — the norm caveat is discharged for this row | `HermitianMat.twistSequentialProductCore`, `HermitianMat.twistSequentialProduct` | `Hermitian/Sequential.lean` |
 
+### `lem:span` — the two load-bearing clauses, at full abstract generality (2026-08-08)
+
+`OrderUnitSpace.span_isEffect_eq_top` and `OrderUnitSpace.linearMap_eq_of_eq_on_effects`
+(`OrderUnitSpace.lean`): over an arbitrary `[OrderUnitSpace V]`, the effects span `V` and two
+linear maps agreeing on effects are equal. Previously this existed only on the concrete
+carrier (`Necessity.span_isEffect_eq_top`, still there and still used).
+
+**It is proved from order-unit boundedness alone** — no norm and no Archimedean property.
+That matters because the article's proof goes through the *norm* (`‖v‖ ≤ ½ ⟹ 0 ≤ ½𝟙+v ≤ 𝟙`),
+which this interface cannot express: its carried norm is not asserted to be the order-unit
+norm and its `archimedean` field is only boundedness. The route here — bound `x` above by
+`r•𝟙` and `-x` above by `s•𝟙`, rescale `x + s•𝟙` by `r+s+1` into the effects — needs
+neither, so it is strictly more general than the article's argument at exactly the
+interface's own strength.
+
+The row stays **PARTIAL**. Not formalized: the ball clause (`eff V` contains the ball of
+radius ½ about ½𝟙), which genuinely needs both missing properties and is the article's route
+rather than its content; and the Peirce clause, which the article obtains by *instantiating*
+this same lemma at the order unit space `(J_2(q), q)` — so it comes for free the moment the
+tree knows a Peirce 2-subalgebra is an order unit space, which it does not.
+
+### `AdjAxis` non-vacuity — now a theorem, not a docstring (2026-08-08)
+
+`Necessity.adjAxis_not_total` (`Necessity/UnitaryGeneration.lean`), with witness
+`not_adjAxis_one_house`: for `N ≥ 2`, the identity frame is **not** axis-adjacent to the
+Householder reflection in the all-ones direction, whose off-diagonal entries are uniformly
+`-2/N ≠ 0` so that it fixes no coordinate axis. This closes the caveat that
+`adjAxis_connected` might be vacuous: if `AdjAxis` were total, the walk would always be one
+step and the Householder factorization would be doing no work.
+
+★ **This supersedes a caveat that said the opposite.** The supplementary caveat list read
+"that non-vacuity is asserted in a docstring but is not itself a theorem of the tree … until
+then it should not be described as machine-checked." It now is one, and the staged
+supplementary text (blog `research/paperA-supplementary-rewrite-draft.md`, caveat 2) has been
+rewritten rather than annotated.
+
 ### `cor:selectors` clause (ii) — machine-checked at article generality (2026-08-08)
 
 `Necessity.selector_traceSymm` (`Necessity/ComplexRowUnconditional.lean`): for an S1–S7

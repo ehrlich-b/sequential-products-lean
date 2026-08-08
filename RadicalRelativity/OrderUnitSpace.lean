@@ -150,4 +150,80 @@ theorem IsEffect.add_of_le_unit {a b : V} (ha : IsEffect a) (hb : IsEffect b)
     (hab : a + b ≤ 𝟙) : IsEffect (a + b) :=
   ⟨add_nonneg ha.1 hb.1, hab⟩
 
+/-! ## `lem:span`: the effects span, and linear maps are determined on them
+
+The article proves the spanning property through the order-unit *norm* — if `‖v‖ ≤ ½`
+then `0 ≤ ½𝟙 + v ≤ 𝟙`, so the effects contain a ball about `½𝟙`.  That route needs the
+carried norm to *be* the order-unit norm, which this interface deliberately does not
+assert (see the class docstring), and needs the Archimedean property proper rather than
+the order-unit boundedness the `archimedean` field carries.
+
+The two conclusions the article draws — that the effects span and that linear maps
+agreeing on effects are equal — do not need either.  They follow from order-unit
+boundedness alone, which is what is proved here: strictly more general than the
+norm route, and available at exactly the interface's own strength.  The ball clause
+itself is *not* formalized; it is the article's route, not its content. -/
+
+/-- Nonnegative scalars preserve nonnegativity. -/
+theorem smul_nonneg' {r : ℝ} (hr : 0 ≤ r) {a : V} (ha : (0 : V) ≤ a) :
+    (0 : V) ≤ r • a := by
+  have h := smul_nonneg_mono r hr ha
+  rwa [smul_zero] at h
+
+/-- A scalar in `[0,1]` times an effect is an effect. -/
+theorem isEffect_smul {r : ℝ} (hr0 : 0 ≤ r) (hr1 : r ≤ 1) {a : V} (ha : IsEffect a) :
+    IsEffect (r • a) := by
+  refine ⟨smul_nonneg' hr0 ha.1, ?_⟩
+  calc r • a ≤ (1 : ℝ) • a := smul_le_smul_of_le_of_nonneg hr1 ha.1
+    _ = a := one_smul ℝ a
+    _ ≤ 𝟙 := ha.2
+
+/-- A scalar in `[0,1]` times the unit is an effect. -/
+theorem isEffect_smul_unit {r : ℝ} (hr0 : 0 ≤ r) (hr1 : r ≤ 1) :
+    IsEffect (r • (𝟙 : V)) :=
+  isEffect_smul hr0 hr1 isEffect_unit
+
+/-- **`lem:span`, spanning clause.**  The effects span the whole space.  Proof from
+order-unit boundedness only: bound `x` above by `r • 𝟙` and `-x` above by `s • 𝟙`, so
+that `x + s • 𝟙` is nonnegative and below `(r+s) • 𝟙`; rescaling by
+`c = r + s + 1 > 0` lands it in the effects, and `x = c • (that) - s • 𝟙` with `𝟙`
+itself an effect. -/
+theorem span_isEffect_eq_top :
+    Submodule.span ℝ {a : V | IsEffect a} = ⊤ := by
+  rw [eq_top_iff]
+  intro x _
+  obtain ⟨r, hr0, hr⟩ := archimedean x
+  obtain ⟨s, hs0, hs⟩ := archimedean (-x)
+  set c : ℝ := r + s + 1 with hc
+  have hcpos : (0 : ℝ) < c := by positivity
+  -- `x + s • 𝟙` is nonnegative
+  have hxs_nonneg : (0 : V) ≤ x + s • 𝟙 := by
+    have h := add_le_add_left (-x) (s • 𝟙) hs x
+    rwa [add_neg_cancel] at h
+  -- and bounded by `c • 𝟙`
+  have hxs_le : x + s • 𝟙 ≤ c • (𝟙 : V) := by
+    calc x + s • 𝟙 ≤ r • 𝟙 + s • 𝟙 := add_le_add_right' hr _
+      _ = (r + s) • (𝟙 : V) := (add_smul r s 𝟙).symm
+      _ ≤ c • (𝟙 : V) :=
+          smul_le_smul_of_le_of_nonneg (by rw [hc]; linarith) ousUnit_nonneg
+  -- so its `c`-rescaling is an effect
+  have hy : IsEffect (c⁻¹ • (x + s • 𝟙)) := by
+    refine ⟨smul_nonneg' (le_of_lt (inv_pos.mpr hcpos)) hxs_nonneg, ?_⟩
+    have h := smul_nonneg_mono c⁻¹ (le_of_lt (inv_pos.mpr hcpos)) hxs_le
+    rwa [smul_smul, inv_mul_cancel₀ (ne_of_gt hcpos), one_smul] at h
+  -- and `x` is a combination of it and the unit
+  have hx : x = c • (c⁻¹ • (x + s • 𝟙)) - s • 𝟙 := by
+    rw [smul_smul, mul_inv_cancel₀ (ne_of_gt hcpos), one_smul]
+    abel
+  rw [hx]
+  exact Submodule.sub_mem _
+    (Submodule.smul_mem _ _ (Submodule.subset_span hy))
+    (Submodule.smul_mem _ _ (Submodule.subset_span isEffect_unit))
+
+/-- **`lem:span`, extensionality clause.**  Two linear maps agreeing on the effects are
+equal.  This is the use the article makes of the spanning property. -/
+theorem linearMap_eq_of_eq_on_effects {W : Type*} [AddCommGroup W] [Module ℝ W]
+    (f g : V →ₗ[ℝ] W) (h : ∀ a : V, IsEffect a → f a = g a) : f = g :=
+  LinearMap.ext_on span_isEffect_eq_top (fun a ha => h a ha)
+
 end OrderUnitSpace

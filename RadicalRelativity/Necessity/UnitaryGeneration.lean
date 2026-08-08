@@ -444,4 +444,48 @@ theorem adjAxis_connected (hN : 3 ≤ N) (F G : Matrix.unitaryGroup (Fin N) ℂ)
     (Or.inl (adjAxis_mul_right (F * V₁) h₂)))
     (Or.inl (adjAxis_mul_right (F * V₁ * V₂) h₃))
 
+/-! ## `AdjAxis` is a proper relation, not a total one
+
+`adjAxis_connected` would be empty of content if `AdjAxis` held of every pair — the walk
+could always be taken in one step, and the Householder factorization it rests on would be
+doing no work.  Until now that this is *not* the case was asserted in prose (an adversarial
+review on 2026-08-07 checked it in a throwaway file); the caveat list in the supplementary
+material recorded it as "asserted in a docstring but not itself a theorem of the tree".
+It is now a theorem.
+
+The witness is the Householder reflection in the **all-ones** direction.  Its off-diagonal
+entries are all `-2/N`, uniformly nonzero, so it fixes no coordinate axis at all — which is
+exactly the negation of `AdjAxis` against the identity frame. -/
+
+/-- The all-ones vector: a Householder axis that meets every coordinate axis. -/
+def onesVec (N : ℕ) : Fin N → ℂ := fun _ => 1
+
+theorem nrm2_onesVec : nrm2 (onesVec N) = (N : ℝ) := by
+  simp [nrm2, onesVec]
+
+/-- **`AdjAxis` is not total** (`N ≥ 2`): the identity frame is not axis-adjacent to the
+Householder reflection in the all-ones direction, because every off-diagonal entry of that
+reflection is `-2/N ≠ 0`, so no axis `m` can have its row and column vanish off the
+diagonal. -/
+theorem not_adjAxis_one_house (hN : 2 ≤ N) :
+    ¬ AdjAxis (1 : Matrix.unitaryGroup (Fin N) ℂ)
+      ⟨house (onesVec N), house_mem_unitaryGroup _⟩ := by
+  haveI : Nontrivial (Fin N) := Fin.nontrivial_iff_two_le.mpr hN
+  rintro ⟨m, hm⟩
+  obtain ⟨j, hj⟩ := exists_ne m
+  have hentry := hm m j (Ne.symm hj) (Or.inl rfl)
+  simp only [Submonoid.coe_one, Matrix.conjTranspose_one, Matrix.one_mul] at hentry
+  rw [house_apply, Matrix.one_apply_ne (Ne.symm hj), nrm2_onesVec] at hentry
+  simp only [onesVec, star_one, mul_one, zero_sub, neg_eq_zero, mul_eq_zero] at hentry
+  rcases hentry with h | h
+  · norm_num at h
+  · rw [Complex.ofReal_eq_zero, inv_eq_zero, Nat.cast_eq_zero] at h
+    omega
+
+/-- **The non-vacuity of the connectivity theorem, stated as such.**  `AdjAxis` is a proper
+subrelation of the total relation on frames, so `adjAxis_connected` asserts something. -/
+theorem adjAxis_not_total (hN : 2 ≤ N) :
+    ∃ F G : Matrix.unitaryGroup (Fin N) ℂ, ¬ AdjAxis F G :=
+  ⟨1, ⟨house (onesVec N), house_mem_unitaryGroup _⟩, not_adjAxis_one_house hN⟩
+
 end Necessity
