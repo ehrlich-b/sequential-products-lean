@@ -87,6 +87,39 @@ shapes discharged (`PaperA.real_meets_ludersConclusion`,
 **3105 jobs**, `AxiomAudit` PASS at **148** modules, custom axioms exactly `[]`. See item 7.3
 in the roadmap below for what is still open there (ℍ/𝕆 shapes, README, paper §App).
 
+**★ COLD ADVERSARIAL REVIEW (2026-08-07, isolated agent, refute-first charter): ALL SIX ATTACK
+VECTORS SOUND; verdict "the claim is justified as stated."** Vectors run: vacuity, circularity,
+junk/stub, conclusion strength, the interval argument, `N ≥ 3` usage. What it independently
+machine-checked rather than argued: `AdjAxis` is satisfiable (`AdjAxis F F`) **and not total**
+(`¬ AdjAxis 1 cycU` for the 3-cycle permutation unitary on `Fin 3`) — so connectivity is real
+content, not a disguised tautology; and `frameTwist hN (twistProductOn t) _ U = t` at EVERY frame,
+so `frameTwist` computes the right number on a known model rather than being a `choose` artefact.
+It confirmed no `sorry`/`axiom`/`native_decide` anywhere in the closure, that the conclusion has
+no `PosDef` (all effects, singular included, and the invertible→all step is genuine density plus
+S2), and that `ExistsUnique` is the real thing. Three DOC-ONLY items were raised and all three
+are now FIXED in the source:
+* the file-header gloss "which is why the family, and not a single base point, is the object
+  being compared" overstated: that is true of THIS probe (one entry ⟹ one phase equation ⟹ mod
+  `2π/Δ`), not a mathematical necessity — for `N ≥ 3` a single base point with incommensurable
+  gaps read at two index pairs would also force exactness. Reworded; **if that sentence ever
+  migrates into the manuscript, weaken it to "a single phase equation cannot pin `t`."**
+* the `Adj := True` instantiation LOOKS like it assumes connectivity away. It does not, and the
+  ORDERING is what makes it non-circular: constancy is established first from the genuine
+  `AdjAxis` walk, and only then is the capstone reused with the cheapest adjacency. Now
+  pre-empted in `ComplexRowUnconditional`'s docstring — say this before a referee asks.
+* `a^{1/2+it}` at singular `a`: under Lean's `Real.log 0 = 0` the factor vanishes on the kernel,
+  which is the intended continuous extension. Now stated in the docstring.
+**The one seam no `#print axioms` can certify** (reviewer's words, and correct): "hypothesis-free"
+means free relative to the Lean ENCODING of van de Wetering Def 2 — `SequentialProductOn`
+(S1, S3-S7, plus `sp_effect` as codomain) + `FirstArgContinuous` as S2. That mapping is a human
+judgment. The reviewer read it as faithful. This is the honest residue of the whole campaign and
+must never be described as machine-checked.
+**PROCESS LESSON (cost the reviewer a re-read):** the tree moved under the cold reviewer mid-review
+(HEAD advanced and `ComplexRowUnconditional.lean` gained the two non-vacuity certificates between
+its first read and its greps), so its verdict was briefly about a state that no longer existed.
+**Freeze the tree or hand the reviewer a tag/SHA next time** — do not run a cold review against a
+live edit session.
+
 **ARC-3 SCORECARD.** U1 cross-coherence ✓ · U2 connectivity ✓ · U4 capstone ✓ · U5 statement
 layer ✓ (ℝ/ℂ). Nothing in the arc hit a wall; no out-of-scope row was touched. Total: five new
 declarations of record (`sp_eq_twistSeq_frame`, `frameTwist_eq_of_adjAxis`, `adjAxis_connected`,
