@@ -124,6 +124,14 @@ theorem firstArgContinuousOu_iff [Nonempty n] (P : SequentialProductOn (Hermitia
   · intro h b hb
     exact (continuousOnOu_iff_continuousOn _ _).mpr (h hb)
 
+/-- **The order-unit hypothesis is inhabited.**  M1's twist product satisfies it, so the
+`_ouNorm` capstones below are not quantified over an empty class.  (That
+`FirstArgContinuousOu` is also not *trivially* satisfied follows from the iff above: it is
+equivalent to `ContinuousOn`, which no discontinuous map satisfies.) -/
+theorem twistProductOn_firstArgContinuousOu [Nonempty n] (t : ℝ) :
+    FirstArgContinuousOu (twistProductOn (n := n) t) :=
+  (firstArgContinuousOu_iff _).mpr (twistProductOn_firstArgContinuous t)
+
 /-! ## Both flagship rows, with the paper's S2 as the literal hypothesis -/
 
 /-- **`mthm:master`, THE REAL ROW, with S2 in the order-unit norm.**  Identical to

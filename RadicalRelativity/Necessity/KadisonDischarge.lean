@@ -18,6 +18,15 @@ automorphism** (`orderAuto_preservesJordan`).  This is the paper's `prop:theta`
 input (van Imhoff–Roelands / Kadison rigidity), the single hypothesis
 `ThetaPreservesJordan` that every M2 result was conditional on.
 
+**The classification, not just the Jordan corollary** (`orderAuto_classification`,
+2026-08-08): such a `Φ` **is** `Ad_U` for a unitary `U`, or `Ad_U ∘ transpose` —
+`∃ U, UᴴU = 1 ∧ (Φ = Ad_U ∨ Φ = Ad_U ∘ ᵗ)`.  This was always what the argument
+established (rank-ones span, so agreement on them is equality of maps) but the
+witness used to be discarded inside the proof; now it is in the statement, and
+`orderAuto_preservesJordan` is the corollary the chain consumes.  Non-vacuity of the
+unitary branch is checked (`unitaryConj_orderAuto`); the antiunitary branch's converse
+is deliberately not packaged, and says so at the point of statement.
+
 The chain, all machine-checked in this development except the disclosed
 vendored rigidity theorem:
 
@@ -149,22 +158,28 @@ theorem isometry_apply_eq_mulVec
 
 /-! ## The unitary branch, closed end to end -/
 
-/-- **M3 on the unitary branch.**  If the induced ray map is `projMap e`, then
-`Φ` preserves the Jordan product.
+/-- **M3 on the unitary branch, the rank-one computation.**  If the induced ray
+map is `projMap e`, then `Φ` acts on every rank-one projection as conjugation by
+`U = unitaryOfIsometry e`.
 
 The chain: `rayMap_rankOne` says `Φ` acting on the ray's rank-one is the
 rank-one of the image ray; substituting `projMap e` and computing through
 `projMap_mk` / `rankOneP_mk` reduces to `(eψ)(eψ)* = U(ψψ*)U*`, which is
-`rankOne_mulVec_eq_conj` with `U = unitaryOfIsometry e`. -/
-theorem preservesJordan_of_rayMap_eq_projMap
+`rankOne_mulVec_eq_conj`.
+
+This is stated separately from the two conclusions drawn from it below — the
+Jordan property (`preservesJordan_of_rayMap_eq_projMap`) and the classification
+(`eq_unitaryConj_of_rayMap_eq_projMap`) — because rank-ones span, so agreement
+here already pins `Φ` completely. -/
+theorem agrees_unitaryConj_of_rayMap_eq_projMap
     (Φ : HermitianMat (Fin N) ℂ →ₗ[ℝ] HermitianMat (Fin N) ℂ)
     (hΦ : ∀ x y : HermitianMat (Fin N) ℂ, x ≤ y ↔ Φ x ≤ Φ y)
     (hunital : Φ 1 = 1) (hsurj : Function.Surjective Φ)
     (e : EuclideanSpace ℂ (Fin N) ≃ₗᵢ[ℂ] EuclideanSpace ℂ (Fin N))
     (he : ∀ p, rayMap Φ hΦ hunital hsurj p = Projectivization.projMap e p) :
-    PreservesJordan Φ := by
-  refine preservesJordan_of_unitary_on_rankOne Φ
-    (unitaryOfIsometry_conjTranspose_mul e) ?_
+    ∀ ψ : Fin N → ℂ, star ψ ⬝ᵥ ψ = 1 →
+      Φ (HermitianMat.rankOne ψ)
+        = (HermitianMat.rankOne ψ).conj (Projectivization.unitaryOfIsometry e) := by
   intro ψ hψ
   -- the ray of `ψ`
   have hne : (WithLp.toLp 2 ψ : EuclideanSpace ℂ (Fin N)) ≠ 0 := by
@@ -196,6 +211,32 @@ theorem preservesJordan_of_rayMap_eq_projMap
   rw [rankOneP_mk' _ hunit] at h1
   rw [h1, isometry_apply_eq_mulVec e, rankOne_mulVec_eq_conj]
 
+/-- **M3 on the unitary branch.**  If the induced ray map is `projMap e`, then
+`Φ` preserves the Jordan product. -/
+theorem preservesJordan_of_rayMap_eq_projMap
+    (Φ : HermitianMat (Fin N) ℂ →ₗ[ℝ] HermitianMat (Fin N) ℂ)
+    (hΦ : ∀ x y : HermitianMat (Fin N) ℂ, x ≤ y ↔ Φ x ≤ Φ y)
+    (hunital : Φ 1 = 1) (hsurj : Function.Surjective Φ)
+    (e : EuclideanSpace ℂ (Fin N) ≃ₗᵢ[ℂ] EuclideanSpace ℂ (Fin N))
+    (he : ∀ p, rayMap Φ hΦ hunital hsurj p = Projectivization.projMap e p) :
+    PreservesJordan Φ :=
+  preservesJordan_of_unitary_on_rankOne Φ (unitaryOfIsometry_conjTranspose_mul e)
+    (agrees_unitaryConj_of_rayMap_eq_projMap Φ hΦ hunital hsurj e he)
+
+/-- **THE CLASSIFICATION on the unitary branch.**  `Φ` is not merely *a* Jordan
+automorphism, it *is* conjugation by the Wigner unitary: `Φ = Ad_U`.  Rank-ones
+span, so the rank-one agreement above is already an equality of linear maps. -/
+theorem eq_unitaryConj_of_rayMap_eq_projMap
+    (Φ : HermitianMat (Fin N) ℂ →ₗ[ℝ] HermitianMat (Fin N) ℂ)
+    (hΦ : ∀ x y : HermitianMat (Fin N) ℂ, x ≤ y ↔ Φ x ≤ Φ y)
+    (hunital : Φ 1 = 1) (hsurj : Function.Surjective Φ)
+    (e : EuclideanSpace ℂ (Fin N) ≃ₗᵢ[ℂ] EuclideanSpace ℂ (Fin N))
+    (he : ∀ p, rayMap Φ hΦ hunital hsurj p = Projectivization.projMap e p) :
+    Φ = unitaryConj (Projectivization.unitaryOfIsometry e) :=
+  HermitianMat.linearMap_eq_of_eq_on_rankOne Φ _ (fun ψ hψ => by
+    rw [unitaryConj_apply]
+    exact agrees_unitaryConj_of_rayMap_eq_projMap Φ hΦ hunital hsurj e he ψ hψ)
+
 /-! ## The antiunitary branch, closed end to end -/
 
 /-- `(star ψ)(star ψ)* = (ψψ*)ᵗ`: the rank-one of the conjugate vector is the
@@ -218,18 +259,20 @@ theorem star_unit {ψ : Fin N → ℂ} (hψ : star ψ ⬝ᵥ ψ = 1) :
     exact Finset.sum_congr rfl fun i _ => mul_comm _ _
   rw [h, hψ]
 
-/-- **M3 on the antiunitary branch.**  If the induced ray map is
-`projMap e ∘ conjProj`, then `Φ` preserves the Jordan product. -/
-theorem preservesJordan_of_rayMap_eq_projMap_conj
+/-- **M3 on the antiunitary branch, the rank-one computation.**  If the induced
+ray map is `projMap e ∘ conjProj`, then `Φ` acts on every rank-one projection as
+transpose followed by conjugation by `U = unitaryOfIsometry e`. -/
+theorem agrees_antiunitaryConj_of_rayMap_eq_projMap_conj
     (Φ : HermitianMat (Fin N) ℂ →ₗ[ℝ] HermitianMat (Fin N) ℂ)
     (hΦ : ∀ x y : HermitianMat (Fin N) ℂ, x ≤ y ↔ Φ x ≤ Φ y)
     (hunital : Φ 1 = 1) (hsurj : Function.Surjective Φ)
     (e : EuclideanSpace ℂ (Fin N) ≃ₗᵢ[ℂ] EuclideanSpace ℂ (Fin N))
     (he : ∀ p, rayMap Φ hΦ hunital hsurj p
       = Projectivization.projMap e (Projectivization.conjProj p)) :
-    PreservesJordan Φ := by
-  refine preservesJordan_of_antiunitary_on_rankOne Φ
-    (unitaryOfIsometry_conjTranspose_mul e) ?_
+    ∀ ψ : Fin N → ℂ, star ψ ⬝ᵥ ψ = 1 →
+      Φ (HermitianMat.rankOne ψ)
+        = (transposeMap (HermitianMat.rankOne ψ)).conj
+            (Projectivization.unitaryOfIsometry e) := by
   intro ψ hψ
   have hne : (WithLp.toLp 2 ψ : EuclideanSpace ℂ (Fin N)) ≠ 0 := by
     intro hz
@@ -290,6 +333,33 @@ theorem preservesJordan_of_rayMap_eq_projMap_conj
   rw [h1, isometry_apply_eq_mulVec e, rankOne_mulVec_eq_conj,
     rankOne_star_eq_transpose]
 
+/-- **M3 on the antiunitary branch.**  If the induced ray map is
+`projMap e ∘ conjProj`, then `Φ` preserves the Jordan product. -/
+theorem preservesJordan_of_rayMap_eq_projMap_conj
+    (Φ : HermitianMat (Fin N) ℂ →ₗ[ℝ] HermitianMat (Fin N) ℂ)
+    (hΦ : ∀ x y : HermitianMat (Fin N) ℂ, x ≤ y ↔ Φ x ≤ Φ y)
+    (hunital : Φ 1 = 1) (hsurj : Function.Surjective Φ)
+    (e : EuclideanSpace ℂ (Fin N) ≃ₗᵢ[ℂ] EuclideanSpace ℂ (Fin N))
+    (he : ∀ p, rayMap Φ hΦ hunital hsurj p
+      = Projectivization.projMap e (Projectivization.conjProj p)) :
+    PreservesJordan Φ :=
+  preservesJordan_of_antiunitary_on_rankOne Φ (unitaryOfIsometry_conjTranspose_mul e)
+    (agrees_antiunitaryConj_of_rayMap_eq_projMap_conj Φ hΦ hunital hsurj e he)
+
+/-- **THE CLASSIFICATION on the antiunitary branch.**  `Φ = Ad_U ∘ transpose`. -/
+theorem eq_unitaryConj_comp_transposeMap_of_rayMap_eq_projMap_conj
+    (Φ : HermitianMat (Fin N) ℂ →ₗ[ℝ] HermitianMat (Fin N) ℂ)
+    (hΦ : ∀ x y : HermitianMat (Fin N) ℂ, x ≤ y ↔ Φ x ≤ Φ y)
+    (hunital : Φ 1 = 1) (hsurj : Function.Surjective Φ)
+    (e : EuclideanSpace ℂ (Fin N) ≃ₗᵢ[ℂ] EuclideanSpace ℂ (Fin N))
+    (he : ∀ p, rayMap Φ hΦ hunital hsurj p
+      = Projectivization.projMap e (Projectivization.conjProj p)) :
+    Φ = (unitaryConj (Projectivization.unitaryOfIsometry e)).comp
+          (transposeMap (n := Fin N)) :=
+  HermitianMat.linearMap_eq_of_eq_on_rankOne Φ _ (fun ψ hψ => by
+    rw [LinearMap.comp_apply, unitaryConj_apply]
+    exact agrees_antiunitaryConj_of_rayMap_eq_projMap_conj Φ hΦ hunital hsurj e he ψ hψ)
+
 /-! ## The capstone: Kadison rigidity on `H_N(ℂ)` -/
 
 /-- **KADISON RIGIDITY ON `H_N(ℂ)` (the M3 result).** Every unital `ℝ`-linear
@@ -310,6 +380,76 @@ theorem orderAuto_preservesJordan
   rcases rayMap_dichotomy Φ hΦ hunital hsurj with ⟨e, he⟩ | ⟨e, he⟩
   · exact preservesJordan_of_rayMap_eq_projMap Φ hΦ hunital hsurj e he
   · exact preservesJordan_of_rayMap_eq_projMap_conj Φ hΦ hunital hsurj e he
+
+/-- **KADISON RIGIDITY ON `H_N(ℂ)`, CLASSIFIED.**  Every unital `ℝ`-linear
+order-automorphism of `H_N(ℂ)` **is** `Ad_U` for a unitary `U`, or `Ad_U ∘ transpose`:
+
+`∃ U, Uᴴ U = 1 ∧ (Φ = Ad_U ∨ Φ = Ad_U ∘ ᵗ)`.
+
+This is the classification, of which `orderAuto_preservesJordan` above is the corollary the
+master-theorem chain consumes.  The two branches are the two branches of the Wigner
+dichotomy: `Ad_U` is the unitary alternative, `Ad_U ∘ transpose` the antiunitary one (over ℂ
+both occur — contrast `orderAutoR_eq_orthConj`, where over ℝ there is no second branch).
+
+Nothing new is proved here: rank-ones span, so the rank-one agreement each branch already
+established *is* the equality of maps.  What changes is that the witness is now in the
+statement instead of being discarded inside the proof. -/
+theorem orderAuto_classification
+    (Φ : HermitianMat (Fin N) ℂ →ₗ[ℝ] HermitianMat (Fin N) ℂ)
+    (hΦ : ∀ x y : HermitianMat (Fin N) ℂ, x ≤ y ↔ Φ x ≤ Φ y)
+    (hunital : Φ 1 = 1) (hsurj : Function.Surjective Φ) :
+    ∃ U : Matrix (Fin N) (Fin N) ℂ, Uᴴ * U = 1 ∧
+      (Φ = unitaryConj U ∨ Φ = (unitaryConj U).comp (transposeMap (n := Fin N))) := by
+  rcases rayMap_dichotomy Φ hΦ hunital hsurj with ⟨e, he⟩ | ⟨e, he⟩
+  · exact ⟨Projectivization.unitaryOfIsometry e, unitaryOfIsometry_conjTranspose_mul e,
+      Or.inl (eq_unitaryConj_of_rayMap_eq_projMap Φ hΦ hunital hsurj e he)⟩
+  · exact ⟨Projectivization.unitaryOfIsometry e, unitaryOfIsometry_conjTranspose_mul e,
+      Or.inr (eq_unitaryConj_comp_transposeMap_of_rayMap_eq_projMap_conj
+        Φ hΦ hunital hsurj e he)⟩
+
+/-! ## Non-vacuity of the classification: the unitary branch really is realized
+
+`orderAuto_classification` would say little if no map of the classified form were a unital
+order-automorphism.  The unitary branch is checked here.  **The antiunitary branch's converse
+is not packaged**: `transposeMap` reflects the Loewner order too (over ℂ the transpose of a
+Hermitian PSD matrix is its entrywise conjugate, which is PSD), but that needs a
+`PosSemidef`-under-transpose lemma Mathlib does not have, and nothing in the paper or the
+master-theorem chain consumes it — so it is recorded as unproved rather than assumed.  This
+does not weaken the classification direction, which is what `orderAuto_classification` states. -/
+
+/-- Unitary conjugation reflects the Loewner order, with `Ad_{Uᴴ}` as the inverse. -/
+theorem unitaryConj_le_iff {U : Matrix (Fin N) (Fin N) ℂ} (hU : Uᴴ * U = 1)
+    (x y : HermitianMat (Fin N) ℂ) : unitaryConj U x ≤ unitaryConj U y ↔ x ≤ y := by
+  constructor
+  · intro h
+    have h2 : (x.conj U).conj Uᴴ ≤ (y.conj U).conj Uᴴ := HermitianMat.conj_mono h
+    rwa [HermitianMat.conj_conj, HermitianMat.conj_conj, hU, HermitianMat.conj_one,
+      HermitianMat.conj_one] at h2
+  · exact fun h => HermitianMat.conj_mono h
+
+/-- Unitary conjugation is unital. -/
+theorem unitaryConj_one {U : Matrix (Fin N) (Fin N) ℂ} (hU : Uᴴ * U = 1) :
+    unitaryConj U (1 : HermitianMat (Fin N) ℂ) = 1 := by
+  ext1
+  rw [unitaryConj_apply, HermitianMat.conj_apply_mat]
+  simp [Matrix.mul_eq_one_comm.mp hU]
+
+/-- Unitary conjugation is surjective, with `Uᴴ`-conjugation as the preimage. -/
+theorem unitaryConj_surjective {U : Matrix (Fin N) (Fin N) ℂ} (hU : Uᴴ * U = 1) :
+    Function.Surjective (unitaryConj U) := by
+  intro y
+  refine ⟨y.conj Uᴴ, ?_⟩
+  rw [unitaryConj_apply, HermitianMat.conj_conj]
+  simp [Matrix.mul_eq_one_comm.mp hU]
+
+/-- **The unitary branch of the classification is realized.**  `Ad_U` is a unital
+order-automorphism for every `U` with `UᴴU = 1`, so `orderAuto_classification`'s hypothesis
+class and its conclusion class genuinely meet. -/
+theorem unitaryConj_orderAuto {U : Matrix (Fin N) (Fin N) ℂ} (hU : Uᴴ * U = 1) :
+    (∀ x y : HermitianMat (Fin N) ℂ, x ≤ y ↔ unitaryConj U x ≤ unitaryConj U y)
+      ∧ unitaryConj U 1 = 1 ∧ Function.Surjective (unitaryConj U) :=
+  ⟨fun x y => (unitaryConj_le_iff hU x y).symm, unitaryConj_one hU,
+    unitaryConj_surjective hU⟩
 
 /-! ## Discharging `ThetaPreservesJordan` -/
 

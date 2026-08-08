@@ -11,9 +11,17 @@ set_option linter.style.longLine false
 /-!
 # Kadison rigidity on `H_N(ℝ)`  (the ℝ bridge, capstone)
 
-**Every unital `ℝ`-linear order-automorphism of `H_N(ℝ)` is a Jordan automorphism**
-(`orderAutoR_preservesJordan`).  This is the ℝ analogue of `KadisonDischarge.orderAuto_preservesJordan`,
-and it discharges the hypothesis the whole real row was conditional on.
+**Every unital `ℝ`-linear order-automorphism of `H_N(ℝ)` IS conjugation by an orthogonal
+matrix** (`orderAutoR_eq_orthConj`, 2026-08-08), hence in particular a Jordan automorphism
+(`orderAutoR_preservesJordan`).  This is the ℝ analogue of
+`KadisonDischarge.orderAuto_classification` / `orderAuto_preservesJordan`, and the Jordan form
+is what discharges the hypothesis the whole real row was conditional on.
+
+The classification is **exact**, not one-sided: `orthConj_orderAuto` proves the converse
+(orthogonal conjugation *is* a unital order-automorphism), so the order-automorphism group of
+`H_N(ℝ)` is exactly `{Ad_O : OᵀO = 1}`.  Over ℂ only the unitary branch's converse is
+packaged, because the antiunitary branch needs a `PosSemidef`-under-transpose lemma Mathlib
+lacks.
 
 **The difference from the ℂ lane.**  Both lanes prove their Wigner step inside this
 development — `Projectivization.wigner_rigidity` at ℂ, and
@@ -72,16 +80,25 @@ theorem isometry_dotProduct_self
   rw [← norm_sq_eq_dotProduct_self, e.norm_map, norm_sq_eq_dotProduct_self]
   exact hψ
 
-/-- **Real Kadison rigidity.**  Every unital `ℝ`-linear order-automorphism of `H_N(ℝ)` is a
-Jordan automorphism — indeed it is conjugation by an orthogonal matrix.
+/-- **REAL KADISON RIGIDITY, CLASSIFIED.**  Every unital `ℝ`-linear order-automorphism of
+`H_N(ℝ)` **is conjugation by an orthogonal matrix**: `Φ = O · (−) · Oᵀ` for some `O` with
+`OᵀO = 1` (written `Oᴴ * O = 1`, which over ℝ is the same statement).
 
-Closure is Lean core alone.  Unlike the ℂ statement there is no dichotomy: real Wigner returns
-an isometry outright, so conjugation by an orthogonal matrix is the only witness. -/
-theorem orderAutoR_preservesJordan (hN : 0 < N)
+This is the classification, not just its Jordan corollary.  The proof already had to produce
+the witness in order to conclude anything — `linearMap_eq_of_eq_on_rankOneR` upgrades
+agreement on rank-one projections to equality of maps — so the classification is what the
+argument actually establishes, and `orderAutoR_preservesJordan` below is a one-line
+consequence of it.
+
+Closure is Lean core alone.  Unlike the ℂ statement there is no dichotomy: real Wigner
+(`Projectivization.exists_isometry_of_transProbPreservingR`, proved in this tree) returns an
+isometry outright, so orthogonal conjugation is the only witness — there is no antiunitary
+branch and no transpose alternative. -/
+theorem orderAutoR_eq_orthConj (hN : 0 < N)
     (Φ : HermitianMat (Fin N) ℝ →ₗ[ℝ] HermitianMat (Fin N) ℝ)
     (hΦ : ∀ x y : HermitianMat (Fin N) ℝ, x ≤ y ↔ Φ x ≤ Φ y) (hunital : Φ 1 = 1)
     (hsurj : Function.Surjective Φ) :
-    PreservesJordan Φ := by
+    ∃ O : Matrix (Fin N) (Fin N) ℝ, Oᴴ * O = 1 ∧ Φ = orthConj O := by
   classical
   haveI : Nonempty (Fin N) := ⟨⟨0, hN⟩⟩
   haveI : Nontrivial (EuclideanSpace ℝ (Fin N)) := by
@@ -93,9 +110,8 @@ theorem orderAutoR_preservesJordan (hN : 0 < N)
   obtain ⟨e, he⟩ := Projectivization.exists_isometry_of_transProbPreservingR
     (rayMapR_transProbPreservingR Φ hΦ hunital hsurj)
   -- step 4: its matrix
-  refine preservesJordanR_of_eq
-    (linearMap_eq_of_eq_on_rankOneR Φ (orthConj (isometryMatrixR e)) ?_)
-    (orthConj_preservesJordan (isometryMatrixR_orthogonal e))
+  refine ⟨isometryMatrixR e, isometryMatrixR_orthogonal e,
+    linearMap_eq_of_eq_on_rankOneR Φ (orthConj (isometryMatrixR e)) ?_⟩
   intro ψ hψ
   have hne : (WithLp.toLp 2 ψ : EuclideanSpace ℝ (Fin N)) ≠ 0 := by
     intro hz
@@ -137,5 +153,65 @@ theorem orderAutoR_preservesJordan (hN : 0 < N)
       (toLp_rayVecR_ne_zero Φ hΦ hunital hsurj p) hne' hray
   -- step 6: assemble
   rw [orthConj_rankOneR, ← hvec, ← rayVecR_spec Φ hΦ hunital hsurj p, hrep]
+
+/-- **Real Kadison rigidity, the Jordan corollary.**  Every unital `ℝ`-linear
+order-automorphism of `H_N(ℝ)` is a Jordan automorphism.
+
+This is the form the real row consumes (`RealRowUnconditional.thetaPreservesJordanR_of_S2`).
+It follows from `orderAutoR_eq_orthConj` because orthogonal conjugation preserves the
+symmetrized product: `OᵀO = 1` cancels in the middle of each term. -/
+theorem orderAutoR_preservesJordan (hN : 0 < N)
+    (Φ : HermitianMat (Fin N) ℝ →ₗ[ℝ] HermitianMat (Fin N) ℝ)
+    (hΦ : ∀ x y : HermitianMat (Fin N) ℝ, x ≤ y ↔ Φ x ≤ Φ y) (hunital : Φ 1 = 1)
+    (hsurj : Function.Surjective Φ) :
+    PreservesJordan Φ := by
+  obtain ⟨O, hO, hEq⟩ := orderAutoR_eq_orthConj hN Φ hΦ hunital hsurj
+  exact preservesJordanR_of_eq hEq (orthConj_preservesJordan hO)
+
+/-! ## The converse, so the classification is exact rather than one-sided -/
+
+/-- For a square matrix `Oᴴ O = 1` gives the other side too; over ℝ, `Oᴴ = Oᵀ`. -/
+theorem mul_transpose_eq_one_of {O : Matrix (Fin N) (Fin N) ℝ} (hO : Oᴴ * O = 1) :
+    O * Oᵀ = 1 := by
+  have h : Oᴴ = Oᵀ := by
+    ext i j
+    simp [Matrix.conjTranspose_apply, Matrix.transpose_apply]
+  rw [← h]
+  exact Matrix.mul_eq_one_comm.mp hO
+
+/-- Orthogonal conjugation reflects the Loewner order, not just preserves it: conjugating
+back by `Oᴴ` is the inverse operation. -/
+theorem orthConj_le_iff {O : Matrix (Fin N) (Fin N) ℝ} (hO : Oᴴ * O = 1)
+    (x y : HermitianMat (Fin N) ℝ) : orthConj O x ≤ orthConj O y ↔ x ≤ y := by
+  constructor
+  · intro h
+    have h2 : (x.conj O).conj Oᴴ ≤ (y.conj O).conj Oᴴ := HermitianMat.conj_mono h
+    rwa [HermitianMat.conj_conj, HermitianMat.conj_conj, hO, HermitianMat.conj_one,
+      HermitianMat.conj_one] at h2
+  · exact fun h => HermitianMat.conj_mono h
+
+/-- Orthogonal conjugation is unital. -/
+theorem orthConj_one {O : Matrix (Fin N) (Fin N) ℝ} (hO : Oᴴ * O = 1) :
+    orthConj O (1 : HermitianMat (Fin N) ℝ) = 1 := by
+  ext1
+  rw [orthConj_apply, HermitianMat.conj_apply_mat]
+  simp [mul_transpose_eq_one_of hO]
+
+/-- Orthogonal conjugation is surjective, with `Oᴴ`-conjugation as the preimage. -/
+theorem orthConj_surjective {O : Matrix (Fin N) (Fin N) ℝ} (hO : Oᴴ * O = 1) :
+    Function.Surjective (orthConj O) := by
+  intro y
+  refine ⟨y.conj Oᴴ, ?_⟩
+  rw [orthConj_apply, HermitianMat.conj_conj]
+  simp [mul_transpose_eq_one_of hO]
+
+/-- **The converse, so the classification is exact.**  Conjugation by an orthogonal matrix
+*is* a unital order-automorphism, so together with `orderAutoR_eq_orthConj` the
+order-automorphism group of `H_N(ℝ)` is exactly `{Ad_O : OᵀO = 1}` — the classification
+characterizes it rather than merely embedding it. -/
+theorem orthConj_orderAuto {O : Matrix (Fin N) (Fin N) ℝ} (hO : Oᴴ * O = 1) :
+    (∀ x y : HermitianMat (Fin N) ℝ, x ≤ y ↔ orthConj O x ≤ orthConj O y)
+      ∧ orthConj O 1 = 1 ∧ Function.Surjective (orthConj O) :=
+  ⟨fun x y => (orthConj_le_iff hO x y).symm, orthConj_one hO, orthConj_surjective hO⟩
 
 end Necessity

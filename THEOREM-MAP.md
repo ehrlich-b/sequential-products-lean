@@ -78,6 +78,8 @@ vendored `Projectivization.wigner_rigidity`).
 | `prop:singular` **applied** (invertible ⟹ all effects) | `Necessity.sp_eq_twistSeq_of_effect` | `Necessity/ComplexClassification.lean` |
 | uniqueness of the twist parameter | `Necessity.twist_param_unique` | `Necessity/TwistUniqueness.lean` |
 | `prop:theta` (`Θ` is a Jordan automorphism) — **derived, no longer assumed** | `Necessity.thetaPreservesJordan_of_S2` | `Necessity/KadisonDischarge.lean` |
+| complex Kadison **CLASSIFIED** (2026-08-08): a unital order-automorphism of `H_N(ℂ)` is `Ad_U` or `Ad_U∘ᵗ` for a unitary `U` — stronger than `prop:theta`, which needs only the Jordan corollary | `Necessity.orderAuto_classification` | `Necessity/KadisonDischarge.lean` |
+| the unitary branch of that classification is realized (non-vacuity) | `Necessity.unitaryConj_orderAuto` | `Necessity/KadisonDischarge.lean` |
 
 **Exact hypothesis accounting for `complex_classification_unconditional` (2026-08-07)**:
 the `SequentialProductOn` fields (S1, S3–S7); S2 (`P.FirstArgContinuous`); and `3 ≤ N`.
@@ -155,7 +157,9 @@ tree, a theorem.
 | --- | --- | --- |
 | `prop:real`, **real row**: `a • b = √a·b·√a` on **all** effects, no twist parameter — **UNCONDITIONAL** | `Necessity.real_classification` | `Necessity/RealRowUnconditional.lean` |
 | the same, with the eigenframe Jordan property as a hypothesis | `Necessity.sp_eq_luders_of_effect` | `Necessity/RealRigidity.lean` |
-| real Kadison rigidity: a unital order-automorphism of `H_N(ℝ)` is orthogonal conjugation | `Necessity.orderAutoR_preservesJordan` | `Necessity/RealKadison.lean` |
+| real Kadison **CLASSIFIED** (2026-08-08): a unital order-automorphism of `H_N(ℝ)` **is** `Ad_O` for an orthogonal `O` — no dichotomy, no transpose branch | `Necessity.orderAutoR_eq_orthConj` | `Necessity/RealKadison.lean` |
+| the converse, so the classification is exact: `Ad_O` *is* a unital order-automorphism | `Necessity.orthConj_orderAuto` | `Necessity/RealKadison.lean` |
+| real Kadison, the Jordan corollary (the form the row consumes) | `Necessity.orderAutoR_preservesJordan` | `Necessity/RealKadison.lean` |
 | real Wigner rigidity: a transition-probability preserving ray map is induced by an isometry | `Projectivization.exists_isometry_of_transProbPreservingR` | `Wigner/RealWigner.lean` (first-party) |
 | the same, invertible effects only | `Necessity.sp_eq_luders_of_posDef` | `Necessity/RealRigidity.lean` |
 | the comparison character is the identity (`Θ_a = id`) | `Necessity.chiTilde_eq_id` | `Necessity/RealRigidity.lean` |
