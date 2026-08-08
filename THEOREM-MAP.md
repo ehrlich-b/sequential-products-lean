@@ -63,33 +63,61 @@ vendored `Projectivization.wigner_rigidity`).
 
 | Paper statement | Lean declaration | File |
 | --- | --- | --- |
-| `mthm:master`, **complex row**: `∃! t`, `a • b = a^{1/2+it} b a^{1/2−it}` on **all** effects | `Necessity.complex_classification` | `Necessity/ComplexMaster.lean` |
+| `mthm:master`, **complex row**: `∃! t`, `a • b = a^{1/2+it} b a^{1/2−it}` on **all** effects — **UNCONDITIONAL** | `Necessity.complex_classification_unconditional` | `Necessity/ComplexRowUnconditional.lean` |
+| the same, with the manuscript's two frame-graph facts as located hypotheses | `Necessity.complex_classification` | `Necessity/ComplexMaster.lean` |
 | the same, with the frame-graph apparatus replaced by one internal hypothesis (`frameTwist` constant) | `Necessity.complex_classification_of_frameTwistConst` | `Necessity/ComplexResidue.lean` |
+| **the residue, discharged**: `frameTwist` is constant | `Necessity.frameTwistConst` | `Necessity/ComplexRowUnconditional.lean` |
+| cross-coherence: axis-adjacent frames have equal twist parameter | `Necessity.frameTwist_eq_of_adjAxis` | `Necessity/FrameConstancy.lean` |
+| `lem:frame-connectivity`: any two frames are joined by an axis-adjacency walk | `Necessity.adjAxis_connected` | `Necessity/UnitaryGeneration.lean` |
+| every unitary is a product of three axis-fixing unitaries (`N ≥ 3`) | `Necessity.exists_axisFixing_factor` | `Necessity/UnitaryGeneration.lean` |
+| the twist form at an arbitrary frame (frame a free parameter) | `Necessity.sp_eq_twistSeq_frame` | `Necessity/FrameConstancy.lean` |
 | the per-frame parameter is unique, so `frameTwist` is an invariant of the frame | `Necessity.frameTwist_unique` | `Necessity/ComplexResidue.lean` |
 | the same, invertible effects only, one global `t` | `Necessity.sp_eq_twistSeq_of_frameGraph` | `Necessity/ComplexMaster.lean` |
 | `prop:singular` **applied** (invertible ⟹ all effects) | `Necessity.sp_eq_twistSeq_of_effect` | `Necessity/ComplexClassification.lean` |
 | uniqueness of the twist parameter | `Necessity.twist_param_unique` | `Necessity/TwistUniqueness.lean` |
 | `prop:theta` (`Θ` is a Jordan automorphism) — **derived, no longer assumed** | `Necessity.thetaPreservesJordan_of_S2` | `Necessity/KadisonDischarge.lean` |
 
-**Exact hypothesis accounting for `complex_classification`** — read this as the
-row's fine print. It takes: the `SequentialProductOn` fields (S1, S3–S7); S2
-(`P.FirstArgContinuous`); `3 ≤ N`; and the manuscript's two frame-graph facts as
-**located hypotheses**, namely `connected` (`lem:frame-connectivity`) and
-`overlap` (the cross-coherence agreement of adjacent frames' `U(1)` characters on
-an open interval). Those two are proved in the paper and carried here, exactly as
-§2's fields were — they are the honest residue of this row, and they are visible
-in its signature rather than hidden in a structure. Nothing else is assumed;
-`#print axioms Necessity.complex_classification` is Lean core only.
+**Exact hypothesis accounting for `complex_classification_unconditional` (2026-08-07)**:
+the `SequentialProductOn` fields (S1, S3–S7); S2 (`P.FirstArgContinuous`); and `3 ≤ N`.
+That is the paper's own list — the row is **UNCONDITIONAL** and may be described as such.
+Verified by `#check`, not by prose:
 
-**Sharpened form (2026-08-07).** Because `Adj` is caller-supplied, the whole apparatus
-collapses: `complex_classification_of_frameTwistConst` takes `Adj := True`, which makes
-connectivity free and turns cross-coherence into `FrameTwistConst` — `frameTwist F =
-frameTwist G` for all frames. Prefer that form when citing the row's residue: it carries
-one hypothesis about an object defined here, rather than two citations plus a relation the
-caller chooses. It is **sufficient, not proved equivalent** — so write "suffices for", not
-"equivalent to". Per-frame uniqueness IS now proved (`Necessity.frameTwist_unique`), which
-makes `frameTwist` an invariant rather than a `choose` artefact; the converse additionally
-needs the twist product's own per-frame parameter to be computed, which is not done.
+```
+@Necessity.complex_classification_unconditional : ∀ {N : ℕ}, 3 ≤ N →
+  ∀ (P : SequentialProductOn (HermitianMat (Fin N) ℂ)), P.FirstArgContinuous →
+    ∃! t, ∀ (a b), IsEffect a → IsEffect b → P.sp a b = HermitianMat.twistSeq t a b
+```
+
+`#print axioms` is Lean core only (`propext`, `Classical.choice`, `Quot.sound`).
+
+**What changed, precisely.** `complex_classification` still takes the manuscript's two
+frame-graph facts as located hypotheses — `connected` (`lem:frame-connectivity`) and
+`overlap` (cross-coherence of adjacent frames' `U(1)` characters). Both are now **theorems
+of this development**, so the located form is no longer the best available statement.
+Prefer `complex_classification_unconditional` when citing the row. The discharge chain:
+
+* `sp_eq_twistSeq_frame` — `ComplexMaster`'s chain with the frame left a free parameter
+  instead of specialized to `a.H.eigenvectorUnitary`. This is what lets two different frames
+  that diagonalize the *same* base point be compared at all.
+* `frameTwist_eq_of_adjAxis` — cross-coherence. If `F* G` fixes a coordinate axis `m`, the
+  scaled family `Ad_F (diagFamily (x • s))`, with `s` two-valued across `{m} ⊕ {m}ᶜ`,
+  commutes with `F* G` and so is diagonal in both frames. The workhorse computes the product
+  at it twice; reading the `(m, m')` entry against the pair projection over an *interval* of
+  `x` and applying `real_character_unique` forces `frameTwist F = frameTwist G` exactly. The
+  interval is not optional: a single base point pins the difference only mod `2π/(r_m − r_m')`.
+* `adjAxis_connected` — connectivity, from `exists_axisFixing_factor`: two Householder
+  reflections clear the first column of `F⁻¹G` onto one axis, and a unitary whose column is
+  supported on one axis fixes that axis. A reflection `1 − 2ww*/⟪w,w⟫` fixes every axis its
+  vector misses, which is what makes it usable as an adjacency step; `N ≥ 3` is exactly what
+  frees the axis the second reflection must miss.
+
+**Superseded claim, do not restore.** The prior entry read that the residue is
+"sufficient, not proved equivalent — write 'suffices for', not 'equivalent to'". That
+caution applied to `FrameTwistConst` as a *carried* hypothesis. It is now discharged
+outright, so the row needs no such qualifier. `frameTwist_unique` remains true and is what
+makes `frameTwist` an invariant rather than a `choose` artefact; the *converse* direction
+(that the row's conclusion forces `frameTwist` constant) is still not proved, and nothing
+in this development claims it.
 
 ### The real row of `mthm:master`, on the concrete carrier (2026-08-06)
 
@@ -127,6 +155,13 @@ Two accuracy notes. (i) The ℂ row's Wigner input is a vendored **proof**, not 
 was a theorem that existed in no library, and it is now proved here. (ii) The
 unconditional statement is at `n := Fin N`; `sp_eq_luders_of_effect` is stated at generic
 `n`, and the Kadison bridge is `Fin N`-bound because it needs `Matrix.toEuclideanLin`.
+
+**Standing as of 2026-08-07: both flagship rows are unconditional.** `H_N(ℂ)` for `N ≥ 3`
+(`complex_classification_unconditional`) and `H_n(ℝ)` (`real_classification`) each carry
+exactly S1–S7 + S2 + a dimension bound, and each closes over Lean core alone. Neither row is
+"better founded" than the other on axioms — that axis is identical. The remaining rows of
+`mthm:master` are unchanged: `H_n(ℍ)` has its foundation built but is blocked on quaternionic
+Wigner rigidity, and `H₃(𝕆)` is blocked on octonions, which exist in no prover.
 
 The supporting field-general infrastructure (of independent interest, all
 `RCLike 𝕜`): `HermitianMat.sqrt_mul_of_commute` (square roots multiply on commuting

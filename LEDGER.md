@@ -13,7 +13,58 @@ interface structure instantiated on the intended algebras.
 
 ---
 
-## ★★ ARC-3 ORDERS (2026-08-07, Fable handoff — Bryan funded 18h of Opus and delegated scoping)
+## ★★ ARC-3 RESULT (2026-08-07) — **THE ℂ ROW IS HYPOTHESIS-FREE. GOAL MET.**
+
+`Necessity.complex_classification_unconditional` (`Necessity/ComplexRowUnconditional.lean`)
+carries exactly `{3 ≤ N, P : SequentialProductOn (HermitianMat (Fin N) ℂ), hS2}` — verified by
+`#check`, not prose — and `#print axioms` is `[propext, Classical.choice, Quot.sound]`.
+Gates after: `lake build` green 3104 jobs, `AxiomAudit` PASS at **147** tracked modules,
+custom axioms exactly `[]`.
+
+**What was built** (three new modules, ~600 lines, no new capstone — the existing one was
+instantiated, exactly as the attack plan called for):
+* `Necessity/FrameConstancy.lean` — `sp_eq_twistSeq_frame` (the workhorse: `ComplexMaster`'s
+  chain with the frame a FREE parameter, not `a.H.eigenvectorUnitary` — this is the unlock,
+  and it worked because `sp_eq_twistSeq_transport` already took the unitary as a parameter);
+  `twistSeq_adU_mat` / `twistSeq_eq_of_adU` (conjugation cancels); `star_phase_factor`,
+  `exp_eq_of_twistSeq_diagFamily_eq`, `twist_param_unique_of_scaled` (uniqueness against a
+  prescribed scaled family — `twist_param_unique` generalized from its fixed probe);
+  `axisSplit`, `AdjAxis`, `diag_commute_of_axis`, `adU_eq_of_commute`,
+  **`frameTwist_eq_of_adjAxis`** (cross-coherence).
+* `Necessity/UnitaryGeneration.lean` — `axisVec` helpers; `AxisFixing`, `axisFixing_of_col`;
+  `nrm2` (squared norm as a real, so no square root enters the reflection); `lineProj`,
+  `house` and its involution/Hermitian/unitary lemmas; `house_axisFixing` (a reflection fixes
+  every axis its vector misses — the fact that makes reflections usable as adjacency steps);
+  `house_mulVec_align`; `exists_alignTarget`; `exists_align_off_axis`;
+  `exists_clear_column`; **`exists_axisFixing_factor`**; **`adjAxis_connected`**.
+* `Necessity/ComplexRowUnconditional.lean` — **`frameTwistConst`**,
+  **`complex_classification_unconditional`**.
+
+**Design decisions that mattered, for anyone extending this:**
+* Adjacency was defined as "`F* G` fixes a coordinate axis" (`AdjAxis`), NOT as the general
+  coordinate-splitting relation the plan sketched. The two-level spectrum `axisSplit m` is
+  all the cross-coherence argument needs, and the singleton form makes both the commutation
+  check and the Householder connectivity argument shorter.
+* Connectivity went through **Householder reflections**, not Givens rotations. A reflection
+  whose vector has one zero coordinate is automatically axis-fixing, so an *arbitrary*
+  reflection can be an adjacency step; that turns the plan's "~150-300 line elementary
+  induction" into a fixed 2-step column clear with no induction at all. `N ≥ 3` enters exactly
+  once: it frees the axis the second reflection's vector must miss.
+* Two `rw`-nesting traps cost time and will recur: rewriting `v` inside a term that also
+  *defines* the reflection vector (fixed by proving linearity as a separate `have` instead of
+  rewriting `v`), and `rw [← hsp]` reaching inside `√(normSq …)` (fixed by obtaining the
+  square roots opaquely via `obtain ⟨b, hbne, hb⟩`).
+* `frameTwistConst` needs `intro F G` + explicit `(Adj := …) (t := …)`; term-mode with
+  implicit unification times out at `whnf` on `frameTwist`'s `Classical.choose` body.
+
+**Item 7.3 (statement layer) is the remaining arc item** — see the ORDERS block below.
+
+---
+
+## ARC-3 ORDERS (2026-08-07, Fable handoff — Bryan funded 18h of Opus and delegated scoping)
+
+*Superseded for U1/U2/U4 by the RESULT block above; retained for the scope decisions, which
+still bind, and for U5.*
 
 **THE GOAL OF THIS ARC:** make the ℂ row hypothesis-free. Deliver
 `Necessity.complex_classification_unconditional` whose signature carries ONLY
@@ -85,14 +136,14 @@ sits under a dependent proof argument, look for the defeq.
 
 ## ★ STATE OF THE SIX TARGETS — as of 2026-08-07 (read this first)
 
-Tree: `lake build` green at 3101 jobs; `AxiomAudit.lean` PASS at 144 tracked modules;
+Tree: `lake build` green at 3104 jobs; `AxiomAudit.lean` PASS at 147 tracked modules;
 **custom axioms exactly `[]`**, every tracked declaration's closure ⊆
 {`propext`, `Classical.choice`, `Quot.sound`}. All commits LOCAL (repo is public;
 pushing is Bryan-gated).
 
 | Row | Status | Capstone |
 | --- | --- | --- |
-| `H_N(ℂ)`, N ≥ 3 | **MACHINE-CHECKED, residue is now ONE internal statement** — `FrameTwistConst` (`frameTwist` is constant). The caller-supplied `Adj` and both frame-graph citations are GONE. **Still not hypothesis-free** | `Necessity.complex_classification_of_frameTwistConst` |
+| `H_N(ℂ)`, N ≥ 3 | **MACHINE-CHECKED, HYPOTHESIS-FREE (2026-08-07)** — `∃! t`, twist on ALL effects; both frame-graph facts DISCHARGED in-tree (cross-coherence + connectivity). Carries only S1-S7 + S2 + `3 ≤ N` | `Necessity.complex_classification_unconditional` |
 | `H_n(ℝ)` | **MACHINE-CHECKED, HYPOTHESIS-FREE (2026-08-07)** — `a•b = √a·b·√a` on ALL effects, no twist; Jordan hypothesis DISCHARGED by real Kadison proved in-tree. **The only row carrying nothing beyond S1-S7 + S2** | `Necessity.real_classification` |
 | `H_n(ℍ)` | **FOUNDATION COMPLETE + `Q_{√a}` restricts** (carrier, order-unit, unital Jordan subalgebra, positivity, cfc-closure, `quatQuadRepEquiv`); **NOT a short lane — see the carrier-genericity finding below** | `QuatCarrier`, `quatQuadRepEquiv` |
 | `H₃(𝕆)` | **BLOCKED** — octonions exist in no prover (verified: zero files) | — |
@@ -142,14 +193,18 @@ unconditional**, which is exactly the standard this ledger applied to the ℝ ro
 `THEOREM-MAP.md` was RIGHT throughout (it calls the two "the honest residue of this row");
 only this summary table and the session reports drifted. THEOREM-MAP remains the governing
 honesty ledger — **when the two disagree, THEOREM-MAP wins.**
-**Net standing after 08-07:** `H_n(ℝ)` is the ONLY row that carries nothing beyond the paper's
-own S1-S7 + S2. It is therefore the strongest row in the development, and the earlier
-instruction "never write 'ℝ is better founded than ℂ'" is correct ONLY about axiom closure
-(both are Lean core). On CARRIED HYPOTHESES ℝ is now strictly cleaner, and saying so is
-accurate. Distinguish the two axes explicitly whenever either row is described.
-To make ℂ genuinely hypothesis-free, `connected` and `overlap` must be discharged: connectivity
-of the unitary frame graph, and cross-coherence of adjacent frames' `U(1)` characters. Neither
-is started; neither is blocked by anything absent from Mathlib.
+The lesson generalizes and still binds: **check hypothesis lists with `#check`, never by
+reading prose**, and apply one standard to every row.
+
+★★**SUPERSEDED LATER THE SAME DAY — do not cite the two paragraphs that stood here.** They
+read "`H_n(ℝ)` is the ONLY row that carries nothing beyond S1-S7 + S2 … On CARRIED HYPOTHESES
+ℝ is now strictly cleaner" and "to make ℂ genuinely hypothesis-free, `connected` and `overlap`
+must be discharged … Neither is started." Both were true when written and are now FALSE: the
+ℂ row's two frame-graph facts were discharged on 2026-08-07 (see the ARC-3 RESULT block at the
+top of this file). **Current standing: `H_N(ℂ)` for `N ≥ 3` and `H_n(ℝ)` are BOTH
+hypothesis-free, and they are equally well founded on both axes** — identical axiom closure
+(Lean core) and identical carried hypotheses (S1-S7 + S2 + a dimension bound). Never rank one
+above the other on either axis.
 
 ★**ℂ RESIDUE SHARPENED 2026-08-07** (`Necessity/ComplexResidue.lean`, census 144, gates green
 3101 jobs, axioms Lean core). `complex_classification` let the CALLER pick `Adj`. Taking
@@ -173,6 +228,13 @@ deleted it — same junk-stub failure mode as `prod_sp_inj`; never ship a vacuou
 a docstring read better.)
 **So the ℂ row's remaining work is exactly one theorem, and it is ORDINARY work** — nothing it
 needs is missing from Mathlib, unlike the octonion wall or the ℍ carrier decision.
+★★**THAT WORK IS NOW DONE (same day).** `FrameTwistConst` is discharged by
+`Necessity.frameTwistConst`; the row's capstone is `complex_classification_unconditional`. The
+"suffices for, never equivalent to" caution above applied to `FrameTwistConst` as a *carried*
+hypothesis and no longer governs the row — but it DOES still govern any statement about the
+converse, which remains unproved (the twist product's own per-frame parameter is still not
+computed). This block is retained because its diagnosis of the residue is what the discharge
+was built against, and because the junk-stub lesson stands.
 
 **Field-general infrastructure now standing** (none of it in Mathlib):
 `HermitianMat.sqrt_mul_of_commute`, `eq_zero_of_commute_hermitian_of_trace_zero`,
