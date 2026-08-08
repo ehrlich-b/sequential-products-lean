@@ -661,7 +661,7 @@ had no row anywhere, now stated:
 
 | Paper statement | Status | Where it stands |
 | --- | --- | --- |
-| `lem:homog` — positive linear extension of `L_a` (i), and first-variable homogeneity `(λa)·b = λ(a·b)` (ii) | **PARTIAL** | Clause (ii) is proved, on the concrete carrier only, as `Necessity.sp_smul_left` (`Necessity/FirstArgument.lean`), following vdW Prop. 3.9 with the σ-SEA normality passage replaced by exactly one use of S2. Clause (i) — the extension of `L_a` to a positive linear map on all of `J` — is **not** in the tree in any form. See the Archimedean note below for why clause (ii) does not generalize for free. |
+| `lem:homog` — positive linear extension of `L_a` (i), and first-variable homogeneity `(λa)·b = λ(a·b)` (ii) | **PARTIAL** | Clause (ii) is proved, on the concrete carrier only, as `Necessity.sp_smul_left` (`Necessity/FirstArgument.lean`), following vdW Prop. 3.9 with the σ-SEA normality passage replaced by exactly one use of S2. ★ **Clause (i) IS in the tree on the concrete carrier — corrected 2026-08-08 (ARC-6). The previous wording here, "not in the tree in any form", was FALSE.** `Necessity.seqLeftMul` (`Necessity/LeftMultiplication.lean`) *is* the positive linear extension: it is an honest `HermitianMat n 𝕜 →ₗ[ℝ] HermitianMat n 𝕜`, built through `spPos` on the cone and the `x = x⁺ − x⁻` splitting, with `seqLeftMul_apply_effect` (agrees with `P.sp a ·` on effects), `seqLeftMul_nonneg` (positivity), and `seqLeftMul_one`; its own docstring says "paper `lem:homog`(i), matrix-concrete". Uniqueness of the extension is `OrderUnitSpace.linearMap_eq_of_eq_on_effects` (abstract, arc-5). So clause (i) is PARTIAL for the same single reason as clause (ii) — concrete carrier vs the article's EJA generality — and **not** for want of a construction. This was the fifth absence claim in two arcs that was wrong on the page rather than in the tree. See the Archimedean note below for why clause (ii) does not generalize for free. |
 | `lem:cone-ext` — extension of the product to positive-cone first arguments | **PARTIAL** | The normalization extension exists on the concrete carrier (`Necessity.thetaNorm`, `theta_smul`). The article's statement is over an arbitrary finite-dimensional EJA, and its proof consumes `lem:homog`(ii); so this row inherits that row's Archimedean obstruction. |
 | `lem:frame-fix` — `Θ_r` fixes the frame and the diagonal, preserves each Peirce block, lies in `Stab(F)°`, hence `L_{a(r)}` is Peirce-block-diagonal | **PARTIAL** | A certificate for the *produced* setup exists inside `MasterTheorem/Master.lean`; the general statement, quantified over frames and over `r`, does not. |
 | `prop:bridge` — standard-product compatibility is exactly Jordan operator commutation | **ABSENT, by design** | A cited external result (`Wetering2018three` Props. A.1, A.3). It enters the skeleton as an interface field and the paper does not claim to reprove it. Not a target of any rung. |
@@ -681,7 +681,10 @@ property to be supplied, and the interface cannot be extended to carry it withou
 an explicit `Prop` hypothesis (it is part of the *definition* of the article's "order unit
 space", not a located stand-in for a cited result, so a row proved under it still counts as
 formalized at the article's generality) and thread it through the six-step ladder. Then
-`lem:homog`(i) still needs the positive-linear-extension construction, which does not exist.
+`lem:homog`(i) needs only that same generalization — **not** a positive-linear-extension construction, which
+**does** exist on the concrete carrier (`Necessity.seqLeftMul`; the claim that it does not was retracted 2026-08-08, see the
+`lem:homog` row above). What the abstract version needs is `spPos`/`seqLeftMul` rebuilt over an order unit space with
+Archimedean supplied, which is the same thread, not a second one.
 Contrast `lem:span`, whose two load-bearing clauses were proved at abstract generality
 *without* Archimedean — see §1 — because the article's norm route is avoidable there and
 here it is not.

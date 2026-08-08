@@ -346,6 +346,69 @@ theorem diagonal_conj_diagFamily {d : Fin N → ℂ}
   show d k * (Real.exp (r k) : ℂ) * star (d k) = _
   rw [mul_comm (d k) _, mul_assoc, hd k, mul_one]
 
+/-- Transporting a twisted product back along `Ad_{U*}` moves the conjugation onto the
+second argument. -/
+theorem adU_conj_twistSeq (t : ℝ) {U : Matrix (Fin N) (Fin N) ℂ} (hU : Uᴴ * U = 1)
+    (hU' : U * Uᴴ = 1) (a b : HermitianMat (Fin N) ℂ) :
+    adU Uᴴ (HermitianMat.twistSeq t (adU U a) b)
+      = HermitianMat.twistSeq t a (adU Uᴴ b) := by
+  have hb : adU U (adU Uᴴ b) = b := adU_cancel' hU' b
+  conv_lhs => rw [← hb]
+  rw [twistSeq_adU_mat t hU hU', adU_cancel hU]
+
+/-! ## Phase arithmetic for the frame parameter
+
+Two elementary facts, used to turn "the phase stays near `1` for every small scale" into a
+numerical bound on the parameter. -/
+
+/-- `|e^{iθ} − 1|² = 2 − 2 cos θ`. -/
+theorem normSq_exp_I_sub_one (θ : ℝ) :
+    Complex.normSq (Complex.exp ((θ : ℂ) * Complex.I) - 1) = 2 - 2 * Real.cos θ := by
+  rw [Complex.exp_mul_I]
+  simp only [Complex.normSq_apply, Complex.sub_re, Complex.sub_im, Complex.add_re,
+    Complex.add_im, Complex.one_re, Complex.one_im, Complex.mul_re, Complex.mul_im,
+    Complex.I_re, Complex.I_im, Complex.cos_ofReal_re, Complex.sin_ofReal_re]
+  have hc : (Complex.cos (θ : ℂ)).im = 0 := by rw [← Complex.ofReal_cos]; simp
+  have hs : (Complex.sin (θ : ℂ)).im = 0 := by rw [← Complex.ofReal_sin]; simp
+  rw [hc, hs]
+  have hpy := Real.sin_sq_add_cos_sq θ
+  ring_nf
+  nlinarith [hpy]
+
+/-- **The quantitative step.**  If the phase `e^{-i t x}` stays strictly inside the unit
+circle about `1` for every scale `x ∈ [0,δ]`, then `|t| ≤ π/(3δ)`.
+
+The witness is explicit: `x = π/(3|t|)` sends the phase to `e^{∓iπ/3}`, which sits at
+distance exactly `1` from `1`.  So no intermediate-value argument is needed, and — as
+everywhere else in this file — no branch of a logarithm is chosen. -/
+theorem abs_le_of_phase_near_one {t δ : ℝ} (hδ : 0 < δ)
+    (h : ∀ x : ℝ, 0 ≤ x → x ≤ δ →
+      Complex.normSq (Complex.exp (((-(t * x) : ℝ) : ℂ) * Complex.I) - 1) < 1) :
+    |t| ≤ Real.pi / (3 * δ) := by
+  by_contra hcon
+  push_neg at hcon
+  have hpi : 0 < Real.pi := Real.pi_pos
+  have hnum : 0 < Real.pi / (3 * δ) := by positivity
+  have habs : 0 < |t| := lt_trans hnum hcon
+  set x : ℝ := Real.pi / (3 * |t|) with hx
+  have hxpos : 0 < x := by rw [hx]; positivity
+  have hxle : x ≤ δ := by
+    rw [hx, div_le_iff₀ (by positivity)]
+    rw [div_lt_iff₀ (by positivity)] at hcon
+    nlinarith
+  have hcos : Real.cos (-(t * x)) = 1 / 2 := by
+    rw [Real.cos_neg]
+    have habsne : |t| ≠ 0 := ne_of_gt habs
+    have habsx : |t * x| = Real.pi / 3 := by
+      rw [abs_mul, abs_of_pos hxpos, hx]
+      field_simp
+    calc Real.cos (t * x) = Real.cos |t * x| := (Real.cos_abs (t * x)).symm
+      _ = Real.cos (Real.pi / 3) := by rw [habsx]
+      _ = 1 / 2 := Real.cos_pi_div_three
+  have hval := h x hxpos.le hxle
+  rw [normSq_exp_I_sub_one, hcos] at hval
+  norm_num at hval
+
 section RankTwoExtraction
 
 variable (P : SequentialProductOn (HermitianMat (Fin 2) ℂ))
@@ -571,6 +634,77 @@ theorem n2FrameTwist_mul_diagonal (hS2 : P.FirstArgContinuous)
         * (U : Matrix (Fin 2) (Fin 2) ℂ)ᴴ := by simp only [Matrix.mul_assoc]
     _ = (U : Matrix (Fin 2) (Fin 2) ℂ) * (diagFamily (x • axisSplit (0 : Fin 2))).mat
         * (U : Matrix (Fin 2) (Fin 2) ℂ)ᴴ := by rw [diagonal_conj_diagFamily hdu]
+
+/-! ### Making the frame parameter analytically visible (`lem:n2-bounded`, partial)
+
+`lem:n2-bounded` asserts `sup_n |t̃(n)| < ∞`.  The article proves it by a contradiction that
+needs operator-norm continuity of `a ↦ Θ_a` in the *matrix* argument.  The route taken here
+avoids `Θ` entirely: it reads the parameter off the product itself as a pure phase, so that
+a compactness argument on `U(2)` can bound it.  `n2Readout_eq` is that readout, and
+`abs_le_of_phase_near_one` is the numerical step that converts "phase near `1` at every small
+scale" into a bound.
+
+**What remains, precisely** (see `LEDGER.md`): joint continuity of the readout in `(x, U)`,
+which needs continuity of the product in its *second* argument as well as its first — and
+that is available, because `Necessity.seqLeftMul` realizes `b ↦ P.sp a b` as an honest
+`→ₗ[ℝ]` linear map (`seqLeftMul_apply_effect`), so on a finite-dimensional carrier
+continuity in `b` is automatic; plus a fixed test effect whose frame coefficient never
+vanishes, plus assembly.  None of that is a missing theorem; it is plumbing. -/
+
+/-- The base-point family: spectrum `{e^{-x}, 1}`, hence ordered log-ratio `-x`, tending to
+the unit effect as `x → 0`. -/
+noncomputable def basePt (x : ℝ) : HermitianMat (Fin 2) ℂ :=
+  diagFamily (x • axisSplit (0 : Fin 2))
+
+theorem basePt_exponent_nonpos {x : ℝ} (hx : 0 ≤ x) :
+    ∀ i, (x • axisSplit (0 : Fin 2)) i ≤ 0 := by
+  intro i
+  simp only [Pi.smul_apply, smul_eq_mul, axisSplit]
+  by_cases h : i = 0
+  · rw [if_pos h]; nlinarith
+  · rw [if_neg h, mul_zero]
+
+/-- The frame coefficient of a test effect: its `(0,1)` entry pulled back to the standard
+frame. -/
+noncomputable def n2Coef (b : HermitianMat (Fin 2) ℂ)
+    (U : Matrix.unitaryGroup (Fin 2) ℂ) : ℂ :=
+  (adU ((U : Matrix (Fin 2) (Fin 2) ℂ)ᴴ) b).mat 0 1
+
+/-- The readout: the `(0,1)` entry of `P.sp (base point in the frame of `U`) b`, pulled back
+to the standard frame. -/
+noncomputable def n2Readout (b : HermitianMat (Fin 2) ℂ) (x : ℝ)
+    (U : Matrix.unitaryGroup (Fin 2) ℂ) : ℂ :=
+  (adU ((U : Matrix (Fin 2) (Fin 2) ℂ)ᴴ)
+    (P.sp (adU (U : Matrix (Fin 2) (Fin 2) ℂ) (basePt x)) b)).mat 0 1
+
+/-- **The readout identity.**  The readout is the frame coefficient, times an explicit
+positive scalar, times the pure phase `e^{-i t(U) x}`.  Everything except the phase is
+explicit and nonvanishing, which is what makes the frame parameter accessible to an analytic
+argument for the first time. -/
+theorem n2Readout_eq (hS2 : P.FirstArgContinuous) {b : HermitianMat (Fin 2) ℂ}
+    (hb : IsEffect b) {x : ℝ} (hx : 0 ≤ x) (U : Matrix.unitaryGroup (Fin 2) ℂ) :
+    n2Readout P b x U
+      = ((Real.sqrt (Real.exp (-x)) : ℝ) : ℂ)
+        * Complex.exp (((-(n2FrameTwist P hS2 U * x) : ℝ) : ℂ) * Complex.I)
+        * n2Coef b U := by
+  have hcls := n2_sp_eq_twistSeq_frame P hS2 U (basePt_exponent_nonpos hx)
+    (a := adU (U : Matrix (Fin 2) (Fin 2) ℂ) (basePt x)) rfl hb
+  unfold n2Readout
+  rw [hcls, adU_conj_twistSeq _ (unitaryGroup_conjTranspose_mul U)
+    (unitaryGroup_mul_conjTranspose U)]
+  rw [show basePt x = diagFamily (x • axisSplit (0 : Fin 2)) from rfl,
+    twistSeq_diagFamily_entry]
+  have h0 : (x • axisSplit (0 : Fin 2)) 0 = -x := by
+    simp only [Pi.smul_apply, smul_eq_mul, axisSplit, if_pos]
+    ring
+  have h1 : (x • axisSplit (0 : Fin 2)) 1 = 0 := by simp [axisSplit]
+  rw [h0, h1]
+  simp only [Real.exp_zero, Real.sqrt_one, Complex.ofReal_one, mul_zero,
+    Complex.ofReal_zero, zero_mul, Complex.exp_zero, mul_one, star_one]
+  rw [n2Coef]
+  congr 2
+  push_cast
+  ring
 
 end RankTwoExtraction
 
