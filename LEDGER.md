@@ -289,77 +289,75 @@ things it structurally could not: a **compiled refutation** of hypotheses I beli
 load-bearing (`cfc_transpose`), and a **theorem I did not know to want** (`arch_iff`). An author
 does not probe the claims he is confident in.
 
-**CHECKPOINT 3 (rank-two) — reviewer spawned TWICE, both went idle; the block was then
-discharged against the reviewer's own brief, by me, with compiled evidence for every item.**
-This is weaker than an outside review and is labelled as such, but it is not "unreviewed": each
-of the four questions the brief posed was answered by a compiled artifact, and two of the four
-produced improvements to the code.
+### ★★ CHECKPOINT 3 (rank-two) — REVIEWED, by four reviewers, and it was the most productive review of the arc
 
-| Brief item | Outcome |
-| --- | --- |
-| Is `n2Readout_eq` true, and is the phase sign right? | **Independent derivation now in the tree** — `readout_direct` derives the same formula for the twist product at the standard frame straight from `twistSeq_diagFamily_entry`, bypassing `n2Readout_eq`'s own chain. Two routes, one formula; a refactor flipping either breaks the agreement. Plus the crown probe, `basePt x = diag(e^{−x},1)`, and log-ratio `−x`. |
-| Inert-hypothesis tests | **One spurious obligation found and removed** (`n2FrameTwist_eq_of_base_eq`'s `hs`, automatically true for every `m : Fin 2`). **`hδ` CERTIFIED load-bearing** by compiled counterexample. Four remain weakly tested — see the strong/weak note below. |
-| Is `π/(3δ)` the right constant? | **Derived as sharp, and the lemma strengthened.** The premise says `cos(tx) > 1/2`, which as `x` sweeps `[0,δ]` in the principal branch forces `|t|δ < π/3` — so the constant is right *and* the inequality is strict. `abs_lt_of_phase_near_one` now states that; the old `≤` form is its corollary. |
-| Does the fibre theorem really give the `ℝP²` descent? | **Machine-checked**, `n2FrameTwist_mul_diagonal_swap`: at rank two the diagonal torus plus the single transposition is the *full* monomial group, so invariance under both generators is invariance under the whole unordered-frame stabilizer — not merely two of its elements. |
+All three checkpoints are now discharged by outside review. The rank-two block took four
+reviewers across three spawn rounds; the last two rounds delivered. Two mechanisms mattered:
+**narrow one-concern briefs**, and **telling the reviewer explicitly to call `SendMessage`** —
+one reported that its earlier reports "returned success" yet never reached me, and another sent
+the same finding four times.
 
-★★ **The joint-continuity question — reviewer B's item 1 — is SETTLED in the direction that
-matters, and the residue is engineering, not mathematics.** The worry was real: S2 gives
-continuity in the *first* argument only, so if the test effect had to vary with `U` the composite
-would not obviously be continuous, and the whole banked route would be worthless. It does not
-have to: **because `b` is fixed, S2 suffices, and no second-argument continuity is needed
-anywhere.** Both halves are now proved and in the tree — `continuous_basePt` and
-`continuous_adU_pair` (`Ad` jointly continuous in the unitary and its argument).
+**CONFIRMED by independent work (not merely agreed with).** The phase sign in `n2Readout_eq` is
+right — two reviewers derived it from `twistSeq_diagFamily_entry` on separate routes and got my
+RHS; one also recompiled the crown probe. The `π/3` constant is exactly right, no factor error,
+and both reviewers independently derived the sharp form as the strict `<` I had already
+strengthened to. `n2FrameTwist_mul_diagonal` is non-vacuous at `diag(i,1)`. The `ℝP²` group
+argument is valid (monomial matrices are exactly the right-stabilizer of the unordered pair of
+column lines). Axioms exactly `[propext, Classical.choice, Quot.sound]` on every new
+declaration; zero linter warnings.
 
-★★ **The assembly into `ContinuousOn (n2Readout …)` IS NOW PROVED —
-`continuousOn_n2Readout`.** I banked it as an elaboration wall an hour earlier and that record
-was wrong; it is corrected here rather than left standing. Four formulations had hit a `whnf`
-heartbeat timeout even at `maxHeartbeats 1000000`, all of them asking Lean to unify the
-composite against `n2Readout`'s unfolding. The fix is to never ask: prove continuity of an
-**explicit lambda** and transfer with `ContinuousOn.congr`, using a pointwise `rfl` lemma
-(`n2Readout_apply`). It then elaborates in seconds. **Lesson: a heartbeat timeout is a statement
-about the unification path, not about the difficulty of the goal** — reshape the goal before
-concluding a wall. (I had even written down this fix as the "likely" one while banking it, then
-banked anyway. If the fix is cheap enough to name, try it before recording a wall.)
+**REFUTED — six of my claims, all applied.**
+1. ★★ **"a fixed test effect whose frame coefficient never vanishes" — that object PROVABLY DOES
+   NOT EXIST**, and three reviewers proved it independently. `n2Coef b U` is the `(0,1)` entry of
+   `Uᴴ b U`, so taking `U` to be an eigenbasis of `b` makes the conjugate diagonal and the
+   coefficient zero; the readout is then identically `0` in `x`, carrying no information. Every
+   fixed probe is blind at its own eigenframe. **The sentence also contradicted the two-effect
+   plan in the same file.** Retracted.
+2. **"needs continuity of the product in its second argument" — wrong requirement.** `b` is
+   fixed, so S2 alone suffices. The `seqLeftMul` justification solved a non-problem.
+3. **Three self-contradicting docstrings**, the worst being a banked note saying the
+   `ContinuousOn` assembly "is NOT proved" sitting 115 lines above the theorem that proves it —
+   a top-down reader was told the theorem beneath them did not exist. Also `n2Readout_eq`'s
+   "everything except the phase is explicit and **nonvanishing**", contradicted 25 lines later by
+   my own correct statement that every non-scalar `b` is blind at its diagonalizing frames.
+4. **`readout_direct` is not an independent cross-check** — both chains bottom out in
+   `twistSeq_diagFamily_entry`, so a sign error *there* flips both. It guards the classification
+   chain only. Narrowed.
+5. **Swap-invariance alone does not give unordered-frame descent** (needs the diagonal-fibre
+   clause proved 80 lines later); and **"invariance under the FULL stabilizer, machine-checked"**
+   overstates — two group words are checked, exhaustion is prose, and no `ℝP²` object exists in
+   Lean. Both narrowed.
+6. **My recorded obstruction for `adU_conj_twistSeq` was wrong.** I wrote that refuting its
+   hypotheses "needs a bespoke product… the twist product cannot witness failure". False for
+   `hU`: what fails at `U = 2·1` is *unitarity*, not effect-ness, so the plain twist product
+   witnesses it with `a = b = 1`. Two reviewers compiled that counterexample (`16` vs `4`), so
+   **`hU` is CERTIFIED load-bearing**. Only `hb`/`hx` remain weakly tested.
 
-**Where `lem:n2-bounded` now stands.** Every ingredient of the route is proved: the readout
-identity (`n2Readout_eq`, with an independent cross-check `readout_direct`), its joint
-continuity (`continuousOn_n2Readout`), the numerical step (`abs_lt_of_phase_near_one`, sharp and
-with `hδ` certified necessary), non-vanishing of the two-effect weight
-(`frameProj_pairProj_not_commute`), and compactness of `U(2)` (in-tree). The weighted
-combination is now built too — `n2Comb` / `n2Weight` with **`n2Comb_eq`** proving
-`n2Comb = √(exp(−x)) · e^{−i t(U) x} · weight`, which exhibits the phase as a continuous function
-of `(x, U)` wherever the weight is bounded away from zero.
+**NEW, adopted: `hU'` was REDUNDANT.** `U * Uᴴ = 1` follows from `Uᴴ * U = 1` by
+`mul_eq_one_comm` for square matrices — one assumption stated twice. Removed from
+`adU_conj_twistSeq`; the tree already used this move at `KadisonDischarge.lean:444`. A reviewer
+notes `adU_isEffect` (`ConjTransport.lean:117`) carries the same redundant pair — **not fixed
+here, recorded as a follow-up.** Also adopted: the `hδ` necessity claim had nothing banked behind
+it, so it is now the theorem `not_abs_le_of_phase_near_one_without_pos`.
 
-★★ **`lem:n2-bounded` now has EVERY ingredient proved; what is left is one compactness
-assembly.** Weight positivity — the step I twice deferred as "~80 lines of entry algebra" — is
-done, and by a cleaner route than the one I had planned: **`n2Weight_pos`**. No eigenvector
-analysis is needed. `n2Coef b U` is the `(0,1)` entry of `Uᴴ b U`, so it vanishes exactly when
-that conjugate is diagonal (`isDiag_of_herm_offdiag_zero`, using Hermitian symmetry to get the
-other off-diagonal entry free); two diagonal `2×2` matrices commute (`commute_of_isDiag`); and
-transporting back by `U` would then force the two test effects themselves to commute,
-contradicting `frameProj_pairProj_not_commute`. Entirely matrix-level.
+★ **ONE REVIEWER FINDING REJECTED, with evidence — and it is the project's own recurring error,
+committed by a reviewer this time.** A reviewer stated that "Mathlib has ZERO results on
+compactness of unitary groups (grep = 0 hits), so that leg was a hidden build", and concluded the
+compactness route was unsound. The grep is accurate and **the inference is wrong**: the instance
+is *in this tree*, vendored at `Vendor/Wigner/UnitaryCompact.lean:141`, it resolves by
+`infer_instance`, and `exists_n2Weight_lower_bound` already compiles through it with Lean-core
+axioms. **A Mathlib-scoped grep is not a search of the tree** — the same scope error that
+produced five false absence claims in this campaign. Reviewers get checked at source too, in both
+directions.
 
-**The full inventory for the row, all Lean-core:** `n2Readout_eq` (with the independent
-cross-check `readout_direct`), `continuousOn_n2Readout` (joint continuity), `n2Comb_eq`
-(combination = weight × pure phase), `n2Weight_pos` (weight never vanishes),
-`abs_lt_of_phase_near_one` (sharp, `hδ` certified necessary), and `CompactSpace (unitaryGroup …)`
-already in-tree. **The `ε` extraction is also done now**: `continuous_n2Coef`, `continuous_n2Weight`, and
-**`exists_n2Weight_lower_bound`** — the weight is continuous and positive on a compact group, so
-it attains a positive minimum. **Exactly one step remains for the row:** uniform continuity of
-`n2Comb` on the compact `[0,δ] × U(2)` (it is continuous, by `continuousOn_n2Readout`), applied
-at `(x,U)` against `(0,U)` where `n2Comb 0 U = weight`, to make `|phase − 1|` small uniformly in
-`U` — then `abs_lt_of_phase_near_one` gives the bound `π/(3δ)`. Nothing but plumbing of already
-proved pieces stands between here and `lem:n2-bounded`, and through it the rest of the rank-two
-lane.
+**BANKED, from a reviewer, and it is better than my route.** S2 applied at the *single point*
+`a = 1` already gives a `δ` uniform in `U`, because `‖adU U (basePt x) − 1‖ = |e^{−x} − 1|` by
+unitary invariance of the Frobenius norm — no joint continuity and no compactness needed for that
+leg. And replacing `frameProj 0` with the projection onto `(e₀ + i e₁)/√2` yields the explicit
+bound `max ≥ 1/(2√2)` from column orthogonality alone, removing compactness from the weight leg
+too. **If the assembly is picked up, take that route rather than mine.**
 
-★ **Reviewer B's third question — can the combined weight vanish? — is answered NO, and
-proved.** `n2Coef b U = ⟪u, b v⟫` vanishes exactly when the second column of `U` is an
-eigenvector of `b`, so a single test effect is never enough: every non-scalar `b` is blind at
-the frames that diagonalize it. Two suffice iff they share no eigenvector, which for rank-one
-projections in dimension two means they do not commute — `frameProj_pairProj_not_commute`. So
-`frameProj 0` with `pairProj 0 1` is a valid pair and the banked route has no hole here.
-
-**What genuinely remains as review debt, narrowly:** the four weakly-tested hypotheses
+**What genuinely remains as review debt, narrowly:****What genuinely remains as review debt, narrowly:** the four weakly-tested hypotheses
 (`n2Readout_eq`'s `hb`/`hx`, `adU_conj_twistSeq`'s `hU`/`hU'`), whose certification needs a
 bespoke product agreeing with the twist product on effects and differing off them; and the
 *overall* rank-two derivation has still had no adversarial outside reading. **The next arc should
