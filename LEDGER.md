@@ -290,6 +290,49 @@ against `n2FrameTwist …`. With the order fixed it compiles at the file's **def
 `set_option` is gone. **Had I kept the raise, I would have banked a false explanation for a
 timeout** — the prose-price failure mode, in Lean.
 
+★★ **CHECKPOINT 1 THEN VERIFIED ITS OWN FIX, and caught that my NEW caveat repeated the OLD one's
+shape.** Row 32's replacement caveat said "Residual, and it is the whole residue" and named one
+item. There are three: (a) surjectivity onto all rank-one projections; (b) a *homeomorphism* to `S²`
+(surjectivity buys only a set-level identification — and `grep -rn Homeomorph RadicalRelativity/`
+returns **zero** hits, whole tree); (c) for `ℝP²`, the further quotient by `p ↦ 𝟙 − p`, which is
+row 34's sentence rather than 32's. **The catch matters more than the omission: the content got
+upgraded and a totalizing word survived the upgrade.** That is the same construction that made the
+caveat it replaced wrong. **A totalizing phrase inside a residual claim is where this project's
+errors live** — treat "and that is all that remains" as a smell, always.
+
+The same pass confirmed by compiling: `FrameSpace` carries exactly the subspace topology (no
+instance diamond, despite being a `def` with `unfold`-built instances); the descent is **not
+vacuous** (`frameMap_swap_ne_one` — the one way the section could have been true and empty); and it
+sharpened the well-definedness question correctly — `Classical.choose` *cannot* be ill-defined
+(proof irrelevance), so the real failure mode was that `n2Moduli` might agree with `n2FrameTwist` at
+the chosen preimage **and nowhere else**, which `n2Moduli_toFrameSpace` is precisely the certificate
+against. Two of its contributions landed: `n2_sp_eq_twistSeq_n2Moduli` (ties `n2Moduli` back to the
+*product*, so the labels are self-evidencing instead of a reader's exercise) and
+`frameMap_swap_ne_one`. It advised **against** the two `_ouNorm` capstones, with a good reason:
+`firstArgContinuousOu_iff` is an **iff on the hypothesis**, so nothing downstream can be weakened,
+and unlike the flagship rows `hS2` appears inside these rows' conclusions, making a converted
+restatement less readable than the iff. Not landed.
+
+★★ **THE AXIOM-FIDELITY AUDIT IS DONE, and it was the reviewer's own earlier "did not get to".**
+Every field of `SequentialProductOn` compared against the pinned `main.tex:363–392`: S1 →
+`sp_add_right` (same `b+c ≤ 𝟙` rider), S2 → `FirstArgContinuous` (equivalent to the ouNorm form), S3
+→ `sp_unit_left`, S4 → `sp_zero_symm`, S5 → `sp_assoc_of_compatible`, S7 → `compatible_sp`, S6 →
+split across `compatible_ortho`/`compatible_add` (a conjunction split, not an addition), `sp_effect`
+= the article's own codomain declaration. **No field is stronger than the article's axioms, so no row
+is a special case** — which was the live risk under every FORMALIZED label in this development, not
+just the two new ones. In one respect the class is strictly **weaker** (total operation, every axiom
+guarded by `IsEffect`), making the rows *more* general; the tree exploits exactly that in `badP`.
+★ Scope: this certifies **Lean-vs-article**. The article claims to restate vdW's Definition 2 with
+the domain riders made explicit; vdW was not opened, so Lean-vs-vdW rests on that claim.
+
+★ **A COUNTING HAZARD, recorded because the count is the thing most often quoted.** Verifying
+10/19/7 by parsing `STATEMENT-MANIFEST.md` programmatically reported 33 rows, not 36 — because three
+rows' *statements* contain LaTeX `|` (`\Theta_a|_{J_2(q)}`, `\mathcal{J}_n`'s restriction bars), which
+breaks naive pipe-splitting of a Markdown table. Rows 16, 22 and 29 were the casualties. **A script
+that silently drops rows reads exactly like a script that found nothing wrong** — the standing
+"verify the verifier saw data" rule, in a new costume: print the row count before believing the
+tally. Count confirmed 10/19/7 over all 36 after the fix.
+
 **Coverage at end of ARC-7's landed work: 10 FORMALIZED / 19 PARTIAL / 7 ABSENT.** Gates green at
 every commit: `lake build` 3106 jobs, census 149 modules, custom axioms exactly `[]`, zero warnings
 in every region touched. Tags `paperA-arc7-cp0` (`d0f1312`), `paperA-arc7-cp1` (`ab87ed3`),
