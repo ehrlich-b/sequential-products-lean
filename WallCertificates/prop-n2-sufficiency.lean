@@ -261,8 +261,8 @@ theorem frame_param_eq_of_compatible
 `t : ℝP² → ℝ`.  The existence statement below is the article's assertion; the construction plus its
 seven clauses is the gap. -/
 
-/-- **GAP — `prop:n2-sufficiency`.**  Every continuous `t : ℝP² → ℝ` is realized by an S1–S7
-product with S2.
+/-- **NO LONGER A GAP — `prop:n2-sufficiency` is FORMALIZED** (ARC-8 block 8.1(b), both passes).
+Every continuous `t : ℝP² → ℝ` is realized by an S1–S7 product with S2.
 
 The `agrees` clause is what makes this the article's statement rather than a bare existence claim:
 the product must be the twisted product with parameter read off the left argument's frame. -/

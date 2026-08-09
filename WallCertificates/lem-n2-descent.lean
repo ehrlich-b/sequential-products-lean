@@ -81,6 +81,7 @@ NOT imported from RadicalRelativity/.  `lake build` and AxiomAudit never see thi
 -/
 import RadicalRelativity.Necessity.FrameConstancy
 import RadicalRelativity.RankTwo.Bloch
+import RadicalRelativity.RankTwo.Sufficiency
 
 set_option linter.style.longLine false
 
@@ -95,10 +96,10 @@ open ComplexOrder OrderUnitSpace
 noncomputable def col₀ (U : Matrix.unitaryGroup (Fin 2) ℂ) : EuclideanSpace ℂ (Fin 2) :=
   WithLp.toLp 2 (fun i => (U : Matrix (Fin 2) (Fin 2) ℂ) i 0)
 
-/-- **GAP.** The first column of a unitary is nonzero.  Elementary (`UᴴU = 1` forces the column
-to have norm one); not in the tree in this form. -/
-theorem col₀_ne_zero (U : Matrix.unitaryGroup (Fin 2) ℂ) : col₀ U ≠ 0 := by
-  sorry
+/-- **NO LONGER A GAP.**  `RankTwo.firstCol` is this definition and `RankTwo.firstCol_ne_zero` is
+this theorem (ARC-8 block 8.1(b)). -/
+theorem col₀_ne_zero (U : Matrix.unitaryGroup (Fin 2) ℂ) : col₀ U ≠ 0 :=
+  RankTwo.firstCol_ne_zero U
 
 /-- The frame ray: the point of `ℂP¹` determined by a unitary's first column. -/
 noncomputable def frameRay (U : Matrix.unitaryGroup (Fin 2) ℂ) : RankTwo.QubitFrame :=
@@ -116,19 +117,32 @@ theorem exists_diagonal_of_frameRay_eq (U V : Matrix.unitaryGroup (Fin 2) ℂ)
       (D : Matrix (Fin 2) (Fin 2) ℂ) = Matrix.diagonal d ∧ V = U * D := by
   sorry
 
-/-- With the two steps above, constancy of the parameter along the frame ray is immediate from the
-in-tree invariance `n2FrameTwist_mul_diagonal`. -/
+/-- ★★★ **NO LONGER A GAP, AND IT DID NOT GO THROUGH THE STEP ABOVE.**  Row 34 closed in ARC-8
+block 8.1(d), and the diagonal/monomial step this file called "the mathematical content of step (1)"
+was **never used**.  What the transfer actually needs is that equal rays give the same *first
+spectral projection* — `RankTwo.frameMap_eq_of_colFrame_eq`, which follows from `rankOne`'s quadratic
+homogeneity plus `RankTwo.nsq_firstCol` (a unitary's column is a unit vector).  No statement about
+diagonal or monomial matrices appears anywhere in the assembly, so the `sorry` above is a gap in a
+route nobody took.
+  ★ THE TRANSFERABLE POINT, and this arc has now hit it three times: a residue read off the
+  ARTICLE's proof is evidence about the article's route, not about the cheapest route through a formal
+  library.  Reading the article to learn WHICH fact is needed has been reliable; reading it to learn
+  HOW has been wrong three times out of three (this step, `lem:n2-descent`'s sibling in
+  `prop-n2-sufficiency.lean`, and S2's predicted global-phase estimate). -/
 theorem n2FrameTwist_eq_of_frameRay_eq
     (P : SequentialProductOn (HermitianMat (Fin 2) ℂ)) (hS2 : P.FirstArgContinuous)
     (U V : Matrix.unitaryGroup (Fin 2) ℂ) (h : frameRay U = frameRay V) :
-    Necessity.n2FrameTwist P hS2 V = Necessity.n2FrameTwist P hS2 U := by
-  obtain ⟨D, d, hD, hUV⟩ := exists_diagonal_of_frameRay_eq U V h
-  rw [hUV, Necessity.n2FrameTwist_mul_diagonal P hS2 U D hD]
+    Necessity.n2FrameTwist P hS2 V = Necessity.n2FrameTwist P hS2 U :=
+  Necessity.n2FrameTwist_eq_of_frameMap_eq P U V hS2
+    (RankTwo.frameMap_eq_of_colFrame_eq h).symm
 
 /-! ### Step (2): the swap case -/
 
-/-- **GAP.**  Reversing the frame is complementation of the ray.  In `ℂ²` a unit vector orthogonal
-to `v₀` is a phase times `orthoVec v₀`; elementary, absent from the tree. -/
+/-- **STILL A GAP, AND ALSO NOT NEEDED.**  The descent that closed row 34 split the fibre of
+`blochFrame` with `RankTwo.blochFrame_eq_iff` and then worked with spectral *projections*
+(`RankTwo.frameMap_eq_one_sub_of_colFrame_eq_ortho`), never with the ray identity below.  Kept as a
+statement about `ℂ²` that remains unproved, and flagged so a reader does not mistake it for a
+blocker. -/
 theorem frameRay_mul_swap (V : Matrix.unitaryGroup (Fin 2) ℂ) :
     frameRay (V * Necessity.swapU) = RankTwo.orthoFrame (frameRay V) := by
   sorry
@@ -145,12 +159,15 @@ The remaining assembly is pure topology and is **cheap**: `U(2)` is compact
 hence a quotient map, hence the descended function is automatically continuous.  Stated here so
 the price is on the record as topology rather than analysis. -/
 
-/-- **GAP (statement, not depth).**  The article's conclusion: a continuous function on `ℝP²`
-pulling back to the frame parameter. -/
+/-- **NO LONGER A GAP — this is row 34, and it is FORMALIZED** (ARC-8 block 8.1(d)):
+`RankTwo.n2QubitModuli P hS2` is the function, with `RankTwo.n2QubitModuli_apply` the pullback
+identity.  ★ The price recorded above — "pure topology and cheap: `U(2)` compact, `ℝP²` Hausdorff,
+so a continuous surjection is closed, hence a quotient map" — **was exactly right**, which is worth
+recording next to the two prices in this same file that were not. -/
 theorem exists_rp2_moduli
     (P : SequentialProductOn (HermitianMat (Fin 2) ℂ)) (hS2 : P.FirstArgContinuous) :
     ∃ f : C(RankTwo.RP2, ℝ), ∀ U : Matrix.unitaryGroup (Fin 2) ℂ,
-      f (RankTwo.blochFrame (frameRay U)) = Necessity.n2FrameTwist P hS2 U := by
-  sorry
+      f (RankTwo.blochFrame (frameRay U)) = Necessity.n2FrameTwist P hS2 U :=
+  ⟨RankTwo.n2QubitModuli P hS2, fun U => RankTwo.n2QubitModuli_apply P hS2 U⟩
 
 end WallCertificate

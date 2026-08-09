@@ -290,6 +290,30 @@ article's S2 limiting argument (singular effects are limits of positive-definite
 continuous), which is not written. So `P.sp = (n2SequentialProduct t).sp` *as functions* is not
 established, and the row must not be read as the full bijection.
 
+**Block 8.6 groundwork — `EJA-DIVIDEND.md` WRITTEN, and the certificate sweep found a fourth
+staleness.** The dividend table is at the repo root: the axiomatization **CLOSES 6 rows** (5, 6, 13,
+15, 16, 17), is **PARTIAL on 3** (8, 14, 22), and does **NOTHING for 15** — including nothing for the
+entire rank-two lane. So the orders' skip condition ("would do literally nothing for Paper A") does
+**not** fire; the decision stands. ★ Two qualifications the table insists on: the six CLOSES rows are
+all *generality-only* rows (the mathematics is already done on the concrete carrier), and rows 16/17
+close only if `Theta_jordan` becomes derivable — which IS row 14, pre-registered external — so their
+honest terminus is **EJA-GATED behind a named citation**, not FORMALIZED.
+
+★★ **Certificate sweep (partial, ahead of the full 8.6 review).** `prop-n2-sufficiency.lean` and
+`differential-trio.lean` now have **zero** gaps. `lem-n2-descent.lean` went from four `sorry`s to two
+— and the two that remain are flagged **NOT NEEDED**: the route that actually closed row 34 never used
+the diagonal/monomial step or the ray-complementation identity. ★ Note the one price in that file that
+*was* exactly right: "the remaining assembly is pure topology and cheap — `U(2)` compact, `ℝP²`
+Hausdorff, so a continuous surjection is closed, hence a quotient map." Recording the correct price
+next to the two wrong ones is the point: **prices about TOPOLOGY/vocabulary have held; prices about
+the ROUTE have not.**
+
+★ A self-audit caught one of my own defects the same way: manifest row 34's cell still *led* with
+"PARTIAL" for one commit after the row closed, because the update was appended instead of rewriting
+the status word. Found by scanning the manifest's own status fields, not by re-reading the prose.
+**Fourth instance of "fix the row, not just the footnote" this arc, and the first committed by the
+agent that wrote the rule down.**
+
 ### CHECKPOINT 1 (tag `paperA-arc8-cp1`, two cold reviewers, one concern each)
 
 Both verified the build independently (0 errors over full output, Census PASS, no `sorryAx`), and
