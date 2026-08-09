@@ -201,6 +201,25 @@ plus verified the one failure mode that would have voided the arc's headline cla
 | Coverage count | **PASS** — 8/19/9 by enumerating all 36 table rows programmatically, not from prose. |
 | Diff-audit pass over the doc changes | **FOUND TWO DEFECTS** — the §3b `lem:homog` row still said clause (ii) was "concrete carrier only" after I proved it abstractly, and a sentence claiming the article's norm route "is not avoidable here" was falsified by `lem:cone-ext` landing norm-free. Both rewritten. |
 
+**Lint sweep over the five files this arc touched.** One warning was mine and is fixed
+(`transpose_eq_conj_of_isHermitian` carried unused section variables; now `omit`ted). Two are
+**pre-existing and left alone** rather than drive-by fixed, but recorded here so they are not
+lost: `SequentialProduct.lean` `sp_sub_right` has an unused hypothesis `hle` — a small inert
+hypothesis in the abstract derived layer, predating this arc — and `OrderUnitSpace.lean:73` has
+two unused `simp` arguments. Neither is mine to fix silently; both are cheap when someone is in
+those files.
+
+**On the limits of the inert-hypothesis test, stated so the record is not overclaimed.** The
+test has real teeth *when the conclusion is actually provable without the hypothesis*: that is
+how `rhoChi_eq_smul_generator`'s `i ≠ j` was caught this arc (proof found, theorem strengthened)
+and how `sp_coneNorm_smul`'s `IsArchimedean`/S2 were caught and removed. But a *failure* to find
+such a proof is not a certificate of load-bearingness — Lean cannot certify that no proof
+exists. For the abstract ladder I have only a mathematical argument that `IsArchimedean` is
+load-bearing (it is the sole bridge from ℚ-homogeneity to ℝ-homogeneity; delete it and the
+ε-squeeze has no replacement), plus positive controls confirming every new theorem does go
+through with its stated hypotheses. **Do not read "inert test run" as "hypothesis proved
+necessary".**
+
 **Self-review is structurally weaker than cold review and the record must not blur them.**
 Every arc-5 finding that mattered came from someone who had not written the code: two of my
 claims were refuted by compiled counterexample, and one finding required checking the
