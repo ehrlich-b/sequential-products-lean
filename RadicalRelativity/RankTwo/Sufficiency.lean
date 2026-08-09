@@ -1063,4 +1063,235 @@ theorem exists_sequentialProduct_of_continuous_moduli (t : C(RP2, ℝ)) :
     fun U r b => n2Sp_eq_twistSeq_at_frame t U r b⟩
 
 
+/-! ### Toward `lem:n2-descent`: the ray-to-projection dictionary
+
+★★ New 2026-08-09 (ARC-8 block 8.1(d)).  Row 34 records its residue as "assembly only: a map
+`U(2) → ℂP¹` (first-column ray), the step *same ray ⟹ the unitaries differ by a monomial matrix*,
+and the quotient construction of `C(ℝP², ℝ)`".  The first is `colFrame`, built above for
+`prop:n2-sufficiency`.  This block does the second — and it turns out the monomial-matrix detour is
+**not needed**: what the transfer actually requires is that equal rays give the *same first spectral
+projection*, which follows from `rankOne`'s quadratic homogeneity plus the fact that a unitary's
+column is a unit vector.  No statement about monomial matrices appears. -/
+
+/-- **The first spectral projection is the rank-one projection of the first column.** -/
+theorem frameMap_eq_rankOne_firstCol (U : Matrix.unitaryGroup (Fin 2) ℂ) :
+    Necessity.frameMap U
+      = HermitianMat.rankOne (fun i => (U : Matrix (Fin 2) (Fin 2) ℂ) i 0) := by
+  ext1
+  rw [HermitianMat.rankOne_mat]
+  ext i j
+  rw [frameMap_mat_apply, Matrix.vecMulVec_apply, Pi.star_apply]
+
+/-- A unitary's first column is a unit vector. -/
+theorem nsq_firstCol (U : Matrix.unitaryGroup (Fin 2) ℂ) :
+    HermitianMat.nsq (fun i => (U : Matrix (Fin 2) (Fin 2) ℂ) i 0) = 1 := by
+  have hU := Necessity.unitaryGroup_conjTranspose_mul U
+  have h := congrFun (congrFun hU 0) 0
+  rw [Matrix.mul_apply, Matrix.one_apply_eq, Fin.sum_univ_two] at h
+  have h2 := congrArg Complex.re h
+  simp only [Complex.add_re, Complex.mul_re, Complex.one_re, Matrix.conjTranspose_apply,
+    Complex.star_def, Complex.conj_re, Complex.conj_im] at h2
+  rw [HermitianMat.nsq, Fin.sum_univ_two, Complex.normSq_apply, Complex.normSq_apply]
+  linarith [h2]
+
+/-- **Equal first-column rays give the same first spectral projection.** -/
+theorem frameMap_eq_of_colFrame_eq {U V : Matrix.unitaryGroup (Fin 2) ℂ}
+    (h : colFrame U = colFrame V) : Necessity.frameMap U = Necessity.frameMap V := by
+  obtain ⟨c, hc⟩ := (Projectivization.mk_eq_mk_iff' ℂ _ _ (firstCol_ne_zero U)
+    (firstCol_ne_zero V)).mp h
+  have hvec : (fun i => (U : Matrix (Fin 2) (Fin 2) ℂ) i 0)
+      = c • (fun i => (V : Matrix (Fin 2) (Fin 2) ℂ) i 0) := by
+    have := congrArg WithLp.ofLp hc
+    simpa [firstCol] using this.symm
+  have hc1 : Complex.normSq c = 1 := by
+    have h1 := nsq_firstCol U
+    rw [hvec, HermitianMat.nsq_smul, nsq_firstCol V, mul_one] at h1
+    exact h1
+  rw [frameMap_eq_rankOne_firstCol, frameMap_eq_rankOne_firstCol, hvec,
+    HermitianMat.rankOne_smul, hc1, one_smul]
+
+/-- **Complementary first-column rays give complementary spectral projections.** -/
+theorem frameMap_eq_one_sub_of_colFrame_eq_ortho {U V : Matrix.unitaryGroup (Fin 2) ℂ}
+    (h : colFrame U = orthoFrame (colFrame V)) :
+    Necessity.frameMap U = 1 - Necessity.frameMap V := by
+  simp only [colFrame] at h
+  rw [orthoFrame_mk] at h
+  obtain ⟨c, hc⟩ := (Projectivization.mk_eq_mk_iff' ℂ _ _ (firstCol_ne_zero U)
+    (orthoE_ne_zero (firstCol_ne_zero V))).mp h
+  have hvec : (fun i => (U : Matrix (Fin 2) (Fin 2) ℂ) i 0)
+      = c • orthoVec (fun i => (V : Matrix (Fin 2) (Fin 2) ℂ) i 0) := by
+    have h1 := congrArg WithLp.ofLp hc
+    simp only [WithLp.ofLp_smul, ofLp_orthoE, firstCol, WithLp.ofLp_toLp] at h1
+    exact h1.symm
+  have hn : HermitianMat.nsq (orthoVec (fun i => (V : Matrix (Fin 2) (Fin 2) ℂ) i 0)) = 1 := by
+    rw [nsq_orthoVec]; exact nsq_firstCol V
+  have hc1 : Complex.normSq c = 1 := by
+    have h1 := nsq_firstCol U
+    rw [hvec, HermitianMat.nsq_smul, hn, mul_one] at h1
+    exact h1
+  rw [frameMap_eq_rankOne_firstCol, frameMap_eq_rankOne_firstCol, hvec,
+    HermitianMat.rankOne_smul, hc1, one_smul, rankOne_orthoVec (nsq_firstCol V)]
+
+/-- **The frame parameter is constant on the fibres of `blochFrame ∘ colFrame`** — the descent
+hypothesis `lem:n2-descent` needs.  The two cases are exactly the two halves of `blochFrame_eq_iff`:
+same ray (fibre-constancy) and complementary ray (frame reversal). -/
+theorem n2FrameTwist_eq_of_blochFrame_colFrame_eq
+    (P : SequentialProductOn (HermitianMat (Fin 2) ℂ)) (hS2 : P.FirstArgContinuous)
+    {U V : Matrix.unitaryGroup (Fin 2) ℂ}
+    (h : blochFrame (colFrame U) = blochFrame (colFrame V)) :
+    Necessity.n2FrameTwist P hS2 U = Necessity.n2FrameTwist P hS2 V := by
+  rcases (blochFrame_eq_iff (colFrame U) (colFrame V)).mp h with hsame | hortho
+  · exact Necessity.n2FrameTwist_eq_of_frameMap_eq P V U hS2
+      (frameMap_eq_of_colFrame_eq hsame)
+  · have hcompl : Necessity.frameMap U = Necessity.frameMap (V * Necessity.swapU) := by
+      rw [Necessity.frameMap_mul_swap]
+      exact frameMap_eq_one_sub_of_colFrame_eq_ortho hortho
+    rw [Necessity.n2FrameTwist_eq_of_frameMap_eq P (V * Necessity.swapU) U hS2 hcompl,
+      Necessity.n2FrameTwist_reverse]
+
+/-! ### `lem:n2-descent`: the frame parameter as a continuous function on `ℝP²`
+
+★★★ New 2026-08-09 (ARC-8 block 8.1(d)).  Row 34's residue was "assembly only", and this is the
+assembly.  The presentation map `U(2) → ℝP²` is `blochFrame ∘ colFrame`; it is continuous and
+surjective from a **compact** group to a **Hausdorff** space, hence a quotient map, so a function on
+`ℝP²` is continuous exactly when its pullback is — and the pullback is `n2FrameTwist`, whose
+continuity is row 33.  ★ Boundedness, which the row also asks for, is then automatic from `ℝP²`'s
+compactness rather than a separate estimate. -/
+
+theorem continuous_firstCol : Continuous firstCol := by
+  apply (PiLp.continuous_toLp 2 (fun _ : Fin 2 => ℂ)).comp
+  apply continuous_pi
+  intro i
+  exact (continuous_apply 0).comp ((continuous_apply i).comp continuous_subtype_val)
+
+theorem continuous_colFrame : Continuous colFrame :=
+  Projectivization.continuous_mk'.comp (continuous_firstCol.subtype_mk _)
+
+/-- The presentation map: a unitary to the `ℝP²` point of the unordered frame it presents. -/
+noncomputable def frameRP2 (U : Matrix.unitaryGroup (Fin 2) ℂ) : RP2 :=
+  blochFrame (colFrame U)
+
+theorem continuous_frameRP2 : Continuous frameRP2 :=
+  blochFrame_continuous.comp continuous_colFrame
+
+theorem surjective_frameRP2 : Function.Surjective frameRP2 :=
+  surjective_blochFrame_colFrame
+
+theorem isQuotientMap_frameRP2 : Topology.IsQuotientMap frameRP2 :=
+  (continuous_frameRP2.isClosedMap).isQuotientMap continuous_frameRP2 surjective_frameRP2
+
+/-- **The article's `t̃` as a function on `ℝP²`**, for an arbitrary rank-two product. -/
+noncomputable def n2ModuliRP2 (P : SequentialProductOn (HermitianMat (Fin 2) ℂ))
+    (hS2 : P.FirstArgContinuous) : RP2 → ℝ :=
+  fun p => Necessity.n2FrameTwist P hS2 (Function.surjInv surjective_frameRP2 p)
+
+@[simp]
+theorem n2ModuliRP2_frameRP2 (P : SequentialProductOn (HermitianMat (Fin 2) ℂ))
+    (hS2 : P.FirstArgContinuous) (U : Matrix.unitaryGroup (Fin 2) ℂ) :
+    n2ModuliRP2 P hS2 (frameRP2 U) = Necessity.n2FrameTwist P hS2 U :=
+  n2FrameTwist_eq_of_blochFrame_colFrame_eq P hS2
+    (Function.surjInv_eq surjective_frameRP2 (frameRP2 U))
+
+theorem continuous_n2ModuliRP2 (P : SequentialProductOn (HermitianMat (Fin 2) ℂ))
+    (hS2 : P.FirstArgContinuous) : Continuous (n2ModuliRP2 P hS2) := by
+  rw [isQuotientMap_frameRP2.continuous_iff]
+  have hcomp : (n2ModuliRP2 P hS2) ∘ frameRP2 = Necessity.n2FrameTwist P hS2 :=
+    funext fun U => n2ModuliRP2_frameRP2 P hS2 U
+  rw [hcomp]
+  exact Necessity.continuous_n2FrameTwist P hS2
+
+/-- **`lem:n2-descent`.**  The frame parameter of an arbitrary norm-continuous S1–S7 product on
+`H_2(ℂ)` descends to a genuine element of the moduli object `C(ℝP², ℝ)` — continuous, and bounded
+because `ℝP²` is compact. -/
+noncomputable def n2QubitModuli (P : SequentialProductOn (HermitianMat (Fin 2) ℂ))
+    (hS2 : P.FirstArgContinuous) : C(RP2, ℝ) :=
+  ⟨n2ModuliRP2 P hS2, continuous_n2ModuliRP2 P hS2⟩
+
+@[simp]
+theorem n2QubitModuli_apply (P : SequentialProductOn (HermitianMat (Fin 2) ℂ))
+    (hS2 : P.FirstArgContinuous) (U : Matrix.unitaryGroup (Fin 2) ℂ) :
+    n2QubitModuli P hS2 (frameRP2 U) = Necessity.n2FrameTwist P hS2 U :=
+  n2ModuliRP2_frameRP2 P hS2 U
+
+/-- **The descended function represents the product**: at every spectral effect, the product is the
+twist product with parameter read off the effect's `ℝP²` frame.  This is `prop:n2-necessity` stated
+against the moduli object rather than against a unitary. -/
+theorem sp_eq_twistSeq_n2QubitModuli (P : SequentialProductOn (HermitianMat (Fin 2) ℂ))
+    (hS2 : P.FirstArgContinuous) (U : Matrix.unitaryGroup (Fin 2) ℂ) {r : Fin 2 → ℝ}
+    (hr : ∀ i, r i ≤ 0) {b : HermitianMat (Fin 2) ℂ} (hb : IsEffect b) :
+    P.sp (Necessity.adU (U : Matrix (Fin 2) (Fin 2) ℂ) (Necessity.diagFamily r)) b
+      = HermitianMat.twistSeq (n2QubitModuli P hS2 (frameRP2 U))
+        (Necessity.adU (U : Matrix (Fin 2) (Fin 2) ℂ) (Necessity.diagFamily r)) b := by
+  rw [n2QubitModuli_apply]
+  exact Necessity.n2_sp_eq_twistSeq_frame P hS2 U hr rfl hb
+
+/-- **`lem:n2-descent`, boundedness clause** — automatic from compactness. -/
+theorem exists_n2QubitModuli_bound (P : SequentialProductOn (HermitianMat (Fin 2) ℂ))
+    (hS2 : P.FirstArgContinuous) :
+    ∃ C : ℝ, ∀ p : RP2, |n2QubitModuli P hS2 p| ≤ C := by
+  obtain ⟨C, hC⟩ := (isCompact_univ (X := RP2)).exists_bound_of_continuousOn
+    (continuous_n2ModuliRP2 P hS2).continuousOn
+  exact ⟨C, fun p => by simpa using hC p (Set.mem_univ p)⟩
+
+/-! ### `cor:qubit-classification`: the correspondence is a bijection
+
+★★★ New 2026-08-09 (ARC-8 block 8.1(f)).  Row 35 is rows 29/30/32/33/34 assembled, and with the
+`ℝP²` moduli object built above the assembly is short.  The two halves:
+
+* **every product determines a unique moduli function** — existence is `n2QubitModuli`, uniqueness is
+  surjectivity of the presentation map;
+* **and the round trip is the identity** — the moduli function recovered from `n2SequentialProduct t`
+  is `t` itself, because `n2FrameTwist_unique_param` says the frame parameter is the *unique* real at
+  which the product acts as a twist at that frame, and `n2Sp_eq_twistSeq_at_frame` exhibits
+  `t (frameRP2 U)` as such a real. -/
+
+/-- **Every rank-two product determines a unique element of the moduli object.** -/
+theorem exists_unique_qubitModuli (P : SequentialProductOn (HermitianMat (Fin 2) ℂ))
+    (hS2 : P.FirstArgContinuous) :
+    ∃! t : C(RP2, ℝ), ∀ U : Matrix.unitaryGroup (Fin 2) ℂ,
+      t (frameRP2 U) = Necessity.n2FrameTwist P hS2 U := by
+  refine ⟨n2QubitModuli P hS2, fun U => n2QubitModuli_apply P hS2 U, ?_⟩
+  intro t' ht'
+  ext p
+  obtain ⟨U, hU⟩ := surjective_frameRP2 p
+  rw [← hU, ht' U, n2QubitModuli_apply]
+
+/-- **The moduli value at a presented frame IS the frame parameter of the product it builds.** -/
+theorem apply_frameRP2_eq (t : C(RP2, ℝ)) (U : Matrix.unitaryGroup (Fin 2) ℂ) :
+    t (frameRP2 U) = Necessity.n2FrameTwist (n2SequentialProduct t)
+      (n2SequentialProduct_firstArgContinuous t) U :=
+  (Necessity.n2FrameTwist_unique_param (n2SequentialProduct t)
+    (n2SequentialProduct_firstArgContinuous t) U).unique
+      (fun r _ b _ => n2Sp_eq_twistSeq_at_frame t U r b)
+      (fun r hr b hb => Necessity.n2_sp_eq_twistSeq_frame _ _ U hr rfl hb)
+
+/-- **The round trip is the identity**: the moduli function of the product built from `t` is `t`. -/
+theorem n2QubitModuli_n2SequentialProduct (t : C(RP2, ℝ)) :
+    n2QubitModuli (n2SequentialProduct t) (n2SequentialProduct_firstArgContinuous t) = t := by
+  ext p
+  obtain ⟨U, hU⟩ := surjective_frameRP2 p
+  rw [← hU, n2QubitModuli_apply]
+  exact (apply_frameRP2_eq t U).symm
+
+/-- **`cor:qubit-classification`.**  The map `t ↦ ∘_t` is a bijection from `C(ℝP², ℝ)` onto the
+norm-continuous S1–S7 products on `H_2(ℂ)`, presented as a two-sided correspondence: the forward map
+is injective, and every norm-continuous product determines a unique moduli function. -/
+theorem qubit_classification :
+    (Function.Injective fun t : C(RP2, ℝ) => (n2SequentialProduct t).sp)
+      ∧ ∀ (P : SequentialProductOn (HermitianMat (Fin 2) ℂ)) (hS2 : P.FirstArgContinuous),
+        ∃! t : C(RP2, ℝ), ∀ U : Matrix.unitaryGroup (Fin 2) ℂ,
+          t (frameRP2 U) = Necessity.n2FrameTwist P hS2 U := by
+  refine ⟨?_, exists_unique_qubitModuli⟩
+  intro t₁ t₂ hsp
+  have hsp' : (n2SequentialProduct t₁).sp = (n2SequentialProduct t₂).sp := hsp
+  ext p
+  obtain ⟨U, hU⟩ := surjective_frameRP2 p
+  rw [← hU]
+  refine (Necessity.n2FrameTwist_unique_param (n2SequentialProduct t₁)
+    (n2SequentialProduct_firstArgContinuous t₁) U).unique
+      (fun r _ b _ => n2Sp_eq_twistSeq_at_frame t₁ U r b) (fun r _ b _ => ?_)
+  show (n2SequentialProduct t₁).sp _ _ = _
+  rw [hsp']
+  exact n2Sp_eq_twistSeq_at_frame t₂ U _ _
+
 end RankTwo

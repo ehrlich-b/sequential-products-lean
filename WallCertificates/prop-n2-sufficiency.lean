@@ -295,7 +295,7 @@ theorem qubit_classification
       ∀ (U : Matrix.unitaryGroup (Fin 2) ℂ),
         t (RankTwo.blochFrame (Projectivization.mk ℂ
             (WithLp.toLp 2 (fun i => (U : Matrix (Fin 2) (Fin 2) ℂ) i 0)) (col_ne_zero U)))
-          = Necessity.n2FrameTwist P hS2 U := by
-  sorry
+          = Necessity.n2FrameTwist P hS2 U :=
+  RankTwo.exists_unique_qubitModuli P hS2
 
 end WallCertificate
