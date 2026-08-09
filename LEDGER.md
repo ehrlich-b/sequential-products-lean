@@ -416,12 +416,56 @@ What actually remains of row 12 is the **restriction** direction only: that an *
 `V × W` restricts to S1–S7 products on each summand (`grep restrict\|toSummand\|ofProd
 RadicalRelativity/DirectSum.lean` → prose only, 2026-08-09). The converse is done.
 
+★★★ **THE ARC'S FORMER TOP RISK IS CLOSED, BY REMOVING THE QUESTION RATHER THAN ANSWERING IT.**
+`n2FrameTwist_unique_param` / `n2FrameTwist_pinned`: `n2FrameTwist P hS2 U` is **the unique real
+number** at which the product acts as the twist product at `U`'s frame — which is the article's
+*definition* of `t̃(n)`. So `tvalLm`'s internals cannot make the number wrong; a defect there could
+only surface as `n2_sp_eq_twistSeq_frame` failing to compile, and it compiles. Rows 32/33 are
+provably about the article's object. Non-vacuity is automatic — the `∃!` carries its own witness.
+
+★★★ **AND THE REVIEWER RETRACTED ITS FRAMING OF THAT RISK, WHICH IS THE ARC'S BEST METHODOLOGICAL
+FINDING.** Twice it listed "I have not read the proofs of X" as the top risk; twice I accepted it, and
+once promoted it to the top item — so my acceptance cost a pass too. **"Unread proof" does not belong
+on a risk list for a kernel-checked theorem with a clean `#print axioms`: the kernel read it, and it
+is stricter than any reviewer.** What a reviewer must read is **statements**, **definitions** (a `def`
+can silently be the wrong object with no error anywhere), and **`Prop`-valued hypotheses** (a located
+stand-in typechecks fine). This item was closable two passes earlier by reading three *statements*.
+★ The exception that keeps the rule honest is kernel bypasses, and those were checked rather than
+assumed: `native_decide` appears twice in the tree and both are prose; all 26 `sorry` and 4 `axiom`
+hits are docstrings asserting their own absence; no `unsafe`/`implemented_by` on any path; and
+`#print axioms` on every flagship declaration returns exactly `[propext, Classical.choice, Quot.sound]`
+— `sorryAx` and `Lean.ofReduceBool` would both appear there if anything upstream used them.
+
+★★★ **A THIRD DEFECT KIND FOR GAP STATEMENTS: SELF-DEFEATING.** The certificate-refutation review's
+second pass found that `prop-n2-sufficiency.lean`'s load-bearing ingredient — the one the file told the
+reader to attack *first* — implies `n2FrameTwist` is **globally constant for every product**, because
+its hypothesis `a = Ad_U a` says `U` *commutes with* `a`, not that it diagonalizes it (at `a = 𝟙`
+every unitary qualifies). Global constancy is the negation of what rows 34/35 need, and the tree proves
+nonconstant frame functions exist (`tauModuliRP2_nonconstant`). **So the ingredient, if true, would
+refute the very row its own certificate covers.** Restated with the diagonalizing idiom
+(`a = Ad_U (diagFamily r)` — eleven lines from a theorem the same file cites, and the idiom that
+file's *other* statement already used correctly) plus the non-scalar hypotheses its own prose asked
+for. The three kinds and their tests, because they are different:
+  * **FALSE** (row 22) — refutable by counterexample;
+  * **VACUOUS** (row 36(i)) — provable, moves nothing; caught by the inert-hypothesis test applied to
+    the *gap*;
+  * **SELF-DEFEATING** (row 30) — caught by neither. **Test: assume the gap statement and check it does
+    not contradict the row it feeds.** One step.
+★ Also found: **two propositions carried an inline `(by sorry)` INSIDE the statement**, so the file's
+warning count understated it by two and those propositions were **not fully written down** — they could
+not be attacked as stated at all. Discharged (`col_ne_zero`). ★ And the review confirmed every
+*judgement* in that certificate's pricing block while refuting its *statement*: **a certificate's prose
+and its proposition fail independently — getting the price right is no evidence that the statement says
+it.**
+
 ★ **Running total of this arc's own corrections, stated plainly because the pattern is the finding:**
 three false absence claims (quaternionic carrier, direct sum, direct-sum assembly — nos. 6, 7, 8),
-one false gap statement (`lem:orientation`), one vacuous gap statement (`exists_peirce_exchange`),
-one mispriced-as-fatal dependency (the sign, retracted by the reviewer who raised it), one totalizing
-residual claim, three inaccurately recorded greps, one broken verification recipe, and one timeout
-"fixed" three times before its real cause was found. **Every one of them was mine or a reviewer's,
+one FALSE gap statement (`lem:orientation`), one VACUOUS gap statement (`exists_peirce_exchange`), one
+SELF-DEFEATING gap statement (`frameRay_eq_of_compatible`), two propositions with sorries hidden inside
+them, two dependencies mispriced as fatal (the sign and the `tvalLm` identification — both retracted by
+the reviewer who raised them, both accepted uncritically by me), one totalizing residual claim, three
+inaccurately recorded greps, one broken verification recipe, and one timeout "fixed" three times before
+its real cause was found. **Every one of them was mine or a reviewer's,
 and every one was caught inside a single day by making the claims falsifiable instead of asserting
 them.** That is the case for the certificate format, and it is stronger than any coverage number.
 
