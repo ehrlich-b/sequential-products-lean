@@ -122,16 +122,36 @@ example {J : Type*} [NormedAddCommGroup J] [InnerProductSpace ℝ J]
     C.Θ a b = b :=
   C.coalescence_J2q ha hsc hb
 
-/-! ### The one genuine gap that is writable today
+/-! ### The gap this file called its one genuine one — CLOSED, and the certificate went stale
+inside the same arc
 
-Row 18's converse.  Stated so it can be attacked; the reviewer judged it a short matrix argument. -/
+★★★ **RETRACTION 2026-08-09, ARC-8 block 8.0/8.2, and the interesting part is the timing.**  The
+statement below was written here as row 18's single remaining stated gap, judged "writable today …
+a short matrix argument".  The judgement was right and it was acted on **the same day**:
+`Necessity.offdiag_eq_zero_of_fixes_frameProj` is this statement, with the same hypotheses and the
+same conclusion, and it has been in the tree since ARC-7.  The `sorry` below survived only because
+nobody re-read the file after the tree caught up with it.
 
-/-- **GAP — the frame stabilizer is exactly the torus.**  A unitary fixing every frame projection is
-diagonal, hence of the form `torusU`.  Nothing in the tree states this direction. -/
+★★★ **AND ARC-8's OWN ORDERS INHERITED THE STALENESS.**  `LEDGER.md`'s block 8.2 opens with "row
+18's ℂ converse (`frame_stabilizer_is_torus`, stated ready in
+`WallCertificates/differential-trio.lean`, priced a short matrix argument)" — a work order for
+something already done, written from *this file* instead of from the tree.  The rule the arc adopted
+("attack evidence must be from THIS ARC") was aimed at exactly this and was violated by the document
+that states it.
+
+★ **TRANSFERABLE RULE, and it is not the grep rule.**  The grep rule says an accurate grep is
+evidence about a string.  This is one ring further out: **a certificate is evidence about the tree
+at the moment it was written, and a work order derived from a certificate inherits that timestamp.**
+The first move when opening a block is not to read the certificate — it is to check the certificate
+against the tree, because the certificate is the thing most likely to be out of date.  A certificate
+whose gap has closed is worse than a prose price: it is a prose price wearing a compiler's badge. -/
+
+/-- **NO LONGER A GAP** — the frame stabilizer is exactly the diagonal subgroup.  Kept, with the
+`sorry` replaced by the tree's theorem, so the retraction above is checkable here. -/
 theorem frame_stabilizer_is_torus {n : Type*} [Fintype n] [DecidableEq n]
     (U : Matrix n n ℂ) (hU : Uᴴ * U = 1)
     (hfix : ∀ k, adU U (frameProj k) = frameProj k) :
-    ∀ i j, i ≠ j → U i j = 0 := by
-  sorry
+    ∀ i j, i ≠ j → U i j = 0 :=
+  Necessity.offdiag_eq_zero_of_fixes_frameProj hU hfix
 
 end WallCertificate

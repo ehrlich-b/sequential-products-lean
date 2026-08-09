@@ -130,6 +130,83 @@ manuscript untouched (blob `205fdf5a`); frozen tags untouched; JMP reserved, T1/
 custom axioms stay exactly `[]`; `THEOREM-MAP.md` and `STATEMENT-MANIFEST.md` update in the
 same commit as each status change; never say "fully formalized".
 
+### ARC-8 EXECUTION RECORD (append per block; the orders above stay as written)
+
+**Block 8.0 — audit before build (done).** Tree verified at `81feb05`: `lake build` clean (3106
+jobs), `AxiomAudit.lean` Census PASS, custom axioms exactly `[]`, tags through
+`paperA-arc7-cp2`. The two `sorry` tokens grep finds in `Vendor/Misc.lean` are inside a block
+comment (VENDOR.md already records this); no `sorry` in live code.
+
+★★★ **The audit's real finding was about the orders, not the tree.** Block 8.2's first item —
+"row 18's ℂ converse (`frame_stabilizer_is_torus`, stated ready in
+`WallCertificates/differential-trio.lean`, priced a short matrix argument)" — was **a work
+order for something already done.** `Necessity.offdiag_eq_zero_of_fixes_frameProj` is that exact
+statement (same hypotheses, same conclusion) and had been in the tree since ARC-7. The
+certificate still carried the `sorry`, and these orders were written from the certificate
+instead of from the tree.
+
+★ **TRANSFERABLE RULE (new, and it is one ring out from the grep rule).** The grep rule says an
+accurate grep is evidence about a string. This one: **a certificate is evidence about the tree
+as of the moment it was written, and a work order derived from a certificate inherits that
+timestamp.** So the first move on opening a block is not to read its certificate — it is to
+check the certificate against the tree. A certificate whose gap has closed is worse than a
+prose price: it is a prose price wearing a compiler's badge. The arc's own "attack evidence must
+be FROM THIS ARC" rule was aimed at exactly this and was violated by the document stating it.
+
+**Block 8.1(a) — the compatibility chain, CLOSED.** `Necessity.n2FrameTwist_eq_of_compatible`
+(plus `frameMap_eq_or_compl_of_compatible`, `eq_frameProj_of_diag_projection`, and the general
+helpers `adU_mul_self`/`trace_adU`/`commute_adU`). The certificate's `frame_param_eq_of_compatible`
+`sorry` is replaced by a citation of it. ★ **The price was right about size and wrong about
+route:** step 3's "`M` is not a scalar, so `eigen_diagonal_fin2` puts `W e₀` on one coordinate"
+is not needed at all — writing the two-level family as `e^{s₁}·𝟙 + (e^{s₀} − e^{s₁})·p₀` makes
+the conjugated frame projection an *affine* function of the conjugated family, so one invertible
+coefficient transfers the vanishing off-diagonal entry, and a diagonal projection of trace one
+over `Fin 2` is a frame projection. **A four-step map written from the article's proof is
+evidence about the article's route, not about the cheapest Lean route**; "no new mathematics and
+no missing vocabulary" was the load-bearing half of that estimate and the step count was not.
+
+**Block 8.1(b) — `prop:n2-sufficiency`'s ALGEBRAIC CORE, landed. Row 30 ABSENT → PARTIAL.** New
+module `RadicalRelativity/RankTwo/Sufficiency.lean` (census manifest 149 → 150, deliberately;
+root import added). `RankTwo.n2SequentialProduct t` is a `SequentialProductOn (HermitianMat (Fin
+2) ℂ)` for an **arbitrary** `t : C(ℝP², ℝ)`, and
+`exists_sequentialProduct_of_continuous_moduli` states it in the article's existential form with
+the operation pinned: at every spectral effect the product IS the twist product with parameter
+`t` at that effect's frame, where the frame is the tree's own `blochFrame (colFrame U)` — the
+bridge `blochHerm_frameMap`/`blochHerm_adU_diagFamily`/`n2Tau_adU_diagFamily`, so this is
+`prop:n2-sufficiency`'s operation and not a lookalike.
+
+★★ **The mechanism is cheaper than the certificate's, and the reason generalizes.** A Hermitian
+`2×2` is `α·𝟙 + n·σ` and its unordered spectral frame IS the `ℝP²` point of `n`; two such
+matrices commute exactly when their axes are parallel, and that is an **entrywise identity** —
+the three components of `n_a × n_b` are the `(0,0)` and `(0,1)` entries of the commutator
+(`blochHerm_parallel_of_commute`). No eigenvectors, no simultaneous diagonalization, so the
+Mathlib `JointEigenspace` machinery the certificate warned about pricing is not needed either.
+★ The certificate's two named worries both dissolve: "compatible ⟹ same frame ⟹ same parameter"
+is `n2Tau_eq_of_commute`, and the scalars cost nothing because
+`HermitianMat.twistSeq_smul_one_left` shows a scalar left argument acts by scalar multiplication
+*for every* parameter — so the article's convention `t_a = 0` at the scalars is **free rather
+than a case to check**, which is the opposite of how the certificate priced it.
+★ **Positive homogeneity was obtained from the constant-parameter S5**, not from a
+functional-calculus scaling identity: apply `twistSeq_assoc_of_comm` with a scalar left factor
+and both sides collapse. That removed the one place this build looked like it needed new `cfc`
+lemmas. Worth remembering as a shape: **an axiom the tree already has, instantiated at a
+degenerate argument, can replace a lemma about the construction.**
+
+★★★ **WHAT REMAINS OF ROW 30 IS EXACTLY S2**, i.e. the word "norm-continuous" in its statement,
+and the same clause is what blocks row 31's "satisfies all seven axioms". Route mapped this arc
+and not built: `t` is bounded (ℝP² compact), `n2Tau` is continuous away from the scalars, and at
+a scalar `c·𝟙` with `c > 0` the twist factor factors as a **global phase** `e^{is log c}` times
+`Y_s = cfc(√x·e^{is(log x − log c)})`, whose deviation from `a^{1/2}` is `O(|s|·(log λ₊ − log λ₋))`
+— so the product is continuous there because the *gap* closes, not because the parameter
+converges. The global-phase factorization is the step that needs writing (it mixes the two real
+`cfc`s), and it is why "S2 is a genuine estimate rather than plumbing" was the right call.
+
+**Block 8.2 — row 18's ℂ converse: NOT WORK, already in the tree** (see 8.0). Row 18's residue
+is now the ℝ/ℍ/𝕆 rows only, i.e. block 8.5. ★ Row 12's "restriction direction" is **also
+mispriced in these orders**: `DirectSum.lean`'s own docstring says the missing statement is that
+*every* product on a direct sum is of the form `P.prod Q`, which is `prop:central`'s splitting —
+the half the manuscript carries as a paper proof. It is not a cheap-sweep item.
+
 ---
 
 ## ★★★ ARC-7 ORDERS (2026-08-09, Fable design pass — the interior-closure campaign). **EXECUTED 2026-08-09 — terminal condition met (see EXECUTION RECORD); superseded as campaign SSOT by ARC-8 above; the certificate spec and lessons remain binding.**
