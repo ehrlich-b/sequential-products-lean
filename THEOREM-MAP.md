@@ -710,13 +710,22 @@ had no row anywhere, now stated:
 
 | Paper statement | Status | Where it stands |
 | --- | --- | --- |
-| `lem:homog` — positive linear extension of `L_a` (i), and first-variable homogeneity `(λa)·b = λ(a·b)` (ii) | **PARTIAL** | Clause (ii) is proved, on the concrete carrier only, as `Necessity.sp_smul_left` (`Necessity/FirstArgument.lean`), following vdW Prop. 3.9 with the σ-SEA normality passage replaced by exactly one use of S2. ★ **Clause (i) IS in the tree on the concrete carrier — corrected 2026-08-08 (ARC-6). The previous wording here, "not in the tree in any form", was FALSE.** `Necessity.seqLeftMul` (`Necessity/LeftMultiplication.lean`) *is* the positive linear extension: it is an honest `HermitianMat n 𝕜 →ₗ[ℝ] HermitianMat n 𝕜`, built through `spPos` on the cone and the `x = x⁺ − x⁻` splitting, with `seqLeftMul_apply_effect` (agrees with `P.sp a ·` on effects), `seqLeftMul_nonneg` (positivity), and `seqLeftMul_one`; its own docstring says "paper `lem:homog`(i), matrix-concrete". Uniqueness of the extension is `OrderUnitSpace.linearMap_eq_of_eq_on_effects` (abstract, arc-5). So clause (i) is PARTIAL for the same single reason as clause (ii) — concrete carrier vs the article's EJA generality — and **not** for want of a construction. This was the fifth absence claim in two arcs that was wrong on the page rather than in the tree. See the Archimedean note below for why clause (ii) does not generalize for free. |
+| `lem:homog` — positive linear extension of `L_a` (i), and first-variable homogeneity `(λa)·b = λ(a·b)` (ii) | **PARTIAL** | ★ **Clause (ii) is now proved at ABSTRACT generality — row corrected 2026-08-08 (ARC-6 rung 6.3); the previous wording "on the concrete carrier only" is superseded.** `SequentialProductOn.sp_smul_left` (`SequentialProduct.lean`) carries S1–S7 + the article's S2 + `OrderUnitSpace.IsArchimedean`, at the generality of this tree's order-unit interface, which covers every EJA; see §1. The concrete `Necessity.sp_smul_left` (`Necessity/FirstArgument.lean`) remains, following vdW Prop. 3.9 with the σ-SEA normality passage replaced by exactly one use of S2. ★ **Clause (i) IS in the tree on the concrete carrier — corrected 2026-08-08 (ARC-6). The previous wording here, "not in the tree in any form", was FALSE.** `Necessity.seqLeftMul` (`Necessity/LeftMultiplication.lean`) *is* the positive linear extension: it is an honest `HermitianMat n 𝕜 →ₗ[ℝ] HermitianMat n 𝕜`, built through `spPos` on the cone and the `x = x⁺ − x⁻` splitting, with `seqLeftMul_apply_effect` (agrees with `P.sp a ·` on effects), `seqLeftMul_nonneg` (positivity), and `seqLeftMul_one`; its own docstring says "paper `lem:homog`(i), matrix-concrete". Uniqueness of the extension is `OrderUnitSpace.linearMap_eq_of_eq_on_effects` (abstract, arc-5). So clause (i) is PARTIAL for the same single reason as clause (ii) — concrete carrier vs the article's EJA generality — and **not** for want of a construction. This was the fifth absence claim in two arcs that was wrong on the page rather than in the tree. The Archimedean note below records why clause (ii) did not generalize *for free* — and is itself now superseded in its pricing: supplying Archimedean as an explicit `Prop` was enough, and the ladder ported essentially verbatim. |
 | `lem:cone-ext` — extension of the product to positive-cone first arguments | **FORMALIZED 2026-08-08** (ARC-6 rung 6.3) | ★ **Row rewritten; the previous text said PARTIAL and "inherits that row's Archimedean obstruction", which is now discharged.** All three clauses are proved at abstract order-unit-space generality, **about a defined extension** `SequentialProductOn.spCone`: `spCone_eq` (well-defined — agrees with every admissible normalization), `spCone_of_isEffect` (agreement on effects), `spCone_smul` (positive homogeneity). Self-audit note: the first version proved these only at the normalization level (`sp_coneNorm_indep`, `sp_coneNorm_smul`, `sp_coneNorm_eq_of_isEffect`, `exists_isConeNorm` — retained as ingredients), which stated homogeneity about expressions rather than about the extension; `spCone` closes that gap before it could be called an overstatement. It does consume `lem:homog`(ii) — which is why it landed only once that was abstract — and it is **norm-free**, unlike the article, whose `μ ≥ ‖v‖` presupposes the carrier's norm is the order-unit norm. `sp_coneNorm_smul` carries neither `IsArchimedean` nor S2: both were inert there and were removed before landing. |
 | `lem:frame-fix` — `Θ_r` fixes the frame and the diagonal, preserves each Peirce block, lies in `Stab(F)°`, hence `L_{a(r)}` is Peirce-block-diagonal | **PARTIAL** | A certificate for the *produced* setup exists inside `MasterTheorem/Master.lean`; the general statement, quantified over frames and over `r`, does not. |
 | `prop:bridge` — standard-product compatibility is exactly Jordan operator commutation | **ABSENT, by design** | A cited external result (`Wetering2018three` Props. A.1, A.3). It enters the skeleton as an interface field and the paper does not claim to reprove it. Not a target of any rung. |
 
-★ **The Archimedean note — why the abstract sub-tier of rung 5.1 is not "machinery in hand"
-(finding, 2026-08-08).** `lem:homog`(ii) and `lem:cone-ext` are stated by the article at EJA
+★ **The Archimedean note — the rung-5.1 finding, and its own correction.**
+
+**SUPERSEDED IN ITS PRICING, 2026-08-08 (ARC-6 rung 6.3).** The diagnosis below is correct and
+worth keeping: the ε-squeeze *is* the Archimedean property, and this class carries only
+order-unit boundedness. The *conclusion* drawn from it — that generalizing was therefore a
+large job — was wrong. Archimedean supplied as an explicit `Prop` was sufficient, and both
+`lem:homog`(ii) and `lem:cone-ext` are now abstract (§1). Read the rest of this note as the
+diagnosis it was, not as a live obstruction. The general lesson is in `LEDGER.md`: **a banked
+wall's price is a claim, and it decays exactly like an absence claim.**
+
+**The original note (2026-08-08, rung 5.1):** `lem:homog`(ii) and `lem:cone-ext` are stated by the article at EJA
 generality, so a concrete-carrier proof cannot close them; they need the abstract layer. But
 the concrete proof of `lem:homog`(ii) runs through
 `Necessity.sp_smul_of_mem_unitInterval` (`Necessity/LeftMultiplication.lean`), whose final
@@ -732,11 +741,27 @@ space", not a located stand-in for a cited result, so a row proved under it stil
 formalized at the article's generality) and thread it through the six-step ladder. Then
 `lem:homog`(i) needs only that same generalization — **not** a positive-linear-extension construction, which
 **does** exist on the concrete carrier (`Necessity.seqLeftMul`; the claim that it does not was retracted 2026-08-08, see the
-`lem:homog` row above). What the abstract version needs is `spPos`/`seqLeftMul` rebuilt over an order unit space with
-Archimedean supplied, which is the same thread, not a second one.
+`lem:homog` row above).
+
+★ **What abstract clause (i) actually needs, stated precisely (2026-08-08).** Not just
+"`spPos`/`seqLeftMul` rebuilt with Archimedean" — there is one genuine structural difference.
+The concrete `seqLeftMul` extends from the cone to all of `H_n(𝕜)` through the lattice
+splitting `x = x⁺ − x⁻`, and **an order unit space need not be a lattice**, so that step does
+not port. The abstract replacement is available and is already used elsewhere in this tree:
+order-unit boundedness gives `r` with `−x ≤ r•𝟙`, so `x = (x + r•𝟙) − r•𝟙` is a difference of
+two *positive* elements — exactly the decomposition `OrderUnitSpace.span_isEffect_eq_top` runs
+on. So the abstract route is: second-argument cone extension (same normalization-independence
+argument as `spCone`, which is already abstract), additivity on the cone, then this
+positive-difference splitting with a congruence lemma for competing representations. No missing
+theorem; a real but bounded construction. Not attempted this arc.
+
 Contrast `lem:span`, whose two load-bearing clauses were proved at abstract generality
-*without* Archimedean — see §1 — because the article's norm route is avoidable there and
-here it is not.
+*without* Archimedean — see §1. ★ **The clause that used to follow here — "because the
+article's norm route is avoidable there and here it is not" — is FALSE and is retracted
+(2026-08-08).** The norm route turned out avoidable for `lem:cone-ext` too: its admissibility
+condition `μ ≥ ‖v‖` can be replaced by "`v/μ` is an effect", which is what the argument uses,
+and order-unit boundedness then supplies an admissible `μ`. `lem:homog`(ii)'s ladder is
+likewise norm-free; the only topology it touches is the article's own S2.
 
 ## 3c. `lem:homomorphism` — repriced from ABSENT, and the missing clause proved (2026-08-08, ARC-6 rungs 6.0/6.2)
 
