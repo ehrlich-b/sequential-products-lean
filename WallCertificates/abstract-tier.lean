@@ -84,8 +84,17 @@ ATTACK EVIDENCE
   over-priced here.
 
 ABSENCE CLAIMS AND THEIR SCOPE
-  * "no Jordan/EJA class, so EJA generality is not statable": see WallCertificates/differential-trio.lean
-    for the grep; same scope, same date.
+  * ★★★ "no Jordan/EJA class, so EJA generality is not statable" — **RETRACTED 2026-08-09.  The
+    tree DOES state the article's generality.**  `MasterTheorem/Interface.lean`'s
+    `structure ComparisonSetup` carries a Jordan product (as a FIELD named `jordan`), a unit,
+    `jordan_comm`, `rank_ge : 3 <= n`, a **Jordan frame** `p : Fin n -> J`, a cone, `Inv`, and
+    `Theta` with its three properties — and row 16's clauses are PROVED over it.  My grep pattern
+    could not see it because the structure is named `ComparisonSetup`.  Tenth false absence claim on
+    this project; full retraction in WallCertificates/differential-trio.lean.
+    ★ What IS absent: an axiomatization making the cited vIR/FK fields derivable rather than carried
+    (`Interface.lean` says outright it "does not encode the JB-algebra premises").  So where this
+    file leaned on "not statable" — rows 5 (Peirce clause) and 6(i) — the honest blocker is that
+    axiomatization, not the vocabulary.
   * "no `J_2(q)` as an order unit space":
       grep -rn 'J2\|PeirceTwo\|peirce.*OrderUnit' RadicalRelativity/ -> `cornerJ2` is a PREDICATE on
       elements, not a carrier type; no `OrderUnitSpace` instance for a Peirce subalgebra.
