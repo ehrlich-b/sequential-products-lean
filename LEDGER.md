@@ -310,16 +310,24 @@ have to: **because `b` is fixed, S2 suffices, and no second-argument continuity 
 anywhere.** Both halves are now proved and in the tree — `continuous_basePt` and
 `continuous_adU_pair` (`Ad` jointly continuous in the unitary and its argument).
 
-**The assembly into `ContinuousOn (n2Readout …)` is NOT proved, and the obstruction is
-elaboration cost.** Four distinct formulations — composition through `continuous_adU_pair`,
-a direct `subtype_mk` proof, a flattened outer map avoiding the double conjTranspose, and an
-explicit `show` to pre-match the goal — all hit a `whnf` heartbeat timeout unifying the
-composite against `n2Readout`'s unfolding, even at `maxHeartbeats 1000000`. That is a wall by
-the three-strategies rule, but it is an **engineering** wall: no mathematical step is missing,
-and the two halves compile in seconds on their own. The likely fix is to restate `n2Readout` as
-a composition of named continuous pieces so nothing has to unfold, or to prove the composite
-against an `abbrev` with `@[simp]` projection lemmas. Cheap for whoever picks it up; not a
-research problem.
+★★ **The assembly into `ContinuousOn (n2Readout …)` IS NOW PROVED —
+`continuousOn_n2Readout`.** I banked it as an elaboration wall an hour earlier and that record
+was wrong; it is corrected here rather than left standing. Four formulations had hit a `whnf`
+heartbeat timeout even at `maxHeartbeats 1000000`, all of them asking Lean to unify the
+composite against `n2Readout`'s unfolding. The fix is to never ask: prove continuity of an
+**explicit lambda** and transfer with `ContinuousOn.congr`, using a pointwise `rfl` lemma
+(`n2Readout_apply`). It then elaborates in seconds. **Lesson: a heartbeat timeout is a statement
+about the unification path, not about the difficulty of the goal** — reshape the goal before
+concluding a wall. (I had even written down this fix as the "likely" one while banking it, then
+banked anyway. If the fix is cheap enough to name, try it before recording a wall.)
+
+**Where `lem:n2-bounded` now stands.** Every ingredient of the route is proved: the readout
+identity (`n2Readout_eq`, with an independent cross-check `readout_direct`), its joint
+continuity (`continuousOn_n2Readout`), the numerical step (`abs_lt_of_phase_near_one`, sharp and
+with `hδ` certified necessary), non-vanishing of the two-effect weight
+(`frameProj_pairProj_not_commute`), and compactness of `U(2)` (in-tree). What remains is
+**assembly only**: form the weighted combination over the two test effects, extract `ε > 0` from
+compactness, apply uniform continuity on `[0,δ] × U(2)`, and conclude. No missing theorem.
 
 ★ **Reviewer B's third question — can the combined weight vanish? — is answered NO, and
 proved.** `n2Coef b U = ⟪u, b v⟫` vanishes exactly when the second column of `U` is an

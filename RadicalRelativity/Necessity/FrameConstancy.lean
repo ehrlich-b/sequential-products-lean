@@ -805,6 +805,72 @@ theorem n2Readout_eq (hS2 : P.FirstArgContinuous) {b : HermitianMat (Fin 2) ℂ}
   push_cast
   ring
 
+/-- Pointwise unfolding of the readout, so continuity can be proved about an explicit lambda
+and transferred, instead of asking `whnf` to unify a composite against the definition. -/
+theorem n2Readout_apply (b : HermitianMat (Fin 2) ℂ) (x : ℝ)
+    (U : Matrix.unitaryGroup (Fin 2) ℂ) :
+    n2Readout P b x U
+      = (adU ((U : Matrix (Fin 2) (Fin 2) ℂ)ᴴ)
+          (P.sp (adU (U : Matrix (Fin 2) (Fin 2) ℂ) (basePt x)) b)).mat 0 1 := rfl
+
+/-- **The readout is jointly continuous on `[0,∞) × U(2)`** — the plumbing the banked
+`lem:n2-bounded` route needs, and the point where that route could have failed.
+
+S2 gives continuity in the FIRST argument only. Had the test effect `b` needed to vary with `U`,
+the composite would not obviously be continuous and the route would be worthless. **Keeping `b`
+fixed is exactly what makes it go through**, and no second-argument continuity is used anywhere.
+
+Note the shape of the proof, because a naive version does not compile: proving continuity of an
+*explicit lambda* and transferring with `ContinuousOn.congr` avoids asking `whnf` to unify the
+composite against `n2Readout`'s unfolding. Four formulations that did ask for that all hit a
+heartbeat timeout even at `maxHeartbeats 1000000`; `n2Readout_apply` plus `congr` costs nothing. -/
+theorem continuousOn_n2Readout (hS2 : P.FirstArgContinuous) {b : HermitianMat (Fin 2) ℂ}
+    (hb : IsEffect b) :
+    ContinuousOn (fun p : ℝ × Matrix.unitaryGroup (Fin 2) ℂ => n2Readout P b p.1 p.2)
+      (Set.Ici 0 ×ˢ Set.univ) := by
+  have hinner : Continuous fun p : ℝ × Matrix.unitaryGroup (Fin 2) ℂ =>
+      adU ((p.2 : Matrix (Fin 2) (Fin 2) ℂ)) (basePt p.1) := by
+    refine Continuous.subtype_mk ?_ _
+    show Continuous fun p : ℝ × Matrix.unitaryGroup (Fin 2) ℂ =>
+      (p.2 : Matrix (Fin 2) (Fin 2) ℂ) * (basePt p.1).mat
+        * (p.2 : Matrix (Fin 2) (Fin 2) ℂ)ᴴ
+    have hU : Continuous fun p : ℝ × Matrix.unitaryGroup (Fin 2) ℂ =>
+        (p.2 : Matrix (Fin 2) (Fin 2) ℂ) := continuous_subtype_val.comp continuous_snd
+    have hy : Continuous fun p : ℝ × Matrix.unitaryGroup (Fin 2) ℂ => (basePt p.1).mat :=
+      HermitianMat.continuous_mat.comp (continuous_basePt.comp continuous_fst)
+    have hstar : Continuous fun p : ℝ × Matrix.unitaryGroup (Fin 2) ℂ =>
+        (p.2 : Matrix (Fin 2) (Fin 2) ℂ)ᴴ := by
+      simp only [← Matrix.star_eq_conjTranspose]; exact continuous_star.comp hU
+    exact (hU.mul hy).mul hstar
+  have hmem : ∀ p ∈ Set.Ici (0:ℝ) ×ˢ (Set.univ : Set (Matrix.unitaryGroup (Fin 2) ℂ)),
+      adU ((p.2 : Matrix (Fin 2) (Fin 2) ℂ)) (basePt p.1)
+        ∈ {a : HermitianMat (Fin 2) ℂ | IsEffect a} := fun p hp =>
+    adU_isEffect (unitaryGroup_conjTranspose_mul p.2) (unitaryGroup_mul_conjTranspose p.2)
+      (diagFamily_isEffect (basePt_exponent_nonpos hp.1))
+  have hsp : ContinuousOn (fun p : ℝ × Matrix.unitaryGroup (Fin 2) ℂ =>
+      P.sp (adU ((p.2 : Matrix (Fin 2) (Fin 2) ℂ)) (basePt p.1)) b)
+      (Set.Ici 0 ×ˢ Set.univ) := (hS2 hb).comp hinner.continuousOn hmem
+  have hpair : ContinuousOn (fun p : ℝ × Matrix.unitaryGroup (Fin 2) ℂ =>
+      ((P.sp (adU ((p.2 : Matrix (Fin 2) (Fin 2) ℂ)) (basePt p.1)) b), p.2))
+      (Set.Ici 0 ×ˢ Set.univ) := hsp.prodMk continuousOn_snd
+  have houter : Continuous fun q : HermitianMat (Fin 2) ℂ × Matrix.unitaryGroup (Fin 2) ℂ =>
+      ((q.2 : Matrix (Fin 2) (Fin 2) ℂ)ᴴ * (q.1).mat
+        * (q.2 : Matrix (Fin 2) (Fin 2) ℂ)) 0 1 := by
+    have hc : Continuous fun q : HermitianMat (Fin 2) ℂ × Matrix.unitaryGroup (Fin 2) ℂ =>
+        (q.2 : Matrix (Fin 2) (Fin 2) ℂ) := continuous_subtype_val.comp continuous_snd
+    have h1 : Continuous fun q : HermitianMat (Fin 2) ℂ × Matrix.unitaryGroup (Fin 2) ℂ =>
+        (q.2 : Matrix (Fin 2) (Fin 2) ℂ)ᴴ := by
+      simp only [← Matrix.star_eq_conjTranspose]; exact continuous_star.comp hc
+    have hy : Continuous fun q : HermitianMat (Fin 2) ℂ × Matrix.unitaryGroup (Fin 2) ℂ =>
+        (q.1).mat := HermitianMat.continuous_mat.comp continuous_fst
+    exact (continuous_apply (1 : Fin 2)).comp
+      ((continuous_apply (0 : Fin 2)).comp ((h1.mul hy).mul hc))
+  refine ((houter.comp_continuousOn hpair).congr ?_)
+  intro p hp
+  simp only [Function.comp_apply]
+  rw [n2Readout_apply, adU_apply, HermitianMat.conj_apply_mat,
+    Matrix.conjTranspose_conjTranspose]
+
 /-- **An independent derivation of the readout formula, as a standing cross-check on the sign.**
 
 `n2Readout_eq` reaches the formula through `n2_sp_eq_twistSeq_frame` and `adU_conj_twistSeq`.
