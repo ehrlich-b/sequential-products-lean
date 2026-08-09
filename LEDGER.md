@@ -121,6 +121,49 @@ written.** Two verdicts:
   is the contradiction argument's plumbing, not a missing theorem. **This is the fourth time
   in two arcs that "Mathlib lacks X" was wrong: grep the library before writing it.**
 
+**6.3 abstract tier — DONE, and it was much cheaper than rung 5.1 priced it.** Two rows moved:
+* **`lem:homog`(ii) proved at abstract order-unit-space generality** —
+  `SequentialProductOn.sp_smul_left`, carrying S1–S7 + the article's S2 +
+  `OrderUnitSpace.IsArchimedean` as an explicit `Prop`. The full ten-step ladder is now
+  abstract (second argument: `sp_natSmul_right`, `sp_divNat_smul_right`, `sp_ratSmul_right`,
+  `sp_smul_right_of_unitInterval` ← Archimedean consumed here; first argument:
+  `sp_comm_natSmul`, `sp_comm_ratSmul_self`, `sp_comm_ratOneSmul`, `sp_ratOneSmul_left`,
+  `sp_smulOne_left` ← the single S2 use, `sp_comm_smulOne`, `sp_smul_left`), in
+  `SequentialProduct.lean`. The concrete versions are untouched. ★ **Rung 5.1's obstruction
+  was correctly diagnosed but wrongly priced.** It was right that the ε-squeeze *is* the
+  Archimedean property and that the class carries only order-unit boundedness. It was wrong to
+  conclude the work was large: with Archimedean supplied as a `Prop`, the ladder ports
+  essentially verbatim, because it never used anything about matrices. Cost was three missing
+  order lemmas (`sub_le_sub_right'`, `sub_le_sub_left'`, `le_of_sub_nonpos` — Mathlib's need
+  ordered-group instances this class does not provide) and one Mathlib import.
+* **`lem:cone-ext` FORMALIZED, and norm-free** — `sp_coneNorm_indep` (independence of the
+  normalization), `sp_coneNorm_smul` (positive homogeneity), `sp_coneNorm_eq_of_isEffect`
+  (agreement on effects), `exists_isConeNorm` (existence). ★ **Better than the article's
+  route**: the article's admissibility is `μ ≥ ‖v‖` and it derives `v ≤ μ𝟙` from that "in an
+  order unit space", which presupposes the carrier's norm *is* the order-unit norm — a fact
+  this class does not carry, and the reason arc-5 had to hedge `lem:span`'s abstract claim.
+  `IsConeNorm v μ := 0 < μ ∧ IsEffect (μ⁻¹ • v)` states the same requirement without the norm,
+  and the class's own order-unit boundedness supplies an admissible `μ`, so no norm hypothesis
+  is needed at all. Self-caught: `sp_coneNorm_smul` had **inert** `IsArchimedean` and S2
+  hypotheses; both were removed before landing (the inert-hypothesis test, applied to my own
+  work rather than waiting for the reviewer to apply it).
+
+**6.4 caveat sweep — the head item's ingredient landed.** `Necessity.cfc_transpose` /
+`transposeMap_cfc`: **transposition commutes with the real functional calculus**, which
+`ComplexRowUnconditional.lean` recorded as the *one* thing `cor:selectors`(iii) was missing,
+with the sentence "Nothing in this tree has it" (now retired). Built exactly as that file's
+recipe predicted: entrywise conjugation is an ℝ-star-algebra hom of `Matrix n n ℂ`
+(`conjMatStarAlg`, from `AlgHom.mapMatrix Complex.conjAe.toAlgHom` plus `map_star'`), so
+`StarAlgHomClass.map_cfc` applies; and `Aᵀ = conj A` for Hermitian `A` converts it. Clause
+(iii) now needs assembly only, and the assembly is checked on paper:
+`twistFactor (aᵀ) (-t) = conj (twistFactor a t)` because `cos` is even and `sin` is odd, so
+`transposeMap (a ∘_t b) = (transposeMap a) ∘_{-t} (transposeMap b)`, and the `∃!` closes it as
+in clause (ii).
+
+**Coverage after 6.3/6.4: 8 FORMALIZED / 19 PARTIAL / 9 ABSENT** (`lem:cone-ext` is the new
+row; `lem:homomorphism` moved ABSENT → PARTIAL earlier in the arc). Gates green at every
+commit: 3106 jobs, census 149, custom axioms exactly `[]`.
+
 **Review protocol (binding).** Three isolated cold reviews: after 6.1(f), after 6.3, and
 at end of arc. Each reviewer reads the diffs at source and COMPILES probes
 (inert-hypothesis tests; strongest-available probe on any new map — arc-5's was
