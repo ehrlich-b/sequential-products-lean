@@ -1917,6 +1917,68 @@ theorem hx_is_load_bearing :
   rw [hlhs] at hbad
   exact (mul_ne_zero (mul_ne_zero hsq (Complex.exp_ne_zero _)) hcoef) hbad.symm
 
+/-! ### The sensitivity guard — what the sign audit found actually matters
+
+★★ **New 2026-08-09, and it replaces a risk this arc had mispriced — including by the reviewer who
+raised it.**  A cold reviewer flagged twice that a sign slip in `twistSeq_diagFamily_entry` "would
+flip both rows [32 and 33] and `readout_direct` could not catch it", and called it the largest
+unexamined risk under those labels.  It then audited the sign — confirmed correct, by an independent
+re-derivation from the definitions of `twistRe`/`twistIm`/`twistFactor` that bypasses both lemmas the
+tree's route goes through — **and retracted its own pricing.**
+
+The retraction is the useful part.  Row 32 concludes `|t̃(U)| ≤ M` and row 33 concludes
+`Continuous t̃`, and **both are invariant under `t̃ ↦ −t̃`** (row 33 under `t̃ ↦ c·t̃` for any
+`c ≠ 0`).  So a global sign error could not have falsified either row; it would only have meant the
+bounded, continuous object is `−t̃`.  What a sign error costs is the **dictionary** between Lean's `t`
+and the manuscript's — a fidelity question about `twistSeq`'s definition, not a soundness question
+about any row.  The error mode: treating a shared dependency as load-bearing for every consumer
+without asking what each consumer's *statement* is sensitive to.  Same shape as "is X needed?" having
+opposite answers on two rungs, which this file already records once.
+
+**What IS load-bearing, and had no theorem guarding it:** the phase must see `t` through a factor
+that does not vanish at the probe point.  Here that factor is `r₀ − r₁ = −x`, nonzero for `x > 0`.
+Had the phase come out proportional to `r_k + r_l`, or to anything vanishing at `basePt`, the readout
+would be **blind to `t`** and the entire boundedness route would collapse silently.  That is what the
+`x > 0` side conditions are protecting, and this is the theorem that would fail loudly if a refactor
+broke it.
+
+★ Deliberately NOT landed: the reviewer's independent re-derivation of the factor lemma.  It shares
+`cfc_diagonal` and `ofReal_polar` with the tree's route, so as a guard it is worth what
+`readout_direct` was worth before its scope was corrected — two chains bottoming out in the same
+lemma are not independent, and a second "independent check" that is not one is worse than none. -/
+
+/-- `e^{−iπ} = −1`. -/
+theorem exp_neg_pi_mul_I : Complex.exp (((-Real.pi : ℝ) : ℂ) * Complex.I) = -1 := by
+  rw [Complex.ofReal_neg, neg_mul, Complex.exp_neg, Complex.exp_pi_mul_I]
+  norm_num
+
+/-- **The readout genuinely sees the parameter.**  At any positive scale, and any test effect with a
+nonvanishing frame coefficient, changing `t` changes the readout.
+
+This is the sensitivity the boundedness route depends on and the one thing in the chain that no other
+theorem guards: if the phase were ever refactored into a factor vanishing at `basePt`, every
+statement above would still typecheck and the route would be silently vacuous. -/
+theorem readout_nonconstant_in_param {x : ℝ} (hx : 0 < x) {b : HermitianMat (Fin 2) ℂ}
+    (hb : b.mat 0 1 ≠ 0) :
+    (HermitianMat.twistSeq (Real.pi / x) (basePt x) b).mat 0 1
+      ≠ (HermitianMat.twistSeq 0 (basePt x) b).mat 0 1 := by
+  rw [readout_direct, readout_direct]
+  have hxne : x ≠ 0 := ne_of_gt hx
+  have hph : ((-(Real.pi / x * x) : ℝ) : ℂ) = ((-Real.pi : ℝ) : ℂ) := by
+    congr 1
+    field_simp
+  rw [hph, exp_neg_pi_mul_I]
+  have hs : ((Real.sqrt (Real.exp (-x)) : ℝ) : ℂ) ≠ 0 :=
+    Complex.ofReal_ne_zero.mpr (ne_of_gt (Real.sqrt_pos.mpr (Real.exp_pos _)))
+  simp only [neg_zero, Complex.ofReal_zero, zero_mul, Complex.exp_zero, mul_one]
+  intro hcon
+  refine hb ?_
+  have h3 : ((Real.sqrt (Real.exp (-x)) : ℝ) : ℂ) * (-(b.mat 0 1))
+      = ((Real.sqrt (Real.exp (-x)) : ℝ) : ℂ) * (b.mat 0 1) := by
+    linear_combination hcon
+  have h4 := mul_left_cancel₀ hs h3
+  linear_combination (-(1:ℂ)/2) * h4
+
 /-- **A sign check that bypasses `twistSeq_diagFamily_entry`.**  Also from the ARC-7 review.
 
 `readout_direct` was kept as a cross-check on the sign, and a reviewer correctly observed it is

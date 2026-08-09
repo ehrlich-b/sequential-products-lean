@@ -333,6 +333,70 @@ that silently drops rows reads exactly like a script that found nothing wrong** 
 "verify the verifier saw data" rule, in a new costume: print the row count before believing the
 tally. Count confirmed 10/19/7 over all 36 after the fix.
 
+★★★ **CHECKPOINT 3 — THE CERTIFICATE-REFUTATION REVIEW — WAS THE MOST DAMAGING AND MOST USEFUL PASS
+OF THE ARC.** It refuted one certificate in full, found two more false absence claims of mine, one
+vacuous gap statement, one false gap statement, and three inaccurately recorded greps. Everything
+below was verified at source before applying.
+
+* ★★★ **`thm-quaternionic.lean` was superseded IN FULL by the file it imports.** All three of its
+  `sorry`s are proved in `Hermitian/Symplectic.lean` — `quatConj` (:70) is character-for-character the
+  `quatInv` body I wrote as a gap; `quatConj_isHermitian` (:322), `quatConj_involutive` (:130),
+  `IsQuaternionic.symmMul` (:196) are the three obligations; and the "vocabulary wall" I recorded does
+  not exist: **`HermitianMat.QuatCarrier n` (:455) IS the fixed-point subalgebra as a type**, with an
+  `OrderUnitSpace` instance (:462) whose docstring says it is "the carrier the `H_n(ℍ)` row's
+  `SequentialProductOn` will live on", and `QuatQuadRep.lean:105` already builds the raw material for
+  `theta`. My "forced route's first step" was *behind* where the tree stood. **SIXTH false absence
+  claim.** ★ Root cause, and the rule is narrower than the one already on the record: I greped for
+  `Quaternion`, the *Mathlib* type name, while the tree's layer is `quatConj`/`QuatCarrier`/
+  `quatQuadRep` — an accurate grep supporting a false claim. **NEW RULE: before writing a gap for
+  anything in a file's subject area, run `grep -n "^def \|^theorem \|^instance \|^abbrev " <that
+  file>`. An import line is a declaration that the file is relevant; reading its declarations costs
+  one command.** The certificate is rewritten around the one genuine gap (the *transfer* of the
+  classification to `QuatCarrier`), which is now statable precisely because the carrier exists.
+* ★★ **"no direct sum of order unit spaces" was FALSE** — `DirectSum.lean:38` is
+  `instance instProd : OrderUnitSpace (V × W)`. **SEVENTH false absence claim**, and the second today
+  where the grep was accurate and the inference was not: the pattern required both words on one line,
+  and the instance is `instProd` in a file named `DirectSum.lean`. **This de-prices row 12
+  `prop:central`, whose recorded blocker was exactly this object.**
+* ★★ **The second-argument cone extension was discharged and is now IN THE TREE**, which closes the
+  other half of row 13. `spConeRight` + `sp_coneNorm_indep_right`, ~25 lines, because its only
+  ingredient (`sp_smul_right_of_unitInterval`) was already present and needs `IsArchimedean` but **no
+  S2** — so the right slot is strictly *cheaper* than the left. `spConeRight_specInv_eq_one` gives
+  `a · a⁻¹ = 𝟙`; with `spCone_specInv_eq_one` the article's identity holds in **both slots**. My
+  "nothing in the tree has it" was true of the object and misleading about the cost.
+* ★★ **`exists_peirce_exchange` was VACUOUS** — satisfied by conjugation by a permutation matrix, with
+  **both** `hN` and `hij` returning as unused-variable lints. A statement that does not need `i ≠ j`
+  cannot be capturing "swaps two frame atoms and acts on the coherence blocks". ★ **This is the mirror
+  of the row-22 defect in the same file**: row 22 stated a gap FALSELY, row 36(i) states it VACUOUSLY,
+  and the consequence is identical — the next person discharges the `sorry` and the row does not move.
+  **One lesson: apply the inert-hypothesis test to the GAP statement, not only to theorems.**
+* Three recorded greps were inaccurate (`Givens` hits `FrameConstancy.lean:1925`; `blockRotation` is
+  case-sensitive and missed `Necessity/BlockRotation.lean`; `crossCoherence` hits
+  `Globalization.lean`) — **all three prices survive on inspection at source, but the recorded results
+  did not.** Case-sensitivity is exactly how the quaternionic claim went false the same day.
+* The Jordan/EJA claim's *inference* was overstated: **Mathlib HAS `IsJordan`/`IsCommJordan`**; what it
+  lacks is formal reality and a Jordan-frame API. "EJA generality is not statable" was a tree-scoped
+  grep supporting a scope-free claim, and it was load-bearing for rows 16/17/18.
+* The README's own hygiene recipe was wrong (it returns two harmless docstring hits, so it reports
+  failure on a healthy tree — which trains readers to ignore it). Recipe fixed; the substance was
+  independently confirmed.
+
+★★ **AND THE SIGN AUDIT ENDED IN A RETRACTION BY THE REVIEWER OF ITS OWN PRICING, which is the
+sharpest methodological finding of the arc.** It had flagged twice that a sign slip in
+`twistSeq_diagFamily_entry` "would flip both rows 32/33". It then confirmed the sign correct by an
+independent re-derivation from the definitions — and retracted: **rows 32 and 33 conclude `|t̃| ≤ M`
+and `Continuous t̃`, and both are invariant under `t̃ ↦ −t̃`.** A sign error could not have falsified
+either row; it would only mis-set the *dictionary* between Lean's `t` and the manuscript's. The error
+mode: **treating a shared dependency as load-bearing for every consumer without asking what each
+consumer's STATEMENT is sensitive to.** What actually needed guarding, and had nothing:
+`readout_nonconstant_in_param` — the phase must see `t` through a factor not vanishing at the probe
+(`r₀ − r₁ = −x`); had it been proportional to `r_k + r_l` the readout would be **blind to `t`** and the
+route silently vacuous. Landed. ★ Its independent probe was deliberately **not** landed, on its own
+advice: it shares `cfc_diagonal` and `ofReal_polar` with the tree's route, so it is worth what
+`readout_direct` was worth before its scope was corrected. **The largest unexamined risk is now
+`tvalLm`/`twist_param_unique_of_scaled`** — they carry the *identification* of the parameter, which
+unlike the sign is invariant under nothing either row concludes.
+
 **Coverage at end of ARC-7's landed work: 10 FORMALIZED / 19 PARTIAL / 7 ABSENT.** Gates green at
 every commit: `lake build` 3106 jobs, census 149 modules, custom axioms exactly `[]`, zero warnings
 in every region touched. Tags `paperA-arc7-cp0` (`d0f1312`), `paperA-arc7-cp1` (`ab87ed3`),
