@@ -314,6 +314,39 @@ the status word. Found by scanning the manifest's own status fields, not by re-r
 **Fourth instance of "fix the row, not just the footnote" this arc, and the first committed by the
 agent that wrote the rule down.**
 
+### Block 8.6 — DRY PASS, first round (partial; the full round is still owed)
+
+Method: for each non-FORMALIZED row whose residue names a concrete object, run the declaration-list
+first move on the file that object would live in, then re-check the row's absence claim against the
+tree rather than against its own prose. Results so far:
+
+* **row 26 `lem:frame-connectivity` — absence CONFIRMED, twice over.** `Givens`/`jacobiRot`/
+  `blockRotation` over `RadicalRelativity/`: one hit, and it is the prose sentence in
+  `FrameConstancy.lean` that records the gap. `Givens` over Mathlib v4.28.0: **zero hits.** So this
+  really is absent from the tree AND from Mathlib, and the row's "standalone contribution" framing is
+  right.
+* **row 22 `lem:orientation` — absence CONFIRMED.** No declaration in `Necessity/` matches
+  `coheren|orientat|J_q`. The coherence space is not a carrier anywhere.
+* **row 36(i) `cor:selectors` — the "different machinery" claim CONFIRMED, and it survived a real
+  near-miss.** `Necessity.theta_conj_exchange` exists and is named "exchange", so the obvious grep
+  finds it — but it is **vdW 5.7(1)** (Θ commutes with Lüders conjugation at a commuting base point),
+  not the frame-atom exchange automorphism clause (i) needs. Reading the statement rather than the
+  name is what settled it. ★ This is the near-miss the grep rule exists for, run in the *other*
+  direction: an accurate grep found a real declaration with the right word in its name and the wrong
+  content.
+* **rows 3, 12, 18, 20, 30, 34, 35 — already re-checked earlier this arc** (see above).
+
+★★ **One thing the dry pass found that it should NOT fix by guessing.** `frame-geometry.lean`'s
+`exists_peirce_exchange` is correctly flagged VACUOUS and its own instruction is to restate with the
+coherence-block action as an explicit conclusion. **I stopped short of restating it**, because the
+obvious restatement is wrong in a way that matters: if the exchange is taken to be conjugation by a
+permutation matrix, then *every* twist product is covariant under it (conjugation commutes with the
+twist), so covariance would carry no information and the restated gap would be **inert for a second
+time**. The article's clause (i) must therefore involve an anti-linear ingredient — as clause (iii)'s
+transpose did — and getting that right requires reading `main.tex`'s definition of Peirce exchange at
+source, not inferring it. **Recorded as the next action on row 36 rather than executed, precisely
+because this row has already been broken once by a plausible guess.**
+
 ### CHECKPOINT 2 (tag `paperA-arc8-cp4`, two cold reviewers, one concern each)
 
 Reviewer on S2 reported; both of its findings verified at source and **applied**. Reviewer on rows
