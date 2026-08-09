@@ -261,6 +261,35 @@ not slowness.** Pinning `f` explicitly made it compile with the bump REMOVED. Ha
 the limit and moved on, I would have banked a false explanation *and* left the guess in place.
 **Use a heartbeat bump to read the error, never to keep it.**
 
+**Blocks 8.1(d) and 8.1(f) — `lem:n2-descent` FORMALIZED, `cor:qubit-classification` ABSENT →
+PARTIAL. Count 11 → 12 FORMALIZED / 19 PARTIAL / 5 ABSENT.** The wall certificate
+`WallCertificates/prop-n2-sufficiency.lean` now has **zero gaps** — both of its rows discharged.
+
+`RankTwo.n2QubitModuli P hS2 : C(ℝP², ℝ)` is the frame parameter of an arbitrary norm-continuous
+product, descended, continuous, bounded, and representing the product. The mechanism: the
+presentation map `blochFrame ∘ colFrame : U(2) → ℝP²` is continuous and surjective from a **compact**
+group to a **Hausdorff** space, hence a quotient map, so continuity of the descended function reduces
+to continuity of its pullback — which is row 33. ★ Boundedness then comes free from ℝP²'s
+compactness rather than as a separate estimate.
+
+★★★ **THE PRICED-BUT-UNNEEDED STEP, and this is now the arc's most repeated finding.** Row 34's
+residue was "a map `U(2) → ℂP¹`, the step *same ray ⟹ the unitaries differ by a monomial matrix*,
+and the quotient construction". **The monomial-matrix step is not needed at all**: what the transfer
+requires is that equal rays give the same *first spectral projection*, which follows from `rankOne`'s
+quadratic homogeneity plus the fact that a unitary's column is a unit vector. No statement about
+monomial matrices appears in the assembly. **That is the third time this arc that a correctly-sized
+price named a longer route than the one that worked** (8.1(a)'s eigenvector step; S2's global-phase
+factorization; this). ★ The pattern is specific enough to act on: **these prices were all read off
+the ARTICLE's proof, and the article optimizes for a human reader's narrative, not for the shortest
+path through a formal library.** Reading the article to find *which* fact is needed has been
+reliable; reading it to find *how* has been wrong three times out of three.
+
+Row 35's residue is stated precisely and is **only** the "onto" half at SINGULAR effects: the
+products agree at every positive-definite first argument, and agreement at rank ≤ 1 needs the
+article's S2 limiting argument (singular effects are limits of positive-definite ones, both sides
+continuous), which is not written. So `P.sp = (n2SequentialProduct t).sp` *as functions* is not
+established, and the row must not be read as the full bijection.
+
 ### CHECKPOINT 1 (tag `paperA-arc8-cp1`, two cold reviewers, one concern each)
 
 Both verified the build independently (0 errors over full output, Census PASS, no `sorryAx`), and
