@@ -325,9 +325,18 @@ banked anyway. If the fix is cheap enough to name, try it before recording a wal
 identity (`n2Readout_eq`, with an independent cross-check `readout_direct`), its joint
 continuity (`continuousOn_n2Readout`), the numerical step (`abs_lt_of_phase_near_one`, sharp and
 with `hδ` certified necessary), non-vanishing of the two-effect weight
-(`frameProj_pairProj_not_commute`), and compactness of `U(2)` (in-tree). What remains is
-**assembly only**: form the weighted combination over the two test effects, extract `ε > 0` from
-compactness, apply uniform continuity on `[0,δ] × U(2)`, and conclude. No missing theorem.
+(`frameProj_pairProj_not_commute`), and compactness of `U(2)` (in-tree). The weighted
+combination is now built too — `n2Comb` / `n2Weight` with **`n2Comb_eq`** proving
+`n2Comb = √(exp(−x)) · e^{−i t(U) x} · weight`, which exhibits the phase as a continuous function
+of `(x, U)` wherever the weight is bounded away from zero.
+
+**What remains for `lem:n2-bounded` is exactly two steps, both routine:** (i) turn
+`frameProj_pairProj_not_commute` into `0 < n2Weight` pointwise — the content is that
+`n2Coef b U = ⟪u, b v⟫` vanishes iff `v` is an eigenvector of `b`, and two self-adjoint
+operators on a 2-space with a common eigenvector are simultaneously diagonalizable hence commute;
+(ii) extract `ε > 0` from compactness of `U(2)`, apply uniform continuity of `n2Comb` on
+`[0,δ] × U(2)`, and feed `abs_lt_of_phase_near_one`. **No missing theorem, and no missing
+mathematics — only Lean-plumbing.**
 
 ★ **Reviewer B's third question — can the combined weight vanish? — is answered NO, and
 proved.** `n2Coef b U = ⟪u, b v⟫` vanishes exactly when the second column of `U` is an

@@ -871,6 +871,36 @@ theorem continuousOn_n2Readout (hS2 : P.FirstArgContinuous) {b : HermitianMat (F
   rw [n2Readout_apply, adU_apply, HermitianMat.conj_apply_mat,
     Matrix.conjTranspose_conjTranspose]
 
+/-- The two-effect weighted readout: each readout is paired with the conjugate of its own frame
+coefficient, so the coefficients enter as squared moduli and cannot cancel. -/
+noncomputable def n2Comb (b₁ b₂ : HermitianMat (Fin 2) ℂ) (x : ℝ)
+    (U : Matrix.unitaryGroup (Fin 2) ℂ) : ℂ :=
+  n2Readout P b₁ x U * star (n2Coef b₁ U) + n2Readout P b₂ x U * star (n2Coef b₂ U)
+
+/-- The total weight. -/
+noncomputable def n2Weight (b₁ b₂ : HermitianMat (Fin 2) ℂ)
+    (U : Matrix.unitaryGroup (Fin 2) ℂ) : ℝ :=
+  Complex.normSq (n2Coef b₁ U) + Complex.normSq (n2Coef b₂ U)
+
+/-- **The combined readout is the weight times the pure phase.**  With the weight bounded away
+from zero, this exhibits `exp(-i t(U) x)` as a continuous function of `(x, U)` — the last
+algebraic step before the compactness argument of `lem:n2-bounded`. -/
+theorem n2Comb_eq (hS2 : P.FirstArgContinuous) {b₁ b₂ : HermitianMat (Fin 2) ℂ}
+    (hb₁ : IsEffect b₁) (hb₂ : IsEffect b₂) {x : ℝ} (hx : 0 ≤ x)
+    (U : Matrix.unitaryGroup (Fin 2) ℂ) :
+    n2Comb P b₁ b₂ x U
+      = ((Real.sqrt (Real.exp (-x)) : ℝ) : ℂ)
+        * Complex.exp (((-(n2FrameTwist P hS2 U * x) : ℝ) : ℂ) * Complex.I)
+        * ((n2Weight b₁ b₂ U : ℝ) : ℂ) := by
+  unfold n2Comb n2Weight
+  rw [n2Readout_eq P hS2 hb₁ hx U, n2Readout_eq P hS2 hb₂ hx U]
+  have hsq : ∀ z : ℂ, z * star z = ((Complex.normSq z : ℝ) : ℂ) := by
+    intro z; rw [Complex.star_def]; exact Complex.mul_conj z
+  push_cast
+  rw [show (∀ A z w : ℂ, A * z * star z + A * w * star w = A * (z * star z + w * star w)) from
+    fun A z w => by ring]
+  rw [hsq, hsq]
+
 /-- **An independent derivation of the readout formula, as a standing cross-check on the sign.**
 
 `n2Readout_eq` reaches the formula through `n2_sp_eq_twistSeq_frame` and `adU_conj_twistSeq`.
