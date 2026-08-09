@@ -186,6 +186,170 @@ theorem blochVec_inverse (x y z : ℝ) (hs : Real.sqrt (x ^ 2 + y ^ 2 + z ^ 2) ^
     simp [blochVec, Complex.mul_re, Complex.mul_im, Complex.normSq_apply, hrdef] <;>
     nlinarith [hs, sq_nonneg s, sq_nonneg z]
 
+/-! ## The fibre of the Bloch map is exactly a complementary pair
+
+★★ **New 2026-08-09 (ARC-7 block 7.1c).**  Everything above says the descent *mechanism* is
+sound: complementation negates the Bloch vector, so a complementation-invariant frame function
+has a chance of descending.  What was missing — and what the `ℝP²` descent for an *arbitrary*
+product needs — is the converse: that `blochFrame` identifies **nothing else**.  These lemmas
+supply it, so the fibres of `ℂP¹ → ℝP²` are precisely the `{ray, orthogonal ray}` pairs.
+
+The whole content is one positive-scalar computation, and the negative case is free from
+`blochVec_orthoVec`.  Note what makes it work: `blochVec_normSq` pins the *scale* of the
+proportionality (`‖B(v)‖ = nsq v`), which turns "proportional" into the two equations
+`|u_i|² = μ|v_i|²` plus `ū₀u₁ = μ v̄₀v₁` — and those determine the ray outright. -/
+
+theorem fin2_funext {a b : Fin 2 → ℂ} (e0 : a 0 = b 0) (e1 : a 1 = b 1) : a = b := by
+  funext i
+  fin_cases i
+  · exact e0
+  · exact e1
+
+/-- Coordinatewise form of a Bloch-vector proportionality. -/
+theorem blochVec_coord_of_eq_smul {u v : Fin 2 → ℂ} {μ : ℝ}
+    (h : blochVec u = μ • blochVec v) (i : Fin 3) :
+    (WithLp.ofLp (blochVec u)) i = μ * (WithLp.ofLp (blochVec v)) i := by
+  have hc := congrArg (fun w : EuclideanSpace ℝ (Fin 3) => (WithLp.ofLp w) i) h
+  simpa using hc
+
+/-- **The positive-scalar case of the Bloch fibre**: positively proportional Bloch vectors come
+from the same ray. -/
+theorem exists_smul_of_blochVec_eq_pos_smul {u v : Fin 2 → ℂ} {μ : ℝ} (hμ : 0 < μ)
+    (hv : HermitianMat.nsq v ≠ 0) (h : blochVec u = μ • blochVec v) :
+    ∃ t : ℂ, u = t • v := by
+  have hnsqv : HermitianMat.nsq v = Complex.normSq (v 0) + Complex.normSq (v 1) := by
+    unfold HermitianMat.nsq; rw [Fin.sum_univ_two]
+  have h0 := blochVec_coord_of_eq_smul h 0
+  have h1 := blochVec_coord_of_eq_smul h 1
+  have h2 := blochVec_coord_of_eq_smul h 2
+  rw [blochVec_apply_zero, blochVec_apply_zero] at h0
+  rw [blochVec_apply_one, blochVec_apply_one] at h1
+  rw [blochVec_apply_two, blochVec_apply_two] at h2
+  -- `blochVec_normSq` pins the scale, which is what makes the coordinates determine the ray
+  have hsum : Complex.normSq (u 0) + Complex.normSq (u 1)
+      = μ * (Complex.normSq (v 0) + Complex.normSq (v 1)) := by
+    have hsq : (Complex.normSq (u 0) + Complex.normSq (u 1)) ^ 2
+        = (μ * (Complex.normSq (v 0) + Complex.normSq (v 1))) ^ 2 := by
+      rw [← blochVec_normSq u, blochVec_coord_of_eq_smul h 0,
+        blochVec_coord_of_eq_smul h 1, blochVec_coord_of_eq_smul h 2,
+        show ∀ a b c : ℝ, (μ*a)^2 + (μ*b)^2 + (μ*c)^2 = μ^2 * (a^2+b^2+c^2) from
+          fun a b c => by ring, blochVec_normSq v]
+      ring
+    have hnn1 : 0 ≤ Complex.normSq (u 0) + Complex.normSq (u 1) :=
+      add_nonneg (Complex.normSq_nonneg _) (Complex.normSq_nonneg _)
+    have hnn2 : 0 ≤ μ * (Complex.normSq (v 0) + Complex.normSq (v 1)) :=
+      mul_nonneg hμ.le (add_nonneg (Complex.normSq_nonneg _) (Complex.normSq_nonneg _))
+    nlinarith [hsq, hnn1, hnn2]
+  have hu0 : Complex.normSq (u 0) = μ * Complex.normSq (v 0) := by linarith
+  have hu1 : Complex.normSq (u 1) = μ * Complex.normSq (v 1) := by linarith
+  have hoff : (starRingEnd ℂ) (u 0) * u 1 = (μ : ℂ) * ((starRingEnd ℂ) (v 0) * v 1) := by
+    refine Complex.ext ?_ ?_
+    · rw [show ((μ : ℂ) * ((starRingEnd ℂ) (v 0) * v 1)).re
+          = μ * ((starRingEnd ℂ) (v 0) * v 1).re from by simp]
+      linarith
+    · rw [show ((μ : ℂ) * ((starRingEnd ℂ) (v 0) * v 1)).im
+          = μ * ((starRingEnd ℂ) (v 0) * v 1).im from by simp]
+      linarith
+  by_cases hv0 : v 0 = 0
+  · have hu0z : u 0 = 0 := by
+      refine Complex.normSq_eq_zero.mp ?_
+      rw [hu0, hv0]; simp
+    have hv1 : v 1 ≠ 0 := by
+      intro hz
+      rw [hnsqv, hv0, hz] at hv
+      simp at hv
+    refine ⟨u 1 / v 1, fin2_funext (by simp [hu0z, hv0]) ?_⟩
+    change u 1 = u 1 / v 1 * v 1
+    field_simp
+  · have hnv0 : 0 < Complex.normSq (v 0) :=
+      lt_of_le_of_ne (Complex.normSq_nonneg _) (fun hh =>
+        hv0 (Complex.normSq_eq_zero.mp hh.symm))
+    have hnu0 : 0 < Complex.normSq (u 0) := by rw [hu0]; positivity
+    have hu0ne : u 0 ≠ 0 := by
+      intro hz
+      rw [hz] at hnu0
+      simp at hnu0
+    have hconjne : (starRingEnd ℂ) (u 0) ≠ 0 := by simpa using hu0ne
+    have hcc : (starRingEnd ℂ) (u 0) * u 0 = (μ : ℂ) * ((starRingEnd ℂ) (v 0) * v 0) := by
+      rw [← Complex.normSq_eq_conj_mul_self, ← Complex.normSq_eq_conj_mul_self, hu0]
+      push_cast
+      ring
+    refine ⟨u 0 / v 0, fin2_funext ?_ ?_⟩
+    · change u 0 = u 0 / v 0 * v 0
+      field_simp
+    change u 1 = u 0 / v 0 * v 1
+    rw [div_mul_eq_mul_div, eq_div_iff hv0]
+    refine mul_left_cancel₀ hconjne ?_
+    rw [show (starRingEnd ℂ) (u 0) * (u 1 * v 0) = ((starRingEnd ℂ) (u 0) * u 1) * v 0 from by
+        ring, hoff,
+      show (starRingEnd ℂ) (u 0) * (u 0 * v 1) = ((starRingEnd ℂ) (u 0) * u 0) * v 1 from by
+        ring, hcc]
+    ring
+
+/-- **The Bloch fibre, both signs.**  A negative proportionality is the positive case applied to
+the complement, because complementation negates the Bloch vector. -/
+theorem exists_smul_or_ortho_of_blochVec_eq_smul {u v : Fin 2 → ℂ} {μ : ℝ} (hμ : μ ≠ 0)
+    (hv : HermitianMat.nsq v ≠ 0) (h : blochVec u = μ • blochVec v) :
+    (∃ t : ℂ, u = t • v) ∨ (∃ t : ℂ, u = t • orthoVec v) := by
+  rcases lt_or_gt_of_ne hμ with hneg | hpos
+  · refine Or.inr (exists_smul_of_blochVec_eq_pos_smul (μ := -μ) (by linarith) ?_ ?_)
+    · rw [nsq_orthoVec]; exact hv
+    · rw [blochVec_orthoVec, h, smul_neg, neg_smul, neg_neg]
+  · exact Or.inl (exists_smul_of_blochVec_eq_pos_smul hpos hv h)
+
+theorem nsq_ofLp_ne_zero {v : EuclideanSpace ℂ (Fin 2)} (hv : v ≠ 0) :
+    HermitianMat.nsq (WithLp.ofLp v) ≠ 0 :=
+  Necessity.nsq_ne_zero_of_ne_zero (fun h => hv ((WithLp.ofLp_eq_zero (p := 2)).mp h))
+
+/-- **The Bloch map on the frame space is exactly two-to-one, with complementary fibres.**
+
+This is the converse of `blochFrame_orthoFrame` and the ingredient the `ℝP²` descent was
+missing: `blochFrame` identifies a ray with its complement **and with nothing else**.  Hence any
+complementation-invariant function on `ℂP¹` is constant on the fibres of `blochFrame`, which is
+exactly the hypothesis a descent along it needs. -/
+theorem blochFrame_eq_iff (p q : QubitFrame) :
+    blochFrame p = blochFrame q ↔ (p = q ∨ p = orthoFrame q) := by
+  refine ⟨?_, ?_⟩
+  · induction p using Projectivization.ind with
+    | h u hu =>
+      induction q using Projectivization.ind with
+      | h v hv =>
+        intro hbf
+        rw [blochFrame_mk, blochFrame_mk, RP2.mk_eq_mk_iff] at hbf
+        obtain ⟨a, ha⟩ := hbf
+        have hane : a ≠ 0 := by
+          intro hz
+          rw [hz, zero_smul] at ha
+          exact blochE_ne_zero hu ha.symm
+        have hcoord : blochVec (WithLp.ofLp u) = a • blochVec (WithLp.ofLp v) := by
+          rw [show blochVec (WithLp.ofLp u) = blochE u from rfl,
+            show blochVec (WithLp.ofLp v) = blochE v from rfl, ← ha]
+        rcases exists_smul_or_ortho_of_blochVec_eq_smul hane (nsq_ofLp_ne_zero hv) hcoord with
+          ⟨t, ht⟩ | ⟨t, ht⟩
+        · refine Or.inl ?_
+          have htne : t ≠ 0 := by
+            intro hz
+            rw [hz, zero_smul] at ht
+            exact hu ((WithLp.ofLp_eq_zero (p := 2)).mp ht)
+          refine (Projectivization.mk_eq_mk_iff ℂ _ _ hu hv).mpr ⟨Units.mk0 t htne, ?_⟩
+          apply (WithLp.ofLp_injective (p := 2) (V := Fin 2 → ℂ))
+          change t • WithLp.ofLp v = WithLp.ofLp u
+          rw [ht]
+        · refine Or.inr ?_
+          rw [orthoFrame_mk]
+          have htne : t ≠ 0 := by
+            intro hz
+            rw [hz, zero_smul] at ht
+            exact hu ((WithLp.ofLp_eq_zero (p := 2)).mp ht)
+          refine (Projectivization.mk_eq_mk_iff ℂ _ _ hu (orthoE_ne_zero hv)).mpr
+            ⟨Units.mk0 t htne, ?_⟩
+          apply (WithLp.ofLp_injective (p := 2) (V := Fin 2 → ℂ))
+          change t • WithLp.ofLp (orthoE v) = WithLp.ofLp u
+          rw [ofLp_orthoE, ht]
+  · rintro (rfl | rfl)
+    · rfl
+    · exact blochFrame_orthoFrame q
+
 /-- **The Bloch map is surjective.**  Every point of `ℝP²` is the Bloch point of a
 ray: solve `r² − (x²+y²) = 2zr` by `r = z + ‖w‖` on the generic branch, and take the
 south pole `(0,1)` on the remaining axis. -/
