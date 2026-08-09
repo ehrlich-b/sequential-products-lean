@@ -164,6 +164,20 @@ in clause (ii).
 row; `lem:homomorphism` moved ABSENT → PARTIAL earlier in the arc). Gates green at every
 commit: 3106 jobs, census 149, custom axioms exactly `[]`.
 
+**6.5 ℍ row — NOT ATTEMPTED, but PRICED, and this is the arc's one genuine BLOCKED.** Given
+this arc's record (five false absence claims, four wrong "Mathlib lacks X"), the stated blocker
+was checked at source rather than inherited. Result: **it holds, and for a stronger reason than
+recorded.** Mathlib *does* have quaternions (`Quaternion`, `Mathlib/Algebra/Quaternion.lean`),
+so that was never the obstacle. The obstacle is that the tree's field-general `Gen` layer is
+written for `RCLike 𝕜`, and **ℍ can never be `RCLike`** — the class extends
+`DenselyNormedField`, hence *commutative*, and its `re_add_im_ax` demands a **two**-dimensional
+real decomposition `z = re z + (im z)·I`, while ℍ is noncommutative and four-dimensional. That
+is an impossibility, not an absent instance, so this row earns **BLOCKED** under the manifest's
+own vocabulary (a wall with named evidence) rather than ABSENT. Consequence: the `Gen` layer
+cannot be reused at ℍ at any price, and the route is forced to be
+`H_n(ℍ) ↪ H_{2n}(ℂ)` as the fixed points of a conjugate-linear involution — the quaternionic
+structure carried by the involution instead of by a scalar field, exactly as the orders said.
+
 ### ★ ARC-6 REVIEW OUTCOME — the protocol was NOT satisfied, and this says so
 
 **One isolated cold review was spawned against frozen tag `paperA-arc6-review` (`9c2aa88`)
