@@ -249,7 +249,17 @@ hypothesis in the abstract derived layer, predating this arc — and `OrderUnitS
 two unused `simp` arguments. Neither is mine to fix silently; both are cheap when someone is in
 those files.
 
-**On the limits of the inert-hypothesis test, stated so the record is not overclaimed.** The
+★★ **The inert-hypothesis test has a STRONGER form, and it should be the default.** Instead of
+trying to prove the conclusion without the hypothesis and reporting failure, **try to disprove
+the hypothesis-free statement.** A compiled counterexample certifies the hypothesis is
+load-bearing; a failed proof search certifies nothing. Demonstrated on
+`abs_le_of_phase_near_one`: at `δ = 0` the premise ranges over `0 ≤ x ≤ 0` only, so it holds for
+*every* `t`, while Lean's `π/(3*0) = 0` forces `|t| ≤ 0` — and `t = 1` refutes it. `hδ` is
+therefore *proved* necessary. Use this form on every hypothesis whose necessity matters; the
+weaker form is what left `cfc_transpose`'s two inert hypotheses standing until a reviewer
+found them.
+
+**On the limits of the WEAK inert-hypothesis test, stated so the record is not overclaimed.** The
 test has real teeth *when the conclusion is actually provable without the hypothesis*: that is
 how `rhoChi_eq_smul_generator`'s `i ≠ j` was caught this arc (proof found, theorem strengthened)
 and how `sp_coneNorm_smul`'s `IsArchimedean`/S2 were caught and removed. But a *failure* to find

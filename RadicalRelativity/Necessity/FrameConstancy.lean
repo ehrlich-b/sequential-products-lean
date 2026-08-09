@@ -380,7 +380,12 @@ circle about `1` for every scale `x ∈ [0,δ]`, then `|t| ≤ π/(3δ)`.
 
 The witness is explicit: `x = π/(3|t|)` sends the phase to `e^{∓iπ/3}`, which sits at
 distance exactly `1` from `1`.  So no intermediate-value argument is needed, and — as
-everywhere else in this file — no branch of a logarithm is chosen. -/
+everywhere else in this file — no branch of a logarithm is chosen.
+
+`hδ` is **necessary, and provably so** (checked 2026-08-08 by disproving the hypothesis-free
+version, not merely by failing to prove it): at `δ = 0` the premise quantifies over `0 ≤ x ≤ 0`,
+so only `x = 0`, where the distance is `0 < 1` — the premise then holds for *every* `t`, while
+`π / (3 * 0) = 0` in Lean would force `|t| ≤ 0`.  `t = 1` refutes it. -/
 theorem abs_le_of_phase_near_one {t δ : ℝ} (hδ : 0 < δ)
     (h : ∀ x : ℝ, 0 ≤ x → x ≤ δ →
       Complex.normSq (Complex.exp (((-(t * x) : ℝ) : ℂ) * Complex.I) - 1) < 1) :
