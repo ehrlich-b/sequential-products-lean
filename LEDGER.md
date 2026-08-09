@@ -13,7 +13,156 @@ interface structure instantiated on the intended algebras.
 
 ---
 
-## ★★ ARC-6 ORDERS (2026-08-08, Fable design pass — the big-chunk climb). READ THIS FIRST.
+## ★★★ ARC-7 ORDERS (2026-08-09, Fable design pass — the interior-closure campaign). READ THIS FIRST.
+
+**This arc IS "finish it."** Not a ladder of targets — a terminal condition over the whole
+denominator. Previous arcs came in at 1–3 hours because a ladder plus prose banking made
+"done" cheap: every listed rung either closed or banked a paragraph, and the goal was
+satisfied. This arc removes both exits. The denominator is all 36 rows of
+`STATEMENT-MANIFEST.md` (pinned to blob `205fdf5a` — never re-pin), and banking now costs a
+compiling artifact, not a sentence.
+
+**TERMINAL CONDITION (the whole goal; nothing else ends the arc):** every one of the 36
+rows is in exactly one of three states —
+
+1. **FORMALIZED** at the article's own generality, no located hypothesis (the standing bar);
+2. **EXTERNAL by pre-registration** — exactly these six, decided in ARC-5/6 and not
+   re-litigated: `thm:vdw1`, `prop:bridge` (cited), `mthm:master`/`mthm:omnibus`
+   one-theorem-over-abstract-EJA form (JvNW, the one permanent import), `prop:theta` at
+   vIR's JB generality, `thm:albert` (Albert M2). For these six the terminal state is
+   "best interior form reached, external delta named in the row" — which the manifest
+   already records; improving their interior form is in scope, closing them is not;
+3. **WALL-CERTIFIED this arc** — see the certificate spec below. A prose price with no
+   certificate does not terminate a row.
+
+— AND the final dry pass (rung 7.5) has run over every non-FORMALIZED row and produced
+zero movement, AND all checkpoint reviews (protocol below) have reported and their findings
+are verified at source and applied. Do not stop at block boundaries; do not stop to report;
+the count is an OUTPUT, not a quota (8/19/9 at these orders; interior ceiling 30, realistic
+26–28; 22 rows are in play = 36 − 8 FORMALIZED − 6 external).
+
+**WALL CERTIFICATES (the new banking currency).** This project's recorded failure mode is
+that prices decay: five false absence claims in two arcs, two walls mispriced CHEAP, four
+false "Mathlib lacks X". A banked wall is therefore no longer prose. A certificate is a
+file `WallCertificates/<row>.lean` at the repo root — **never imported from
+`RadicalRelativity/`**, so `lake build` and the census never see it — that (a) states the
+missing step in Lean at the article's generality with `sorry` for exactly the missing
+part, (b) compiles under `lake env lean` from the repo root, and (c) carries a header
+comment: date, scope of every absence claim in it, and attack evidence (what was tried,
+what failed, at which commit). Where the wall is the *vocabulary* itself (no Lean statement
+is even statable), the certificate states the nearest statable approximation and names the
+missing vocabulary — that a statement cannot be written down is itself the strongest
+evidence of depth, and it gets recorded, not asserted. Certificates are inputs to the
+rung-7.5 refutation review: reviewers attack the certificates the way this arc's reviews
+attacked absence claims.
+
+**THE BLOCKS (in order; the wall protocol = write the certificate and continue):**
+
+* **7.0 Reviewer-first on the readout block.** Before building on it, spawn ONE narrow
+  reviewer (protocol below) on `n2Readout_eq`'s `hb`/`hx` and the readout chain in
+  `Necessity/FrameConstancy.lean` — the one load-bearing block that has never had an
+  outside read (ARC-6's rank-two reviewer went idle). Runs in parallel with 7.1; do not
+  wait for it to start building, but its findings gate the 7.1 checkpoint. While there:
+  remove the redundant `hU`/`hU'` pair still on `adU_isEffect` (`ConjTransport.lean:117`
+  — same redundancy already removed from `adU_conj_twistSeq`), and take the two
+  pre-existing lint warnings recorded in the ARC-6 lint sweep (now in-scope: we are in
+  those files).
+* **7.1 The rank-two lane to the corollary — the crown.** In order:
+  (a) **`lem:n2-bounded` assembly** — the four steps itemized in manifest row 32, with the
+  reviewer's cheaper legs pre-loaded: S2 at the single point `a = 𝟙` gives δ uniform in U
+  free (`‖Ad_U(basePt x) − 𝟙‖ = |e^{−x} − 1|` by Frobenius conj-invariance), and the
+  `(e₀+ie₁)/√2` probe gives an explicit `1/(2√2)` weight bound — no compactness needed on
+  either leg. Step (i), stripping the modulus, is the genuinely analytic one: triangle
+  inequality plus a δ small enough that `1 − √(e^{−δ})` eats only part of the budget.
+  (b) **`lem:n2-continuity` via the arg route, NOT the article's SO(3) Log** — pre-loaded
+  design: with `M` from (a), fix `δ < π/M`; the readout gives `U ↦ exp(−i·t̃(U)·δ)`
+  continuous (already proved at fixed first argument via `continuousOn_n2Readout`), and
+  `|t̃(U)·δ| ≤ Mδ < π` keeps the phase on the unit circle minus `{−1}`, where
+  `Complex.arg` is continuous and `arg (exp (iθ)) = θ`; so `t̃ = −arg(phase)/δ` is
+  continuous as a composition. Row 33's recorded route-refutations were all about routes
+  WITHOUT boundedness; with (a) in hand this is the article's order at a fraction of its
+  price. If the arg route walls, the SO(3) trace formula is the fallback, certificate on
+  resistance.
+  (c) **`lem:n2-descent`'s continuity clause** — build the actual `ℝP² → ℝ` function for an
+  arbitrary product by quotient lifting; the vocabulary (`RP2`, `QubitFrame`, `tauModuli`)
+  exists in `RankTwo/` for the concrete element and the invariances
+  (`n2FrameTwist_mul_diagonal_swap`, `n2FrameTwist_reverse`) are proved.
+  (d) **`prop:n2-sufficiency`** — generalize `lem:twist-sufficiency`'s constant-`t`
+  machinery to continuous `t : ℝP² → ℝ`, reusing the τ-family partials banked under
+  `thm:qubit-boundary`. This is the block's biggest single build: all seven axioms again,
+  with the frame-dependent parameter.
+  (e) **`cor:qubit-classification`** — assemble the bijection from (a)–(d).
+  (f) **`thm:qubit-boundary`'s bundled S1–S7 clause** as an instantiation of (d), plus the
+  unimodular cocycle subcases.
+  (g) **`prop:n2-necessity` gap (b)** — the Θ-level vs product-level equivalence, closing
+  the row. ★ CHECKPOINT after (e).
+* **7.2 The differential/necessity sweep.** `lem:coalescence` (identify the in-tree shadow
+  WITH the article's differential — the identification is the open part);
+  `prop:stabilizers` (construct the representation from Θ, ℂ row first; ℝ/ℍ/𝕆 rows
+  certificate-bankable); `lem:frame-fix` general statement; `lem:orientation` (concrete
+  `H_n(ℂ)` work throughout — the complex structure `J_{q,k}`, splitting-independence,
+  commutation, the `Ad_{a^{it}}` formula); `lem:frame-connectivity` via a Givens/Jacobi
+  factorization into rank-two block rotations (the three Householder factors do NOT
+  suffice — `AdjBlock` is strictly finer than `AdjAxis`).
+* **7.3 The abstract/vdW tier sweep.** `lem:homog`(i) abstract port (`seqLeftMul` exists on
+  the carrier; port the order-bounded-extension argument to `OrderUnitSpace` +
+  `IsArchimedean`, same pattern as the (ii) ladder — rung 6.3 proved this tier is cheaper
+  than priced); `prop:pseudo-transfer` to the article's `a·a⁻¹ = 𝟙` form by dividing out
+  `pseudoInvCoef` through `spCone` (the tool now exists — this is why `lem:cone-ext` was
+  built); `lem:span`'s ball clause (ε-ball about `½𝟙` in `ouNorm`, where the Archimedean
+  `Prop` and `Necessity/OrderUnitS2.lean`'s `ouNorm` apparatus already live) and Peirce
+  clause (needs `J₂(q)` as an order unit space on the concrete carrier); `lem:normality`
+  (f.d. + S1 + S2 ⟹ vdW-normal; monotone convergence in f.d. order topology);
+  `prop:central`'s summand inheritance + converse assembly; `lem:simple-bridge` clause (ii)
+  on the concrete carrier (Mathlib's spectral theorem); `def:sp` restated clause-for-clause
+  with an equivalence proof to `SequentialProductOn` (moves the definition row);
+  `cor:selectors`(iii) assembly — `twistFactor (aᵀ)(−t) = conj (twistFactor a t)` by
+  cos-even/sin-odd, then the `∃!` step that closed clause (ii); then clause (i).
+  ★ CHECKPOINT after this block.
+* **7.4 The ℍ row — the big build, no longer a stretch.** `thm:quaternionic` via
+  `H_n(ℍ) ↪ H_{2n}(ℂ)` as the fixed points of a conjugate-linear involution (the `Gen`
+  layer is impossible at ℍ — `RCLike` is commutative and two-dimensional — so this route
+  is forced, and it was priced, not attempted, in ARC-6). Build the carrier and the
+  embedding first; whether the classification transfers through the embedding or the
+  stabilizer-coupling route is cheaper is decided by what compiles, not in advance.
+  Quaternionic Wigner may fall to the `RealWigner` rank-one technique. Certificate on
+  resistance — but the certificate must contain the embedding, not just name it.
+* **7.5 The dry pass — the arc's exit gate.** Re-run the 6.0-style audit over EVERY row not
+  FORMALIZED: grep the whole tree for ingredients (absence claims scoped and dated), run
+  the STRONG inert-hypothesis test (disprove the hypothesis-free statement, not fail to
+  prove it) on the nearest declaration, and either move the row or write/refresh its
+  certificate. Then the certificate-refutation review: reviewers attack the certificates'
+  absence claims and prices. Zero movement + reviews applied = terminal.
+
+**REVIEW PROTOCOL (four checkpoints minimum: 7.0, after 7.1(e), after 7.3, and 7.5's
+refutation pass).** Everything ARC-6 learned, pre-paid: narrow one-concern briefs sized to
+~25 tool calls — a whole-arc brief failed twice; tell every reviewer explicitly that plain
+text is NOT delivered and it must call `SendMessage`; pin each review to a fresh tag
+(`paperA-arc7-cpN`) and tell the reviewer the tag — a reviewer on a stale checkout reports
+already-fixed defects as live; verify every finding at source before applying OR rejecting
+(reviewers have been confidently wrong in both directions, and so have I); check
+Mathlib-scoped claims against the vendored tree before accepting them; a silent channel is
+not a dead channel — "no report yet" is never written as "failed"; and audit your own
+corrections — late-round defects are created by the fixes, so after applying a round of
+findings, diff-audit the round itself.
+
+**Pre-paid field hazards (from the ARC-6 record; details below):** a `whnf` heartbeat
+timeout is about the unification path — prove an explicit lambda and transfer via `congr`,
+never unify a composite against a `def`'s unfolding; grep before any "Mathlib lacks X"
+(wrong four times); `decide` fails on free variables — standalone `have := by decide` then
+`rcases`; `lake` commands from the repo root by absolute path; over-correcting under review
+is its own error mode — verify the correction too; fix the row, not just the footnote —
+grep every summary instance of a changed claim.
+
+**Per-commit gates, unchanged:** `lake build` green; census custom axioms exactly `[]`;
+`THEOREM-MAP.md` + `STATEMENT-MANIFEST.md` in the same commit as any status change; single-
+sentence commit messages; all commits LOCAL (repo is public — never push, never `sync.sh`);
+manuscript untouched (blob `205fdf5a` must survive the arc); everything outward
+Bryan-gated. Never say "fully formalized".
+
+---
+
+## ★★ ARC-6 ORDERS (2026-08-08, Fable design pass — the big-chunk climb). **Superseded as campaign SSOT by ARC-7 above (2026-08-09); the execution record and lessons below remain binding.**
 
 **Sizing:** this is a ~24-hour-of-work campaign, set as ONE goal on purpose. Do not stop at
 rung boundaries to report; continue until the ladder is exhausted or every remaining item

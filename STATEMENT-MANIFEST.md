@@ -3,7 +3,8 @@
 **Purpose.** Every coverage claim about this development ("N of 36") cites *this* file for
 what the 36 are. Without a frozen list, a renumbering, a split lemma, or a promoted remark
 silently moves the target and makes the count unfalsifiable. Created 2026-08-08 as rung
-**5.0** of the ARC-5 orders (`LEDGER.md`; superseded as campaign SSOT by ARC-6, 2026-08-08).
+**5.0** of the ARC-5 orders (`LEDGER.md`; superseded as campaign SSOT by ARC-6, 2026-08-08,
+then by ARC-7, 2026-08-09).
 
 ## The pin
 
