@@ -273,8 +273,11 @@ never reviewed**: its reviewer went idle without reporting, so `n2Readout_eq` (i
 phase sign), `n2FrameTwist_mul_diagonal`, `n2FrameTwist_eq_of_base_eq`, and
 `abs_le_of_phase_near_one` carry **only my own probes**. I checked the sign three independent
 ways (crown probe `n2FrameTwist (twistProductOn t) U = t`; `basePt x = diag(e^{−x},1)`;
-log-ratio `−x`) and non-vacuity at `diag(i,1)`, but the `π/(3δ)` constant in
-`abs_le_of_phase_near_one` was derived once and never independently cross-checked. **The next
+log-ratio `−x`) and non-vacuity at `diag(i,1)`, and the `π/(3δ)` constant is now
+cross-checked (`normSq (exp(iπ/3) − 1) = 1` exactly, and at `t = π/(3δ)` the phase reaches
+distance 1 at `x = δ` — so the strict hypothesis excludes that `t` and the `≤` conclusion is a
+valid, if not sharp, bound). What remains unreviewed there is the *derivation as a whole*, not
+any one constant. **The next
 arc should cold-review the rank-two block first.** The abstract tier and the retractions are
 reviewed and their findings applied; do not re-spend effort there.
 
