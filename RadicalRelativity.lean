@@ -593,6 +593,15 @@ import RadicalRelativity.RankTwo.Bloch
 -- because the off-diagonal phase e^{-i log 4} is nontrivial (0 < log 4 < 2 pi).
 import RadicalRelativity.RankTwo.Separation
 
+-- ARC-8 (LEDGER 8.1(b)): `prop:n2-sufficiency`'s ALGEBRAIC CORE, for an arbitrary
+-- continuous tau on RP2.  The article's frame-dependent family, with S1 and S3--S7
+-- verified.  The mechanism is that a Hermitian 2x2's unordered spectral frame IS the
+-- RP2 point of its Bloch axis, and commutation of two such matrices is exactly
+-- parallelism of the axes -- an entrywise identity, no spectral theorem.  S2 for this
+-- product is NOT here: the parameter map is discontinuous at the scalars and the
+-- article's continuity argument there is a genuine estimate.
+import RadicalRelativity.RankTwo.Sufficiency
+
 -- Exact paper-facing S1--S7 and product-conclusion statement boundary.  This
 -- freezes the target signature; it does not claim the classification is proved.
 import RadicalRelativity.PaperA.Statement

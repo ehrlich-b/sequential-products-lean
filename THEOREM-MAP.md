@@ -49,6 +49,9 @@ three kinds, and only the first is conditional on §2:
 | `thm:qubit-boundary`(i), block form (V1) | `MasterTheorem.RankTwo.sp_blockForm` | `MasterTheorem/RankTwo.lean` |
 | `thm:qubit-boundary`(iii), frame-dependence pair (V9) | `RankTwo.sp_tau_had_is_luders`, `RankTwo.sp_tau_std_is_unit_twist` | `MasterTheorem/RankTwo.lean` |
 | `lem:twist-sufficiency` — every twist product satisfies S1–S7 on `H_n(ℂ)`, packaged per `t`; S2 holds in the carried norm AND (ε–δ, `twistSeq_continuousAt_ouNorm`) in the order-unit norm — the norm caveat is discharged for this row | `HermitianMat.twistSequentialProductCore`, `HermitianMat.twistSequentialProduct` | `Hermitian/Sequential.lean` |
+| `prop:n2-sufficiency`, **algebraic core** — for an arbitrary `t : C(ℝP², ℝ)`, S1 and S3–S7 of the frame-dependent family, with the operation pinned to `t` at the tree's own `blochFrame` of the effect's frame. ★ **S2 is NOT included** — the row is PARTIAL for exactly that reason | `RankTwo.n2SequentialProduct`, `RankTwo.exists_sequentialProduct_of_continuous_moduli`, `RankTwo.n2Sp_eq_twistSeq_at_frame` | `RankTwo/Sufficiency.lean` |
+| commutation criterion at rank two — two Hermitian `2×2` matrices commute iff their Bloch axes are parallel, hence carry the same `ℝP²` frame point | `RankTwo.blochHerm_parallel_of_commute`, `RankTwo.blochPoint_eq_of_commute`, `RankTwo.n2Tau_eq_of_commute` | `RankTwo/Sufficiency.lean` |
+| a scalar argument makes the twist product parameter-blind (why `t_a = 0` at the scalars is free), and positive homogeneity in the first argument | `HermitianMat.twistSeq_smul_one_left`, `HermitianMat.twistSeq_smul_one_right`, `HermitianMat.twistSeq_smul_left` | `RankTwo/Sufficiency.lean` |
 
 ### `lem:adjacent` — FORMALIZED, but it was an UNDERCOUNTED ROW, not new mathematics
 
@@ -684,6 +687,13 @@ machine-checked on the concrete carrier: `lem:twist-sufficiency` in §1.)
   attempted before boundedness — was **lifted the same day and the row closed**
   (`continuous_n2FrameTwist`). What remains of the rank-two lane is the `ℝP²` descent as a
   constructed quotient function, `prop:n2-sufficiency`, and the assembled bijection.
+  ★★ **NARROWED 2026-08-09 (ARC-8 block 8.1(b)): `prop:n2-sufficiency`'s ALGEBRAIC CORE IS DONE.**
+  `RankTwo.n2SequentialProduct` gives S1 and S3–S7 for an arbitrary `t : C(ℝP², ℝ)`, and
+  `n2Sp_eq_twistSeq_at_frame` pins the operation to the article's — the parameter is `t` at the
+  effect's `blochFrame`. What remains of *that* row is **S2 alone** (the parameter map is
+  discontinuous at the scalars; the product's continuity there is a genuine estimate). Every
+  sentence below that lists `prop:n2-sufficiency` among the wholly-open items should be read against
+  this.
 
   **What is still open, stated exactly** (as of 2026-08-08; boundedness struck 2026-08-09). The
   frame function exists; nothing yet proves it
@@ -717,7 +727,8 @@ is exactly why building the map was the rank-two work that remained. **SUPERSEDE
   bite because none of the needed machinery was rank-gated.** What remains of this row is
   boundedness and continuity of that function, plus `prop:n2-sufficiency`. **Boundedness AND continuity both landed
   2026-08-09 (`exists_n2FrameTwist_bound`, `continuous_n2FrameTwist`); what remains of this row is
-  the `ℝP²` descent (building the quotient function itself) and `prop:n2-sufficiency`.**
+  the `ℝP²` descent (building the quotient function itself), and — of `prop:n2-sufficiency` — its S2
+  clause only, the algebraic core having landed the same day (`RankTwo.n2SequentialProduct`).**
 - **`mthm:omnibus`** (the finite-dimensional omnibus classification).
 - ~~**`prop:pseudo-transfer`**~~ — **CORRECTED 2026-08-08.** Not "no counterpart":
   `Necessity/PseudoInverse.lean` proves it on the concrete carrier in *normalized* form.
