@@ -349,9 +349,14 @@ theorem diagonal_conj_diagFamily {d : Fin N → ℂ}
 /-- Transporting a twisted product back along `Ad_{U*}` moves the conjugation onto the
 second argument. -/
 theorem adU_conj_twistSeq (t : ℝ) {U : Matrix (Fin N) (Fin N) ℂ} (hU : Uᴴ * U = 1)
-    (hU' : U * Uᴴ = 1) (a b : HermitianMat (Fin N) ℂ) :
+    (a b : HermitianMat (Fin N) ℂ) :
     adU Uᴴ (HermitianMat.twistSeq t (adU U a) b)
       = HermitianMat.twistSeq t a (adU Uᴴ b) := by
+  -- ★ `U * Uᴴ = 1` was a second hypothesis here until a cold reviewer pointed out it is
+  -- *redundant* for a square matrix: it follows from `hU` by `mul_eq_one_comm`.  One
+  -- assumption stated twice, not two.  (`hU` itself IS load-bearing — certified by a compiled
+  -- counterexample at `U = 2·1`, `a = b = 1`, `t = 0`, where the two sides differ 16 vs 4.)
+  have hU' : U * Uᴴ = 1 := mul_eq_one_comm.mp hU
   have hb : adU U (adU Uᴴ b) = b := adU_cancel' hU' b
   conv_lhs => rw [← hb]
   rw [twistSeq_adU_mat t hU hU', adU_cancel hU]
@@ -382,10 +387,9 @@ The witness is explicit: `x = π/(3|t|)` sends the phase to `e^{∓iπ/3}`, whic
 distance exactly `1` from `1`.  So no intermediate-value argument is needed, and — as
 everywhere else in this file — no branch of a logarithm is chosen.
 
-`hδ` is **necessary, and provably so** (checked 2026-08-08 by disproving the hypothesis-free
-version, not merely by failing to prove it): at `δ = 0` the premise quantifies over `0 ≤ x ≤ 0`,
-so only `x = 0`, where the distance is `0 < 1` — the premise then holds for *every* `t`, while
-`π / (3 * 0) = 0` in Lean would force `|t| ≤ 0`.  `t = 1` refutes it. -/
+`hδ` is **necessary**, and that is a theorem here rather than a remark:
+`not_abs_le_of_phase_near_one_without_pos` below. (It was a remark until a cold reviewer noted
+the claim "checked by disproving" had nothing banked behind it.) -/
 theorem abs_lt_of_phase_near_one {t δ : ℝ} (hδ : 0 < δ)
     (h : ∀ x : ℝ, 0 ≤ x → x ≤ δ →
       Complex.normSq (Complex.exp (((-(t * x) : ℝ) : ℂ) * Complex.I) - 1) < 1) :
@@ -413,6 +417,28 @@ theorem abs_lt_of_phase_near_one {t δ : ℝ} (hδ : 0 < δ)
   have hval := h x hxpos.le hxle
   rw [normSq_exp_I_sub_one, hcos] at hval
   norm_num at hval
+
+/-- **`hδ` in `abs_lt_of_phase_near_one` is necessary** — the hypothesis-free statement is
+false, not merely unproved.  At `δ = 0` the premise ranges over `0 ≤ x ≤ 0`, so only `x = 0`,
+where the distance is `0 < 1`; it therefore holds for *every* `t`, while Lean's
+`π / (3 * 0) = 0` would force `|t| ≤ 0`.  `t = 1` refutes it.
+
+This is the *strong* form of the inert-hypothesis test — disprove the hypothesis-free statement
+rather than fail to prove it — and it is banked as a theorem so the claim is checkable. -/
+theorem not_abs_le_of_phase_near_one_without_pos :
+    ¬ (∀ (t δ : ℝ),
+        (∀ x : ℝ, 0 ≤ x → x ≤ δ →
+          Complex.normSq (Complex.exp (((-(t * x) : ℝ) : ℂ) * Complex.I) - 1) < 1) →
+        |t| ≤ Real.pi / (3 * δ)) := by
+  intro h
+  have hpre : ∀ x : ℝ, 0 ≤ x → x ≤ (0 : ℝ) →
+      Complex.normSq (Complex.exp (((-((1 : ℝ) * x) : ℝ) : ℂ) * Complex.I) - 1) < 1 := by
+    intro x hx0 hx1
+    have hx : x = 0 := le_antisymm hx1 hx0
+    subst hx
+    norm_num
+  have hbad := h 1 0 hpre
+  norm_num at hbad
 
 /-- The non-strict form, kept for callers.  ★ Sharpness note (2026-08-08): the strict version
 above is the correct statement — the premise `normSq(e^{-itx} − 1) < 1` says `cos(tx) > 1/2`,
@@ -508,8 +534,10 @@ theorem n2_every_posDef_effect (hS2 : P.FirstArgContinuous)
 /-! ### The frame-reversal clause of `lem:n2-descent`, for an arbitrary product
 
 Reversing an ordered frame means swapping the two columns of `U`.  The frame function is
-invariant under that, so it is a function of the *unordered* frame — which is the first of the
-three things `lem:n2-descent` needs (the others, boundedness and continuity, remain open).
+invariant under that.  ★ **Corrected by a cold reviewer: swap-invariance ALONE does not make it a
+function of the unordered frame** — that also needs constancy on the diagonal-phase fibres, which
+is `n2FrameTwist_mul_diagonal`, proved further down this file.  This sentence predated that
+clause and asserted the conclusion from half the input.
 
 This was banked as remaining boulder work and it should not have been: the arc-5 cold review
 produced it in ~35 lines from `n2_sp_eq_twistSeq_frame` plus pre-existing machinery, and it is
@@ -665,8 +693,12 @@ and `swap * D = D' * swap` with `D'` the permuted diagonal, so every such elemen
 `D * swap`.  Invariance under both generators — `n2FrameTwist_mul_diagonal` and
 `n2FrameTwist_reverse` — is therefore invariance under the whole stabilizer.
 
-Added 2026-08-08 after a cold reviewer was asked whether the two generators really suffice.
-They do, and the composition is now checked rather than argued. -/
+★ **Precisely what is and is not checked here (narrowed after review).**  What Lean proves is
+invariance at the two group *words* `U·D` and `U·D·swap`.  That those words exhaust the
+right-stabilizer of the unordered frame — i.e. that a unitary presenting the same unordered pair
+of column lines must be monomial — is the paragraph above, and it is **mathematics in prose, not
+a Lean statement**.  Nor is any `S² → ℝ` or `ℝP² → ℝ` object constructed.  So say "invariant
+under the diagonal torus and the swap", and treat the descent to `ℝP²` as justified-but-unformalized. -/
 theorem n2FrameTwist_mul_diagonal_swap (hS2 : P.FirstArgContinuous)
     (U D : Matrix.unitaryGroup (Fin 2) ℂ) {d : Fin 2 → ℂ}
     (hD : (D : Matrix (Fin 2) (Fin 2) ℂ) = Matrix.diagonal d) :
@@ -679,15 +711,26 @@ theorem n2FrameTwist_mul_diagonal_swap (hS2 : P.FirstArgContinuous)
 needs operator-norm continuity of `a ↦ Θ_a` in the *matrix* argument.  The route taken here
 avoids `Θ` entirely: it reads the parameter off the product itself as a pure phase, so that
 a compactness argument on `U(2)` can bound it.  `n2Readout_eq` is that readout, and
-`abs_le_of_phase_near_one` is the numerical step that converts "phase near `1` at every small
-scale" into a bound.
+`abs_lt_of_phase_near_one` is the numerical step that converts "phase near `1` at every small
+scale" into a bound (strict; `abs_le_of_phase_near_one` is its `≤` corollary).
 
-**What remains, precisely** (see `LEDGER.md`): joint continuity of the readout in `(x, U)`,
-which needs continuity of the product in its *second* argument as well as its first — and
-that is available, because `Necessity.seqLeftMul` realizes `b ↦ P.sp a b` as an honest
-`→ₗ[ℝ]` linear map (`seqLeftMul_apply_effect`), so on a finite-dimensional carrier
-continuity in `b` is automatic; plus a fixed test effect whose frame coefficient never
-vanishes, plus assembly.  None of that is a missing theorem; it is plumbing. -/
+★★ **This paragraph used to state the remaining work and was WRONG TWICE; both errors were
+caught by the ARC-6 cold reviewers and are corrected here rather than appended to.**
+
+It said the route needs "continuity of the product in its *second* argument". **It does not** —
+`b` is held fixed, so `U` and `x` enter only the first argument, and S2 alone suffices
+(`continuousOn_n2Readout`, below). The `seqLeftMul` justification offered for it solved a
+problem that does not arise.
+
+It also said the route needs "a fixed test effect whose frame coefficient never vanishes".
+**No such effect exists**, and three reviewers proved it independently: `n2Coef b U` is the
+`(0,1)` entry of `Uᴴ b U`, so for *any* Hermitian `b`, taking `U` to be an eigenbasis of `b`
+makes that conjugate diagonal and the coefficient zero. Every fixed probe is blind at its own
+eigenframe. That is exactly why the construction below uses **two** test effects with no common
+eigenbasis, and it is why `n2Weight_pos` is a theorem about a *pair*. The old sentence also
+contradicted the very plan it was describing.
+
+**What actually remains** is one uniform-continuity step; see the inventory in `LEDGER.md`. -/
 
 /-- The base-point family: spectrum `{e^{-x}, 1}`, hence ordered log-ratio `-x`, tending to
 the unit effect as `x → 0`. -/
@@ -702,14 +745,18 @@ theorem basePt_exponent_nonpos {x : ℝ} (hx : 0 ≤ x) :
   · rw [if_pos h]; nlinarith
   · rw [if_neg h, mul_zero]
 
-/-! The two halves of the joint continuity the banked `lem:n2-bounded` route needs.
+/-! The two halves of the joint continuity the `lem:n2-bounded` route needs.
 
-Both are proved; **the assembly into `ContinuousOn` of the readout is NOT**, and the obstruction
-is elaboration cost rather than mathematics — four distinct formulations all hit a `whnf`
-heartbeat timeout while unifying the composite against `n2Readout`'s unfolding, even at
-`maxHeartbeats 1000000`. Recorded in `LEDGER.md`. The mathematical point that mattered is
-settled by these two: because the test effect `b` is *fixed*, S2's first-argument-only
-continuity is enough, and no continuity in the second argument is required. -/
+★ **Correction (caught by a cold reviewer): this note previously said "the assembly into
+`ContinuousOn` of the readout is NOT [proved]" and described four heartbeat timeouts. That is
+stale — `continuousOn_n2Readout` below proves exactly it.** The timeouts were real but the fix
+was to stop asking `whnf` to unify a composite against `n2Readout`'s unfolding; see that
+theorem's docstring. A reader coming top-down was being told the theorem beneath them did not
+exist.
+
+The mathematical point these two settle: because the test effect `b` is *fixed*, S2's
+first-argument-only continuity is enough, and no continuity of `P.sp` in its second argument is
+required anywhere on this route. -/
 
 theorem continuous_basePt : Continuous (basePt) := by
   show Continuous fun x : ℝ => diagFamily (x • axisSplit (0 : Fin 2))
@@ -758,8 +805,12 @@ they have no common eigenvector — equivalently, for rank-one projections in di
 they do not commute.  That is this lemma, and it is why `frameProj 0` together with
 `pairProj 0 1` is the right pair.
 
-Settled in response to a cold reviewer asking whether the weight could vanish at some `U`. It
-cannot. -/
+★ **Scope, corrected by a cold reviewer:** this theorem states only that the two matrices do not
+commute.  The chain "non-commuting ⟹ no common eigenvector ⟹ the combined weight never
+vanishes" was prose here when it should not have been; it is now the theorem `n2Weight_pos`
+below, which is what may be cited for the conclusion.  Note also that non-vanishing here is
+*pointwise*; the uniform lower bound the boundedness argument needs is
+`exists_n2Weight_lower_bound`. -/
 theorem frameProj_pairProj_not_commute :
     (frameProj (0 : Fin 2)).mat * (pairProj (0 : Fin 2) 1).mat
       ≠ (pairProj (0 : Fin 2) 1).mat * (frameProj (0 : Fin 2)).mat := by
@@ -778,8 +829,10 @@ noncomputable def n2Readout (b : HermitianMat (Fin 2) ℂ) (x : ℝ)
 
 /-- **The readout identity.**  The readout is the frame coefficient, times an explicit
 positive scalar, times the pure phase `e^{-i t(U) x}`.  Everything except the phase is
-explicit and nonvanishing, which is what makes the frame parameter accessible to an analytic
-argument for the first time. -/
+explicit.  ★ **Not "nonvanishing" — corrected by a cold reviewer:** `n2Coef b U` *does* vanish,
+at exactly the frames that diagonalize `b` (`U = 1`, `b = frameProj 0` is a witness), which is
+why the boundedness route below uses two test effects with no common eigenbasis rather than one.
+What the identity gives is that the phase is the *only* non-explicit factor. -/
 theorem n2Readout_eq (hS2 : P.FirstArgContinuous) {b : HermitianMat (Fin 2) ℂ}
     (hb : IsEffect b) {x : ℝ} (hx : 0 ≤ x) (U : Matrix.unitaryGroup (Fin 2) ℂ) :
     n2Readout P b x U
@@ -789,8 +842,7 @@ theorem n2Readout_eq (hS2 : P.FirstArgContinuous) {b : HermitianMat (Fin 2) ℂ}
   have hcls := n2_sp_eq_twistSeq_frame P hS2 U (basePt_exponent_nonpos hx)
     (a := adU (U : Matrix (Fin 2) (Fin 2) ℂ) (basePt x)) rfl hb
   unfold n2Readout
-  rw [hcls, adU_conj_twistSeq _ (unitaryGroup_conjTranspose_mul U)
-    (unitaryGroup_mul_conjTranspose U)]
+  rw [hcls, adU_conj_twistSeq _ (unitaryGroup_conjTranspose_mul U)]
   rw [show basePt x = diagFamily (x • axisSplit (0 : Fin 2)) from rfl,
     twistSeq_diagFamily_entry]
   have h0 : (x • axisSplit (0 : Fin 2)) 0 = -x := by
@@ -1051,8 +1103,13 @@ theorem exists_n2Weight_lower_bound :
 
 `n2Readout_eq` reaches the formula through `n2_sp_eq_twistSeq_frame` and `adU_conj_twistSeq`.
 This states the same formula for the twist product at the standard frame, derived directly from
-`twistSeq_diagFamily_entry` and nothing else.  Two routes, one formula: if a refactor ever flips
-the phase in either chain, these stop agreeing.
+`twistSeq_diagFamily_entry`.
+
+★ **Scope, corrected by a cold reviewer: this is NOT a fully independent check.** Both chains
+bottom out in `twistSeq_diagFamily_entry`, so a sign error *there* would flip both and they would
+still agree.  What it does guard is the classification chain — `n2_sp_eq_twistSeq_frame` and
+`adU_conj_twistSeq` — which is where a transport or conjugation slip would live.  Call it a
+cross-check on the chain, never on the entry lemma.
 
 Kept because the sign here is load-bearing for the banked route to `lem:n2-bounded`, and it was
 the one claim in that route argued rather than computed. -/
