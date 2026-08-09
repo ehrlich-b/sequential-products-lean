@@ -397,6 +397,34 @@ advice: it shares `cfc_diagonal` and `ofReal_polar` with the tree's route, so it
 `tvalLm`/`twist_param_unique_of_scaled`** — they carry the *identification* of the parameter, which
 unlike the sign is invariant under nothing either row concludes.
 
+★★★ **THE EIGHTH FALSE ABSENCE CLAIM, AND THE NEW RULE CAUGHT IT ON ITS FIRST USE.** Checkpoint 3
+de-priced row 12 `prop:central` by showing "no direct sum of order unit spaces" was false, and said
+its summand inheritance and converse assembly "should now be attempted, not deferred". I attempted
+it — by applying the rule that same review had just handed over (list a file's declarations rather
+than grep for a guessed name) — and **the converse assembly was already built**:
+`SequentialProductOn.prod` (`DirectSum.lean:84`) assembles a product on `V × W` from summand
+products, all eight fields, with `prod_sp`, `prod_fst`, `prod_snd` and `sp_eq_of_prod_eq`, and its
+own docstring says "This is the *sufficiency* half of the omnibus's factorwise assembly".
+
+★★ Note who missed it and why: the reviewer found `instProd` **in that same file** and stopped
+there, twenty lines short of `prod`. It had grepped for a pattern rather than read the declaration
+list — the exact mistake its own new rule forbids. Listing the declarations found it immediately.
+**A rule that catches its author's own error on first use is the strongest evidence a rule can
+have**, and it is now the project's standing first move before any absence claim.
+
+What actually remains of row 12 is the **restriction** direction only: that an *arbitrary* product on
+`V × W` restricts to S1–S7 products on each summand (`grep restrict\|toSummand\|ofProd
+RadicalRelativity/DirectSum.lean` → prose only, 2026-08-09). The converse is done.
+
+★ **Running total of this arc's own corrections, stated plainly because the pattern is the finding:**
+three false absence claims (quaternionic carrier, direct sum, direct-sum assembly — nos. 6, 7, 8),
+one false gap statement (`lem:orientation`), one vacuous gap statement (`exists_peirce_exchange`),
+one mispriced-as-fatal dependency (the sign, retracted by the reviewer who raised it), one totalizing
+residual claim, three inaccurately recorded greps, one broken verification recipe, and one timeout
+"fixed" three times before its real cause was found. **Every one of them was mine or a reviewer's,
+and every one was caught inside a single day by making the claims falsifiable instead of asserting
+them.** That is the case for the certificate format, and it is stronger than any coverage number.
+
 **Coverage at end of ARC-7's landed work: 10 FORMALIZED / 19 PARTIAL / 7 ABSENT.** Gates green at
 every commit: `lake build` 3106 jobs, census 149 modules, custom axioms exactly `[]`, zero warnings
 in every region touched. Tags `paperA-arc7-cp0` (`d0f1312`), `paperA-arc7-cp1` (`ab87ed3`),
