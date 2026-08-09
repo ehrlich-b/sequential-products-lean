@@ -697,8 +697,14 @@ and `swap * D = D' * swap` with `D'` the permuted diagonal, so every such elemen
 invariance at the two group *words* `U·D` and `U·D·swap`.  That those words exhaust the
 right-stabilizer of the unordered frame — i.e. that a unitary presenting the same unordered pair
 of column lines must be monomial — is the paragraph above, and it is **mathematics in prose, not
-a Lean statement**.  Nor is any `S² → ℝ` or `ℝP² → ℝ` object constructed.  So say "invariant
-under the diagonal torus and the swap", and treat the descent to `ℝP²` as justified-but-unformalized. -/
+a Lean statement**.
+
+★ **Second correction, narrowing my own first one:** an earlier version of this note said "nor is
+any `S² → ℝ` or `ℝP² → ℝ` object constructed", which overshot.  `RP2`, `QubitFrame` and
+`tauModuli : C(QubitFrame, ℝ)` **do** exist, in `RankTwo/`.  What does not exist is such an object
+for an *arbitrary* product's `n2FrameTwist` — `tauModuli` is built for the concrete `τ` family.
+So: say "invariant under the diagonal torus and the swap"; the descent to `ℝP²` for an arbitrary
+product is justified-but-unformalized, while for `τ` it is formalized elsewhere. -/
 theorem n2FrameTwist_mul_diagonal_swap (hS2 : P.FirstArgContinuous)
     (U D : Matrix.unitaryGroup (Fin 2) ℂ) {d : Fin 2 → ℂ}
     (hD : (D : Matrix (Fin 2) (Fin 2) ℂ) = Matrix.diagonal d) :
