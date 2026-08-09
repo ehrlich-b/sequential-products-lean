@@ -1528,6 +1528,161 @@ theorem continuous_n2FrameTwist (hS2 : P.FirstArgContinuous) :
   calc |n2FrameTwist P hS2 U| * δ ≤ M * δ := mul_le_mul_of_nonneg_right (hM U) hδpos.le
     _ = Real.pi / 4 := hMδ
 
+/-! ### The descent onto the frame space — the article's own indexing
+
+★★ **New 2026-08-09 (ARC-7 checkpoint 1 review), and it exists because a cold reviewer refuted the
+caveat I had written on rows 32 and 33.**
+
+Those two rows were landed about `n2FrameTwist : U(2) → ℝ`, with a manifest caveat saying that
+fibre-constancy plus surjectivity of "the frame map" made this the article's frame-indexed
+statement.  The reviewer found two things.  **(a)** No map from `U(2)` to any frame space existed
+anywhere in the tree, so the caveat's surjectivity clause was prose about an undefined object.
+**(b)** Worse, for CONTINUITY the inference is not merely unproved but *invalid*: continuity of a
+pullback along a bare surjection does not give continuity downstairs — that needs a quotient map.
+Row 33's caveat was therefore load-bearing and wrong, and the reviewer recommended downgrading.
+
+★★ **It then found the tree already contained something strictly stronger than what I had used, and
+that it deletes the expensive step of my own wall certificate.**  `n2FrameTwist_eq_of_base_eq` at
+`m = m' = 0` gives constancy on the fibres of `U ↦ Ad_U(frameProj 0)` — genuine fibre-constancy,
+not invariance at two group words — because `basePt x = 𝟙 + (e^{−x} − 1)·frameProj 0`, so equal
+first spectral projections force equal base points at every scale.  `WallCertificates/lem-n2-descent.lean`
+had priced the descent's first step at ~200 lines of `ℂ²` linear algebra ("same first-column ray ⟹
+the unitaries differ by a diagonal unitary").  **That step is unnecessary: one never needs rays if
+one descends along the projection.**  The whole descent below is ~50 lines.
+
+The lesson, recorded because it is the transferable one: I reached for the *rays* because
+`RankTwo/` is written in terms of `ℂP¹`, and never asked whether the parameter's own defining
+identity already descended along something cheaper.  A reviewer with no attachment to that
+vocabulary saw it immediately.
+
+**What this buys.**  `n2Moduli` below is a function of the FRAME, and rows 32/33 hold for it
+outright — so the indexing caveat shrinks to one honest residue: `FrameSpace` is the set of rank-one
+projections *presented by unitaries*, and identifying it with `S²`/`ℝP²` needs surjectivity onto all
+rank-one projections, which is still absent. -/
+
+section Descent
+
+/-- `basePt` as a rank-one perturbation of the unit — the identity that makes the descent work. -/
+theorem basePt_mat_eq (x : ℝ) :
+    (basePt x).mat
+      = (1 : Matrix (Fin 2) (Fin 2) ℂ)
+        + ((Real.exp (-x) : ℂ) - 1) • (frameProj (0 : Fin 2)).mat := by
+  rw [basePt, diagFamily_mat, frameProj_mat_eq_single]
+  ext p q
+  fin_cases p <;> fin_cases q <;>
+    simp [Matrix.diagonal, Matrix.single, axisSplit]
+
+/-- **The frame map**: a unitary to its first spectral projection.  This is the article's "frame",
+presented concretely; contrast `RankTwo.QubitFrame`, which is the same geometry via rays. -/
+noncomputable def frameMap (U : Matrix.unitaryGroup (Fin 2) ℂ) : HermitianMat (Fin 2) ℂ :=
+  adU (U : Matrix (Fin 2) (Fin 2) ℂ) (frameProj (0 : Fin 2))
+
+theorem continuous_frameMap : Continuous frameMap := by
+  refine Continuous.subtype_mk ?_ _
+  change Continuous fun U : Matrix.unitaryGroup (Fin 2) ℂ =>
+    (U : Matrix (Fin 2) (Fin 2) ℂ) * (frameProj (0 : Fin 2)).mat
+      * (U : Matrix (Fin 2) (Fin 2) ℂ)ᴴ
+  have hU : Continuous fun U : Matrix.unitaryGroup (Fin 2) ℂ =>
+      (U : Matrix (Fin 2) (Fin 2) ℂ) := continuous_subtype_val
+  have hstar : Continuous fun U : Matrix.unitaryGroup (Fin 2) ℂ =>
+      (U : Matrix (Fin 2) (Fin 2) ℂ)ᴴ := by
+    simp only [← Matrix.star_eq_conjTranspose]; exact continuous_star.comp hU
+  exact (hU.mul continuous_const).mul hstar
+
+/-- **Genuine fibre-constancy.**  Two unitaries with the same first spectral projection carry the
+same twist parameter.  Strictly stronger than `n2FrameTwist_mul_diagonal` together with
+`n2FrameTwist_reverse`, which are invariance at two group words; this is constancy on the actual
+fibres, and it makes the monomial-exhaustion argument those two needed unnecessary. -/
+theorem n2FrameTwist_eq_of_frameMap_eq (U V : Matrix.unitaryGroup (Fin 2) ℂ)
+    (hS2 : P.FirstArgContinuous) (h : frameMap V = frameMap U) :
+    n2FrameTwist P hS2 V = n2FrameTwist P hS2 U := by
+  refine n2FrameTwist_eq_of_base_eq P hS2 U V 0 0 ?_
+  intro x _
+  have hmat : (V : Matrix (Fin 2) (Fin 2) ℂ) * (frameProj (0 : Fin 2)).mat
+        * (V : Matrix (Fin 2) (Fin 2) ℂ)ᴴ
+      = (U : Matrix (Fin 2) (Fin 2) ℂ) * (frameProj (0 : Fin 2)).mat
+        * (U : Matrix (Fin 2) (Fin 2) ℂ)ᴴ := by
+    have hc := congrArg HermitianMat.mat h
+    simpa [frameMap, adU_apply, HermitianMat.conj_apply_mat] using hc
+  have key : ∀ W : Matrix.unitaryGroup (Fin 2) ℂ,
+      (W : Matrix (Fin 2) (Fin 2) ℂ) * (basePt x).mat * (W : Matrix (Fin 2) (Fin 2) ℂ)ᴴ
+        = (1 : Matrix (Fin 2) (Fin 2) ℂ)
+          + ((Real.exp (-x) : ℂ) - 1) • ((W : Matrix (Fin 2) (Fin 2) ℂ)
+              * (frameProj (0 : Fin 2)).mat * (W : Matrix (Fin 2) (Fin 2) ℂ)ᴴ) := by
+    intro W
+    rw [basePt_mat_eq, Matrix.mul_add, Matrix.add_mul, Matrix.mul_one,
+      unitaryGroup_mul_conjTranspose W, Matrix.mul_smul, Matrix.smul_mul]
+  change adU (V : Matrix (Fin 2) (Fin 2) ℂ) (basePt x)
+      = adU (U : Matrix (Fin 2) (Fin 2) ℂ) (basePt x)
+  ext1
+  rw [adU_apply, adU_apply, HermitianMat.conj_apply_mat, HermitianMat.conj_apply_mat,
+    key U, key V, hmat]
+
+/-- The space of rank-two frames **presented by unitaries**.
+
+The residual honesty point about rows 32/33: this is the range of `frameMap`, not the full space of
+rank-one projections.  The two coincide (every rank-one projection of `ℂ²` is `Ad_U(frameProj 0)`
+for some `U`), but that surjectivity is not proved here — it needs assembling `RankTwo.orthoVec`
+into a unitary, which the tree never does. -/
+def FrameSpace : Type := Set.range frameMap
+
+noncomputable instance : TopologicalSpace FrameSpace := by
+  unfold FrameSpace; infer_instance
+
+instance : T2Space FrameSpace := by
+  unfold FrameSpace; infer_instance
+
+noncomputable def toFrameSpace : Matrix.unitaryGroup (Fin 2) ℂ → FrameSpace :=
+  Set.rangeFactorization frameMap
+
+theorem continuous_toFrameSpace : Continuous toFrameSpace :=
+  Continuous.subtype_mk continuous_frameMap _
+
+theorem surjective_toFrameSpace : Function.Surjective toFrameSpace :=
+  Set.rangeFactorization_surjective
+
+/-- **The frame map is a QUOTIENT map**, which is the property continuity actually needs (a bare
+continuous surjection is not enough).  Free here: `U(2)` is compact — vendored in-tree at
+`Vendor/Wigner/UnitaryCompact.lean` — and the frame space is Hausdorff, so a continuous surjection
+between them is closed. -/
+theorem isQuotientMap_toFrameSpace : Topology.IsQuotientMap toFrameSpace :=
+  (continuous_toFrameSpace.isClosedMap).isQuotientMap continuous_toFrameSpace
+    surjective_toFrameSpace
+
+open Classical in
+/-- **The article's `t̃`, as a function of the frame.** -/
+noncomputable def n2Moduli (hS2 : P.FirstArgContinuous) : FrameSpace → ℝ :=
+  fun p => n2FrameTwist P hS2 (Classical.choose (show ∃ U, frameMap U = p.1 from p.2))
+
+theorem n2Moduli_toFrameSpace (hS2 : P.FirstArgContinuous)
+    (U : Matrix.unitaryGroup (Fin 2) ℂ) :
+    n2Moduli P hS2 (toFrameSpace U) = n2FrameTwist P hS2 U := by
+  -- NB the argument order: the metavariable must land in the `V` slot, since the goal's left side
+  -- is the parameter at the CHOSEN preimage.  Putting it in the `U` slot asks the unifier to match
+  -- `n2Moduli …` against `n2FrameTwist …` and times out at `isDefEq`.
+  refine n2FrameTwist_eq_of_frameMap_eq P U _ hS2 ?_
+  exact Classical.choose_spec (show ∃ W, frameMap W = frameMap U from ⟨U, rfl⟩)
+
+/-- **`lem:n2-continuity` for the frame-indexed parameter** — no longer a statement about a
+pullback.  This is what the checkpoint-1 review asked for. -/
+theorem continuous_n2Moduli (hS2 : P.FirstArgContinuous) :
+    Continuous (n2Moduli P hS2) := by
+  rw [isQuotientMap_toFrameSpace.continuous_iff]
+  exact (continuous_n2FrameTwist P hS2).congr
+    (fun U => (n2Moduli_toFrameSpace P hS2 U).symm)
+
+/-- **`lem:n2-bounded` for the frame-indexed parameter.** -/
+theorem exists_n2Moduli_bound (hS2 : P.FirstArgContinuous) :
+    ∃ M : ℝ, 0 < M ∧ ∀ p : FrameSpace, |n2Moduli P hS2 p| ≤ M := by
+  obtain ⟨M, hMpos, hM⟩ := exists_n2FrameTwist_bound P hS2
+  refine ⟨M, hMpos, ?_⟩
+  intro p
+  obtain ⟨U, hU⟩ := surjective_toFrameSpace p
+  rw [← hU, n2Moduli_toFrameSpace]
+  exact hM U
+
+end Descent
+
 end RankTwoExtraction
 
 /-! ## A product that is garbage off the effect set — certifying effect hypotheses

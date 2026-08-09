@@ -392,4 +392,38 @@ theorem seqLeftMul_one {a : HermitianMat n 𝕜} (ha : IsEffect a) :
   rw [seqLeftMul_apply_effect P ha h1]
   exact P.sp_unit_right ha
 
+/-! ## `lem:normality`'s convergence clause — and it needs no S2
+
+★★ **New 2026-08-09 (ARC-7 block 7.5), and it REFUTES this arc's own wall certificate for row 9
+within the hour it was written.**  `WallCertificates/abstract-tier.lean` recorded row 9 as ABSENT
+with the price "plausibly cheap; never attempted".  It was cheap, and the certificate is corrected
+rather than quietly dropped — that is the format working as intended.
+
+★ **And the result is STRONGER than the article's statement.**  The article says an operation
+satisfying S1 *and S2* is normal.  S2 is not used here at all: additivity alone (S1) extends
+`b ↦ a · b` to the linear map `seqLeftMul`, and a linear map on a finite-dimensional normed space
+is automatically continuous.  So second-argument continuity — which S2 does *not* provide, and which
+an earlier note in `FrameConstancy.lean` wrongly worried was needed elsewhere — is free on this
+carrier.
+
+Scope: the concrete carrier, with a sequence and an explicit limit.  The article's form is about
+order-infima in an abstract f.d. order unit space; `⨅` for this order is not developed here, and the
+compatibility-passes-to-infima clause is untouched.  So the row moves ABSENT → PARTIAL, not to
+FORMALIZED. -/
+
+/-- **`lem:normality`, convergence clause.**  If a sequence of effects converges, so do its
+products with a fixed effect — by linearity of `seqLeftMul` and finite-dimensionality, with **no**
+appeal to S2. -/
+theorem sp_tendsto_of_tendsto {a : HermitianMat n 𝕜} (ha : IsEffect a)
+    (b : ℕ → HermitianMat n 𝕜) (hb : ∀ k, IsEffect (b k))
+    (blim : HermitianMat n 𝕜) (hblim : IsEffect blim)
+    (hconv : Filter.Tendsto b Filter.atTop (nhds blim)) :
+    Filter.Tendsto (fun k => P.sp a (b k)) Filter.atTop (nhds (P.sp a blim)) := by
+  have hcont : Continuous (seqLeftMul P a ha) :=
+    LinearMap.continuous_of_finiteDimensional _
+  have h : Filter.Tendsto (fun k => seqLeftMul P a ha (b k)) Filter.atTop
+      (nhds (seqLeftMul P a ha blim)) := (hcont.tendsto blim).comp hconv
+  rw [← seqLeftMul_apply_effect P ha hblim]
+  exact h.congr (fun k => seqLeftMul_apply_effect P ha (hb k))
+
 end Necessity

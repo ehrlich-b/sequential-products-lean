@@ -51,7 +51,8 @@ PER-ROW STATUS AND GAP
     concrete carrier, where Mathlib's spectral theorem applies.  So this row should be READ AS ~3/4
     CITED, and the coverage arithmetic should not count it as a full interior row.
 
-  row 9 `lem:normality`.  ABSENT.  On a f.d. order-unit space, S1 + S2 imply vdW-normality
+  row 9 `lem:normality`.  ★★ REFUTED SAME DAY — see below; the row is now PARTIAL.  Original text:
+    ABSENT.  On a f.d. order-unit space, S1 + S2 imply vdW-normality
     (b_k decreasing to b implies a . b_k decreasing to a . b) and compatibility passes to infima.
     The gap is stated below.  In finite dimension monotone bounded nets converge, so this is
     plausibly cheap; it was never attempted.
@@ -105,9 +106,16 @@ The cleanest statable form of the article's normality: a decreasing sequence of 
 infimum has its images decreasing to the image of the infimum.  In finite dimension this should
 follow from S2 plus monotone convergence; the tree has neither the statement nor an attempt. -/
 
-/-- **GAP — `lem:normality`.**  Written with a sequence and an explicit limit rather than with nets
-and order-infima, which is the weakest honest form: the article's statement is about order-infima in
-an order unit space, and `⨅` for this order is not developed in the tree. -/
+/-- ★★ **NO LONGER A GAP — REFUTED 2026-08-09, THE SAME DAY THIS CERTIFICATE WAS WRITTEN.**
+
+The convergence clause is proved in the tree as `Necessity.sp_tendsto_of_tendsto`, and it needs
+**no S2 at all**: additivity alone extends `b ↦ a · b` to the linear map `seqLeftMul`, and a linear
+map on a finite-dimensional normed space is automatically continuous.  So the result is *stronger*
+than the article's statement, which assumes S1 and S2.
+
+The statement below is kept, with its `sorry`, as the **abstract** form — the article's own
+generality, over an arbitrary `OrderUnitSpace` rather than the concrete carrier.  That is what
+remains, together with the compatibility-passes-to-infima clause. -/
 theorem normality (P : SequentialProductOn V) (hS2 : P.FirstArgContinuous)
     {a : V} (ha : IsEffect a) (b : ℕ → V) (hb : ∀ k, IsEffect (b k))
     (hmono : ∀ k, b (k + 1) ≤ b k) (blim : V) (hblim : IsEffect blim)

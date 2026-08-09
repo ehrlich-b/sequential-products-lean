@@ -50,6 +50,33 @@ ABSENCE CLAIMS AND THEIR SCOPE
     did not exist at all — when in fact its input lives in `Necessity/`.  Directory-scoped absence
     claims have misfired here before; the scope is stated so this one can be checked.)
 
+★★ REFUTED IN PART, 2026-08-09, SAME DAY, BY THE CHECKPOINT-1 COLD REVIEW.  Recorded here rather
+than rewritten away, because the whole point of this directory is that certificates are falsifiable
+and this one was falsified within the hour.
+
+  STEP (1) BELOW IS UNNECESSARY.  It is priced above at ~200 lines of C^2 ray algebra ("same
+  first-column ray ==> the unitaries differ by a diagonal unitary").  One never needs rays: the
+  parameter descends along the FIRST SPECTRAL PROJECTION instead, because
+  basePt x = 1 + (e^{-x} - 1) * frameProj 0, so equal first spectral projections force equal base
+  points at every scale, and `n2FrameTwist_eq_of_base_eq` — already in the tree — then applies.
+  That is `Necessity.n2FrameTwist_eq_of_frameMap_eq`, now landed, and it is GENUINE fibre-constancy
+  rather than invariance at two group words.
+
+  STEP (3) IS ALSO CHEAPER THAN PRICED and is now DONE: `Necessity.FrameSpace`,
+  `Necessity.toFrameSpace`, `Necessity.isQuotientMap_toFrameSpace`, `Necessity.n2Moduli`,
+  `Necessity.continuous_n2Moduli`, `Necessity.exists_n2Moduli_bound`.
+
+  WHAT ACTUALLY REMAINS OF ROW 34, after all of the above: only that `FrameSpace` — the rank-one
+  projections PRESENTED BY UNITARIES — is all of them, i.e. surjectivity onto rank-one projections,
+  which needs `RankTwo.orthoVec` assembled into a unitary.  Plus the identification of that space
+  with `RP^2` (the complementation quotient), for which `RankTwo.blochFrame_eq_iff` (ARC-7) supplies
+  the fibre structure.
+
+  WHY I MISSED IT, recorded because it is the transferable part: I reached for rays because
+  `RankTwo/` is written in terms of `CP^1`, and never asked whether the parameter's own defining
+  identity already descended along something cheaper.  A reviewer with no attachment to that
+  vocabulary saw it immediately.
+
 NOT imported from RadicalRelativity/.  `lake build` and AxiomAudit never see this file.
 -/
 import RadicalRelativity.Necessity.FrameConstancy
