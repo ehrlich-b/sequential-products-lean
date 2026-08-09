@@ -16,12 +16,17 @@ PER-ROW STATUS AND GAP
     Peirce-block-diagonal — is open.  The last clause ("lies in Stab(F)^0") needs the stabilizer as
     a group with an identity component, the same missing vocabulary as row 18.
 
-  row 22 `lem:orientation`.  ABSENT, and it is the most self-contained genuinely-unbuilt row in the
-    manifest: an explicit complex structure J_{q,k}(x) = iz - iz* on the cross-coherence space, its
-    independence of any splitting of q, its commutation with stabilizing inner automorphisms, and
-    the formula Ad_{a^{it}}|_X = exp(t(log lam - log lam_k) J_{q,k}).  All four clauses are concrete
-    H_n(C) matrix statements — no missing vocabulary, no cited input.  ★ THIS IS THE ROW TO ATTACK
-    if the goal is to move an ABSENT row to FORMALIZED with no prerequisites.
+  row 22 `lem:orientation`.  ABSENT: an explicit complex structure J_{q,k}(x) = iz - iz* on the
+    cross-coherence space X, its independence of any splitting of q, its commutation with stabilizing
+    inner automorphisms, and the formula Ad_{a^{it}}|_X = exp(t(log lam - log lam_k) J_{q,k}).
+    ★★ RETRACTED SAME DAY, BY MY OWN AUDIT.  This entry first said the row is "the most
+    self-contained genuinely-unbuilt row", needs "no missing vocabulary", and is "THE ROW TO ATTACK
+    first".  All three are wrong.  The clauses are about J restricted to X, and X is a CARRIER the
+    tree does not have — the same missing vocabulary as W_n (row 29) and the Peirce subalgebra
+    (row 5).  Worse, the Lean statement this file first wrote down to sidestep the carrier — the
+    unrestricted `forall x, J (J x) = -x` — is FALSE, with a compiled witness
+    (`frameProj_mul_orthogonal_eq_zero` below).  See the retraction at
+    `orientation_complex_structure`.
 
   row 26 `lem:frame-connectivity`.  ★ The pricing here has already been corrected once and the
     correction must not be lost: `AdjBlock` (the article's adjacency: all but two axes fixed) is
@@ -51,10 +56,12 @@ PER-ROW STATUS AND GAP
 
 ATTACK EVIDENCE
   Row 36 clause (iii) was attacked and CLOSED today.  Row 29 gap (a) was attacked and closed in
-  ARC-6.  Rows 15, 22, 26, 29(b), 31 were NOT attempted in ARC-6 or ARC-7.  Row 22 in particular has
-  never been attempted at all, and since it needs nothing the tree lacks, its ABSENT status is
-  evidence about budget rather than about difficulty — recorded that way deliberately, because
-  "ABSENT" on this project has three times meant "nobody looked".
+  ARC-6.  Rows 15, 22, 26, 29(b), 31 were NOT attempted in ARC-6 or ARC-7.  ★★ Row 22 WAS probed on
+  2026-08-09, and the probe refuted this file's own pricing of it rather than advancing the row: the
+  statement written here to avoid the missing carrier is false.  That is the useful outcome — a
+  certificate whose statement is wrong sends the next person to prove a false thing, which is worse
+  than a vague price.  Recorded because "ABSENT" on this project has three times meant "nobody
+  looked", and this time looking produced a retraction instead of a proof.
 
 ABSENCE CLAIMS AND THEIR SCOPE
   * "no Givens/Jacobi factorization of unitaries into rank-two block rotations":
@@ -78,24 +85,50 @@ namespace WallCertificate
 open scoped Matrix
 open ComplexOrder OrderUnitSpace
 
-/-! ### Row 22 `lem:orientation` — the row to attack first, stated in full
+/-! ### Row 22 `lem:orientation` — and the retraction of this file's first pricing of it
 
-All four clauses are concrete `H_n(ℂ)` statements.  Only the third clause is written out here (the
-`Ad_{a^{it}}` formula), because it is the one the master theorem consumes; the other three are
-stated in the article and need no vocabulary this tree lacks. -/
+The article's clauses are about `J` restricted to the cross-coherence space `X`.  `X` is not a
+carrier in this tree, and the attempt below to state the content *without* it produced a false
+proposition.  Read the docstring on `orientation_complex_structure`: the useful content of this
+section is the retraction, not the statement. -/
 
-/-- **GAP — `lem:orientation`, the complex structure.**  For a rank-two `q` and an orthogonal atom
-`p_k`, `x ↦ i·(q x p_k) − i·(q x p_k)*` is a complex structure on the cross-coherence space.
+/-- ★★ **THIS CERTIFICATE'S FIRST VERSION STATED A FALSE PROPOSITION, and it is corrected here
+rather than quietly replaced.**
 
-Stated at the matrix level, which is where the article's proof lives.  Being a complex structure
-means squaring to `−1` on that subspace; the subspace itself is the object the tree lacks, so the
-statement below is the *pointwise* form: applying the map twice negates. -/
+The first version asserted the *unrestricted* pointwise form `∀ x, J (J x) = -x`, on the reasoning
+that the cross-coherence subspace is the object the tree lacks, so the statement should be made
+about all `x` instead.  **That is false, with a compiled witness**: for orthogonal frame
+projections `frameProj 0 * frameProj 1 = 0` (checked in Lean), so at `x = q` the inner product
+`q·x·p` vanishes, giving `J q = 0` and hence `J (J q) = 0`, while `-q ≠ 0`.  `J` squares to `−1`
+**only on the coherence space**, which is exactly why the article states it there.
+
+A certificate that states a gap *incorrectly* is worse than one that states it vaguely, because
+someone will try to prove a false thing.  This is the failure mode this arc's certificate-refutation
+brief asked reviewers to hunt for, and the first instance was mine.
+
+**So the honest content of row 22 is the opposite of what this file first claimed.**  It said the row
+"needs nothing the tree lacks" and was "the row to attack first".  Wrong: it needs the
+cross-coherence space as a *carrier*, which the tree does not have — the same missing vocabulary as
+`W_n` in row 29 and the Peirce subalgebra in row 5.  The statement below therefore carries the
+subspace condition as a hypothesis, which is the strongest form that is actually statable here. -/
 theorem orientation_complex_structure {N : ℕ}
     (q p : HermitianMat (Fin N) ℂ) (J : HermitianMat (Fin N) ℂ → HermitianMat (Fin N) ℂ)
     (hJ : ∀ x, J x = ⟨Complex.I • (q.mat * x.mat * p.mat)
       - Complex.I • (q.mat * x.mat * p.mat)ᴴ, by sorry⟩) :
-    ∀ x, J (J x) = -x := by
+    ∀ x, q.mat * x.mat * p.mat + (q.mat * x.mat * p.mat)ᴴ = x.mat → J (J x) = -x := by
   sorry
+
+/-- The compiled witness behind the retraction above: distinct frame projections annihilate, so the
+unrestricted form fails at `x = q`. -/
+theorem frameProj_mul_orthogonal_eq_zero :
+    (Necessity.frameProj (0 : Fin 3)).mat * (Necessity.frameProj (1 : Fin 3)).mat = 0 := by
+  rw [Necessity.frameProj_mat_eq_single, Necessity.frameProj_mat_eq_single]
+  ext i j
+  simp only [Matrix.mul_apply, Matrix.single, Matrix.of_apply]
+  refine Finset.sum_eq_zero fun x _ => ?_
+  split_ifs with h1 h2
+  · exact absurd (h1.2.trans h2.1.symm) (by decide)
+  all_goals simp
 
 /-! ### Row 29 gap (b) — the Θ-level statement
 
