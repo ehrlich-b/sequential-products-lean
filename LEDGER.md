@@ -25,8 +25,8 @@ REJECTED (rationale in the ARC-5 block below); the six by-design-external rows a
 `thm:vdw1` + `prop:bridge` (cited), `mthm:master`/`mthm:omnibus` one-theorem form (JvNW),
 `prop:theta` at vIR generality, `thm:albert` (Albert M2). Interior ceiling 30, realistic
 26–28. The count is an OUTPUT, not a quota — the census (`custom axioms exactly []`) and
-`THEOREM-MAP.md` are the product. Baseline at these orders: **7 / 19 / 10** per
-`STATEMENT-MANIFEST.md`; the denominator stays pinned to blob `205fdf5a` — never re-pin.
+`THEOREM-MAP.md` are the product. Baseline at these orders was **7 / 19 / 10**; **as executed the arc ended at 8 / 19 / 9** —
+see the EXECUTION RECORD below and `STATEMENT-MANIFEST.md`, which is authoritative; the denominator stays pinned to blob `205fdf5a` — never re-pin.
 
 **THE LADDER (in order; the wall protocol below governs every rung):**
 
@@ -60,8 +60,11 @@ REJECTED (rationale in the ARC-5 block below); the six by-design-external rows a
   NOT a change to `SequentialProductCore.mk` (`AxiomAudit.lean` Layer 5 freezes the
   printed constructor type). Then: abstract `lem:homog`(ii), abstract `lem:cone-ext`, and
   divide the `pseudoInvCoef` out of `prop:pseudo-transfer` to reach the article's
-  `a·a⁻¹ = 𝟙` form. `lem:homog`(i) needs a positive-linear-extension construction:
-  attempt it, bank on resistance. ★ CHECKPOINT REVIEW after this rung.
+  `a·a⁻¹ = 𝟙` form. ★ **This next sentence was falsified during the arc and is retained only as
+  the order as written:** "`lem:homog`(i) needs a positive-linear-extension construction:
+  attempt it, bank on resistance." The construction **already existed** —
+  `Necessity.seqLeftMul` — so what (i) actually needs is the abstract port, not a construction
+  (see the EXECUTION RECORD and `THEOREM-MAP.md` §3b). ★ CHECKPOINT REVIEW after this rung.
 * **6.4 The caveat sweep, in yield order.** `cor:selectors`(iii) — exactly one missing
   lemma, `(cfc f a)ᵀ = cfc f (aᵀ)`, recipe recorded in `ComplexRowUnconditional.lean` —
   then clause (i); `lem:normality` (f.d. order-unit space, S1+S2 ⟹ vdW-normal);
@@ -172,48 +175,71 @@ so that was never the obstacle. The obstacle is that the tree's field-general `G
 written for `RCLike 𝕜`, and **ℍ can never be `RCLike`** — the class extends
 `DenselyNormedField`, hence *commutative*, and its `re_add_im_ax` demands a **two**-dimensional
 real decomposition `z = re z + (im z)·I`, while ℍ is noncommutative and four-dimensional. That
-is an impossibility, not an absent instance, so this row earns **BLOCKED** under the manifest's
-own vocabulary (a wall with named evidence) rather than ABSENT. Consequence: the `Gen` layer
+is an impossibility, not an absent instance. ★ **But the ARC-6 cold review corrected the
+conclusion I drew from it:** the row stays **PARTIAL**, because what this blocks is the `Gen`
+*layer*'s reuse at ℍ, not the row, which remains reachable by the embedding route — and because
+"BLOCKED" is a fourth status word outside the FORMALIZED/PARTIAL/ABSENT taxonomy the coverage
+count depends on, and row 32 already forbids that vocabulary ("ABSENT-with-a-named-route, never
+BLOCKED"). Keep status words inside the taxonomy; put the obstruction in prose. Consequence: the `Gen` layer
 cannot be reused at ℍ at any price, and the route is forced to be
 `H_n(ℍ) ↪ H_{2n}(ℂ)` as the fixed points of a conjugate-linear involution — the quaternionic
 structure carried by the involution instead of by a scalar field, exactly as the orders said.
 
-### ★ ARC-6 REVIEW OUTCOME — the protocol was NOT satisfied, and this says so
+### ★ ARC-6 REVIEW OUTCOME — attempt 1 failed, attempt 2 delivered (2 of 3), and the findings are applied
 
-**The review protocol failed on BOTH attempts. Four reviewers, eleven requests, zero
-reports.** Do not read this arc's confirmations as reviewed.
+**Attempt 1 failed; attempt 2 SUCCEEDED, 2 reviewers of 3. This section was itself wrong for
+several hours and is corrected here — see the note at the end, which is the most useful thing
+in it.**
 
-*Attempt 1.* One reviewer against frozen tag `paperA-arc6-review` (`9c2aa88`) with a full
-adversarial brief covering the whole arc. Asked five times, including "partial findings now beat
-complete findings later" and a final one-line-per-item request. Nothing returned.
+*Attempt 1 — failed.* One reviewer against frozen tag `paperA-arc6-review` (`9c2aa88`) with a
+brief covering the whole arc. Asked five times, including "partial findings now beat complete
+findings later". Nothing returned.
 
-*Attempt 2, after diagnosing attempt 1 as too broad a brief.* **Three** reviewers spawned in
-parallel, each deliberately narrow so each could finish inside ~25 tool calls, on separate
-concerns: the abstract tier's two FORMALIZED claims; the rank-two lane and the phase sign; the
-retractions plus documentation consistency. Each was given an early liveness check ("reply with
-ONE line now"), then a floor of three one-word answers, then a last call. Nothing returned from
-any of the three.
+*Attempt 2 — succeeded.* Diagnosing attempt 1 as too broad a brief, **three** reviewers were
+spawned in parallel, each narrowly scoped to finish inside ~25 tool calls: the abstract tier's
+two FORMALIZED claims; the rank-two lane and the phase sign; the retractions plus documentation
+consistency. **Two of the three delivered substantive reports; the rank-two reviewer went idle
+without reporting.** So the narrowing worked, and the fix was real rather than cosmetic. One
+reviewer also reported *why* its earlier attempts vanished: it had written them as plain text
+instead of calling `SendMessage`. That is a mechanism worth knowing — a subagent's prose is not
+delivered.
 
-**Conclusion: this is a tooling failure, not a scoping failure.** Narrowing the brief, running
-three in parallel, and lowering the bar to a single word all changed nothing, so the useful
-lesson is not "write shorter briefs" — it is that **this review channel cannot currently be
-relied on, and an arc must not be planned as though it can.** The next campaign should either
-verify the channel with a throwaway request *before* the work starts, or budget for
-review-by-a-second-session instead of by subagent.
+★★ **THE REVIEWS EARNED THEIR KEEP, AND CAUGHT THINGS SELF-REVIEW DID NOT.** Findings, all
+verified at source before applying:
 
-**What was done instead, and it is not equivalent.** I ran the reviewer's own playbook against
-my own work — the probes arc-5's review taught the project to run — and it caught a real defect
-plus verified the one failure mode that would have voided the arc's headline claims:
-
-| Probe | Result |
+| Finding | Disposition |
 | --- | --- |
-| Is `OrderUnitSpace.IsArchimedean` inhabited? | **PASS** — `HermitianMat n ℂ` satisfies it (`le_zero_of_forall_le_smul_one`). Had this failed, both new FORMALIZED claims would have been vacuous. |
-| Do the abstract results instantiate on a real product? | **PASS** — `sp_smul_left` and `spCone_of_isEffect` both apply on `H_N(ℂ)`; hypotheses jointly satisfiable. |
-| Inert-hypothesis test on `rhoChi_eq_smul_generator` | **FOUND A DEFECT** — `i ≠ j` is inert (`rhoField` is `0` on the diagonal). `rhoChi_eq_smul_generator_all` now states it unconditionally. Same class as `lem:adjacent` last arc. |
-| Is `n2FrameTwist_mul_diagonal` non-vacuous? | **PASS** — applies to `diag(i,1)`, proved unitary and proved ≠ `1`. |
-| `cfc_transpose`'s algebraic step on a concrete non-symmetric Hermitian matrix | **PASS** — for `[[1,i],[−i,1]]`: Hermitian, `A ≠ Aᵀ`, conjugation `=` transpose entrywise, `conjMatStarAlg A ≠ A`. |
-| Coverage count | **PASS** — 8/19/9 by enumerating all 36 table rows programmatically, not from prose. |
-| Diff-audit pass over the doc changes | **FOUND TWO DEFECTS** — the §3b `lem:homog` row still said clause (ii) was "concrete carrier only" after I proved it abstractly, and a sentence claiming the article's norm route "is not avoidable here" was falsified by `lem:cone-ext` landing norm-free. Both rewritten. |
+| **`cfc_transpose`'s BOTH hypotheses are inert** — outside its domain `cfc` is junk-valued at `0` and degrades on both sides together, since `spectrum ℝ Aᵀ = spectrum ℝ A`. The reviewer supplied a compiled hypothesis-free proof. | **ADOPTED.** `spectrum_transpose` + `cfc_transpose_unconditional` are in the tree; `transposeMap_cfc` is unconditional too. **Third inert hypothesis this arc**, and the first found by someone other than me. |
+| **`IsArchimedean` ⟺ the textbook ℕ-form** (Alfsen–Shultz / Paulsen–Tomforde), proved in both directions, unprompted. | **ADOPTED** as `OrderUnitSpace.arch_iff` (+ `IsArchNat`). This makes the "part of the definition, not a located hypothesis" defense of both FORMALIZED labels *machine-checked* instead of asserted. I would not have thought to ask for it. |
+| "The *statement* of `sp_smul_left` never mentions the norm" — **FALSE**: `hS2` unfolds to `ContinuousOn` in the carried norm topology. | **RETRACTED.** Never call `lem:homog`(ii) "norm-free". The label survives on a different argument (S2 *is* the article's norm-continuity axiom, and `ouNorm_le_norm` makes the topologies agree on the carrier). |
+| "`IsConeNorm` states the same requirement without the norm" — **FALSE**: strictly *weaker*, hence a *larger* admissible set, hence the independence clause is *stronger* than the article's. | **CORRECTED** in the docstring and the manifest row. |
+| "covers every EJA" — **not machine-checked**: there is no Jordan/EJA class anywhere in the tree. | **CORRECTED** to "every EJA instantiates it by standard mathematics this tree does not itself formalize". |
+| `mthm:master` listed under "no Lean counterpart" while the manifest rates it PARTIAL. | **RE-SCOPED** to the `master_chain` *declaration* — the same scope-loss the list corrects two bullets down. |
+| The ORDERS block still ordered "`lem:homog`(i) needs a positive-linear-extension construction: attempt it, bank on resistance", falsified by my own retraction. | **FIXED** at both sites. |
+| Three stale present-tense counts (`LEDGER` ×2, `THEOREM-MAP` ×1), one inside the SSOT block and one phrased as a standing rule. | **FIXED**; historical figures now dated. |
+| `thm:quaternionic` called "genuinely BLOCKED, not ABSENT" while row 32 forbids that vocabulary, and BLOCKED is a fourth term outside the taxonomy the count depends on. Also: the RCLike argument blocks the `Gen` **layer**, not the row. | **CORRECTED**; row stays PARTIAL, obstruction described in prose. |
+| `sp_coneNorm_smul`'s `IsConeNorm` hypothesis used only for `μ ≠ 0` — over-strong. | **WEAKENED** to `μ ≠ 0`. |
+
+Both reviewers independently **CONFIRMED** the two retractions (`lem:homomorphism` wrongly
+ABSENT; `lem:homog`(i) is `seqLeftMul`), that `multiParameter_eq_exp` is a genuine theorem with
+no located hypothesis, that `conjMatStarAlg` is a real ℝ-star-algebra hom, that the
+cos-even/sin-odd reasoning behind the banked `cor:selectors`(iii) assembly holds, that `spCone`'s
+`else 0` branch is unreachable, that the coverage count is 8/19/9 (counted independently), and
+that **both FORMALIZED labels stand**. One added a fact I did not have: the **real** lane also
+discharges the Jordan hypothesis from S2 (`thetaPreservesJordanR_of_S2`).
+
+★ **One nuance to preserve verbatim:** the tree contains **no `HasDerivAt`/`fderiv` statement
+about `Θ` or `χ` anywhere** — the `exp`-generator route bypasses differentiation entirely. The
+retracted sentence's *inference* was false, which is what mattered; but **never upgrade §3c to
+"Lean differentiates Θ"**.
+
+★★ **The lesson I got wrong, recorded because it is the most transferable thing here.** I wrote
+"the review channel failed on BOTH attempts … this is a tooling failure, not a scoping failure"
+— and then two reports arrived. **Both halves were wrong: attempt 2 worked, and the cause was
+scoping (plus one reviewer not calling `SendMessage`).** I declared a systemic failure from two
+data points while the second was still running, which is the same impatience that produces
+premature absence claims. **A silent channel is not a dead channel; "no report yet" is not "no
+report".** Wait, or say "not yet returned" — never "failed".
 
 **Lint sweep over the five files this arc touched.** One warning was mine and is fixed
 (`transpose_eq_conj_of_isHermitian` carried unused section variables; now `omit`ted). Two are
@@ -234,20 +260,29 @@ load-bearing (it is the sole bridge from ℚ-homogeneity to ℝ-homogeneity; del
 through with its stated hypotheses. **Do not read "inert test run" as "hypothesis proved
 necessary".**
 
-**Self-review is structurally weaker than cold review and the record must not blur them.**
-Every arc-5 finding that mattered came from someone who had not written the code: two of my
-claims were refuted by compiled counterexample, and one finding required checking the
-manuscript, which I had already misread. Nothing here substitutes for that. **The next arc
-should open by cold-reviewing this one** — specifically the two FORMALIZED claims
-(`lem:cone-ext`, and `lem:homog`(ii)'s article-generality argument), the `else 0` branch of
-`spCone`, and whether `cfc_transpose` is the lemma `cor:selectors`(iii) actually needs.
+**Self-review is structurally weaker than cold review, and this arc is the proof — in both
+directions.** Self-probing did real work: it caught `rhoChi_eq_smul_generator`'s inert
+hypothesis, two doc rows still asserting superseded claims, and the one failure mode that would
+have voided the FORMALIZED labels (`IsArchimedean` inhabited). But the reviewers produced two
+things it structurally could not: a **compiled refutation** of hypotheses I believed were
+load-bearing (`cfc_transpose`), and a **theorem I did not know to want** (`arch_iff`). An author
+does not probe the claims he is confident in.
 
-**Process note for the next arc:** a background reviewer that never reports is a silent
-failure that looks like work in progress. Asking for an interim report early is necessary but —
-as attempt 2 showed — **not sufficient**: the liveness checks went unanswered too. So the rule
-is stronger: **prove the channel with a trivial round-trip before the arc depends on it**, and
-if that round-trip fails, plan the arc with self-verification as the primary mechanism and say
-so up front, rather than discovering at close-out that the protocol cannot be met.
+**REVIEW DEBT CARRIED FORWARD — this is the actionable remainder.** The **rank-two lane was
+never reviewed**: its reviewer went idle without reporting, so `n2Readout_eq` (including the
+phase sign), `n2FrameTwist_mul_diagonal`, `n2FrameTwist_eq_of_base_eq`, and
+`abs_le_of_phase_near_one` carry **only my own probes**. I checked the sign three independent
+ways (crown probe `n2FrameTwist (twistProductOn t) U = t`; `basePt x = diag(e^{−x},1)`;
+log-ratio `−x`) and non-vacuity at `diag(i,1)`, but the `π/(3δ)` constant in
+`abs_le_of_phase_near_one` was derived once and never independently cross-checked. **The next
+arc should cold-review the rank-two block first.** The abstract tier and the retractions are
+reviewed and their findings applied; do not re-spend effort there.
+
+**Process note for the next arc, corrected by what actually happened.** A narrowly-scoped
+reviewer works; a whole-arc brief does not. And one reviewer's reports vanished because it
+wrote them as **plain text instead of calling `SendMessage`** — a subagent's prose is not
+delivered, so say so in the brief. Do ask for an early interim report, but **do not conclude
+failure from silence**: two of these reviewers were still working when I wrote them off.
 
 **Review protocol (binding).** Three isolated cold reviews: after 6.1(f), after 6.3, and
 at end of arc. Each reviewer reads the diffs at source and COMPILES probes
@@ -662,8 +697,10 @@ caveats, and the re-pin off `b7db3e8`.
 coverage, upstream, holistic skeptic; all reviewed frozen `ba317b8`; key claims
 re-verified at source by the orchestrator). Verdicts that bind this arc:
 
-- **"Fully formalized" is FALSE and must never appear in prose: 5 of 36
-  numbered results in main.tex FORMALIZED, 17 PARTIAL, 14 ABSENT.** What IS
+- **"Fully formalized" is FALSE and must never appear in prose.** ★ The counts in this
+  ARC-4-era bullet (5 / 17 / 14) are **STALE — current is 8 / 19 / 9**, see
+  `STATEMENT-MANIFEST.md`. The *rule* stands; the numbers do not. (Flagged by the ARC-6 cold
+  review: the rule is phrased so a reader grepping for it lands on stale figures.) What IS
   banked survived a hostile audit untouched: both flagship rows unconditional,
   Lean-core closure re-verified by the auditor's own scratch probes, zero live
   sorry, zero axiom declarations tree-wide.
@@ -966,8 +1003,10 @@ Tree: `lake build` green at 3106 jobs; `AxiomAudit.lean` PASS at 149 tracked mod
 {`propext`, `Classical.choice`, `Quot.sound`}. All commits LOCAL (repo is public;
 pushing is Bryan-gated).
 
-**Coverage of the paper, stated as a count so it is never overstated: 5 of the 36 numbered
-results are FORMALIZED at the article's own generality, 17 PARTIAL, 14 ABSENT.** Never
+**Coverage of the paper, stated as a count so it is never overstated** — ★ the figures in this
+ARC-4-era block (5 / 17 / 14) are **STALE; current is 8 / 19 / 9** per
+`STATEMENT-MANIFEST.md`, which is authoritative. Historical figures are retained for
+provenance only. Never
 write "fully formalized". Itemization: blog `research/paperA-supplementary-rewrite-draft.md`
 §3; per-statement evidence: `THEOREM-MAP.md`, which governs.
 

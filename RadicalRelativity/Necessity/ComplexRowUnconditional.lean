@@ -285,13 +285,55 @@ theorem cfc_transpose (f : ℝ → ℝ) {A : Matrix n n ℂ} (hA : IsSelfAdjoint
       exact (Matrix.isHermitian_transpose_iff A).mpr hherm)
   simpa using hmap
 
-/-- The `HermitianMat` form. -/
-theorem transposeMap_cfc (f : ℝ → ℝ) (A : HermitianMat n ℂ)
-    (hf : ContinuousOn f (spectrum ℝ A.mat)) :
+/-- Transposition does not move the real spectrum: `algebraMap r - Aᵀ` is the transpose of
+`algebraMap r - A`, and `det` is transpose-invariant. -/
+theorem spectrum_transpose (A : Matrix n n ℂ) :
+    spectrum ℝ A.transpose = spectrum ℝ A := by
+  have key : ∀ B : Matrix n n ℂ, ∀ r : ℝ,
+      IsUnit (algebraMap ℝ (Matrix n n ℂ) r - B) →
+      IsUnit (algebraMap ℝ (Matrix n n ℂ) r - B.transpose) := by
+    intro B r hu
+    rw [Matrix.isUnit_iff_isUnit_det] at hu ⊢
+    have hrw : (algebraMap ℝ (Matrix n n ℂ) r - B.transpose)
+        = (algebraMap ℝ (Matrix n n ℂ) r - B).transpose := by
+      simp [Matrix.transpose_sub, Matrix.algebraMap_eq_diagonal, Matrix.diagonal_transpose]
+    rw [hrw, Matrix.det_transpose]
+    exact hu
+  ext r
+  simp only [spectrum.mem_iff]
+  exact ⟨fun h hu => h (key _ r hu), fun h hu => h (by simpa using key _ r hu)⟩
+
+/-- **Transposition commutes with the real functional calculus, UNCONDITIONALLY.**
+
+Both hypotheses of `cfc_transpose` are **inert**, found by the ARC-6 cold review: outside its
+domain `cfc` is junk-valued at `0`, and it degrades on *both* sides together — if `f` is
+discontinuous on the spectrum then it is discontinuous on the transpose's spectrum too
+(`spectrum_transpose`), and if `A` is not self-adjoint neither is `Aᵀ`. So the identity holds
+for arbitrary `f` and arbitrary `A`.
+
+This is the **third** inert hypothesis caught in this arc, after `lem:adjacent` (arc-5) and
+`rhoChi_eq_smul_generator`; unlike those two it was found by an outside reviewer rather than by
+me, which is the case for cold review in one line. -/
+theorem cfc_transpose_unconditional (f : ℝ → ℝ) (A : Matrix n n ℂ) :
+    (cfc f A).transpose = cfc f A.transpose := by
+  by_cases hA : IsSelfAdjoint A
+  · by_cases hf : ContinuousOn f (spectrum ℝ A)
+    · exact cfc_transpose f hA hf
+    · rw [cfc_apply_of_not_continuousOn (f := f) A hf, Matrix.transpose_zero,
+        cfc_apply_of_not_continuousOn (f := f) A.transpose (by rwa [spectrum_transpose])]
+  · rw [cfc_apply_of_not_predicate (R := ℝ) A hA, Matrix.transpose_zero,
+      cfc_apply_of_not_predicate (R := ℝ) _ (by
+        rw [show IsSelfAdjoint A.transpose ↔ A.IsHermitian from
+          Matrix.isHermitian_transpose_iff A]
+        exact hA)]
+
+/-- The `HermitianMat` form, likewise unconditional — the continuity hypothesis it used to
+carry was inert for the same reason. -/
+theorem transposeMap_cfc (f : ℝ → ℝ) (A : HermitianMat n ℂ) :
     transposeMap (A.cfc f) = (transposeMap A).cfc f := by
   rw [HermitianMat.ext_iff]
   rw [transposeMap_mat, HermitianMat.mat_cfc, HermitianMat.mat_cfc, transposeMap_mat]
-  exact cfc_transpose f A.H hf
+  exact cfc_transpose_unconditional f A.mat
 
 end CfcTranspose
 

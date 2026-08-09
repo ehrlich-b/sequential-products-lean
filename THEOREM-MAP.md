@@ -616,11 +616,16 @@ machine-checked on the concrete carrier: `lem:twist-sufficiency` in §1.)
 
 **Statements with no Lean counterpart:**
 
-- **`mthm:master` itself.** `master_chain` audits the *composition* of the case
-  split over one abstract algebra; it constructs no concrete simple EJA, and does
-  not prove that a given algebra is of a particular coordinate type, that an
-  operation satisfies S1–S7, that `L_a = Q_{√a}Θ_a`, that `Θ_a = id`, or any
-  product equality. Its own docstring says so.
+- **The `master_chain` DECLARATION** (★ **re-scoped 2026-08-08 by the ARC-6 cold review; this
+  bullet used to say "`mthm:master` itself", which contradicted `STATEMENT-MANIFEST.md`'s row 1
+  rating it PARTIAL with the ℝ and ℂ rows proved outright).** `master_chain` audits the
+  *composition* of the case split over one abstract algebra; it constructs no concrete simple
+  EJA, and does not prove that a given algebra is of a particular coordinate type, that an
+  operation satisfies S1–S7, that `L_a = Q_{√a}Θ_a`, that `Θ_a = id`, or any product equality.
+  Its own docstring says so. What is absent is that *declaration's* reach — **not** the article
+  statement, whose ℝ and ℂ rows are machine-checked on the concrete carriers (§1). This is the
+  same scope-loss error this very list corrects two bullets down for
+  `lem:n2-descent`/`lem:n2-continuity`.
 - **Rank two: `lem:n2-bounded` and the assembled bijection `cor:qubit-classification`.**
   ★ `lem:n2-descent` and `lem:n2-continuity` were listed here and have been MOVED OUT
   (2026-08-08): this section's heading is "no Lean counterpart", and both have one —
@@ -628,7 +633,7 @@ machine-checked on the concrete carrier: `lem:twist-sufficiency` in §1.)
   as of the arc-5 cold review `lem:n2-descent`'s **frame-reversal clause is proved for an
   arbitrary product** (`Necessity.n2FrameTwist_reverse`). Leaving them here made this file —
   the one the manifest designates as governing — imply a count of 7/17/12 against the
-  manifest's 7/19/10. The manifest's rating is the correct one. (The lifting step of `prop:n2-necessity` was on
+  manifest's 7/19/10 *as those stood during arc-5* (the current count is **8/19/9**). The manifest's rating is the correct one. (The lifting step of `prop:n2-necessity` was on
   this list and has come off it — see the correction below.)
 
   ★★ **SUPERSEDED IN PART, 2026-08-08 (ARC-5 rung 5.3).** The entry below read: "the
