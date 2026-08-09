@@ -697,11 +697,20 @@ theorem sp_smul_left (harch : IsArchimedean V) (hS2 : P.FirstArgContinuous) {a b
 
 /-- `μ` is an admissible normalization for `v`: positive, and `v/μ` is an effect.
 
-The article's condition is `μ ≥ ‖v‖`, `μ > 0`; this is the same requirement stated without
-the norm, which is what the argument actually uses.  Stating it this way makes the row
-independent of whether the carrier's norm *is* the order-unit norm — the article gets
-`v ≤ μ𝟙` from `‖v‖ ≤ μ` "in an order unit space", and here the class's own order-unit
-boundedness supplies an admissible `μ` directly. -/
+The article's condition is `μ ≥ ‖v‖`, `μ > 0`.  This is **not** the same condition — it is
+strictly *weaker*, hence admits a strictly *larger* set of normalizations, which makes the
+independence clause below correspondingly **stronger** than the article's.  (Correction, ARC-6
+cold review: the docstring here previously said "the same requirement stated without the norm",
+which was wrong.  Concretely, with the carrier's norm not being the order-unit norm —
+`ouNorm_le_norm` / `norm_le_sqrt_card_mul_ouNorm` — `μ = 1` is admissible here for `v = 𝟙` in
+`H₂` while the article would demand `μ ≥ ‖𝟙‖ > 1`.)
+
+What it *is*: the condition the article's argument actually uses.  The article obtains
+`v ≤ μ𝟙` from `‖v‖ ≤ μ` "in an order unit space", i.e. it uses the norm only as a route to
+`v/μ` being an effect.  Asking for that directly makes the row independent of whether the
+carrier's norm is the order-unit norm, and the class's own order-unit boundedness then supplies
+an admissible `μ` outright (`exists_isConeNorm`).  Article-admissible `μ` are still admissible
+here, so the article's statement follows from this one. -/
 def IsConeNorm (v : V) (μ : ℝ) : Prop := 0 < μ ∧ IsEffect (μ⁻¹ • v)
 
 /-- Admissible normalizations exist for every positive-cone element — from order-unit
@@ -766,10 +775,10 @@ theorem isConeNorm_smul {v : V} {μ lam : ℝ} (h : IsConeNorm v μ) (hlam : 0 <
   rw [coneNorm_smul_rescale (ne_of_gt h.1) (ne_of_gt hlam)]
   exact h.2
 
-theorem sp_coneNorm_smul {v : V} {μ lam : ℝ} (h : IsConeNorm v μ) (hlam : 0 < lam)
+theorem sp_coneNorm_smul {v : V} {μ lam : ℝ} (hμ : μ ≠ 0) (hlam : 0 < lam)
     (b : V) :
     (lam * μ) • P.sp ((lam * μ)⁻¹ • (lam • v)) b = lam • (μ • P.sp (μ⁻¹ • v) b) := by
-  rw [coneNorm_smul_rescale (ne_of_gt h.1) (ne_of_gt hlam), smul_smul]
+  rw [coneNorm_smul_rescale hμ (ne_of_gt hlam), smul_smul]
 
 open Classical in
 /-- **The positive-cone extension, as a function.**  `spCone v b` is the article's
@@ -807,6 +816,6 @@ theorem spCone_smul (harch : IsArchimedean V) (hS2 : P.FirstArgContinuous)
   have hlamv : (0 : V) ≤ lam • v := smul_nonneg' (le_of_lt hlam) hv
   rw [spCone_eq P harch hS2 hlamv (isConeNorm_smul hμ hlam) hb,
     spCone_eq P harch hS2 hv hμ hb]
-  exact sp_coneNorm_smul P hμ hlam b
+  exact sp_coneNorm_smul P (ne_of_gt hμ.1) hlam b
 
 end SequentialProductOn

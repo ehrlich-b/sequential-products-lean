@@ -136,7 +136,7 @@ written.** Two verdicts:
   essentially verbatim, because it never used anything about matrices. Cost was three missing
   order lemmas (`sub_le_sub_right'`, `sub_le_sub_left'`, `le_of_sub_nonpos` — Mathlib's need
   ordered-group instances this class does not provide) and one Mathlib import.
-* **`lem:cone-ext` FORMALIZED, and norm-free** — `sp_coneNorm_indep` (independence of the
+* **`lem:cone-ext` FORMALIZED, with a norm-free admissibility condition** (the row still carries S2, which is a norm-topology hypothesis — ARC-6 review correction; do not call the row "norm-free") — `sp_coneNorm_indep` (independence of the
   normalization), `sp_coneNorm_smul` (positive homogeneity), `sp_coneNorm_eq_of_isEffect`
   (agreement on effects), `exists_isConeNorm` (existence). ★ **Better than the article's
   route**: the article's admissibility is `μ ≥ ‖v‖` and it derives `v ≤ μ𝟙` from that "in an

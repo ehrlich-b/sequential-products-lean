@@ -264,4 +264,48 @@ generality. -/
 def IsArchimedean (V : Type*) [OrderUnitSpace V] : Prop :=
   ∀ x : V, (∀ ε : ℝ, 0 < ε → x ≤ ε • ousUnit) → x ≤ 0
 
+/-- The textbook Archimedean order-unit condition in its `ℕ` form (Alfsen–Shultz,
+Paulsen–Tomforde): `n • x ≤ 𝟙` for every positive `n` forces `x ≤ 0`. -/
+def IsArchNat (V : Type*) [OrderUnitSpace V] : Prop :=
+  ∀ x : V, (∀ n : ℕ, 0 < n → (n : ℝ) • x ≤ (𝟙 : V)) → x ≤ 0
+
+theorem archNat_of_arch {V : Type*} [OrderUnitSpace V] (h : IsArchimedean V) :
+    IsArchNat V := by
+  intro x hx
+  refine h x ?_
+  intro ε hε
+  obtain ⟨n, hn⟩ := exists_nat_gt (1 / ε)
+  have hnpos : (0 : ℝ) < (n : ℝ) := lt_trans (by positivity) hn
+  have hn0 : 0 < n := by exact_mod_cast hnpos
+  have h2 := smul_nonneg_mono ((n : ℝ))⁻¹ (by positivity) (hx n hn0)
+  rw [smul_smul, inv_mul_cancel₀ (ne_of_gt hnpos), one_smul] at h2
+  have h3 : ((n : ℝ))⁻¹ ≤ ε := by
+    rw [div_lt_iff₀ hε] at hn
+    rw [inv_eq_one_div, div_le_iff₀ hnpos]
+    nlinarith
+  exact le_trans h2 (smul_le_smul_of_le_of_nonneg h3 ousUnit_nonneg)
+
+theorem arch_of_archNat {V : Type*} [OrderUnitSpace V] (h : IsArchNat V) :
+    IsArchimedean V := by
+  intro x hx
+  refine h x ?_
+  intro n hn0
+  have hnpos : (0 : ℝ) < (n : ℝ) := by exact_mod_cast hn0
+  have h2 := smul_nonneg_mono ((n : ℝ)) (le_of_lt hnpos) (hx ((n : ℝ))⁻¹ (by positivity))
+  rwa [smul_smul, mul_inv_cancel₀ (ne_of_gt hnpos), one_smul] at h2
+
+/-- **`IsArchimedean` is exactly the textbook notion — neither stronger nor weaker.**
+
+This matters for honesty, not for any proof: rows proved under `IsArchimedean` (abstract
+`lem:homog`(ii), `lem:cone-ext`) are claimed to be at the article's own generality on the
+grounds that the Archimedean property is *part of the definition* of the article's order unit
+space rather than a located stand-in for a cited result. That defense is only as good as the
+claim that this `Prop` is the standard condition — so here it is, machine-checked in both
+directions against the `ℕ` form.
+
+Contributed by the ARC-6 cold reviewer, which proved the equivalence unprompted; it is the
+kind of check self-review does not generate, because the author already believes the claim. -/
+theorem arch_iff {V : Type*} [OrderUnitSpace V] : IsArchimedean V ↔ IsArchNat V :=
+  ⟨archNat_of_arch, arch_of_archNat⟩
+
 end OrderUnitSpace

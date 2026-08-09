@@ -106,14 +106,32 @@ the remainder is exactly the Givens decomposition.
 *nothing* about the carrier beyond the order-unit structure — no Jordan product, no norm, no
 matrices. So the abstract statement subsumes the article's.
 
-★ **The precise scope, stated so it cannot drift** (this is the correction arc-5's cold review
-forced on `lem:span`, applied here pre-emptively): the `OrderUnitSpace` *class* extends
-`NormedAddCommGroup`, so this is not a statement about every mathematician's order unit space —
-those carry no norm. It is a statement about every instance of this interface, and the norm
-plays no role in either the statement or the proof of `sp_smul_left`. What matters for the row
-is that **every EJA instantiates the interface**, which is the article's ambient, so nothing
-the article claims is left uncovered. Say "at the generality of this tree's order-unit
-interface, which covers every EJA" — never "at full order-unit-space generality". The one
+★ **The precise scope, twice corrected — read this before restating the claim.**
+
+The `OrderUnitSpace` *class* extends `NormedAddCommGroup`, so this is not a statement about
+every mathematician's order unit space; those carry no norm. It is a statement about every
+instance of this interface. (That much is arc-5's correction to `lem:span`, applied here.)
+
+★★ **The ARC-6 cold review then refuted my own gloss on it.** I had written that "the norm
+plays no role in either the statement or the proof of `sp_smul_left`". **The proof, yes; the
+statement, no.** The hypothesis `hS2 : P.FirstArgContinuous` unfolds to `ContinuousOn` in the
+carrier's norm topology (`SequentialProduct.lean`, and its own docstring says "in the carrier's
+norm topology"), so the statement does depend on the norm. **Never call `lem:homog`(ii)
+"norm-free".** The FORMALIZED label survives on a *different* argument, which is the one to
+quote: the article's S2 is itself a norm-continuity axiom, and on the instantiated carrier
+`ouNorm_le_norm` / `norm_le_sqrt_card_mul_ouNorm` (`Hermitian/OrderUnit.lean`) make the two
+topologies agree — so the hypothesis Lean carries is the article's own hypothesis there.
+Abstractly the two notions are incomparable, which is harmless for covering the article but
+must not be smoothed over.
+
+★★ **Second refutation, same review: "covers every EJA" is not machine-checked.** There is **no
+Jordan or EJA class anywhere in this tree** (`grep -rl "EuclideanJordan\|JordanAlgebra"
+RadicalRelativity/` → zero files). The EJA ⟹ order-unit-space bridge is standard mathematics,
+but it is *not* verified here, so "covers every EJA" is a mathematical claim resting on
+unformalized background, not a Lean fact. The in-tree instances are `HermitianMat`,
+`SpinFactor`, `QuatCarrier`, and the direct-sum construction. Say: "at the generality of this
+tree's order-unit interface; every EJA instantiates it by standard mathematics that this tree
+does not itself formalize." Never "at full order-unit-space generality". The one
 hypothesis added, `IsArchimedean`, is part of the *definition* of the article's order unit
 space (the class's `archimedean` field is order-unit boundedness only — the long-standing
 caveat 1), not a located stand-in for a cited result. Note also that the article merely
@@ -761,7 +779,12 @@ article's norm route is avoidable there and here it is not" — is FALSE and is 
 (2026-08-08).** The norm route turned out avoidable for `lem:cone-ext` too: its admissibility
 condition `μ ≥ ‖v‖` can be replaced by "`v/μ` is an effect", which is what the argument uses,
 and order-unit boundedness then supplies an admissible `μ`. `lem:homog`(ii)'s ladder is
-likewise norm-free; the only topology it touches is the article's own S2.
+**not** norm-free — corrected by the ARC-6 cold review: its
+`hS2` hypothesis *is* a norm-topology condition (`ContinuousOn`), so only the *proof* avoids
+the norm, not the statement. The same qualification applies to `lem:cone-ext`: what is
+norm-free there is the **admissibility condition** `IsConeNorm` (where the article uses
+`μ ≥ ‖v‖`), not the row as a whole, which also carries S2. Say "norm-free admissibility
+condition", never "norm-free row".
 
 ## 3c. `lem:homomorphism` — repriced from ABSENT, and the missing clause proved (2026-08-08, ARC-6 rungs 6.0/6.2)
 
