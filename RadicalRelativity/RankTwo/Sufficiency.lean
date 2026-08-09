@@ -1351,4 +1351,108 @@ theorem not_forall_effects_tau_eq_twistSeq (s : ℝ) :
   obtain ⟨p, q, hpq⟩ := tauModuliRP2_nonconstant
   exact not_forall_effects_eq_twistSeq tauModuliRP2 hpq s
 
+/-! ### The totality obstruction: "onto the products" is FALSE, not unwritten
+
+★★★ New 2026-08-09 (ARC-8 checkpoint 2, from a cold reviewer, and it corrects a claim I had made).
+Row 35's residue was recorded as "the onto half at **singular effects** — and that is the whole
+residue", with the implication that one writable limiting argument stands between the tree and the
+article's bijection.  **That is wrong, and the tree already contained the refutation.**
+
+`Necessity.badP t` is a genuine S1–S7 product with S2 (`Necessity.badP_S2`) that equals the twist
+product **on effects** and is `0` off them — it exists precisely because every axiom of
+`SequentialProductOn` is `IsEffect`-guarded.  So it has the *same* element of `C(ℝP², ℝ)` as
+`n2SequentialProduct (const t)` and a *different* `.sp`.  Hence `product ↦ moduli` is **not
+injective on `SequentialProductOn` values**, and no bijection onto the products-as-`.sp`-functions
+can exist.
+
+★ **The honest target is therefore products up to agreement on effects**, which is what the article
+means and what the axioms can see.  ★★ And the lesson is one already on this project's record:
+**a totalizing phrase inside a residual claim is where the error lives.**  "…and that is the whole
+residue" was the false part of that sentence, exactly as it was the last time. -/
+
+/-- `badP t`'s frame parameter is the constant `t` at every frame. -/
+theorem badP_frameTwist (t : ℝ) (U : Matrix.unitaryGroup (Fin 2) ℂ) :
+    Necessity.n2FrameTwist (Necessity.badP t) (Necessity.badP_S2 t) U = t := by
+  refine (Necessity.n2FrameTwist_unique_param (Necessity.badP t) (Necessity.badP_S2 t) U).unique
+    (fun r hr b hb => Necessity.n2_sp_eq_twistSeq_frame _ _ U hr rfl hb) ?_
+  intro r hr b hb
+  have ha : IsEffect (Necessity.adU (U : Matrix (Fin 2) (Fin 2) ℂ) (Necessity.diagFamily r)) :=
+    Necessity.adU_isEffect (Necessity.unitaryGroup_conjTranspose_mul U)
+      (Necessity.unitaryGroup_mul_conjTranspose U) (Necessity.diagFamily_isEffect hr)
+  rw [Necessity.badP_sp, Necessity.badSp_eq ha hb, Necessity.twistProductOn_sp]
+
+/-- **Two distinct products with the same moduli function.** -/
+theorem moduli_collide (t : ℝ) :
+    n2QubitModuli (Necessity.badP t) (Necessity.badP_S2 t)
+      = n2QubitModuli (n2SequentialProduct (ContinuousMap.const RP2 t))
+        (n2SequentialProduct_firstArgContinuous _) := by
+  rw [n2QubitModuli_n2SequentialProduct]
+  ext p
+  obtain ⟨U, hU⟩ := surjective_frameRP2 p
+  rw [← hU, n2QubitModuli_apply, badP_frameTwist]
+  rfl
+
+theorem not_isEffect_two_smul_one : ¬ IsEffect ((2 : ℝ) • (1 : HermitianMat (Fin 2) ℂ)) := by
+  intro h
+  have h0 : (0 : HermitianMat (Fin 2) ℂ) ≤ 1 - (2 : ℝ) • (1 : HermitianMat (Fin 2) ℂ) :=
+    sub_nonneg.mpr (le_of_le_of_eq h.2 HermitianMat.ousUnit_eq_one)
+  have hd : (0 : ℂ) ≤ (1 - (2 : ℝ) • (1 : HermitianMat (Fin 2) ℂ)).mat 0 0 :=
+    Matrix.PosSemidef.diag_nonneg (HermitianMat.zero_le_iff.mp h0)
+  have hval : (1 - (2 : ℝ) • (1 : HermitianMat (Fin 2) ℂ)).mat 0 0 = (-1 : ℂ) := by
+    rw [HermitianMat.mat_sub, HermitianMat.mat_smul, HermitianMat.mat_one,
+      Matrix.sub_apply, Matrix.smul_apply, Matrix.one_apply_eq]
+    norm_num
+  rw [hval] at hd
+  have := (Complex.le_def.mp hd).1
+  norm_num at this
+
+/-- The two products differ at a **non-effect** first argument, where the axioms say nothing. -/
+theorem badP_sp_differs (t : ℝ) :
+    (Necessity.badP t).sp ((2 : ℝ) • (1 : HermitianMat (Fin 2) ℂ)) 1
+      ≠ (n2SequentialProduct (ContinuousMap.const RP2 t)).sp
+          ((2 : ℝ) • (1 : HermitianMat (Fin 2) ℂ)) 1 := by
+  rw [Necessity.badP_sp, Necessity.badSp_eq_zero (fun h => not_isEffect_two_smul_one h.1)]
+  show (0 : HermitianMat (Fin 2) ℂ) ≠ n2Sp _ _ _
+  rw [n2Sp_smul_one_left _ (by norm_num : (0 : ℝ) ≤ 2)]
+  intro hcon
+  have h00 : (0 : HermitianMat (Fin 2) ℂ).mat 0 0
+      = ((2 : ℝ) • (1 : HermitianMat (Fin 2) ℂ)).mat 0 0 := by rw [hcon]
+  rw [HermitianMat.mat_zero, HermitianMat.mat_smul, HermitianMat.mat_one,
+    Matrix.zero_apply, Matrix.smul_apply, Matrix.one_apply_eq] at h00
+  norm_num at h00
+
+/-- ★★★ **The article's "bijection ONTO the norm-continuous products" is FALSE for this encoding of
+"product".**  `badP t` is an S1–S7 + S2 product on `H_2(ℂ)` that is `n2SequentialProduct t'` for no
+`t'` whatsoever.  So row 35's target must be *products up to agreement on effects*, and the residue
+recorded as "singular effects only" was incomplete. -/
+theorem not_exists_moduli_of_badP (t : ℝ) :
+    ¬ ∃ t' : C(RP2, ℝ), (Necessity.badP t).sp = (n2SequentialProduct t').sp := by
+  rintro ⟨t', h⟩
+  have ht' : t' = ContinuousMap.const RP2 t := by
+    ext p
+    obtain ⟨U, hU⟩ := surjective_frameRP2 p
+    have huniq :=
+      (Necessity.n2FrameTwist_unique_param (Necessity.badP t) (Necessity.badP_S2 t) U).unique
+        (fun r hr b hb => Necessity.n2_sp_eq_twistSeq_frame (Necessity.badP t)
+          (Necessity.badP_S2 t) U hr rfl hb)
+        (fun r _ b _ => by rw [h]; exact n2Sp_eq_twistSeq_at_frame t' U r b)
+    rw [badP_frameTwist] at huniq
+    rw [← hU]
+    exact huniq.symm
+  rw [ht'] at h
+  exact badP_sp_differs t (congrFun (congrFun h _) _)
+
+/-- **The `n2Sp` bridge a reviewer found missing**: `sp_eq_twistSeq_n2QubitModuli` equates `P.sp`
+with the CONSTANT-parameter `twistSeq`, not with `n2Sp`.  This is the two-line statement that the two
+*products* agree at every spectral first argument, which is what row 35's positive-definite half
+actually asserts. -/
+theorem sp_eq_n2Sp_of_moduli (P : SequentialProductOn (HermitianMat (Fin 2) ℂ))
+    (hS2 : P.FirstArgContinuous) (U : Matrix.unitaryGroup (Fin 2) ℂ) {r : Fin 2 → ℝ}
+    (hr : ∀ i, r i ≤ 0) {b : HermitianMat (Fin 2) ℂ} (hb : IsEffect b) :
+    P.sp (Necessity.adU (U : Matrix (Fin 2) (Fin 2) ℂ) (Necessity.diagFamily r)) b
+      = n2Sp (n2QubitModuli P hS2)
+        (Necessity.adU (U : Matrix (Fin 2) (Fin 2) ℂ) (Necessity.diagFamily r)) b := by
+  rw [n2Sp_eq_twistSeq_at_frame]
+  exact sp_eq_twistSeq_n2QubitModuli P hS2 U hr hb
+
 end RankTwo
