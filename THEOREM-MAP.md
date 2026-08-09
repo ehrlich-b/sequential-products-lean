@@ -802,6 +802,12 @@ their hypotheses are simultaneously satisfiable. FOUND: **`rhoChi_eq_smul_genera
 vanish. `rhoChi_eq_smul_generator_all` now states the identity unconditionally. Same defect
 class as `lem:adjacent` last arc; caught here before a reviewer had to.
 
+ALSO PASSED — **`n2FrameTwist_mul_diagonal` is non-vacuous**: it applies to
+`diag(i, 1) ∈ U(2)`, which is proved unitary and proved *not* the identity, so the theorem
+asserts something about a real diagonal-phase change rather than being trivially about `1`.
+(A vacuous fibre theorem would have left the `U(2) → S²` gap open while looking closed — the
+precise failure the arc-5 review taught us to probe for.)
+
 Where the article spans the hyperplane `{rᵢ = rⱼ}` by differences of coalesced orthant
 vectors, Lean takes the vanishing directly from the differentiated coalescence
 (`dChi_kills_corner` / `rhoField_dChi_coalesced`) and then factors a linear functional that
