@@ -3,10 +3,21 @@ WALL CERTIFICATE — `prop:n2-sufficiency`  (row 30)  and  `cor:qubit-classifica
 Date: 2026-08-09, ARC-7 block 7.5.  Tag `paperA-arc7-cp1`.  Pin: main.tex blob 205fdf5a.
 Row status on this date: 30 = ABSENT, 35 = ABSENT.
 
-★★★ SUPERSEDED IN PART, 2026-08-09 (ARC-8 block 8.1(b) + checkpoint 1).  ROW 30 IS NO LONGER ABSENT:
-its ALGEBRAIC CORE IS IN THE TREE — `RankTwo.n2SequentialProduct` /
-`RankTwo.exists_sequentialProduct_of_continuous_moduli` in `RadicalRelativity/RankTwo/Sufficiency.lean`,
-for an arbitrary `t : C(RP2, R)`, with only S2 open.  Row 35 is still ABSENT.
+★★★ SUPERSEDED, 2026-08-09 (ARC-8 block 8.1(b), second pass).  ROW 30 IS FORMALIZED.  The gap
+statement below is now PROVED, not `sorry`-ed, with `RankTwo.n2SequentialProduct` and
+`RankTwo.n2SequentialProduct_firstArgContinuous` in `RadicalRelativity/RankTwo/Sufficiency.lean`,
+for an arbitrary `t : C(RP2, R)` — including the S2 conjunct, i.e. the word "norm-continuous" in the
+article's statement.  Row 35 is still ABSENT.
+  ★★ AND THIS FILE'S CENTRAL PREDICTION ABOUT S2 WAS WRONG IN THE USEFUL DIRECTION.  It said S2
+  "needs the deviation to vanish fast enough at the scalars, which is a genuine estimate rather than
+  plumbing".  There is a genuine analytic input, but it is JOINT continuity of the twist product in
+  (parameter, matrix) — and the near-the-scalars comparison the file predicted is NOT NEEDED AT ALL,
+  because at a scalar the product does not depend on the parameter (`twistSeq_smul_one_left`), so
+  joint continuity plus compactness of `[-K,K] x effects` (Heine-Cantor) already gives a modulus of
+  continuity in the matrix that is uniform in the parameter.  THE PARAMETER NEVER HAS TO CONVERGE.
+  ★ So the same scalar lemma that made the algebra free made the analysis free.  A certificate that
+  correctly identifies WHICH clause is hard can still be wrong about WHY it is hard, and the "why" is
+  what a reader uses to price it.
 
 ★★★ AND THE MORE USEFUL FINDING, FROM THE CHECKPOINT-1 COLD REVIEW: THE GAP THIS CERTIFICATE NAMED
 AS LOAD-BEARING IS NOT ON ROW 30'S PATH.  This file told the reader to attack
@@ -137,6 +148,7 @@ NOT imported from RadicalRelativity/.
 -/
 import RadicalRelativity.Necessity.FrameConstancy
 import RadicalRelativity.RankTwo.Bloch
+import RadicalRelativity.RankTwo.Sufficiency
 
 set_option linter.style.longLine false
 
@@ -262,8 +274,9 @@ theorem exists_sequentialProduct_of_continuous_moduli (t : C(RankTwo.RP2, ℝ)) 
           = HermitianMat.twistSeq (t (RankTwo.blochFrame (Projectivization.mk ℂ
               (WithLp.toLp 2 (fun i => (U : Matrix (Fin 2) (Fin 2) ℂ) i 0))
               (col_ne_zero U))))
-            (Necessity.adU (U : Matrix (Fin 2) (Fin 2) ℂ) (Necessity.diagFamily r)) b := by
-  sorry
+            (Necessity.adU (U : Matrix (Fin 2) (Fin 2) ℂ) (Necessity.diagFamily r)) b :=
+  ⟨RankTwo.n2SequentialProduct t, RankTwo.n2SequentialProduct_firstArgContinuous t,
+    fun U r b _ _ => RankTwo.n2Sp_eq_twistSeq_at_frame t U r b⟩
 
 /-! ### `cor:qubit-classification` (row 35): the bijection
 

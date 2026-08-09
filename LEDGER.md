@@ -234,6 +234,33 @@ honest description. ★★ **The row's own statement is untouched** — `thm:qua
 honest residue. Mechanical note for the next attempt: `QuatQuadRep.lean` was a leaf that did not
 reach `Hermitian/Sequential.lean`; that import was added.
 
+**Block 8.1(b), second pass — S2 LANDED. ROW 30 IS FORMALIZED (10 → 11).** Its wall certificate's
+`sorry` is discharged; that file is down to row 35's gap alone. Row 31's clause (ii) is complete in
+the same stroke, since `tauModuliRP2` is one such `t`.
+
+★★★ **The certificate's prediction about WHY S2 is hard was wrong, in the useful direction.** It
+said S2 "needs the deviation to vanish fast enough at the scalars, which is a genuine estimate
+rather than plumbing". There *is* one genuine analytic input — **joint** continuity of the twist
+product in (parameter, matrix), via the vendored `continuous_cfc_joint` plus joint continuity of
+`√x·cos(s·log x)` where the squeeze at `x = 0` is uniform in `s`. But the predicted
+near-the-scalars comparison is **not needed at all**: at a scalar the product does not depend on
+the parameter, so the function is *constant in the parameter* there, and joint continuity plus
+compactness of `[-K,K] × effects` (Heine–Cantor) gives a modulus of continuity in the matrix that
+is **uniform in the parameter**. **The parameter never has to converge.** No global-phase
+factorization appears anywhere. ★ **The same scalar lemma that made the algebra free made the
+analysis free** — which is a hint worth generalizing: when a construction's difficulty is localized
+at a degeneracy, check first whether the *object* degenerates there too.
+★ **Transferable:** a certificate can correctly identify WHICH clause is hard and still be wrong
+about WHY, and the "why" is what a reader prices from.
+
+★★★ **AND LEDGER RULE 7 FIRED AGAIN — second instance on this project.** The S2 assembly failed
+with a `whnf` heartbeat timeout. Raising `maxHeartbeats` as a *diagnostic* turned it into a real
+error message: `ContinuousWithinAt.comp` had solved the higher-order unification
+`f x ≡ (n2Tau t a₀, a₀)` by guessing `f := Prod.mk (n2Tau t a₀)` — **arguments in the wrong slots,
+not slowness.** Pinning `f` explicitly made it compile with the bump REMOVED. Had I simply raised
+the limit and moved on, I would have banked a false explanation *and* left the guess in place.
+**Use a heartbeat bump to read the error, never to keep it.**
+
 ### CHECKPOINT 1 (tag `paperA-arc8-cp1`, two cold reviewers, one concern each)
 
 Both verified the build independently (0 errors over full output, Census PASS, no `sorryAx`), and

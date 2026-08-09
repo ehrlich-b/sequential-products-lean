@@ -5,6 +5,7 @@ Authors: Bryan Ehrlich
 -/
 import RadicalRelativity.RankTwo.Bloch
 import RadicalRelativity.Necessity.FrameConstancy
+import RadicalRelativity.Hermitian.CfcSqrtContinuous
 
 set_option linter.style.longLine false
 
@@ -45,10 +46,15 @@ its constant-parameter counterpart in `Hermitian/Sequential.lean`.
 * `n2Tau`, `n2Sp`, `n2SequentialProduct` — the parameter, the product, and the
   `SequentialProductOn` structure.
 
-**What is NOT here:** S2 (`FirstArgContinuous`) for this product.  The parameter map `a ↦ t_a`
-is discontinuous at the scalars, and the article's argument that the *product* is nonetheless
-continuous there is a genuine estimate rather than plumbing; it is not attempted in this file.
-So this file supplies `prop:n2-sufficiency`'s S1, S3–S7 and leaves its S2 open.
+**S2 is here too** (`n2SequentialProduct_firstArgContinuous`), so this file supplies the whole of
+`prop:n2-sufficiency`.  ★ An earlier version of this docstring said S2 was left open because "the
+article's argument that the product is nonetheless continuous there is a genuine estimate rather
+than plumbing".  There *is* a genuine analytic input — joint continuity in (parameter, matrix) — but
+the predicted near-the-scalars comparison is **not needed**: at a scalar the product does not depend
+on the parameter, so it is *constant in the parameter* there, and joint continuity plus compactness
+of `[-K,K] × effects` gives a modulus of continuity in the matrix that is uniform in the parameter.
+**The parameter never has to converge**, and the scalar lemma that made the algebra free makes the
+analysis free.
 -/
 
 noncomputable section
@@ -700,19 +706,6 @@ theorem n2Sp_eq_twistSeq_at_frame (t : C(RP2, ℝ)) (U : Matrix.unitaryGroup (Fi
       HermitianMat.twistSeq_smul_one_left (Real.exp_nonneg _)]
   · rw [n2Sp, n2Tau_adU_diagFamily t U hr]
 
-/-- **`prop:n2-sufficiency`, algebraic core, in the article's existential form.**  Every
-continuous `t : ℝP² → ℝ` is realized by an S1, S3–S7 sequential product on `H_2(ℂ)` whose
-value at each spectral effect is the twist product at that effect's frame parameter.
-
-★ S2 is NOT part of this statement; see the module docstring. -/
-theorem exists_sequentialProduct_of_continuous_moduli (t : C(RP2, ℝ)) :
-    ∃ P : SequentialProductOn (HermitianMat (Fin 2) ℂ),
-      ∀ (U : Matrix.unitaryGroup (Fin 2) ℂ) (r : Fin 2 → ℝ) (b : HermitianMat (Fin 2) ℂ),
-        P.sp (Necessity.adU (U : Matrix (Fin 2) (Fin 2) ℂ) (Necessity.diagFamily r)) b
-          = HermitianMat.twistSeq (t (blochFrame (colFrame U)))
-            (Necessity.adU (U : Matrix (Fin 2) (Fin 2) ℂ) (Necessity.diagFamily r)) b :=
-  ⟨n2SequentialProduct t, fun U r b => n2Sp_eq_twistSeq_at_frame t U r b⟩
-
 /-! ### Non-collapse: the frame-dependent product is not a constant twist
 
 ★★★ New 2026-08-09 (ARC-8 checkpoint 1), and it exists because a cold reviewer named its absence as
@@ -852,5 +845,222 @@ theorem exists_n2Sp_tau_ne_twistSeq (s : ℝ) :
       n2Sp tauModuliRP2 a b ≠ HermitianMat.twistSeq s a b := by
   obtain ⟨p, q, hpq⟩ := tauModuliRP2_nonconstant
   exact exists_n2Sp_ne_twistSeq_of_nonconstant tauModuliRP2 hpq s
+
+/-! ### S2 for the frame-dependent product
+
+★★★ New 2026-08-09 (ARC-8 block 8.1(b), second pass).  The module docstring above said S2 was "a
+genuine estimate rather than plumbing" and did not attempt it.  That judgement was **half right**:
+there is one genuine analytic input, but it is *joint* continuity of the twist product in
+`(parameter, matrix)`, not the delicate near-the-scalars comparison the certificate predicted.
+
+★ **Why the predicted estimate is not needed.**  The certificate's picture was: near a scalar the
+parameter jumps, so one must show `twistSeq s a b` converges to `√a·b·√a` uniformly in `s` by
+factoring out a global phase `e^{is log c}` and bounding the residual by the closing spectral gap.
+The cheap route instead observes that **at a scalar the product does not depend on the parameter at
+all** (`twistSeq_smul_one_left`), so `G(s, a₀)` is *constant in `s`*; then joint continuity plus
+compactness of `[-K,K] × effects` (Heine–Cantor) gives a modulus of continuity in `a` that is
+uniform in `s`, and that is exactly what the jump needs.  **The parameter never has to converge.**
+So the scalar lemma that made the algebra free makes the analysis free too, and no global-phase
+factorization appears anywhere.
+
+★ `K` exists because `ℝP²` is compact and `t` is continuous, so the parameter is *bounded* — the
+same compactness that makes the moduli object `C(ℝP², ℝ)` well behaved. -/
+
+theorem continuous_blochHerm : Continuous blochHerm := by
+  have hmat : ∀ p q : Fin 2, Continuous fun a : HermitianMat (Fin 2) ℂ => a p q :=
+    fun p q => (continuous_apply q).comp
+      ((continuous_apply p).comp HermitianMat.continuous_mat)
+  have hre : ∀ p q : Fin 2, Continuous fun a : HermitianMat (Fin 2) ℂ => (a p q).re :=
+    fun p q => Complex.continuous_re.comp (hmat p q)
+  have him : ∀ p q : Fin 2, Continuous fun a : HermitianMat (Fin 2) ℂ => (a p q).im :=
+    fun p q => Complex.continuous_im.comp (hmat p q)
+  apply (PiLp.continuous_toLp 2 (fun _ : Fin 3 => ℝ)).comp
+  apply continuous_pi
+  intro i
+  fin_cases i <;> simp [blochHerm]
+  · exact continuous_const.mul (hre 0 1)
+  · exact (continuous_const.mul (him 0 1)).neg
+  · exact (hre 0 0).sub (hre 1 1)
+
+theorem isOpen_blochHerm_ne_zero :
+    IsOpen {a : HermitianMat (Fin 2) ℂ | blochHerm a ≠ 0} :=
+  isOpen_compl_iff.mpr (isClosed_singleton.preimage continuous_blochHerm)
+
+/-- **The parameter is continuous away from the scalars.** -/
+theorem continuousOn_n2Tau (t : C(RP2, ℝ)) :
+    ContinuousOn (n2Tau t) {a : HermitianMat (Fin 2) ℂ | blochHerm a ≠ 0} := by
+  rw [continuousOn_iff_continuous_restrict]
+  have hres : (Set.restrict {a : HermitianMat (Fin 2) ℂ | blochHerm a ≠ 0} (n2Tau t))
+      = fun a => t (Projectivization.mk' ℝ ⟨blochHerm a.val, a.property⟩) := by
+    funext a
+    exact n2Tau_of_ne_zero t a.property
+  rw [hres]
+  exact t.continuous.comp (Projectivization.continuous_mk'.comp
+    ((continuous_blochHerm.comp continuous_subtype_val).subtype_mk _))
+
+/-- **The parameter is bounded**, because `ℝP²` is compact. -/
+theorem exists_n2Tau_bound (t : C(RP2, ℝ)) :
+    ∃ K : ℝ, 0 ≤ K ∧ ∀ a : HermitianMat (Fin 2) ℂ, |n2Tau t a| ≤ K := by
+  obtain ⟨K, hK⟩ := (isCompact_univ (X := RP2)).exists_bound_of_continuousOn
+    t.continuous.continuousOn
+  refine ⟨max K 0, le_max_right _ _, fun a => ?_⟩
+  by_cases h : blochHerm a = 0
+  · rw [n2Tau_of_eq_zero t h]
+    simpa using le_max_right K 0
+  · rw [n2Tau_of_ne_zero t h]
+    exact le_trans (by simpa using hK _ (Set.mem_univ _)) (le_max_left _ _)
+
+/-- Joint continuity of `(s, x) ↦ √x · c(s · log x)` for bounded continuous `c`.  At `x = 0` the
+squeeze `|√x·c| ≤ √x` is **uniform in `s`**, which is exactly why the parameter is allowed to jump
+there. -/
+theorem continuous_sqrt_mul_bounded_joint {c : ℝ → ℝ} (hc : Continuous c)
+    (hbd : ∀ y, |c y| ≤ 1) :
+    Continuous (fun p : ℝ × ℝ => Real.sqrt p.2 * c (p.1 * Real.log p.2)) := by
+  rw [continuous_iff_continuousAt]
+  rintro ⟨s₀, x₀⟩
+  rcases eq_or_ne x₀ 0 with rfl | hx₀
+  · have h0 : (fun p : ℝ × ℝ => Real.sqrt p.2 * c (p.1 * Real.log p.2)) (s₀, 0) = 0 := by simp
+    unfold ContinuousAt
+    rw [h0]
+    have hten : Filter.Tendsto (fun p : ℝ × ℝ => Real.sqrt p.2)
+        (nhds ((s₀, 0) : ℝ × ℝ)) (nhds 0) := by
+      have hca : Filter.Tendsto (fun p : ℝ × ℝ => Real.sqrt p.2) (nhds ((s₀, 0) : ℝ × ℝ))
+          (nhds (Real.sqrt ((s₀, 0) : ℝ × ℝ).2)) :=
+        Real.continuous_sqrt.continuousAt.comp' continuousAt_snd
+      simpa using hca
+    refine squeeze_zero_norm (fun p => ?_) hten
+    rw [Real.norm_eq_abs, abs_mul, abs_of_nonneg (Real.sqrt_nonneg p.2)]
+    exact mul_le_of_le_one_right (Real.sqrt_nonneg p.2) (hbd _)
+  · have hsq : ContinuousAt (fun p : ℝ × ℝ => Real.sqrt p.2) ((s₀, x₀) : ℝ × ℝ) :=
+      Real.continuous_sqrt.continuousAt.comp' continuousAt_snd
+    have hlog : ContinuousAt (fun p : ℝ × ℝ => Real.log p.2) ((s₀, x₀) : ℝ × ℝ) :=
+      continuousAt_snd.log hx₀
+    have hcc : ContinuousAt (fun p : ℝ × ℝ => c (p.1 * Real.log p.2)) ((s₀, x₀) : ℝ × ℝ) :=
+      hc.continuousAt.comp' (continuousAt_fst.mul hlog)
+    exact hsq.mul hcc
+
+/-- Conjugation is continuous in the conjugating matrix. -/
+theorem continuous_conj_matrix (b : HermitianMat (Fin 2) ℂ) :
+    Continuous (fun M : Matrix (Fin 2) (Fin 2) ℂ => b.conj M) := by
+  have hmat : Continuous fun M : Matrix (Fin 2) (Fin 2) ℂ => (b.conj M).mat := by
+    simp only [HermitianMat.conj_apply_mat]
+    have h2 : Continuous fun M : Matrix (Fin 2) (Fin 2) ℂ => Mᴴ := by
+      simp only [← Matrix.star_eq_conjTranspose]; exact continuous_star
+    exact (continuous_id.matrix_mul continuous_const).matrix_mul h2
+  exact hmat.subtype_mk _
+
+/-- **Joint continuity of the twist factor in `(parameter, matrix)`, over the effects.**  This is
+the one genuine analytic input S2 needs. -/
+theorem continuousOn_twistFactor_joint :
+    ContinuousOn (fun p : ℝ × HermitianMat (Fin 2) ℂ => HermitianMat.twistFactor p.2 p.1)
+      (Set.univ ×ˢ {a : HermitianMat (Fin 2) ℂ | OrderUnitSpace.IsEffect a}) := by
+  have hspec : ∀ x ∈ (Set.univ ×ˢ {a : HermitianMat (Fin 2) ℂ | OrderUnitSpace.IsEffect a}),
+      spectrum ℝ ((fun p : ℝ × HermitianMat (Fin 2) ℂ => p.2) x).mat ⊆ Set.Icc (0 : ℝ) 1 := by
+    intro x hx
+    exact HermitianMat.spectrum_subset_Icc_of_isEffect hx.2
+  have hA₂ : ContinuousOn (fun p : ℝ × HermitianMat (Fin 2) ℂ => p.2)
+      (Set.univ ×ˢ {a : HermitianMat (Fin 2) ℂ | OrderUnitSpace.IsEffect a}) :=
+    continuous_snd.continuousOn
+  have hRe := HermitianMat.continuous_cfc_joint
+    (f := fun (x : ℝ × HermitianMat (Fin 2) ℂ) (y : ℝ) =>
+      Real.sqrt y * Real.cos (x.1 * Real.log y))
+    (A := fun p : ℝ × HermitianMat (Fin 2) ℂ => p.2)
+    (T := Set.Icc (0 : ℝ) 1)
+    (((continuous_sqrt_mul_bounded_joint Real.continuous_cos
+      (fun y => Real.abs_cos_le_one y)).comp
+      (continuous_fst.fst'.prodMk continuous_snd)).continuousOn) hspec hA₂
+  have hIm := HermitianMat.continuous_cfc_joint
+    (f := fun (x : ℝ × HermitianMat (Fin 2) ℂ) (y : ℝ) =>
+      Real.sqrt y * Real.sin (x.1 * Real.log y))
+    (A := fun p : ℝ × HermitianMat (Fin 2) ℂ => p.2)
+    (T := Set.Icc (0 : ℝ) 1)
+    (((continuous_sqrt_mul_bounded_joint Real.continuous_sin
+      (fun y => Real.abs_sin_le_one y)).comp
+      (continuous_fst.fst'.prodMk continuous_snd)).continuousOn) hspec hA₂
+  have hgoal : ∀ p : ℝ × HermitianMat (Fin 2) ℂ,
+      HermitianMat.twistFactor p.2 p.1
+        = (p.2.cfc (fun y => Real.sqrt y * Real.cos (p.1 * Real.log y))).mat
+          + Complex.I • (p.2.cfc (fun y => Real.sqrt y * Real.sin (p.1 * Real.log y))).mat :=
+    fun _ => rfl
+  simp only [hgoal]
+  exact ((HermitianMat.continuous_mat.comp_continuousOn hRe).add
+    ((HermitianMat.continuous_mat.comp_continuousOn hIm).const_smul Complex.I))
+
+/-- **Joint continuity of the twist product in `(parameter, first argument)`, over the effects.** -/
+theorem continuousOn_twistSeq_joint (b : HermitianMat (Fin 2) ℂ) :
+    ContinuousOn (fun p : ℝ × HermitianMat (Fin 2) ℂ => HermitianMat.twistSeq p.1 p.2 b)
+      (Set.univ ×ˢ {a : HermitianMat (Fin 2) ℂ | OrderUnitSpace.IsEffect a}) :=
+  (continuous_conj_matrix b).comp_continuousOn continuousOn_twistFactor_joint
+
+/-- **S2 for the frame-dependent product.**  The parameter jumps at the scalars, and it does not
+matter: there the product does not depend on the parameter, and joint continuity plus compactness of
+`[−K,K] × effects` supplies a modulus of continuity in the matrix that is uniform in the parameter. -/
+theorem n2SequentialProduct_firstArgContinuous (t : C(RP2, ℝ)) :
+    (n2SequentialProduct t).FirstArgContinuous := by
+  intro b _
+  obtain ⟨K, hK0, hKb⟩ := exists_n2Tau_bound t
+  have hG := continuousOn_twistSeq_joint b
+  intro a₀ ha₀
+  show ContinuousWithinAt (fun a => HermitianMat.twistSeq (n2Tau t a) a b)
+    {a : HermitianMat (Fin 2) ℂ | OrderUnitSpace.IsEffect a} a₀
+  have hmem : ∀ a : HermitianMat (Fin 2) ℂ, n2Tau t a ∈ Set.Icc (-K) K := fun a =>
+    Set.mem_Icc.mpr (abs_le.mp (hKb a))
+  by_cases hsc : blochHerm a₀ = 0
+  · -- the scalar case: the product is parameter-blind at `a₀`
+    obtain ⟨γ, hγ0, hγ⟩ := exists_smul_one_of_blochHerm_eq_zero ha₀.1 hsc
+    have hconst : ∀ s : ℝ, HermitianMat.twistSeq s a₀ b = γ • b := by
+      intro s
+      rw [hγ]
+      exact HermitianMat.twistSeq_smul_one_left hγ0 s b
+    have hcomp : IsCompact (Set.Icc (-K) K
+        ×ˢ {a : HermitianMat (Fin 2) ℂ | OrderUnitSpace.IsEffect a}) :=
+      isCompact_Icc.prod HermitianMat.isCompact_setOf_isEffect
+    have huc := hcomp.uniformContinuousOn_of_continuous
+      (hG.mono (Set.prod_mono (Set.subset_univ _) le_rfl))
+    rw [Metric.uniformContinuousOn_iff] at huc
+    rw [Metric.continuousWithinAt_iff]
+    intro ε hε
+    obtain ⟨δ, hδ, hball⟩ := huc ε hε
+    refine ⟨δ, hδ, fun {a} ha hda => ?_⟩
+    have h1 := hball (n2Tau t a, a) ⟨hmem a, ha⟩ (n2Tau t a, a₀) ⟨hmem a, ha₀⟩ (by
+      rw [Prod.dist_eq]
+      simpa using hda)
+    show dist (HermitianMat.twistSeq (n2Tau t a) a b)
+      (HermitianMat.twistSeq (n2Tau t a₀) a₀ b) < ε
+    rw [hconst (n2Tau t a₀)]
+    rw [hconst (n2Tau t a)] at h1
+    exact h1
+  · -- the non-scalar case: the parameter is continuous here, so it is a composition
+    have hnb : {a : HermitianMat (Fin 2) ℂ | blochHerm a ≠ 0} ∈ nhds a₀ :=
+      isOpen_blochHerm_ne_zero.mem_nhds hsc
+    have hτ : ContinuousAt (n2Tau t) a₀ := (continuousOn_n2Tau t).continuousAt hnb
+    have hpair : ContinuousWithinAt (fun a : HermitianMat (Fin 2) ℂ => (n2Tau t a, a))
+        {a : HermitianMat (Fin 2) ℂ | OrderUnitSpace.IsEffect a} a₀ :=
+      (hτ.continuousWithinAt).prodMk continuousWithinAt_id
+    have hcomp : ContinuousWithinAt
+        ((fun p : ℝ × HermitianMat (Fin 2) ℂ => HermitianMat.twistSeq p.1 p.2 b)
+          ∘ (fun a : HermitianMat (Fin 2) ℂ => (n2Tau t a, a)))
+        {a : HermitianMat (Fin 2) ℂ | OrderUnitSpace.IsEffect a} a₀ :=
+      ContinuousWithinAt.comp (f := fun a : HermitianMat (Fin 2) ℂ => (n2Tau t a, a))
+        (hG (n2Tau t a₀, a₀) ⟨Set.mem_univ _, ha₀⟩) hpair
+        (fun a ha => ⟨Set.mem_univ _, ha⟩)
+    exact hcomp
+
+/-- **`prop:n2-sufficiency`, the article's statement.**  Every continuous `t : ℝP² → ℝ` is
+realized by a **norm-continuous** S1–S7 sequential product on `H_2(ℂ)` whose value at each
+spectral effect is the twist product at that effect's frame parameter.
+
+★ The `FirstArgContinuous` conjunct is S2; it is supplied by
+`n2SequentialProduct_firstArgContinuous`, proved further down this file — so this statement is the
+row's, not a weakened form of it. -/
+theorem exists_sequentialProduct_of_continuous_moduli (t : C(RP2, ℝ)) :
+    ∃ P : SequentialProductOn (HermitianMat (Fin 2) ℂ), P.FirstArgContinuous ∧
+      ∀ (U : Matrix.unitaryGroup (Fin 2) ℂ) (r : Fin 2 → ℝ) (b : HermitianMat (Fin 2) ℂ),
+        P.sp (Necessity.adU (U : Matrix (Fin 2) (Fin 2) ℂ) (Necessity.diagFamily r)) b
+          = HermitianMat.twistSeq (t (blochFrame (colFrame U)))
+            (Necessity.adU (U : Matrix (Fin 2) (Fin 2) ℂ) (Necessity.diagFamily r)) b :=
+  ⟨n2SequentialProduct t, n2SequentialProduct_firstArgContinuous t,
+    fun U r b => n2Sp_eq_twistSeq_at_frame t U r b⟩
+
 
 end RankTwo
