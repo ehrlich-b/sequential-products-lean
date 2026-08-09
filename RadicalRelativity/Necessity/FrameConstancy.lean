@@ -587,11 +587,14 @@ indistinguishable to it.  No `2π` bookkeeping enters, because
 family of two-level spectra to the *same* base point, they carry the same twist parameter. -/
 theorem n2FrameTwist_eq_of_base_eq (hS2 : P.FirstArgContinuous)
     (U V : Matrix.unitaryGroup (Fin 2) ℂ) (m m' : Fin 2)
-    (hs : (axisSplit m) (0 : Fin 2) ≠ (axisSplit m) 1)
     (hbase : ∀ x : ℝ, 0 < x →
       adU (V : Matrix (Fin 2) (Fin 2) ℂ) (diagFamily (x • axisSplit m'))
         = adU (U : Matrix (Fin 2) (Fin 2) ℂ) (diagFamily (x • axisSplit m))) :
     n2FrameTwist P hS2 V = n2FrameTwist P hS2 U := by
+  -- the spectral-separation side condition is automatic at rank two, for either axis, so it is
+  -- discharged here rather than imposed on callers (self-audit, 2026-08-08)
+  have hs : (axisSplit m) (0 : Fin 2) ≠ (axisSplit m) 1 := by
+    fin_cases m <;> simp [axisSplit]
   refine twist_param_unique_of_scaled (N := 2) (i := 0) (j := 1) (by decide)
     (u := 0) (v := 1) zero_lt_one (s := axisSplit m) hs ?_
   intro x hx
@@ -620,7 +623,7 @@ theorem n2FrameTwist_mul_diagonal (hS2 : P.FirstArgContinuous)
     intro k
     have hk := congrFun (congrFun h k) k
     simpa using hk
-  refine n2FrameTwist_eq_of_base_eq P hS2 U (U * D) 0 0 (by simp [axisSplit]) ?_
+  refine n2FrameTwist_eq_of_base_eq P hS2 U (U * D) 0 0 ?_
   intro x _
   ext1
   simp only [adU_apply, HermitianMat.conj_apply_mat, Submonoid.coe_mul, hD]
