@@ -1657,9 +1657,18 @@ noncomputable def n2Moduli (hS2 : P.FirstArgContinuous) : FrameSpace → ℝ :=
 theorem n2Moduli_toFrameSpace (hS2 : P.FirstArgContinuous)
     (U : Matrix.unitaryGroup (Fin 2) ℂ) :
     n2Moduli P hS2 (toFrameSpace U) = n2FrameTwist P hS2 U := by
-  -- NB the argument order: the metavariable must land in the `V` slot, since the goal's left side
-  -- is the parameter at the CHOSEN preimage.  Putting it in the `U` slot asks the unifier to match
-  -- `n2Moduli …` against `n2FrameTwist …` and times out at `isDefEq`.
+  -- ★★ NB the argument order, and read this together with the anti-`whnf` note on
+  -- `continuousOn_n2Readout` above — they are ONE lesson reached from opposite directions, and a
+  -- reader who files them as two will learn it a third time.  The lesson: never ask the unifier to
+  -- match a composite against a `def`'s unfolding.  There it happened because a term was written in
+  -- composite form; here because the metavariable was in the wrong SLOT.  The metavariable must land
+  -- in `V`, since the goal's left side is the parameter at the CHOSEN preimage; putting it in `U`
+  -- asks Lean to match `n2Moduli …` against `n2FrameTwist …` and times out at `isDefEq`.
+  -- ★ What makes this worth a comment rather than a fix-and-forget: I "fixed" that timeout three
+  -- times before finding the cause — twice by reformulating (`abbrev` for `def`, `surjInv` for
+  -- `Classical.choose`) and once by raising `maxHeartbeats` with a comment blaming the range
+  -- subtype.  Raising the budget would have banked a FALSE explanation.  It compiles at the
+  -- file's default budget.
   refine n2FrameTwist_eq_of_frameMap_eq P U _ hS2 ?_
   exact Classical.choose_spec (show ∃ W, frameMap W = frameMap U from ⟨U, rfl⟩)
 
@@ -1680,6 +1689,31 @@ theorem exists_n2Moduli_bound (hS2 : P.FirstArgContinuous) :
   obtain ⟨U, hU⟩ := surjective_toFrameSpace p
   rw [← hU, n2Moduli_toFrameSpace]
   exact hM U
+
+/-- **`n2Moduli` is the product's own twist parameter at that frame** — the link that makes the two
+labels self-evidencing rather than a reader's exercise.
+
+Contributed by the checkpoint-1 verification pass, which observed that nothing in this section tied
+`n2Moduli` back to `P`, so a reader had to chain two theorems to see that it is the twist parameter
+and not merely some continuous function that happens to exist. -/
+theorem n2_sp_eq_twistSeq_n2Moduli (hS2 : P.FirstArgContinuous)
+    (U : Matrix.unitaryGroup (Fin 2) ℂ) {r : Fin 2 → ℝ} (hr : ∀ i, r i ≤ 0)
+    {a b : HermitianMat (Fin 2) ℂ}
+    (ha : a = adU (U : Matrix (Fin 2) (Fin 2) ℂ) (diagFamily r)) (hb : IsEffect b) :
+    P.sp a b = HermitianMat.twistSeq (n2Moduli P hS2 (toFrameSpace U)) a b := by
+  rw [n2Moduli_toFrameSpace]
+  exact n2_sp_eq_twistSeq_frame P hS2 U hr ha hb
+
+/-- **The descent is not vacuous**: the frame space has at least two points, so continuity on it has
+content.  Also from the checkpoint-1 verification — it was the one way this whole section could have
+been true and empty. -/
+theorem frameMap_swap_ne_one :
+    frameMap swapU ≠ frameMap (1 : Matrix.unitaryGroup (Fin 2) ℂ) := by
+  intro h
+  have hc := congrArg (fun a : HermitianMat (Fin 2) ℂ => a.mat 0 0) h
+  simp only [frameMap, adU_apply, HermitianMat.conj_apply_mat] at hc
+  simp [swapU, swapMat, frameProj, HermitianMat.diagonal, Matrix.mul_apply,
+    Fin.sum_univ_two, Matrix.conjTranspose_apply, Matrix.diagonal] at hc
 
 end Descent
 
