@@ -288,6 +288,30 @@ theorem rhoChi_eq_smul_generator (hS2 : P.FirstArgContinuous)
   have hsplit : r = c • e + (r - c • e) := by abel
   rw [hsplit, map_add, hvanish, add_zero, map_smul]
 
+/-- **The same identity, unconditionally.**
+
+Self-audit finding (2026-08-08): the `i ≠ j` hypothesis of `rhoChi_eq_smul_generator` is
+**inert** — `rhoField` is defined to be `0` on the diagonal, so at `i = j` both sides are `0`
+and the identity holds for free. Recorded and the stronger version stated, rather than leaving
+a hypothesis that looks like it is doing work; this is the defect the arc-5 cold review found
+in `lem:adjacent`, applied here to my own diff before a reviewer had to.
+
+The article states its version for `i ≠ j` (there is no `V_ii`), so the hypothesised form
+remains the one that matches the paper; this is a bonus, not a fidelity change. -/
+theorem rhoChi_eq_smul_generator_all (hS2 : P.FirstArgContinuous)
+    (hjord : ThetaPreservesJordan P) (i j : n) (r : n → ℝ) :
+    rhoChi P hS2 hjord i j r
+      = (r i - r j) • rhoChi P hS2 hjord i j (fun k => if k = i then 1 else 0) := by
+  by_cases hij : i = j
+  · subst hij
+    have h0 : ∀ s : n → ℝ, rhoChi P hS2 hjord i i s = 0 := by
+      intro s
+      show rhoField i i (dChiStab P hS2 hjord s) = 0
+      rw [rhoField_diag]
+      rfl
+    rw [h0, h0, sub_self, zero_smul]
+  · exact rhoChi_eq_smul_generator P hS2 hjord hij r
+
 /-! ## The phase cocycle -/
 
 /-- **The phase cocycle** `t_{ik}(r) = t_{ij}(r) + t_{jk}(r)`: the Leibniz rule

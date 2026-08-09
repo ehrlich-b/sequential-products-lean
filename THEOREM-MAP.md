@@ -791,6 +791,17 @@ What the tree already had, unread:
 phrasing — `rhoChi` with **`rhoChi_eq_smul_generator` : `ρ_ij(dχ(r)) = (rᵢ − rⱼ) • ρ_ij(dχ(eᵢ))`**.
 Closure `[propext, Classical.choice, Quot.sound]` on each.
 
+★ **Self-probes run on this block (2026-08-08), the way the arc-5 review would have.** Three
+passed and one found a defect in my own work. PASSED: `OrderUnitSpace.IsArchimedean` **is
+inhabited** — `HermitianMat n ℂ` satisfies it via
+`HermitianMat.le_zero_of_forall_le_smul_one` — so the abstract tier is not vacuous, which was
+the one failure mode that would have made the two FORMALIZED claims worthless; the abstract
+`sp_smul_left` and `spCone_of_isEffect` both instantiate on a real product on `H_N(ℂ)`, so
+their hypotheses are simultaneously satisfiable. FOUND: **`rhoChi_eq_smul_generator`'s
+`i ≠ j` hypothesis is INERT** — `rhoField` is `0` on the diagonal, so at `i = j` both sides
+vanish. `rhoChi_eq_smul_generator_all` now states the identity unconditionally. Same defect
+class as `lem:adjacent` last arc; caught here before a reviewer had to.
+
 Where the article spans the hyperplane `{rᵢ = rⱼ}` by differences of coalesced orthant
 vectors, Lean takes the vanishing directly from the differentiated coalescence
 (`dChi_kills_corner` / `rhoField_dChi_coalesced`) and then factors a linear functional that
