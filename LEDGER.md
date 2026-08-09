@@ -13,7 +13,126 @@ interface structure instantiated on the intended algebras.
 
 ---
 
-## ★★★ ARC-7 ORDERS (2026-08-09, Fable design pass — the interior-closure campaign). READ THIS FIRST.
+## ★★★ ARC-8 ORDERS (2026-08-09, Fable design pass — the ceiling campaign). READ THIS FIRST.
+
+**SCOPE DECISION (Bryan, 2026-08-09):** this arc does everything interior EXCEPT the EJA
+axiomatization — encoding the JB-algebra premises (Jordan identity, formal reality, cone of
+squares) so the vIR/FK facts that `MasterTheorem/Interface.lean` carries as *fields* become
+theorems. That work is **COMMITTED, scheduled before Paper A's submission, unless the
+dividend table (block 8.6) shows it would do literally nothing for Paper A** — the table is
+this arc's decision instrument, and building it is not optional. The six pre-registered
+external rows stay external (tranche-4 work — JvNW, vdW's theorems, vIR generality, Albert
+M2 — is downstream of the axiomatization and equally out of scope).
+
+**TERMINAL CONDITION (the whole goal; nothing else ends the arc):** every one of
+`STATEMENT-MANIFEST.md`'s 36 rows (pinned to blob `205fdf5a` — never re-pin) is in exactly
+one of FOUR states —
+
+1. **FORMALIZED** at the article's own generality, no located hypothesis (the standing bar);
+2. **EXTERNAL by pre-registration** — the same six, not re-litigated: `thm:vdw1`,
+   `prop:bridge`, `mthm:master`/`mthm:omnibus` one-theorem form (JvNW), `prop:theta` at vIR
+   generality, `thm:albert`. Improving their interior form is in scope; closing them is not;
+3. **EJA-GATED** — a fresh certificate, dated this arc, establishing that the row's ENTIRE
+   remaining residue is exactly the EJA axiomatization gap: every non-EJA clause is closed
+   in-tree first, and the certificate states the article-generality statement in Lean with
+   `sorry` exactly at the axiomatization gap, naming WHICH ingredient gates it (Jordan
+   spectral theorem, Peirce decomposition at generality, formal reality, `Theta_jordan`
+   derivable, FK fields derivable). Claiming EJA-GATED without having closed the non-EJA
+   clauses does not count — that is the "external as a place to hide interior work" failure
+   `external-rows.md` warns about, applied one ring in;
+4. **WALL-CERTIFIED this arc** — ARC-7's certificate spec unchanged (compiling file in
+   `WallCertificates/`, never imported from `RadicalRelativity/`, `sorry` at exactly the
+   gap, dated absence claims carrying the grep's scope), with one tightening: **attack
+   evidence must be FROM THIS ARC.** Carried-over evidence does not terminate a row —
+   ARC-7's refutation review falsified six certificate entries in a day; a certificate that
+   was not re-attacked this arc is a prose price with a `.lean` extension.
+
+— AND `EJA-DIVIDEND.md` exists at the repo root: one row per non-FORMALIZED manifest row,
+stating exactly what the axiomatization would move (closes it / partially / not at all,
+and why), so the do-it-unless-it-does-nothing decision is decidable on evidence; AND the
+block-8.6 dry pass over every non-FORMALIZED row has produced zero movement; AND at least
+four checkpoint reviews have reported, their findings verified at source and applied or
+rejected with evidence. Do not stop at block boundaries; the count is an OUTPUT, not a
+quota (10/19/7 at these orders; 20 rows in play = 36 − 10 FORMALIZED − 6 external;
+realistic ceiling 26–28, and the gap between that and 30 is mostly the axiomatization this
+arc defers).
+
+**THE BLOCKS (in order; wall protocol = write the certificate and continue):**
+
+* **8.0 Audit before build.** The six ARC-7 certificates ARE the work orders — re-read them
+  as attack plans, not records. Verify tree state (build, census `[]`, tags). Standing
+  first moves everywhere: `grep -n "^def \|^theorem \|^instance \|^abbrev \|^structure "`
+  on any file before claiming absence in its subject area; full-output error counts +
+  `#print axioms` for any compile claim; `lake` only from the repo root.
+* **8.1 The rank-two corollary — the crown.** In dependency order:
+  (a) finish the compatibility chain — steps 3(b) and 4 as mapped in
+  `WallCertificates/prop-n2-sufficiency.lean`; two of four are in-tree
+  (`offdiag_zero_of_commute_diagonal`, `eigen_diagonal_fin2`);
+  (b) **`prop:n2-sufficiency`** — all seven axioms for the frame-dependent family,
+  generalizing `twistSequentialProduct`'s constant-`t` machinery; the hard half of
+  compatibility is in-tree as `commute_of_twistSeq_comm_param`;
+  (c) `thm:qubit-boundary`'s bundled S1–S7 clause as an instantiation of (b), plus the
+  unimodular cocycle subcases;
+  (d) `lem:n2-descent` assembly — the `U(2) → ℂP¹` first-column ray map, "same ray ⟹
+  monomial difference", the quotient construction of `C(ℝP², ℝ)`, and the
+  `QubitFrame`/`FrameSpace` homeomorphism (priced 40–60 lines by a reviewer, ★ NEVER
+  TESTED — treat the price as SUSPECTED);
+  (e) `prop:n2-necessity` gap (b) — the Θ-level vs product-level equivalence;
+  (f) **`cor:qubit-classification`** — the bijection, from (a)–(e) plus rows 32/33 (done).
+  ★ CHECKPOINT after (f).
+* **8.2 The cheap interior sweep.** Row 18's ℂ converse (`frame_stabilizer_is_torus`,
+  stated ready in `WallCertificates/differential-trio.lean`, priced a short matrix
+  argument); row 8 clause (ii) on the concrete carrier (Mathlib's spectral theorem); row
+  9's remaining clauses (compatibility-passes-to-infima, plus the article's f.d.
+  order-unit generality — that is `⨅`-vocabulary work, NOT EJA); row 12's restriction
+  direction (the converse assembly already exists — `SequentialProductOn.prod`); row 3's
+  packaging (the article's eight clauses as a structure + an equivalence with
+  `SequentialProductOn`; flagged the highest movement-per-effort item on the board);
+  `cor:selectors`(i)'s Peirce exchange object on the concrete carrier (the mechanism is
+  machine-checked at rank two). ★ CHECKPOINT.
+* **8.3 The quaternionic transfer (row 20) — the arc's biggest single build.** The named
+  route, per `WallCertificates/thm-quaternionic.lean`: a `SequentialProductOn
+  (QuatCarrier n)` (carrier + `OrderUnitSpace` instance exist); a functional calculus on
+  the carrier assembled from `quatQuadRep`; then the transfer — whether the article's
+  `Z(ℍ) ∩ Im ℍ = {0}` mechanism (in-tree at skeleton level,
+  `luders_quaternionic_produced`) survives the `H_n(ℍ) ↪ H_{2n}(ℂ)` embedding is
+  **genuinely open**; land `thm:quaternionic` at the article's own `H_n(ℍ)`, `n ≥ 3`, or
+  certificate the exact step that resists. The `Gen`-layer impossibility (ℍ is never
+  `RCLike`) is settled — do not re-derive it; the involution route is the only route.
+  ★ CHECKPOINT.
+* **8.4 The geometry pair.** `lem:frame-connectivity` — Givens/Jacobi factorization of a
+  unitary into rank-two block rotations (absent from tree AND Mathlib; build it
+  Mathlib-grade, it is a standalone contribution); `lem:orientation` — the coherence space
+  as a carrier: `J_{q,k}`, splitting-independence, commutation with stabilizing inner
+  automorphisms, the `Ad_{a^{it}}` formula.
+* **8.5 The stabilizer rows + frame-fix.** Row 18's ℝ row (trivial stabilizer); ℍ row
+  (`Sp(1)^n` action — reuses 8.3's carrier); 𝕆 row certificate-only (Spin(8)/triality is
+  Albert-adjacent — do NOT sink time); `lem:frame-fix`'s non-EJA content, then EJA-GATED
+  or certificated.
+* **8.6 The dividend table, dry pass, refutation review.** Write `EJA-DIVIDEND.md` from
+  the terminal states; dry pass over every non-FORMALIZED row, repeated until a full round
+  produces zero movement; certificate-refutation review over EVERY certificate standing at
+  arc end (written this arc or carried), attacked the way ARC-7's review attacked absence
+  claims — its three defect kinds (FALSE, VACUOUS, SELF-DEFEATING) each get their test.
+
+**REVIEW PROTOCOL — unchanged from ARC-7, with its ten transferable rules pre-paid** (they
+are in the ARC-7 EXECUTION RECORD below; read them before the first checkpoint): narrow
+one-concern briefs; pinned to fresh tags; reviewers told plain text is not delivered and to
+call SendMessage; every finding verified at source before applying OR rejecting; keep at
+least one reviewer on a target long enough to audit its own earlier reports; budget a
+diff-audit after every fix round (late-round defects are created by the fixes). Mechanical
+blocks (lint, porting, pre-mapped plumbing) may run on cheaper-model subagents; ANY claim
+that enters a ledger, a certificate, or a status cell gets verified by the main agent at
+source regardless of who produced it.
+
+**Standing constraints:** all commits local (public repo — never push, never `sync.sh`);
+manuscript untouched (blob `205fdf5a`); frozen tags untouched; JMP reserved, T1/T2 parked;
+custom axioms stay exactly `[]`; `THEOREM-MAP.md` and `STATEMENT-MANIFEST.md` update in the
+same commit as each status change; never say "fully formalized".
+
+---
+
+## ★★★ ARC-7 ORDERS (2026-08-09, Fable design pass — the interior-closure campaign). **EXECUTED 2026-08-09 — terminal condition met (see EXECUTION RECORD); superseded as campaign SSOT by ARC-8 above; the certificate spec and lessons remain binding.**
 
 **This arc IS "finish it."** Not a ladder of targets — a terminal condition over the whole
 denominator. Previous arcs came in at 1–3 hours because a ladder plus prose banking made
