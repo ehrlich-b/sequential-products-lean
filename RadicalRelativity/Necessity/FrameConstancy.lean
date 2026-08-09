@@ -908,6 +908,108 @@ theorem n2Comb_eq (hS2 : P.FirstArgContinuous) {b₁ b₂ : HermitianMat (Fin 2)
     fun A z w => by ring]
   rw [hsq, hsq]
 
+/-! ### Weight positivity: the last ingredient of `lem:n2-bounded`
+
+`n2Coef b U` is the `(0,1)` entry of `Uᴴ b U`, so it vanishes exactly when that conjugate is
+diagonal.  If BOTH test effects had vanishing coefficient at the same `U`, both conjugates would
+be diagonal, hence commuting; transporting back by `U` would make the two test effects themselves
+commute, contradicting `frameProj_pairProj_not_commute`.  Entirely matrix-level — no eigenvector
+argument needed. -/
+
+theorem fin2_ne_cases : ∀ i j : Fin 2, i ≠ j → (i = 0 ∧ j = 1) ∨ (i = 1 ∧ j = 0) := by decide
+
+/-- A `2×2` Hermitian matrix whose `(0,1)` entry vanishes is diagonal. -/
+theorem isDiag_of_herm_offdiag_zero {B : Matrix (Fin 2) (Fin 2) ℂ} (hB : B.IsHermitian)
+    (h01 : B 0 1 = 0) : ∀ i j, i ≠ j → B i j = 0 := by
+  have h10 : B 1 0 = 0 := by
+    have hh := congrFun (congrFun hB 1) 0
+    simp only [Matrix.conjTranspose_apply] at hh
+    rw [← hh, h01]; simp
+  intro i j hij
+  rcases fin2_ne_cases i j hij with ⟨hi, hj⟩ | ⟨hi, hj⟩
+  · rw [hi, hj]; exact h01
+  · rw [hi, hj]; exact h10
+
+/-- Two `2×2` matrices that are both diagonal commute. -/
+theorem commute_of_isDiag {A B : Matrix (Fin 2) (Fin 2) ℂ}
+    (hA : ∀ i j, i ≠ j → A i j = 0) (hB : ∀ i j, i ≠ j → B i j = 0) :
+    A * B = B * A := by
+  have hA01 : A 0 1 = 0 := hA 0 1 (by decide)
+  have hA10 : A 1 0 = 0 := hA 1 0 (by decide)
+  have hB01 : B 0 1 = 0 := hB 0 1 (by decide)
+  have hB10 : B 1 0 = 0 := hB 1 0 (by decide)
+  ext i j
+  rw [Matrix.mul_apply, Matrix.mul_apply, Fin.sum_univ_two, Fin.sum_univ_two]
+  by_cases hij : i = j
+  · subst hij
+    fin_cases i <;> simp [hA01, hA10, hB01, hB10] <;> ring
+  · rcases fin2_ne_cases i j hij with ⟨hi, hj⟩ | ⟨hi, hj⟩ <;> subst hi <;> subst hj <;>
+      simp [hA01, hA10, hB01, hB10]
+
+/-- **The two-effect weight never vanishes.** -/
+theorem n2Weight_pos (U : Matrix.unitaryGroup (Fin 2) ℂ) :
+    0 < n2Weight (frameProj (0 : Fin 2)) (pairProj (0 : Fin 2) 1) U := by
+  have hw : n2Weight (frameProj (0 : Fin 2)) (pairProj (0 : Fin 2) 1) U
+      = Complex.normSq (n2Coef (frameProj (0 : Fin 2)) U)
+        + Complex.normSq (n2Coef (pairProj (0 : Fin 2) 1) U) := rfl
+  have hnn1 := Complex.normSq_nonneg (n2Coef (frameProj (0 : Fin 2)) U)
+  have hnn2 := Complex.normSq_nonneg (n2Coef (pairProj (0 : Fin 2) 1) U)
+  rcases eq_or_lt_of_le (show (0:ℝ) ≤ n2Weight (frameProj (0 : Fin 2)) (pairProj (0 : Fin 2) 1) U
+      by rw [hw]; linarith) with h | h
+  swap
+  · exact h
+  exfalso
+  rw [hw] at h
+  have hz1 : n2Coef (frameProj (0 : Fin 2)) U = 0 :=
+    Complex.normSq_eq_zero.mp (by linarith)
+  have hz2 : n2Coef (pairProj (0 : Fin 2) 1) U = 0 :=
+    Complex.normSq_eq_zero.mp (by linarith)
+  have hdiag : ∀ b : HermitianMat (Fin 2) ℂ, n2Coef b U = 0 →
+      ∀ i j, i ≠ j → (adU ((U : Matrix (Fin 2) (Fin 2) ℂ)ᴴ) b).mat i j = 0 := by
+    intro b hb
+    exact isDiag_of_herm_offdiag_zero (adU ((U : Matrix (Fin 2) (Fin 2) ℂ)ᴴ) b).H hb
+  have hcomm := commute_of_isDiag (hdiag _ hz1) (hdiag _ hz2)
+  -- transport back: Uᴴ b₁ U · Uᴴ b₂ U = Uᴴ (b₁ b₂) U
+  have hUU : (U : Matrix (Fin 2) (Fin 2) ℂ) * (U : Matrix (Fin 2) (Fin 2) ℂ)ᴴ = 1 :=
+    unitaryGroup_mul_conjTranspose U
+  have hexp : ∀ b c : HermitianMat (Fin 2) ℂ,
+      (adU ((U : Matrix (Fin 2) (Fin 2) ℂ)ᴴ) b).mat * (adU ((U : Matrix (Fin 2) (Fin 2) ℂ)ᴴ) c).mat
+        = (U : Matrix (Fin 2) (Fin 2) ℂ)ᴴ * (b.mat * c.mat)
+            * (U : Matrix (Fin 2) (Fin 2) ℂ) := by
+    intro b c
+    simp only [adU_apply, HermitianMat.conj_apply_mat, Matrix.conjTranspose_conjTranspose]
+    calc (U : Matrix (Fin 2) (Fin 2) ℂ)ᴴ * b.mat * (U : Matrix (Fin 2) (Fin 2) ℂ)
+          * ((U : Matrix (Fin 2) (Fin 2) ℂ)ᴴ * c.mat * (U : Matrix (Fin 2) (Fin 2) ℂ))
+        = (U : Matrix (Fin 2) (Fin 2) ℂ)ᴴ * b.mat
+            * ((U : Matrix (Fin 2) (Fin 2) ℂ) * (U : Matrix (Fin 2) (Fin 2) ℂ)ᴴ)
+            * c.mat * (U : Matrix (Fin 2) (Fin 2) ℂ) := by
+          simp only [Matrix.mul_assoc]
+      _ = (U : Matrix (Fin 2) (Fin 2) ℂ)ᴴ * (b.mat * c.mat)
+            * (U : Matrix (Fin 2) (Fin 2) ℂ) := by
+          rw [hUU, Matrix.mul_one]; simp only [Matrix.mul_assoc]
+  rw [hexp, hexp] at hcomm
+  -- strip the conjugation
+  have hstrip : (frameProj (0 : Fin 2)).mat * (pairProj (0 : Fin 2) 1).mat
+      = (pairProj (0 : Fin 2) 1).mat * (frameProj (0 : Fin 2)).mat := by
+    have h1 := congrArg (fun M => (U : Matrix (Fin 2) (Fin 2) ℂ) * M
+      * (U : Matrix (Fin 2) (Fin 2) ℂ)ᴴ) hcomm
+    simp only at h1
+    have hUUL : (U : Matrix (Fin 2) (Fin 2) ℂ) * (U : Matrix (Fin 2) (Fin 2) ℂ)ᴴ = 1 := hUU
+    calc (frameProj (0 : Fin 2)).mat * (pairProj (0 : Fin 2) 1).mat
+        = (U : Matrix (Fin 2) (Fin 2) ℂ) * ((U : Matrix (Fin 2) (Fin 2) ℂ)ᴴ
+            * ((frameProj (0 : Fin 2)).mat * (pairProj (0 : Fin 2) 1).mat)
+            * (U : Matrix (Fin 2) (Fin 2) ℂ)) * (U : Matrix (Fin 2) (Fin 2) ℂ)ᴴ := by
+          simp only [← Matrix.mul_assoc, hUUL, Matrix.one_mul]
+          simp only [Matrix.mul_assoc, hUUL, Matrix.mul_one]
+      _ = (U : Matrix (Fin 2) (Fin 2) ℂ) * ((U : Matrix (Fin 2) (Fin 2) ℂ)ᴴ
+            * ((pairProj (0 : Fin 2) 1).mat * (frameProj (0 : Fin 2)).mat)
+            * (U : Matrix (Fin 2) (Fin 2) ℂ)) * (U : Matrix (Fin 2) (Fin 2) ℂ)ᴴ := by
+          rw [hcomm]
+      _ = (pairProj (0 : Fin 2) 1).mat * (frameProj (0 : Fin 2)).mat := by
+          simp only [← Matrix.mul_assoc, hUUL, Matrix.one_mul]
+          simp only [Matrix.mul_assoc, hUUL, Matrix.mul_one]
+  exact frameProj_pairProj_not_commute hstrip
+
 /-- **An independent derivation of the readout formula, as a standing cross-check on the sign.**
 
 `n2Readout_eq` reaches the formula through `n2_sp_eq_twistSeq_frame` and `adU_conj_twistSeq`.

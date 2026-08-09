@@ -330,13 +330,22 @@ combination is now built too — `n2Comb` / `n2Weight` with **`n2Comb_eq`** prov
 `n2Comb = √(exp(−x)) · e^{−i t(U) x} · weight`, which exhibits the phase as a continuous function
 of `(x, U)` wherever the weight is bounded away from zero.
 
-**What remains for `lem:n2-bounded` is exactly two steps, both routine:** (i) turn
-`frameProj_pairProj_not_commute` into `0 < n2Weight` pointwise — the content is that
-`n2Coef b U = ⟪u, b v⟫` vanishes iff `v` is an eigenvector of `b`, and two self-adjoint
-operators on a 2-space with a common eigenvector are simultaneously diagonalizable hence commute;
-(ii) extract `ε > 0` from compactness of `U(2)`, apply uniform continuity of `n2Comb` on
-`[0,δ] × U(2)`, and feed `abs_lt_of_phase_near_one`. **No missing theorem, and no missing
-mathematics — only Lean-plumbing.**
+★★ **`lem:n2-bounded` now has EVERY ingredient proved; what is left is one compactness
+assembly.** Weight positivity — the step I twice deferred as "~80 lines of entry algebra" — is
+done, and by a cleaner route than the one I had planned: **`n2Weight_pos`**. No eigenvector
+analysis is needed. `n2Coef b U` is the `(0,1)` entry of `Uᴴ b U`, so it vanishes exactly when
+that conjugate is diagonal (`isDiag_of_herm_offdiag_zero`, using Hermitian symmetry to get the
+other off-diagonal entry free); two diagonal `2×2` matrices commute (`commute_of_isDiag`); and
+transporting back by `U` would then force the two test effects themselves to commute,
+contradicting `frameProj_pairProj_not_commute`. Entirely matrix-level.
+
+**The full inventory for the row, all Lean-core:** `n2Readout_eq` (with the independent
+cross-check `readout_direct`), `continuousOn_n2Readout` (joint continuity), `n2Comb_eq`
+(combination = weight × pure phase), `n2Weight_pos` (weight never vanishes),
+`abs_lt_of_phase_near_one` (sharp, `hδ` certified necessary), and `CompactSpace (unitaryGroup …)`
+already in-tree. **Remaining: extract `ε > 0` as the minimum of the continuous positive weight on
+the compact `U(2)`, apply uniform continuity of `n2Comb` on `[0,δ] × U(2)`, and feed the
+numerical step.** That is assembly of proved pieces — no mathematics and no missing theorem.
 
 ★ **Reviewer B's third question — can the combined weight vanish? — is answered NO, and
 proved.** `n2Coef b U = ⟪u, b v⟫` vanishes exactly when the second column of `U` is an
