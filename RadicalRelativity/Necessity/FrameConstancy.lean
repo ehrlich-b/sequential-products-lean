@@ -1618,6 +1618,105 @@ theorem n2FrameTwist_eq_of_frameMap_eq (U V : Matrix.unitaryGroup (Fin 2) ℂ)
   rw [adU_apply, adU_apply, HermitianMat.conj_apply_mat, HermitianMat.conj_apply_mat,
     key U, key V, hmat]
 
+/-! ### Toward "compatible ⟹ same frame": the two elementary steps
+
+★★ New 2026-08-09.  `WallCertificates/prop-n2-sufficiency.lean` identifies "compatible effects share
+a spectral frame" as the load-bearing missing fact for rows 30/35, and its own absence claim about it
+was refuted twice over: the hard half (**compatibility ⟹ matrix commutation**) was already in the tree
+as `HermitianMat.commute_of_twistSeq_comm`, and the two-parameter form the rank-two application needs
+is now `commute_of_twistSeq_comm_param`.  These are the next two steps, and they are the elementary
+ones.
+
+**The full chain, so the remainder is a stated size rather than a vague price.**  With
+`a = Ad_U(diagFamily r)`, `b = Ad_V(diagFamily s)`, both non-scalar, and `W = UᴴV`:
+  1. `P.sp a b = P.sp b a` ⟹ `Commute a b` — `n2_sp_eq_twistSeq_frame` then
+     `commute_of_twistSeq_comm_param` (the two parameters differ, which is why the one-parameter form
+     did not suffice).  **In the tree.**
+  2. conjugating by `Uᴴ`, `Commute (diagFamily r) (Ad_W (diagFamily s))`; since `diagFamily r` is
+     diagonal with distinct entries, `M := Ad_W (diagFamily s)` is **diagonal** —
+     `offdiag_zero_of_commute_diagonal` below.  **In the tree now.**
+  3. `M` is not a scalar (else conjugating back forces `s 0 = s 1`), so its diagonal entries are
+     distinct; and `M (W e₀) = e^{s₀}(W e₀)`, so `W e₀` is a multiple of a basis vector —
+     `eigen_diagonal_fin2` below.  **The eigenvector step is in the tree now; the "M is not a
+     scalar" step is not.**
+  4. hence `Ad_W (frameProj 0) ∈ {frameProj 0, frameProj 1}`, so `frameMap V = frameMap U` or
+     `= 𝟙 − frameMap U`, and `n2FrameTwist_eq_of_frameMap_eq` / `frameMap_mul_swap` +
+     `n2FrameTwist_reverse` finish.  **Not assembled.**
+So the honest remainder is steps 3(b) and 4: matrix plumbing over `Fin 2`, no new mathematics, and no
+missing vocabulary.  That is a much narrower claim than the certificate's original "nothing in the
+tree states it". -/
+
+/-- A matrix commuting with a diagonal matrix of distinct entries is diagonal. -/
+theorem offdiag_zero_of_commute_diagonal {n : Type*} [Fintype n] [DecidableEq n]
+    {M : Matrix n n ℂ} {d : n → ℂ} (hd : ∀ i j, i ≠ j → d i ≠ d j)
+    (h : M * Matrix.diagonal d = Matrix.diagonal d * M) :
+    ∀ i j, i ≠ j → M i j = 0 := by
+  intro i j hij
+  have he := congrFun (congrFun h i) j
+  rw [Matrix.mul_diagonal, Matrix.diagonal_mul] at he
+  have hz : M i j * (d j - d i) = 0 := by linear_combination he
+  rcases mul_eq_zero.mp hz with h1 | h2
+  · exact h1
+  · exact absurd (sub_eq_zero.mp h2) (Ne.symm (hd i j hij))
+
+/-- An eigenvector of a `2×2` diagonal matrix with distinct entries is supported on a single
+coordinate. -/
+theorem eigen_diagonal_fin2 {d : Fin 2 → ℂ} (hd : d 0 ≠ d 1)
+    {v : Fin 2 → ℂ} {lam : ℂ} (h : Matrix.diagonal d *ᵥ v = lam • v) :
+    v 1 = 0 ∨ v 0 = 0 := by
+  have h0 := congrFun h 0
+  have h1 := congrFun h 1
+  rw [Matrix.mulVec_diagonal] at h0 h1
+  simp only [Pi.smul_apply, smul_eq_mul] at h0 h1
+  by_cases hv0 : v 0 = 0
+  · exact Or.inr hv0
+  · refine Or.inl ?_
+    have hlam : lam = d 0 := by
+      rcases mul_eq_zero.mp (by linear_combination h0 : (d 0 - lam) * v 0 = 0) with hh | hh
+      · exact (sub_eq_zero.mp hh).symm
+      · exact absurd hh hv0
+    rw [hlam] at h1
+    rcases mul_eq_zero.mp (by linear_combination h1 : (d 1 - d 0) * v 1 = 0) with hh | hh
+    · exact absurd (sub_eq_zero.mp hh) hd.symm
+    · exact hh
+
+/-! ### Residual item (c): reversing the frame complements the frame map
+
+★★ New 2026-08-09.  The rows 32/33 caveat lists three residual items for identifying `FrameSpace`
+with `S²`/`ℝP²`; this is the third, and it is the one that carries **row 34** rather than 32/33 — the
+`p ↦ 𝟙 − p` quotient that turns the sphere into the projective plane.  The reviewer who enumerated the
+three noted the needed identity was absent and elementary; both were right. -/
+
+theorem adU_swap_frameProj_zero :
+    adU swapMat (frameProj (0 : Fin 2)) = frameProj (1 : Fin 2) := by
+  ext1
+  rw [adU_apply, HermitianMat.conj_apply_mat, frameProj_mat_eq_single, frameProj_mat_eq_single]
+  ext i j
+  fin_cases i <;> fin_cases j <;>
+    simp [swapMat, Matrix.mul_apply, Fin.sum_univ_two, Matrix.single,
+      Matrix.conjTranspose_apply]
+
+/-- **Reversing the frame complements the frame map.**  With `n2FrameTwist_reverse` this is the
+`ℝP²`-side of the descent: the frame function is blind to the complementation that distinguishes
+`S²` from `ℝP²`. -/
+theorem frameMap_mul_swap (V : Matrix.unitaryGroup (Fin 2) ℂ) :
+    frameMap (V * swapU) = 1 - frameMap V := by
+  have hVsw : ((V * swapU : Matrix.unitaryGroup (Fin 2) ℂ) : Matrix (Fin 2) (Fin 2) ℂ)
+      = (V : Matrix (Fin 2) (Fin 2) ℂ) * swapMat := rfl
+  have hstep : frameMap (V * swapU)
+      = adU (V : Matrix (Fin 2) (Fin 2) ℂ) (frameProj (1 : Fin 2)) := by
+    rw [frameMap, hVsw, ← adU_swap_frameProj_zero]
+    ext1
+    rw [adU_apply, adU_apply, adU_apply, HermitianMat.conj_apply_mat,
+      HermitianMat.conj_apply_mat, HermitianMat.conj_apply_mat]
+    rw [Matrix.conjTranspose_mul]
+    simp only [Matrix.mul_assoc]
+  have hsum : frameProj (1 : Fin 2) = 1 - frameProj (0 : Fin 2) := by
+    have h := sum_frameProj (n := Fin 2)
+    rw [Fin.sum_univ_two] at h
+    linear_combination (norm := module) h
+  rw [hstep, hsum, adU_sub, adU_unital (unitaryGroup_mul_conjTranspose V), frameMap]
+
 /-! ### Surjectivity of the frame map onto the unit-vector rank-one projections
 
 ★★ New 2026-08-09, from the independent review of residual item (a).  This closes the first of the

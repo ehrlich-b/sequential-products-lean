@@ -77,10 +77,23 @@ ABSENCE CLAIMS AND THEIR SCOPE
     enters the proof only through the Frobenius certificate, which lives on the `b`-side parameter,
     while the `a`-side appears in exactly one place supplying a trace value that is itself
     parameter-independent.
-    ★ So the honest remaining price of "compatible ⟹ same frame" is: (1) transport
-    `commute_of_twistSeq_comm_param` through `n2_sp_eq_twistSeq_frame` to an arbitrary `P`, and
-    (2) "commuting non-scalar Hermitian 2×2 matrices share an eigenbasis", which is elementary.
-    Neither is a new theory, and (1) is now a one-lemma step rather than a missing fact.
+    ★★ THE CHAIN IS NOW MAPPED IN FOUR STEPS, TWO OF THEM IN THE TREE (2026-08-09).  With
+    `a = Ad_U(diagFamily r)`, `b = Ad_V(diagFamily s)` non-scalar and `W = U^H V`:
+      1. compatibility ⟹ `Commute a b`, via `n2_sp_eq_twistSeq_frame` then
+         `commute_of_twistSeq_comm_param` (the two parameters differ, which is exactly why the
+         one-parameter form did not suffice).  IN THE TREE.
+      2. conjugating by `U^H`, `M := Ad_W (diagFamily s)` is DIAGONAL, because `diagFamily r` is
+         diagonal with distinct entries — `Necessity.offdiag_zero_of_commute_diagonal`.  IN THE TREE.
+      3. `M` is not a scalar (else conjugating back forces `s 0 = s 1`), so its entries are distinct,
+         and `M (W e_0) = e^{s_0}(W e_0)` makes `W e_0` supported on one coordinate —
+         `Necessity.eigen_diagonal_fin2`.  THE EIGENVECTOR STEP IS IN THE TREE; the "M is not a
+         scalar" step is NOT.
+      4. hence `Ad_W (frameProj 0)` is `frameProj 0` or `frameProj 1`, so the frame maps agree or
+         complement, and `n2FrameTwist_eq_of_frameMap_eq` / `frameMap_mul_swap` +
+         `n2FrameTwist_reverse` finish.  NOT ASSEMBLED.
+    ★ So the remainder is steps 3(b) and 4: matrix plumbing over `Fin 2`, no new mathematics and no
+    missing vocabulary.  Attempted 2026-08-09 and not finished — the two elementary lemmas landed, the
+    assembly did not, and that is recorded as budget rather than resistance.
 
 NOT imported from RadicalRelativity/.
 -/
