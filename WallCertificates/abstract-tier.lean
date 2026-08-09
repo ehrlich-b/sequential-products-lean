@@ -58,9 +58,17 @@ PER-ROW STATUS AND GAP
     plausibly cheap; it was never attempted.
 
   row 12 `prop:central`.  The componentwise identity is proved
-    (`MasterTheorem.Central.central_decomposition`).  Open: that each restriction inherits S1-S7,
-    and the converse assembly.  Both are routine but need a direct-sum-of-order-unit-spaces
-    construction the tree does not have.
+    (`MasterTheorem.Central.central_decomposition`).  ★★★ THIS ENTRY WAS WRONG TWICE OVER AND IS
+    RETRACTED (2026-08-09).  It said the row needs "a direct-sum-of-order-unit-spaces construction the
+    tree does not have": that construction is `DirectSum.lean:38 instance instProd`.  It also listed
+    "the converse assembly" as open: that is `SequentialProductOn.prod` (`DirectSum.lean:84`), all
+    eight fields, with `prod_sp`, `prod_fst`, `prod_snd` and `sp_eq_of_prod_eq`, and its docstring
+    says outright "This is the *sufficiency* half of the omnibus's factorwise assembly".
+    ★★ Caught by applying the rule from the quaternionic retraction — list a file's declarations
+    instead of grepping for a guessed name.  The rule found this on its FIRST use.
+    WHAT ACTUALLY REMAINS: the RESTRICTION direction only — that an arbitrary product on `V × W`
+    restricts to S1-S7 products on each summand (grep `restrict|toSummand|ofProd` in DirectSum.lean
+    -> prose only, 2026-08-09).
 
   row 13 `prop:pseudo-transfer`.  ★ ADVANCED TODAY: `Necessity.spCone_specInv_eq_one` proves the
     article's literal `a⁻¹ · a = 𝟙` with the true spectral inverse and no coefficient, using
