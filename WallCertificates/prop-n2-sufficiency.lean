@@ -47,8 +47,15 @@ ATTACK EVIDENCE
   above is from reading the article's own proof of `prop:n2-sufficiency` at source plus the shape of
   `HermitianMat.twistSequentialProduct`'s seven clauses.  ★ Note this is exactly the kind of
   estimate-without-attempt that has been WRONG twice on this project about `lem:n2-bounded`, in both
-  directions.  Treat the S2-near-scalars claim as the part most likely to be mispriced, and attack
-  the "compatible ==> same frame" lemma FIRST, since if that is cheap the rest is mechanical.
+  directions.
+  ★★★ AND THE PRICING SURVIVED REVIEW WHILE THE STATEMENT DID NOT (2026-08-09).  The
+  certificate-refutation review agreed with every judgement in this block — S2-near-the-scalars is the
+  delicate clause, "compatible ==> same frame" is load-bearing, this is not "row 28 with a variable
+  parameter" — and then showed the Lean statement written to carry that judgement was SELF-DEFEATING.
+  See the retraction on `frame_param_eq_of_compatible` below.  The lesson is that a certificate's prose
+  and its statement fail independently: getting the price right is no evidence that the proposition
+  says it.  Attack "compatible ==> same frame" first, as originally advised, but attack the RESTATED
+  version.
 
 ABSENCE CLAIMS AND THEIR SCOPE
   * "no frame-dependent sequential-product structure is constructed for a general t":
@@ -71,22 +78,95 @@ namespace WallCertificate
 open scoped Matrix
 open ComplexOrder OrderUnitSpace
 
+/-! ### A side condition the first version hid INSIDE two statements
+
+★★ The reviewer found that two propositions below carried an inline `(by sorry)` **inside the
+statement** (the `col₀ ≠ 0` obligation for `Projectivization.mk`).  Those attribute to the enclosing
+declaration, so the file's `sorry` warning count **understated it by two** — and, worse, meant those
+two propositions were **not fully written down** and could not be attacked as stated at all.
+
+Discharged here, from the reviewer's own proof, so the statements below are well-formed. -/
+
+theorem col_ne_zero (U : Matrix.unitaryGroup (Fin 2) ℂ) :
+    (WithLp.toLp 2 (fun i => (U : Matrix (Fin 2) (Fin 2) ℂ) i 0) : EuclideanSpace ℂ (Fin 2)) ≠ 0 := by
+  intro h
+  have hf : ∀ i, (U : Matrix (Fin 2) (Fin 2) ℂ) i 0 = 0 := by
+    intro i
+    have := congrFun (congrArg WithLp.ofLp h) i
+    simpa using this
+  have hU : star (U : Matrix (Fin 2) (Fin 2) ℂ) * (U : Matrix (Fin 2) (Fin 2) ℂ) = 1 :=
+    Matrix.mem_unitaryGroup_iff'.mp U.2
+  have h00 := congrFun (congrFun hU 0) 0
+  rw [Matrix.mul_apply] at h00
+  simp only [Matrix.star_apply, hf, star_zero, mul_zero, Finset.sum_const_zero,
+    Matrix.one_apply_eq] at h00
+  exact one_ne_zero h00.symm
+
 /-! ### The load-bearing missing fact, isolated
 
 If this is cheap, row 30 is mechanical; if it is hard, row 30 is hard.  Attack it first. -/
 
-/-- **GAP — the step row 30's S5 and S7 turn on.**  Two compatible effects of `H₂(ℂ)` have the same
-spectral frame, hence are assigned the same parameter by any frame function.
+/-- ★★★ **THE FIRST VERSION OF THIS STATEMENT WAS SELF-DEFEATING, AND THAT IS A THIRD DEFECT KIND
+FOR THIS DIRECTORY.  Refuted 2026-08-09 by the certificate-refutation review, on the same day it was
+written.**
 
-Stated with `Necessity.n2FrameTwist`'s indexing (frames as unitaries) because that is the tree's
-vocabulary; the article states it with frames as unordered atom sets. -/
-theorem frameRay_eq_of_compatible
+The first version's hypotheses were `a = Ad_U a` and `b = Ad_V b`.  But `Necessity.adU U a = U a Uᴴ`,
+so `a = Ad_U a` says **`U` COMMUTES with `a`** — not that `U` diagonalizes it.  Consequences, both
+compiled by the reviewer:
+  * `a = b = 𝟙` is stabilized by *every* unitary (`adU_unital`) and is compatible with itself by
+    `rfl`, so the hypotheses hold for **arbitrary** `U` and `V`;
+  * therefore the statement implies `n2FrameTwist P hS2` is **globally constant, for every product**.
+
+**Global constancy is exactly the negation of what rows 34 and 35 need** — a *nonconstant*
+`ℝP² → ℝ` — and the tree itself proves nonconstant ones exist
+(`RankTwo.tauModuliRP2_nonconstant`).  So the ingredient this certificate told the reader to "attack
+FIRST" would, if true, refute `cor:qubit-classification`: **the very row this same certificate
+covers.**
+
+★★ **Name the three defect kinds together, because the tests that catch them are different.**
+  * FALSE — row 22's `lem:orientation` statement: refutable by counterexample.
+  * VACUOUS — row 36(i)'s `exists_peirce_exchange`: provable, moves nothing.  Caught by the
+    inert-hypothesis test applied to the *gap*.
+  * SELF-DEFEATING — this one: an ingredient whose truth kills its own conclusion.  Caught by
+    neither of the above.  **The test is: assume the gap statement and check it does not contradict
+    the row it feeds.**  One step, and it would have caught this immediately.
+
+★ A second defect in the same statement, which the file's own prose asked for and the Lean did not
+carry: `a` and `b` must be **non-scalar**.  For `a = t • 𝟙` every unitary diagonalizes it, so no frame
+is determined — which is precisely why the article sets `t_a = 0` at scalars, as this file says at its
+own lines 37–40.  A statement contradicting its own file's prose, in a file that had already retracted
+one false statement.
+
+**THE CORRECT IDIOM WAS ELEVEN LINES FROM A THEOREM THIS FILE CITES.**
+`Necessity.n2_sp_eq_twistSeq_frame` takes `a = adU U (diagFamily r)` — "`a` is a `U`-conjugate of a
+diagonal", which is what "`U` presents `a`'s frame" means — and this certificate's *own* row-30
+statement uses that idiom correctly.  Two statements in one file disagreed about how a frame is
+presented, and the load-bearing one had the wrong one.
+
+**THE UNDERLYING MATHEMATICS IS TRUE AND CHEAP, so the pricing survives.**  A non-scalar Hermitian
+`2×2` has two distinct eigenvalues, hence one-dimensional eigenspaces; a Hermitian `b` commuting with
+it preserves each, so shares its frame.  The real remaining step, which the first version did not
+isolate: **`P`-compatibility ⟹ matrix commutation** for an arbitrary `P`, transportable through
+`n2_sp_eq_twistSeq_frame`.
+★ **Do not price that as a build without checking Mathlib first**: simultaneous diagonalization of
+commuting symmetric operators is there —
+`Mathlib/Analysis/InnerProductSpace/JointEigenspace.lean:110` `directSum_isInternal_of_commute` and
+`:120` `iSup_iInf_eq_top_of_commute` (v4.28.0, read at source).  Flagged because "Mathlib lacks X" has
+been wrong four times here.
+★ **And do NOT reach for the tree's `HermitianMat.eq_diagonal_of_commute_hermitian`**: its hypothesis
+is commuting with *every* Hermitian (the commutant of the whole algebra), strictly stronger than
+commuting with one non-scalar `a`.  Related machinery, wrong shape.
+
+Restated below with the diagonalizing idiom and non-scalar hypotheses. -/
+theorem frame_param_eq_of_compatible
     (P : SequentialProductOn (HermitianMat (Fin 2) ℂ)) (hS2 : P.FirstArgContinuous)
-    {a b : HermitianMat (Fin 2) ℂ} (ha : IsEffect a) (hb : IsEffect b)
-    (hcomm : P.sp a b = P.sp b a)
+    {r s : Fin 2 → ℝ} (hr : ∀ i, r i ≤ 0) (hs : ∀ i, s i ≤ 0)
+    (hrne : r 0 ≠ r 1) (hsne : s 0 ≠ s 1)
     (U V : Matrix.unitaryGroup (Fin 2) ℂ)
-    (hUa : a = Necessity.adU (U : Matrix (Fin 2) (Fin 2) ℂ) a)
-    (hVb : b = Necessity.adU (V : Matrix (Fin 2) (Fin 2) ℂ) b) :
+    (hcomm : P.sp (Necessity.adU (U : Matrix (Fin 2) (Fin 2) ℂ) (Necessity.diagFamily r))
+        (Necessity.adU (V : Matrix (Fin 2) (Fin 2) ℂ) (Necessity.diagFamily s))
+      = P.sp (Necessity.adU (V : Matrix (Fin 2) (Fin 2) ℂ) (Necessity.diagFamily s))
+        (Necessity.adU (U : Matrix (Fin 2) (Fin 2) ℂ) (Necessity.diagFamily r))) :
     Necessity.n2FrameTwist P hS2 U = Necessity.n2FrameTwist P hS2 V := by
   sorry
 
@@ -108,7 +188,7 @@ theorem exists_sequentialProduct_of_continuous_moduli (t : C(RankTwo.RP2, ℝ)) 
         P.sp (Necessity.adU (U : Matrix (Fin 2) (Fin 2) ℂ) (Necessity.diagFamily r)) b
           = HermitianMat.twistSeq (t (RankTwo.blochFrame (Projectivization.mk ℂ
               (WithLp.toLp 2 (fun i => (U : Matrix (Fin 2) (Fin 2) ℂ) i 0))
-              (by sorry))))
+              (col_ne_zero U))))
             (Necessity.adU (U : Matrix (Fin 2) (Fin 2) ℂ) (Necessity.diagFamily r)) b := by
   sorry
 
@@ -128,7 +208,7 @@ theorem qubit_classification
     ∃! t : C(RankTwo.RP2, ℝ),
       ∀ (U : Matrix.unitaryGroup (Fin 2) ℂ),
         t (RankTwo.blochFrame (Projectivization.mk ℂ
-            (WithLp.toLp 2 (fun i => (U : Matrix (Fin 2) (Fin 2) ℂ) i 0)) (by sorry)))
+            (WithLp.toLp 2 (fun i => (U : Matrix (Fin 2) (Fin 2) ℂ) i 0)) (col_ne_zero U)))
           = Necessity.n2FrameTwist P hS2 U := by
   sorry
 

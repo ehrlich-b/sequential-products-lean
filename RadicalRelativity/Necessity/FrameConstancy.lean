@@ -1917,6 +1917,63 @@ theorem hx_is_load_bearing :
   rw [hlhs] at hbad
   exact (mul_ne_zero (mul_ne_zero hsq (Complex.exp_ne_zero _)) hcoef) hbad.symm
 
+/-! ### The parameter is PINNED by the product — so its construction cannot make it wrong
+
+★★★ **New 2026-08-09, and it closes what was the arc's largest unexamined risk by removing the
+question rather than answering it.**
+
+A cold reviewer had flagged `tvalLm` and `twist_param_unique_of_scaled` as the top remaining risk:
+they carry the *identification* of the parameter — that the number `n2FrameTwist` reads off is the
+product's own twist parameter — and unlike a sign error that is invariant under nothing rows 32/33
+conclude.  Instead of auditing how `n2FrameTwist` is built, it proved the construction irrelevant.
+
+`n2FrameTwist_unique_param` says `n2FrameTwist P hS2 U` is **the unique real number** at which the
+product acts as the twist product at `U`'s frame.  That is the article's *definition* of `t̃(n)`.  So
+whatever `tvalLm` computes internally, it cannot produce a wrong number: a defect there could only
+surface as `n2_sp_eq_twistSeq_frame` failing to compile, and it compiles.  Non-vacuity is automatic,
+because the `∃!` carries its own witness.
+
+★★ **The methodological lesson, which the reviewer stated against its own two previous reports and
+which I had accepted uncritically — twice, once by promoting it to "the top item".**  "I have not read
+the proof of X" does not belong on a risk list for a kernel-checked theorem with a clean
+`#print axioms`: the kernel read it, and it is stricter than any reviewer.  What a reviewer must read
+is **statements**, **definitions** (a `def` can silently be the wrong object with no error anywhere),
+and **`Prop`-valued hypotheses** (a located stand-in typechecks fine).  This item was closable two
+passes earlier by reading three *statements*; what finally closed it was proving a new one. -/
+
+/-- **The frame parameter is pinned by the product.**  Any `t'` at which the product acts as the
+twist product at `U`'s frame equals `n2FrameTwist P hS2 U`. -/
+theorem n2FrameTwist_pinned (P : SequentialProductOn (HermitianMat (Fin 2) ℂ))
+    (hS2 : P.FirstArgContinuous) (U : Matrix.unitaryGroup (Fin 2) ℂ) (t' : ℝ)
+    (h : ∀ r : Fin 2 → ℝ, (∀ i, r i ≤ 0) → ∀ b : HermitianMat (Fin 2) ℂ, IsEffect b →
+      P.sp (adU (U : Matrix (Fin 2) (Fin 2) ℂ) (diagFamily r)) b
+        = HermitianMat.twistSeq t' (adU (U : Matrix (Fin 2) (Fin 2) ℂ) (diagFamily r)) b) :
+    t' = n2FrameTwist P hS2 U := by
+  have hs : (axisSplit (0 : Fin 2)) 0 ≠ (axisSplit (0 : Fin 2)) 1 := by simp [axisSplit]
+  refine twist_param_unique_of_scaled (N := 2) (i := 0) (j := 1) (by decide)
+    (u := 0) (v := 1) zero_lt_one (s := axisSplit 0) hs ?_
+  intro x hx
+  have hxpos : (0:ℝ) < x := hx.1
+  refine twistSeq_eq_of_adU (U := (U : Matrix (Fin 2) (Fin 2) ℂ))
+    (unitaryGroup_conjTranspose_mul U) (unitaryGroup_mul_conjTranspose U) ?_
+    (pairProj_isEffect (i := (0 : Fin 2)) (j := 1) (by decide))
+  intro c hc
+  have h1 := h (x • axisSplit (0 : Fin 2)) (axisSplit_smul_nonpos 0 hxpos) c hc
+  have h2 := n2_sp_eq_twistSeq_frame P hS2 U (axisSplit_smul_nonpos 0 hxpos)
+    (a := adU (U : Matrix (Fin 2) (Fin 2) ℂ) (diagFamily (x • axisSplit (0 : Fin 2)))) rfl hc
+  rw [← h1, h2]
+
+/-- **The article's `t̃(n)`, characterised with no reference to `tvalLm` at all.**  This is what makes
+rows 32/33 provably about the article's object rather than about a number the tree happens to
+compute. -/
+theorem n2FrameTwist_unique_param (P : SequentialProductOn (HermitianMat (Fin 2) ℂ))
+    (hS2 : P.FirstArgContinuous) (U : Matrix.unitaryGroup (Fin 2) ℂ) :
+    ∃! t : ℝ, ∀ r : Fin 2 → ℝ, (∀ i, r i ≤ 0) → ∀ b : HermitianMat (Fin 2) ℂ, IsEffect b →
+      P.sp (adU (U : Matrix (Fin 2) (Fin 2) ℂ) (diagFamily r)) b
+        = HermitianMat.twistSeq t (adU (U : Matrix (Fin 2) (Fin 2) ℂ) (diagFamily r)) b :=
+  ⟨n2FrameTwist P hS2 U, fun r hr b hb => n2_sp_eq_twistSeq_frame P hS2 U hr rfl hb,
+    fun t' ht' => n2FrameTwist_pinned P hS2 U t' ht'⟩
+
 /-! ### The sensitivity guard — what the sign audit found actually matters
 
 ★★ **New 2026-08-09, and it replaces a risk this arc had mispriced — including by the reviewer who
