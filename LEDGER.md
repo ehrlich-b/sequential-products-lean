@@ -164,6 +164,41 @@ in clause (ii).
 row; `lem:homomorphism` moved ABSENT → PARTIAL earlier in the arc). Gates green at every
 commit: 3106 jobs, census 149, custom axioms exactly `[]`.
 
+### ★ ARC-6 REVIEW OUTCOME — the protocol was NOT satisfied, and this says so
+
+**One isolated cold review was spawned against frozen tag `paperA-arc6-review` (`9c2aa88`)
+with a full adversarial brief, and it returned nothing.** It was asked five times, twice with
+explicit "partial findings now beat complete findings later" and a final one-line-per-item
+request. No report arrived. **The arc therefore has ZERO external verification**, against a
+protocol that called for three checkpoint reviews. Do not read this arc's confirmations as
+reviewed.
+
+**What was done instead, and it is not equivalent.** I ran the reviewer's own playbook against
+my own work — the probes arc-5's review taught the project to run — and it caught a real defect
+plus verified the one failure mode that would have voided the arc's headline claims:
+
+| Probe | Result |
+| --- | --- |
+| Is `OrderUnitSpace.IsArchimedean` inhabited? | **PASS** — `HermitianMat n ℂ` satisfies it (`le_zero_of_forall_le_smul_one`). Had this failed, both new FORMALIZED claims would have been vacuous. |
+| Do the abstract results instantiate on a real product? | **PASS** — `sp_smul_left` and `spCone_of_isEffect` both apply on `H_N(ℂ)`; hypotheses jointly satisfiable. |
+| Inert-hypothesis test on `rhoChi_eq_smul_generator` | **FOUND A DEFECT** — `i ≠ j` is inert (`rhoField` is `0` on the diagonal). `rhoChi_eq_smul_generator_all` now states it unconditionally. Same class as `lem:adjacent` last arc. |
+| Is `n2FrameTwist_mul_diagonal` non-vacuous? | **PASS** — applies to `diag(i,1)`, proved unitary and proved ≠ `1`. |
+| `cfc_transpose`'s algebraic step on a concrete non-symmetric Hermitian matrix | **PASS** — for `[[1,i],[−i,1]]`: Hermitian, `A ≠ Aᵀ`, conjugation `=` transpose entrywise, `conjMatStarAlg A ≠ A`. |
+| Coverage count | **PASS** — 8/19/9 by enumerating all 36 table rows programmatically, not from prose. |
+| Diff-audit pass over the doc changes | **FOUND TWO DEFECTS** — the §3b `lem:homog` row still said clause (ii) was "concrete carrier only" after I proved it abstractly, and a sentence claiming the article's norm route "is not avoidable here" was falsified by `lem:cone-ext` landing norm-free. Both rewritten. |
+
+**Self-review is structurally weaker than cold review and the record must not blur them.**
+Every arc-5 finding that mattered came from someone who had not written the code: two of my
+claims were refuted by compiled counterexample, and one finding required checking the
+manuscript, which I had already misread. Nothing here substitutes for that. **The next arc
+should open by cold-reviewing this one** — specifically the two FORMALIZED claims
+(`lem:cone-ext`, and `lem:homog`(ii)'s article-generality argument), the `else 0` branch of
+`spCone`, and whether `cfc_transpose` is the lemma `cor:selectors`(iii) actually needs.
+
+**Process note for the next arc:** a background reviewer that never reports is a silent
+failure that looks like work in progress. Ask for an interim report early — after the first
+finding, not at the end — so the channel is proved live before the arc depends on it.
+
 **Review protocol (binding).** Three isolated cold reviews: after 6.1(f), after 6.3, and
 at end of arc. Each reviewer reads the diffs at source and COMPILES probes
 (inert-hypothesis tests; strongest-available probe on any new map — arc-5's was
