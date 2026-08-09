@@ -516,6 +516,49 @@ do touch the record:
   every theorem carries `PosDef`, but the *name* invites dropping it. One inert hypothesis removed
   (`specInv_nonneg`'s `IsEffect`).
 
+★★★ **TWO MORE ROWS ADVANCED, AND THE ARC'S LAST FINDING IS ABOUT EVIDENCE RATHER THAN MATHEMATICS.**
+
+**Row 18's converse is PROVED** (`offdiag_eq_zero_of_fixes_frameProj`): a unitary fixing every frame
+projection is diagonal, so the frame stabilizer is exactly the torus. The rewritten
+`differential-trio.lean` had recorded this as the row's **single** remaining stated gap, judged
+"writable today… a short matrix argument" — and it was: multiplying the fixing condition through by
+`U` turns it into commutation with the matrix unit `E_kk`, and the `(i,k)` entry gives the result.
+**That certificate's one gap closed within the hour of the certificate being written** — the fourth
+time an entry in that directory has been falsified by an attempt.
+
+**Residual item (a) of the rows 32/33 caveat is CLOSED** (`exists_frameMap_eq_rankOne`): every
+unit-vector rank-one projection is `frameMap U` for the explicit unitary
+`!![ψ₀, -conj ψ₁; ψ₁, conj ψ₀]`, ~25 lines, and `RankTwo.orthoVec` is not needed. Two of the three
+residual items remain, and the reviewer's observation that the third sub-part is *avoidable* by
+phrasing the identification against `QubitFrame` (defined as rays) rather than "all rank-one
+projections" stands.
+
+★★★ **AND A RETRACTION I HAVE TO OWN, not just record.** The reviewer's earlier report said the
+substantive half of that surjectivity "COMPILES"; **it did not**. The proof had an unsolved goal,
+Lean's error recovery inserted a `sorry`, and the top-level theorem carried `sorryAx`. The cause was
+reading `lake env lean` output through a `head` window that earlier failures had already filled — the
+**truncating-pipe** failure this project has had a rule about since before this arc. The reviewer
+committed it; **I then propagated it into the manifest on its word, without an independent check**,
+which is the second time this arc I accepted a reviewer's claim about its own work and paid for it
+(the first was the sign mispricing). The conclusion survived and is now genuinely compiled; the
+evidence did not exist when it was claimed.
+
+★ **The check, now standing protocol for scratch work:** count errors over the FULL output
+(`grep -cE error`, never a `head` window) **and** `#print axioms` the final theorem looking for
+`sorryAx`. Note what this is *not*: it is a different rule from the statements-vs-proofs rule — that
+one is about what to read, this one is about how to verify a compile, and both belong in the review
+protocol. ★ For the library itself the check is already automatic and strictly stronger:
+`AxiomAudit.lean` requires every tracked declaration's closure to lie in
+`[propext, Classical.choice, Quot.sound]`, and `sorryAx` is not in that list — **which is why the tree
+was never at risk even while a claim about it was false.** I verified all six certificates the same
+way afterwards: zero errors in every one, sorry counts exactly the intended gaps.
+
+★★ **The reviewer's own closing observation is worth keeping:** of its seven passes, the two most
+useful findings were both corrections of its *own* earlier claims rather than of mine — the sign
+mispricing and this one. That is an argument for keeping a reviewer on a target long enough to audit
+its earlier reports, not only the code, and it is the opposite of the instinct to rotate reviewers for
+freshness.
+
 ★ **Running total of this arc's own corrections, stated plainly because the pattern is the finding:**
 five false absence claims (quaternionic carrier, direct sum, direct-sum assembly, twist-product
 compatibility, and the article's own generality being unstatable — nos. 6-10),
@@ -525,7 +568,8 @@ them, two dependencies mispriced as fatal (the sign and the `tvalLm` identificat
 the reviewer who raised them, both accepted uncritically by me), one totalizing residual claim, one half-certified
 claim about the axioms, one row whose three clauses I described as one, five inaccurately recorded
 greps, one broken verification recipe, two `True` placeholders that recorded awkwardness and got read
-as depth, and one timeout "fixed" three times before its real cause was found. **Every one of them was mine or a reviewer's,
+as depth, one compile claim that was false when made and which I propagated without checking, and one
+timeout "fixed" three times before its real cause was found. **Every one of them was mine or a reviewer's,
 and every one was caught inside a single day by making the claims falsifiable instead of asserting
 them.** That is the case for the certificate format, and it is stronger than any coverage number.
 
