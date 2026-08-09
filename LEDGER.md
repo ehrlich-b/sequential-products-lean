@@ -180,12 +180,26 @@ structure carried by the involution instead of by a scalar field, exactly as the
 
 ### ★ ARC-6 REVIEW OUTCOME — the protocol was NOT satisfied, and this says so
 
-**One isolated cold review was spawned against frozen tag `paperA-arc6-review` (`9c2aa88`)
-with a full adversarial brief, and it returned nothing.** It was asked five times, twice with
-explicit "partial findings now beat complete findings later" and a final one-line-per-item
-request. No report arrived. **The arc therefore has ZERO external verification**, against a
-protocol that called for three checkpoint reviews. Do not read this arc's confirmations as
-reviewed.
+**The review protocol failed on BOTH attempts. Four reviewers, eleven requests, zero
+reports.** Do not read this arc's confirmations as reviewed.
+
+*Attempt 1.* One reviewer against frozen tag `paperA-arc6-review` (`9c2aa88`) with a full
+adversarial brief covering the whole arc. Asked five times, including "partial findings now beat
+complete findings later" and a final one-line-per-item request. Nothing returned.
+
+*Attempt 2, after diagnosing attempt 1 as too broad a brief.* **Three** reviewers spawned in
+parallel, each deliberately narrow so each could finish inside ~25 tool calls, on separate
+concerns: the abstract tier's two FORMALIZED claims; the rank-two lane and the phase sign; the
+retractions plus documentation consistency. Each was given an early liveness check ("reply with
+ONE line now"), then a floor of three one-word answers, then a last call. Nothing returned from
+any of the three.
+
+**Conclusion: this is a tooling failure, not a scoping failure.** Narrowing the brief, running
+three in parallel, and lowering the bar to a single word all changed nothing, so the useful
+lesson is not "write shorter briefs" — it is that **this review channel cannot currently be
+relied on, and an arc must not be planned as though it can.** The next campaign should either
+verify the channel with a throwaway request *before* the work starts, or budget for
+review-by-a-second-session instead of by subagent.
 
 **What was done instead, and it is not equivalent.** I ran the reviewer's own playbook against
 my own work — the probes arc-5's review taught the project to run — and it caught a real defect
@@ -229,8 +243,11 @@ should open by cold-reviewing this one** — specifically the two FORMALIZED cla
 `spCone`, and whether `cfc_transpose` is the lemma `cor:selectors`(iii) actually needs.
 
 **Process note for the next arc:** a background reviewer that never reports is a silent
-failure that looks like work in progress. Ask for an interim report early — after the first
-finding, not at the end — so the channel is proved live before the arc depends on it.
+failure that looks like work in progress. Asking for an interim report early is necessary but —
+as attempt 2 showed — **not sufficient**: the liveness checks went unanswered too. So the rule
+is stronger: **prove the channel with a trivial round-trip before the arc depends on it**, and
+if that round-trip fails, plan the arc with self-verification as the primary mechanism and say
+so up front, rather than discovering at close-out that the protocol cannot be met.
 
 **Review protocol (binding).** Three isolated cold reviews: after 6.1(f), after 6.3, and
 at end of arc. Each reviewer reads the diffs at source and COMPILES probes
