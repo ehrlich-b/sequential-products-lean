@@ -1618,6 +1618,71 @@ theorem n2FrameTwist_eq_of_frameMap_eq (U V : Matrix.unitaryGroup (Fin 2) ℂ)
   rw [adU_apply, adU_apply, HermitianMat.conj_apply_mat, HermitianMat.conj_apply_mat,
     key U, key V, hmat]
 
+/-! ### Surjectivity of the frame map onto the unit-vector rank-one projections
+
+★★ New 2026-08-09, from the independent review of residual item (a).  This closes the first of the
+three items the rows 32/33 caveat lists: every rank-one projection of a unit vector is `frameMap U`
+for an explicit `U`.  `RankTwo.orthoVec` is **not** needed — the unitary is written down directly.
+
+★★★ **A RETRACTION ABOUT EVIDENCE, not about content, and it is the more useful half.**  The
+reviewer's first report said the substantive half of this "COMPILES", I recorded that in the manifest
+on its word, and **it was false at the time**: the proof had an unsolved goal, Lean's error recovery
+inserted a `sorry`, and the top-level theorem was carrying `sorryAx`.  The cause was reading
+`lake env lean` output through a `head` window that the earlier failures had already filled — the
+truncating-pipe failure this project has a rule about, committed by the reviewer and then propagated
+by me.  The conclusion survived (it was cheap, and it is genuinely compiled now); the evidence did
+not exist when it was claimed.
+★ **The check that would have caught it, now standing protocol for scratch work:** count errors over
+the FULL output (`grep -cE error`, never a `head` window) and run `#print axioms` on the final
+theorem looking for **`sorryAx`**.  For the library itself this is already automatic and stronger —
+`AxiomAudit.lean` requires every tracked declaration's closure to lie in
+`[propext, Classical.choice, Quot.sound]`, and `sorryAx` is not in that list — which is why the tree
+was never at risk even while the claim about it was wrong.
+
+Two pieces of friction cost both of us several attempts, recorded because they are one-word fixes:
+`frameMap_frameU` needs **`Matrix.vecMul_diagonal`** in the simp set (with `Matrix.diagonal_apply`
+the goals stall at a `ᵥ*` residue), and the `frameProj` *diagonal* form rather than
+`frameProj_mat_eq_single` (which leaves `vecHead`/`vecTail` residue).  And `frameU_unitary`'s
+`all_goals` must be its own line rather than chained off the multi-line `simp`, or the alternatives
+are never reached. -/
+
+/-- The unitary whose first column is `ψ` and whose second is the complement. -/
+def frameU (ψ : Fin 2 → ℂ) : Matrix (Fin 2) (Fin 2) ℂ :=
+  !![ψ 0, -(star (ψ 1)); ψ 1, star (ψ 0)]
+
+theorem frameU_unitary {ψ : Fin 2 → ℂ} (hψ : HermitianMat.nsq ψ = 1) :
+    frameU ψ ∈ Matrix.unitaryGroup (Fin 2) ℂ := by
+  have hn : Complex.normSq (ψ 0) + Complex.normSq (ψ 1) = 1 := by
+    unfold HermitianMat.nsq at hψ; rwa [Fin.sum_univ_two] at hψ
+  have e0 : (starRingEnd ℂ) (ψ 0) * ψ 0 + (starRingEnd ℂ) (ψ 1) * ψ 1 = 1 := by
+    rw [← Complex.normSq_eq_conj_mul_self, ← Complex.normSq_eq_conj_mul_self,
+      ← Complex.ofReal_add, hn, Complex.ofReal_one]
+  have e1 : ψ 1 * (starRingEnd ℂ) (ψ 1) + ψ 0 * (starRingEnd ℂ) (ψ 0) = 1 := by
+    rw [Complex.mul_conj, Complex.mul_conj, ← Complex.ofReal_add,
+      show Complex.normSq (ψ 1) + Complex.normSq (ψ 0)
+        = Complex.normSq (ψ 0) + Complex.normSq (ψ 1) from by ring, hn, Complex.ofReal_one]
+  rw [Matrix.mem_unitaryGroup_iff']
+  ext i j
+  fin_cases i <;> fin_cases j <;>
+    simp [frameU, Matrix.mul_apply, Fin.sum_univ_two, Matrix.one_apply,
+      Matrix.conjTranspose_apply, star_star]
+  all_goals first | exact e0 | exact e1 | ring
+
+theorem frameMap_frameU {ψ : Fin 2 → ℂ} (hψ : HermitianMat.nsq ψ = 1) :
+    frameMap ⟨frameU ψ, frameU_unitary hψ⟩ = HermitianMat.rankOne ψ := by
+  ext1
+  rw [frameMap, adU_apply, HermitianMat.conj_apply_mat, HermitianMat.rankOne_mat,
+    frameProj, HermitianMat.diagonal_mat]
+  ext i j
+  fin_cases i <;> fin_cases j <;>
+    simp [frameU, Matrix.mul_apply, Fin.sum_univ_two, Matrix.vecMul_diagonal,
+      Matrix.vecMulVec_apply, Matrix.conjTranspose_apply, Pi.star_apply]
+
+/-- **Residual item (a): the frame map hits every unit-vector rank-one projection.** -/
+theorem exists_frameMap_eq_rankOne (ψ : Fin 2 → ℂ) (hψ : HermitianMat.nsq ψ = 1) :
+    ∃ U : Matrix.unitaryGroup (Fin 2) ℂ, frameMap U = HermitianMat.rankOne ψ :=
+  ⟨⟨frameU ψ, frameU_unitary hψ⟩, frameMap_frameU hψ⟩
+
 /-- The space of rank-two frames **presented by unitaries**.
 
 The residual honesty point about rows 32/33: this is the range of `frameMap`, not the full space of
@@ -1947,6 +2012,34 @@ theorem stabilizer_group_action_complex {n : Type*} [Fintype n] [DecidableEq n]
           adU (torusU t r) (blockHerm i j z)
             = blockHerm i j (Complex.exp ((↑(t * (r i - r j)) : ℂ) * Complex.I) * z) :=
   ⟨fun k => torusU_fixes_frameProj t r k, fun _ _ hij z => torusU_block t r hij z⟩
+
+/-- **The converse: the frame stabilizer is exactly the diagonal subgroup.**
+
+★★ New 2026-08-09.  After the cold review discharged row 18's forward direction, the rewritten
+`WallCertificates/differential-trio.lean` recorded this converse as the row's **single** remaining
+stated gap, judged "writable today with `adU`/`frameProj`/`Matrix.unitaryGroup`, no new vocabulary,
+and looks like a short matrix argument".  That judgement was right, and this is it — so that
+certificate's one gap closed within the hour of being written, which is now the fourth time a
+certificate in that directory has been falsified by an attempt.
+
+The argument: fixing `frameProj k` under conjugation is, after multiplying through by `U`, plain
+commutation with the matrix unit `E_kk`.  Reading the `(i,k)` entry of `U·E_kk = E_kk·U` gives
+`U i k = 0` whenever `i ≠ k`. -/
+theorem offdiag_eq_zero_of_fixes_frameProj {n : Type*} [Fintype n] [DecidableEq n]
+    {U : Matrix n n ℂ} (hU : Uᴴ * U = 1)
+    (hfix : ∀ k, adU U (frameProj k) = frameProj k) :
+    ∀ i k, i ≠ k → U i k = 0 := by
+  intro i k hik
+  have hmat : U * (frameProj k).mat = (frameProj k).mat * U := by
+    have h := congrArg HermitianMat.mat (hfix k)
+    rw [adU_apply, HermitianMat.conj_apply_mat] at h
+    calc U * (frameProj k).mat
+        = (U * (frameProj k).mat * Uᴴ) * U := by
+          rw [Matrix.mul_assoc, Matrix.mul_assoc, hU, Matrix.mul_one]
+      _ = (frameProj k).mat * U := by rw [h]
+  have hentry := congrFun (congrFun hmat i) k
+  rw [frameProj_mat_eq_single] at hentry
+  simpa [Matrix.mul_apply, Matrix.single, Ne.symm hik] using hentry
 
 /-- **The certificate's stated gap, verbatim and proved**: an arbitrary product's coefficient
 `tvalCoef` is realized by the frame-stabilizer element `torusU (tvalCoef …) r`, acting on the `(i,j)`
