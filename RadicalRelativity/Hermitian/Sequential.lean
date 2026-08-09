@@ -230,16 +230,26 @@ theorem trace_twistSeq_mul_left {a : HermitianMat n ℂ} (ha : 0 ≤ a) (b : Her
     _ = (a.mat * a.mat * b.mat).trace := by rw [conjTranspose_mul_twistFactor ha]
     _ = (b.mat * (a.mat * a.mat)).trace := Matrix.trace_mul_comm _ _
 
-/-- **Compatibility ⇒ commutation** for the twist product, via the Frobenius
-certificate `C = b^{1/2+it}·a − a·b^{1/2+it}` (the Gudder–Nagy normality trick at
-general twist). -/
-theorem commute_of_twistSeq_comm {a b : HermitianMat n ℂ} (ha : 0 ≤ a) (hb : 0 ≤ b) {t : ℝ}
-    (h : twistSeq t a b = twistSeq t b a) : Commute a.mat b.mat := by
+/-- **Compatibility ⇒ commutation for the twist product, at TWO parameters.**
+
+★★ New 2026-08-09 (ARC-7). The one-parameter form below was already here; this generalization exists
+because `WallCertificates/prop-n2-sufficiency.lean` recorded "compatible ⟹ same frame" as a fact
+"nothing in the tree states", and that was wrong — the one-parameter form *is* the hard half of it.
+What the rank-two application actually needs is this two-parameter shape, because
+`n2_sp_eq_twistSeq_frame` gives the two orders of the product with the parameters of *different*
+frames: `P.sp a b = twistSeq t_U a b` but `P.sp b a = twistSeq t_V b a`.
+
+The generalization is essentially free, and the reason is worth stating: the parameter enters the
+proof only through the Frobenius certificate `C = b^{1/2+it}·a − a·b^{1/2+it}`, which lives entirely
+on the `b`-side parameter `t`. The `a`-side parameter appears in exactly one place — supplying the
+common trace value via `trace_twistSeq_mul_left`, which is itself parameter-independent. -/
+theorem commute_of_twistSeq_comm_param {a b : HermitianMat n ℂ} (ha : 0 ≤ a) (hb : 0 ≤ b)
+    {t t' : ℝ} (h : twistSeq t' a b = twistSeq t b a) : Commute a.mat b.mat := by
   have hYY : twistFactor b t * (twistFactor b t)ᴴ = b.mat := twistFactor_mul_conjTranspose hb t
   have hYY' : (twistFactor b t)ᴴ * twistFactor b t = b.mat := conjTranspose_mul_twistFactor hb t
   -- the common real trace value
   have hτ : ((twistSeq t b a).mat * a.mat).trace = (b.mat * (a.mat * a.mat)).trace := by
-    rw [← h]; exact trace_twistSeq_mul_left ha b t
+    rw [← h]; exact trace_twistSeq_mul_left ha b t'
   have hreal : star ((b.mat * (a.mat * a.mat)).trace) = (b.mat * (a.mat * a.mat)).trace := by
     rw [← Matrix.trace_conjTranspose]
     rw [show (b.mat * (a.mat * a.mat))ᴴ = (a.mat * a.mat) * b.mat from by
@@ -292,6 +302,11 @@ theorem commute_of_twistSeq_comm {a b : HermitianMat n ℂ} (ha : 0 ≤ a) (hb :
     exact hh.symm
   have h3 : Commute a.mat ((twistFactor b t)ᴴ * twistFactor b t) := hcomm2.mul_right hcomm1
   rwa [conjTranspose_mul_twistFactor hb] at h3
+
+/-- The one-parameter form, now a corollary. -/
+theorem commute_of_twistSeq_comm {a b : HermitianMat n ℂ} (ha : 0 ≤ a) (hb : 0 ≤ b) {t : ℝ}
+    (h : twistSeq t a b = twistSeq t b a) : Commute a.mat b.mat :=
+  commute_of_twistSeq_comm_param ha hb h
 
 /-! ## S4: zero-symmetry -/
 
