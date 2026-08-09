@@ -248,9 +248,10 @@ literal.
 
 **Scope, stated precisely.**  `spCone` extends the **first** argument only, so this gives the
 article's `a⁻¹ · a = 𝟙`.  The companion `a · a⁻¹ = 𝟙` puts the non-effect in the *second* slot,
-which no lemma in this tree covers; the article gets it from S4-symmetry of the extended product,
-which would need a second-argument extension. That half is **not** proved here — do not read this
-as the full row. -/
+which no lemma in this tree covered when this was written. ★★ **SUPERSEDED 2026-08-09: it is now
+proved** — see `spConeRight_specInv_eq_one` below. `SequentialProductOn.spConeRight` turned out to be
+*cheaper* than the first-slot extension, because second-argument homogeneity needs no S2. Both slots
+now hold. -/
 
 section ArticleForm
 
@@ -299,6 +300,32 @@ theorem spCone_specInv_eq_one (hS2 : P.FirstArgContinuous) (hb : IsEffect b)
       (isConeNorm_specInv hb hbd) hb]
   rw [specInv_eq_smul_pseudoInv hbd, smul_smul, inv_inv, mul_inv_cancel₀ hc, one_smul,
     sp_pseudoInv_eq_smul_one P hS2 hb hbd, smul_smul, inv_mul_cancel₀ hc, one_smul]
+
+/-- **`prop:pseudo-transfer`, SECOND slot**: `b · b⁻¹ = 𝟙`, the companion the first version of this
+section recorded as unreachable.
+
+★★ Landed 2026-08-09 after the certificate-refutation review discharged the missing extension. The
+note above said this half "puts the non-effect in the *second* slot, which no lemma in this tree
+covers" and that it "is **not** proved here — do not read this as the full row". Both sentences were
+correct when written and both are now retired: `SequentialProductOn.spConeRight` exists, and it was
+*cheaper* than the first-slot extension, because second-argument homogeneity needs no S2.
+
+**So the article's identity `a · a⁻¹ = a⁻¹ · a = 𝟙` now holds in both slots on this carrier.** -/
+theorem spConeRight_specInv_eq_one (hS2 : P.FirstArgContinuous) (hb : IsEffect b)
+    (hbd : b.mat.PosDef) :
+    P.spConeRight b (specInv b) = 1 := by
+  have hc : pseudoInvCoef b ≠ 0 := ne_of_gt (pseudoInvCoef_pos hbd)
+  rw [P.spConeRight_eq HermitianMat.isArchimedean hb (specInv_nonneg hb hbd)
+      (isConeNorm_specInv hb hbd)]
+  rw [specInv_eq_smul_pseudoInv hbd, smul_smul, inv_inv, mul_inv_cancel₀ hc, one_smul,
+    ← sp_pseudoInv_comm P hS2 hb hbd, sp_pseudoInv_eq_smul_one P hS2 hb hbd,
+    smul_smul, inv_mul_cancel₀ hc, one_smul]
+
+/-- **Both slots at once** — the article's `prop:pseudo-transfer` identity as it is stated. -/
+theorem spCone_specInv_both (hS2 : P.FirstArgContinuous) (hb : IsEffect b)
+    (hbd : b.mat.PosDef) :
+    P.spCone (specInv b) b = 1 ∧ P.spConeRight b (specInv b) = 1 :=
+  ⟨spCone_specInv_eq_one P hS2 hb hbd, spConeRight_specInv_eq_one P hS2 hb hbd⟩
 
 end ArticleForm
 

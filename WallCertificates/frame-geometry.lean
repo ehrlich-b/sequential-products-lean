@@ -65,12 +65,18 @@ ATTACK EVIDENCE
 
 ABSENCE CLAIMS AND THEIR SCOPE
   * "no Givens/Jacobi factorization of unitaries into rank-two block rotations":
-      grep -rn 'Givens\|Jacobi\|blockRotation' RadicalRelativity/ -> no hits.  Whole first-party
-      tree incl. Vendor/, 2026-08-09.  In Mathlib: grep -rn 'Givens' .lake/packages/mathlib/Mathlib/
-      -> no hits either (scope: Mathlib v4.28.0).  ★ Stated with both scopes because "Mathlib lacks
-      X" has been wrong four times on this project when the tree vendored it; here neither has it.
+      ★ **THE RECORDED GREP RESULT WAS WRONG TWICE** (found 2026-08-09 by the certificate-refutation
+      review): `Givens` DOES hit `Necessity/FrameConstancy.lean:1925`, and `blockRotation` is
+      case-sensitive so it missed `Necessity/BlockRotation.lean` entirely.  **The PRICE nevertheless
+      survives**, checked at source: `BlockRotation.lean` is about the block *character* being a
+      rotation (`chiEntryCLM`, `chiEntry_is_rotation`), not a factorization of unitaries.  Mathlib
+      scope CONFIRMED clean (case-insensitive `givens` → no hits, v4.28.0).  **Fix the grep, keep the
+      price** — and note that a case-sensitive pattern is exactly how the quaternionic certificate's
+      absence claim went false on the same day.
   * "no complex structure on a cross-coherence space":
-      grep -rn 'crossCoherence\|orientationJ\|complexStructure' RadicalRelativity/ -> no hits.
+      ★ **RECORDED GREP RESULT WAS WRONG**: `crossCoherence_single_scalar` appears at
+      `MasterTheorem/Globalization.lean:43,193,205`.  The price survives — those are U(1)-character
+      statements, not a complex structure on a carrier — but the recorded result did not.
   * "no Peirce exchange automorphism":
       grep -rn 'peirceExchange\|exchangeAuto\|PeirceExchange' RadicalRelativity/ -> no hits.
 
@@ -147,12 +153,24 @@ theorem n2_necessity_theta_level : True := by
 The remaining clause of `cor:selectors`.  The hypothesis is covariance under the Peirce exchange
 automorphism, which does not exist in the tree; the conclusion is the same as clauses (ii)/(iii). -/
 
-/-- **GAP — clause (i)'s missing input.**  A Peirce exchange automorphism of `H_N(ℂ)`: the unital
-order automorphism swapping two frame atoms and acting on the coherence blocks accordingly.
+/-- ★★ **THIS STATEMENT IS VACUOUS — REFUTED 2026-08-09 by the certificate-refutation review, which
+DISCHARGED it and thereby showed it does not price the gap.**
 
-Note the shape: once such a map exists and is shown to flip the twist (as transposition does —
-`Necessity.transposeMap_twistSeq`, proved today), clause (i) closes by the *same* `∃!` step that
-closed (ii) and (iii).  So the gap is an object, not an argument. -/
+The proposition below is satisfied by conjugation by the permutation matrix of `Equiv.swap i j` —
+nothing Peirce about it, no action on the coherence blocks at all.  Worse, the reviewer's compiled
+discharge returns **both** `hN : 3 ≤ N` and `hij : i ≠ j` as `unused variable` lints: **two inert
+hypotheses**, and a statement that does not need `i ≠ j` cannot possibly be capturing "swaps two
+frame atoms and acts on the coherence blocks accordingly".
+
+★ **This is the mirror of the row-22 defect in the same file.** Row 22 stated a gap FALSELY; row
+36(i) states it VACUOUSLY. The consequence is identical: the next person discharges the `sorry` and
+the row does not move. **Two failure modes, one lesson — a gap statement has to be strong enough that
+proving it would actually close the row, and the cheapest test of that is the inert-hypothesis test
+applied to the GAP rather than to the theorem.**
+
+Before anyone attacks this, restate it with the coherence-block action as an explicit conclusion
+(its effect on `blockEmbedLm`/`cornerJ2`). The `sorry` below is left in place only so the defect
+stays visible. -/
 theorem exists_peirce_exchange {N : ℕ} (hN : 3 ≤ N) (i j : Fin N) (hij : i ≠ j) :
     ∃ Φ : HermitianMat (Fin N) ℂ →ₗ[ℝ] HermitianMat (Fin N) ℂ,
       (∀ x y, x ≤ y ↔ Φ x ≤ Φ y) ∧ Φ 1 = 1 ∧ Φ (Necessity.frameProj i) = Necessity.frameProj j := by

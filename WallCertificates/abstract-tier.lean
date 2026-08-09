@@ -81,11 +81,24 @@ ABSENCE CLAIMS AND THEIR SCOPE
   * "no `J_2(q)` as an order unit space":
       grep -rn 'J2\|PeirceTwo\|peirce.*OrderUnit' RadicalRelativity/ -> `cornerJ2` is a PREDICATE on
       elements, not a carrier type; no `OrderUnitSpace` instance for a Peirce subalgebra.
-  * "no direct sum of order unit spaces":
-      grep -rn 'DirectSum.*OrderUnit\|OrderUnit.*DirectSum\|Pi.*OrderUnitSpace' RadicalRelativity/
-      -> no hits.  Whole first-party tree incl. Vendor/, 2026-08-09.
-  * "no second-argument cone extension":
-      grep -rn 'spConeRight\|sp_cone_right\|secondArg' RadicalRelativity/ -> no hits.
+  * ★★ "no direct sum of order unit spaces" — **FALSE, RETRACTED 2026-08-09 by the
+    certificate-refutation review.**  `RadicalRelativity/DirectSum.lean:38` is
+    `instance instProd : OrderUnitSpace (V × W)`, with `prod_ousUnit` (:54) and `isEffect_prod_iff`
+    (:59), and that file's own header calls it "the M7 foundation … carrier for that decomposition:
+    the direct sum of order-unit spaces".  The grep
+    `DirectSum.*OrderUnit|OrderUnit.*DirectSum|Pi.*OrderUnitSpace` was accurate and the inference was
+    invalid: the pattern needed both words on ONE LINE, and the instance is called `instProd` in a
+    file called `DirectSum.lean`.  **This DE-PRICES row 12 `prop:central`, whose stated blocker was
+    exactly this object** — summand inheritance and the converse assembly should now be attempted, not
+    deferred.  Seventh false absence claim on this project; second one today whose grep was accurate.
+  * ★★ "no second-argument cone extension" — the OBJECT was genuinely absent, but the PRICING was
+    wrong and the object now EXISTS.  `SequentialProductOn.spConeRight` /
+    `sp_coneNorm_indep_right` / `spConeRight_eq` / `spConeRight_of_isEffect` landed 2026-08-09 after
+    the review discharged it in ~25 lines: its only ingredient, `sp_smul_right_of_unitInterval`, was
+    already in the tree, and it needs `IsArchimedean` but **no S2 at all** — making the right slot
+    strictly CHEAPER than the left.  The phrase "nothing in the tree has" was true of the object and
+    misleading about the cost.  Consequence: `Necessity.spConeRight_specInv_eq_one` now proves the
+    article's `a · a⁻¹ = 𝟙`, so **row 13's identity holds in BOTH slots**.
 
 NOT imported from RadicalRelativity/.
 -/
@@ -128,8 +141,15 @@ theorem normality (P : SequentialProductOn V) (hS2 : P.FirstArgContinuous)
 `spCone` extends the FIRST argument.  The article's `a · a⁻¹ = 𝟙` needs the non-effect in the
 second slot.  Stated below so the missing object is on the record as an object, not a remark. -/
 
-/-- **GAP — the second-argument cone extension.**  `spCone` has no companion for the right slot;
-the article obtains the right-slot identity from S4-symmetry of the extended product. -/
+/-- ★★ **NO LONGER A GAP — DISCHARGED 2026-08-09, the day this certificate was written**, by the
+certificate-refutation review.  `SequentialProductOn.spConeRight` is in the tree.
+
+The statement below is kept, with its `sorry`, only to record a **second defect the review found in
+it**: as written it OMITS `IsArchimedean V`, and without that hypothesis there is no route to
+second-argument homogeneity, so the proposition is probably not provable at all.  Compare
+`spCone_eq`/`sp_coneNorm_indep`, which both carry `harch`.  A gap stated with too few hypotheses is
+the same class of defect as row 22's false statement: it sends the next person after something
+unreachable. -/
 theorem spCone_right_exists (P : SequentialProductOn V) :
     ∃ f : V → V → V, ∀ (a v : V), IsEffect a → (0 : V) ≤ v →
       ∀ μ : ℝ, SequentialProductOn.IsConeNorm v μ → f a v = μ • P.sp a (μ⁻¹ • v) := by

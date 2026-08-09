@@ -818,4 +818,65 @@ theorem spCone_smul (harch : IsArchimedean V) (hS2 : P.FirstArgContinuous)
     spCone_eq P harch hS2 hv hμ hb]
   exact sp_coneNorm_smul P (ne_of_gt hμ.1) hlam b
 
+/-! ### The SECOND-argument cone extension
+
+★★ **New 2026-08-09 (ARC-7), contributed by the certificate-refutation review, and it refutes this
+project's own price twice over.**
+
+`WallCertificates/abstract-tier.lean` recorded "no second-argument cone extension" with the claim
+that the article's companion identity `a · a⁻¹ = 𝟙` "needs a second-argument extension nothing in
+the tree has".  The grep behind that was accurate and the *pricing* was wrong on both counts.
+
+★ First, the only ingredient was already here: `sp_smul_right_of_unitInterval`, second-argument
+homogeneity — which needs `IsArchimedean` and **no S2 at all**, making it strictly *cheaper* than
+the first-slot ingredient `sp_smul_left`.  Second, the construction is a line-for-line mirror of
+`sp_coneNorm_indep`/`spCone`.  So "nothing in the tree has it" was true of the *object* and
+misleading about the *cost* — the failure mode this project keeps repeating in the expensive
+direction.
+
+Note the asymmetry that makes this worth reading: the right slot is **easier** than the left,
+because the left slot's homogeneity needs S2 and the right slot's does not. -/
+
+/-- Independence of the normalization, in the second argument.  Mirror of `sp_coneNorm_indep`, and
+it needs no S2. -/
+theorem sp_coneNorm_indep_right (harch : IsArchimedean V)
+    {a : V} (ha : IsEffect a) {v : V} {μ μ' : ℝ}
+    (h : IsConeNorm v μ) (h' : IsConeNorm v μ') :
+    μ • P.sp a (μ⁻¹ • v) = μ' • P.sp a (μ'⁻¹ • v) := by
+  have key : ∀ {c d : ℝ}, IsConeNorm v c → IsConeNorm v d → c ≤ d →
+      c • P.sp a (c⁻¹ • v) = d • P.sp a (d⁻¹ • v) := by
+    intro c d hc hd hcd
+    have hc0 : 0 < c := hc.1
+    have hd0 : 0 < d := hd.1
+    have hratio0 : 0 ≤ c / d := by positivity
+    have hratio1 : c / d ≤ 1 := by rw [div_le_one hd0]; exact hcd
+    have hsplit : d⁻¹ • v = (c / d) • (c⁻¹ • v) := by
+      rw [smul_smul, div_mul_eq_mul_div, mul_inv_cancel₀ (ne_of_gt hc0), one_div]
+    rw [hsplit, sp_smul_right_of_unitInterval P harch ha hc.2 hratio0 hratio1, smul_smul]
+    congr 1
+    field_simp
+  rcases le_total μ μ' with hle | hle
+  · exact key h h' hle
+  · exact (key h' h hle).symm
+
+open Classical in
+/-- **The positive-cone extension in the second argument.** -/
+noncomputable def spConeRight (a v : V) : V :=
+  if h : (0 : V) ≤ v then
+    (Classical.choose (exists_isConeNorm h)) •
+      P.sp a ((Classical.choose (exists_isConeNorm h))⁻¹ • v)
+  else 0
+
+/-- The right-slot extension evaluates at *every* admissible normalization. -/
+theorem spConeRight_eq (harch : IsArchimedean V) {a : V} (ha : IsEffect a)
+    {v : V} (hv : (0 : V) ≤ v) {μ : ℝ} (h : IsConeNorm v μ) :
+    P.spConeRight a v = μ • P.sp a (μ⁻¹ • v) := by
+  rw [spConeRight, dif_pos hv]
+  exact sp_coneNorm_indep_right P harch ha (Classical.choose_spec (exists_isConeNorm hv)) h
+
+/-- On effects it agrees with the original operation. -/
+theorem spConeRight_of_isEffect (harch : IsArchimedean V) {a : V} (ha : IsEffect a)
+    {v : V} (hv : IsEffect v) : P.spConeRight a v = P.sp a v := by
+  rw [spConeRight_eq P harch ha hv.1 (isConeNorm_one hv), inv_one, one_smul, one_smul]
+
 end SequentialProductOn

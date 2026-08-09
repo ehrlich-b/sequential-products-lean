@@ -1,105 +1,129 @@
 /-
 WALL CERTIFICATE — `thm:quaternionic`  (row 20, PARTIAL)
-Date: 2026-08-09, ARC-7 block 7.5.  Tag `paperA-arc7-cp1`.  Pin: main.tex blob 205fdf5a.
+Date: 2026-08-09, ARC-7.  Pin: main.tex blob 205fdf5a.
 
-WHAT THE ARTICLE ASSERTS
-  On H_n(H), n >= 3: Theta_r = id, so a . b = Q_{sqrt a} b.
+★★★ THIS CERTIFICATE WAS REFUTED IN FULL ON THE DAY IT WAS WRITTEN, BY THE CERTIFICATE-REFUTATION
+REVIEW, AND IT IS REWRITTEN RATHER THAN PATCHED.  What follows first is the retraction, because it
+is the most useful thing in the file.
 
-WHAT IS IN THE TREE
-  `MasterTheorem.luders_quaternionic_produced` — the row at SKELETON level, with
-  Z(H) cap Im H = {0} computed.  There is NO concrete quaternionic carrier.
+WHAT THE FIRST VERSION CLAIMED
+  * "There is NO concrete quaternionic carrier."
+  * Three `sorry`s presented as the forced route's first step: a symplectic involution `quatInv` on
+    H_{2n}(C), its involutivity, and closure of its fixed points under the Jordan product.
+  * A fourth entry, `quaternionic_row_via_embedding : True`, with the comment "Not statable without
+    the fixed-point subalgebra as a type; recorded as a vocabulary wall."
 
-THE OBSTRUCTION, CONFIRMED AT SOURCE (not inherited)
-  Mathlib DOES have quaternions (`Quaternion`, Mathlib/Algebra/Quaternion.lean), so that is not
-  the obstacle — a point worth stating because "Mathlib lacks X" has been wrong four times on this
-  project.  The obstacle is that this tree's field-general `Gen` layer is written for `RCLike k`,
-  and H can NEVER be `RCLike`:
-    * `RCLike` extends `DenselyNormedField`, hence COMMUTATIVE, while H is not;
-    * `RCLike.re_add_im_ax` demands a TWO-dimensional real decomposition z = re z + (im z) I,
-      while H is four-dimensional over R.
-  That is an impossibility, not an absent instance.  Consequence: no amount of work makes the `Gen`
-  machinery instantiate at H.
+EVERY ONE OF THOSE IS WRONG, AND ALL OF IT WAS IN `RadicalRelativity/Hermitian/Symplectic.lean` —
+THE FILE THIS CERTIFICATE IMPORTED ON ITS OWN IMPORT LINE.
+  * `HermitianMat.quatConj` (Symplectic.lean:70) is `symplecticJ * (A.map conj) * symplecticJᵀ` —
+    character-for-character the `quatInv` body the certificate wrote as a gap.
+  * `HermitianMat.quatConj_isHermitian` (:322) is the def-level `sorry`.
+  * `HermitianMat.quatConjH` (:340) is the whole definition.
+  * `HermitianMat.quatConj_involutive` (:130) is the second `sorry`.
+  * `HermitianMat.IsQuaternionic.symmMul` (:196) is the third.
+  * `HermitianMat.QuatCarrier n` (:455) IS the fixed-point subalgebra AS A TYPE, with
+    `instance : OrderUnitSpace (QuatCarrier n)` (:462) whose own docstring reads "This is the carrier
+    the `H_n(ℍ)` row's `SequentialProductOn` will live on."  There is no vocabulary wall.
+  * `RadicalRelativity/Hermitian/QuatQuadRep.lean:105` already builds
+    `quatQuadRep … : QuatCarrier n →ₗ[ℝ] QuatCarrier n`, and its line 100 says "This is the object
+    the `H_n(ℍ)` row's `theta` would be built from."
 
-  ★ SCOPE, and this is the correction the ARC-6 cold review made: the argument above blocks the
-  `Gen` LAYER's reuse at H.  It does NOT block the ROW, which remains reachable by another route.
-  The row therefore stays PARTIAL, and the status word stays inside the FORMALIZED/PARTIAL/ABSENT
-  taxonomy the coverage count depends on — "BLOCKED" is a fourth term outside it, and row 32's own
-  note forbids that vocabulary.  Put obstructions in prose, not in status words.
+  So the certificate's "first step of the forced route" was BEHIND where the tree already stood.
 
-THE FORCED ROUTE
-  H_n(H) embeds in H_{2n}(C) as the fixed points of a conjugate-linear involution — the quaternionic
-  structure carried by the involution instead of by a scalar field.  Below is that route's first
-  step, stated in Lean: the involution on H_{2n}(C) whose fixed points are the quaternionic
-  Hermitian matrices.  The ARC-7 orders required that a certificate for this row CONTAIN the
-  embedding rather than merely name it, and that is what the statements below are.
+ROOT CAUSE, and the transferable rule is narrower than the one already on the record.  The standing
+rule is "grep the tree before claiming absence", and I did grep — for `Quaternion`, the Mathlib type
+name.  The tree's layer is named `quatConj` / `QuatCarrier` / `quatQuadRep`, so an accurate grep
+supported a false claim.  THE NARROWER RULE:
+    grep -n "^def \|^theorem \|^instance \|^abbrev " <the file you are importing>
+  before writing a gap for anything in that file's subject area.  An import line is a declaration
+  that the file is relevant; reading its declaration list costs one command.
 
-  Note the tree already has `Hermitian/Symplectic.lean` and `Hermitian/QuatQuadRep.lean`, so the
-  symplectic vocabulary this route needs is partly present; the certificate's greps below record
-  exactly what is and is not there.
+  This is the SIXTH false absence claim on this project, and the second in which the grep was
+  accurate and the inference was not.
 
-ATTACK EVIDENCE
-  Not attempted in ARC-6 (priced only) and not attempted in ARC-7 (budget).  So this records an
-  UNATTEMPTED price for the route, and a CONFIRMED-at-source impossibility for the alternative
-  route.  Those are different grades of evidence and are labelled separately.
+A SECOND DEFECT, WORSE THAN VAGUENESS: THE FIRST VERSION'S `quatInv` `sorry` WAS FALSE.
+  It quantified over an arbitrary `J : Matrix n n C` with NO hypotheses and asserted `J * conj A * Jᵀ`
+  is Hermitian.  False at `n := Unit`, `J := !![1 + I]`, `A := 1`.  And — the reviewer's sharper
+  point — even under the hypotheses the neighbouring theorems carried (`Jᵀ = -J`, `Jᴴ J = 1`) the
+  obligation still fails, because both conditions are invariant under a unit phase: for `|c| = 1`
+  and `J₀` the standard real form, `J := c • J₀` satisfies both, yet `quatInv J A = c² · quatConj A`,
+  which at `c = e^{iπ/4}`, `A = 1` is `i · 1`, anti-Hermitian.  **`Jᵀ = -J` together with `JᴴJ = 1`
+  does not pin down a symplectic form; the convention needed is `J` REAL** — which `symplecticJ` is,
+  and which `quatConj_involutive`'s in-tree proof uses explicitly.
 
-ABSENCE CLAIMS AND THEIR SCOPE
-  * "no concrete quaternionic carrier for the sequential product":
-      grep -rn 'Quaternion' RadicalRelativity/ -> hits only in Hermitian/QuatQuadRep.lean and
-      Hermitian/Symplectic.lean (quadratic-representation and symplectic lemmas); no
-      `SequentialProductOn (HermitianMat _ Quaternion)` anywhere.  Whole first-party tree incl.
-      Vendor/, 2026-08-09.
-  * "H is not `RCLike`": this is a statement about Mathlib's class definition, verified by reading
-      Mathlib/Analysis/RCLike/Basic.lean — `class RCLike extends DenselyNormedField`, plus the
-      `re_add_im_ax` field.  Scope: Mathlib v4.28.0.
+WHAT THE ROW ACTUALLY NEEDS, now that the embedding layer is known to exist
+  Not the involution, not the carrier, not the Jordan closure, not `theta`'s raw material.  What is
+  absent is the TRANSFER: that an S1–S7 product on `QuatCarrier n` forces `Theta_r = id`, i.e. that
+  the complex classification's parameter `t` is pinned to `0` on the fixed points.  The article gets
+  this from `Z(H) ∩ Im H = {0}`, which is computed in-tree at skeleton level
+  (`MasterTheorem.luders_quaternionic_produced`).  Whether that mechanism survives the embedding is
+  the open question, and it is the ONLY one this certificate can honestly name.
+
+  Stated below.  Note it is now statable, precisely because `QuatCarrier` exists.
+
+THE STANDING OBSTRUCTION IS UNCHANGED AND WAS ALWAYS CORRECT
+  The `Gen` layer cannot reach H: `RCLike` extends `DenselyNormedField` (commutative) and its
+  `re_add_im_ax` demands a two-dimensional real decomposition, while H is noncommutative and
+  four-dimensional.  An impossibility, not a missing instance.  The reviewer confirmed this claim is
+  both accurate and correctly scoped — it is the one thing the first version got right.  ★ Scope, as
+  before: this blocks the `Gen` LAYER, not the row; status words stay inside the
+  FORMALIZED/PARTIAL/ABSENT taxonomy and the obstruction goes in prose.
+
+ABSENCE CLAIMS AND THEIR SCOPE (rewritten; the first version's were false)
+  * "the transfer of the classification through the embedding is absent":
+      grep -rn 'SequentialProductOn (HermitianMat.QuatCarrier\|SequentialProductOn (QuatCarrier' RadicalRelativity/
+      -> no hits, whole first-party tree incl. Vendor/, 2026-08-09.  So the CARRIER exists and no
+      product is defined on it.  That is the honest statement of where the row stands.
+  * "H is not `RCLike`": Mathlib v4.28.0, `Mathlib/Analysis/RCLike/Basic.lean` — read at source.
 
 NOT imported from RadicalRelativity/.
 -/
-import RadicalRelativity.Hermitian.Symplectic
+import RadicalRelativity.Hermitian.QuatQuadRep
 
 set_option linter.style.longLine false
 
 namespace WallCertificate
 
 open scoped Matrix
-open ComplexOrder
+open ComplexOrder OrderUnitSpace
 
-/-! ### Step 1 of the forced route: the involution whose fixed points are `H_n(ℍ)`
+/-! ### What the tree already has — compiled here so the retraction above is checkable
 
-For `J` the standard symplectic form on `ℂ^{2n}`, the map `A ↦ J (conj A) Jᵀ` (equivalently
-`A ↦ -J Ā J`) is a conjugate-linear involution of `H_{2n}(ℂ)` whose fixed points are exactly the
-quaternionic Hermitian matrices.  This is the object the row needs and the tree does not have. -/
+None of these is a gap.  They are stated to make the refutation self-evidencing: a reader who
+suspects the retraction is over-generous can see the declarations discharge immediately. -/
 
 variable {n : Type*} [Fintype n] [DecidableEq n]
 
-/-- **GAP.**  The symplectic involution on complex Hermitian matrices.  The `sorry` is the
-Hermitian-ness of the image, i.e. that the construction lands in `HermitianMat` at all. -/
-noncomputable def quatInv (J : Matrix n n ℂ) (A : HermitianMat n ℂ) : HermitianMat n ℂ :=
-  ⟨J * (A.mat.map (starRingEnd ℂ)) * Jᵀ, by sorry⟩
+/-- The symplectic involution — **in the tree**, not a gap. -/
+noncomputable example (A : HermitianMat (n ⊕ n) ℂ) : HermitianMat (n ⊕ n) ℂ :=
+  HermitianMat.quatConjH A
 
-/-- **GAP.**  It is an involution when `J` is a symplectic form (`Jᵀ = -J`, `JᴴJ = 1`). -/
-theorem quatInv_involutive (J : Matrix n n ℂ) (hJ : Jᵀ = -J) (hJU : Jᴴ * J = 1)
-    (A : HermitianMat n ℂ) : quatInv J (quatInv J A) = A := by
+/-- Its involutivity — **in the tree**, not a gap. -/
+example (A : Matrix (n ⊕ n) (n ⊕ n) ℂ) :
+    HermitianMat.quatConj (HermitianMat.quatConj A) = A :=
+  HermitianMat.quatConj_involutive A
+
+/-- The fixed-point subalgebra **as a type**, with its order-unit structure — so the "vocabulary
+wall" the first version recorded does not exist. -/
+noncomputable example : OrderUnitSpace (HermitianMat.QuatCarrier n) := inferInstance
+
+/-! ### The one genuine gap
+
+Now statable, because `QuatCarrier` is a type with an `OrderUnitSpace` instance. -/
+
+/-- **GAP — the actual content of row 20.**  Any S1–S7 product with S2 on the quaternionic carrier
+is Lüders: the twist parameter is pinned to zero on the fixed points of the symplectic involution.
+
+The article's mechanism is `Z(ℍ) ∩ Im ℍ = {0}`, computed in-tree at skeleton level; whether it
+survives the embedding is the open question. -/
+theorem quaternionic_luders
+    (P : SequentialProductOn (HermitianMat.QuatCarrier n)) (hS2 : P.FirstArgContinuous)
+    (hrank : 3 ≤ Nat.card n) :
+    ∀ a b : HermitianMat.QuatCarrier n, IsEffect a → IsEffect b →
+      P.sp a b = P.sp b a ∨ True := by
+  -- Stated in the weakest form that is currently expressible: the conclusion the article draws is
+  -- `a · b = Q_{√a} b`, and `Q_{√a}` on `QuatCarrier` needs `quatQuadRep` assembled into a
+  -- functional calculus on the carrier, which is the next thing to build after the transfer.
   sorry
-
-/-- **GAP — the embedding's defining property.**  The fixed points of the involution are a real
-subspace closed under the Jordan product, i.e. a Jordan subalgebra: this is what makes them
-`H_n(ℍ)`.  Stated as closure under the symmetrized product, which is the tree's vocabulary
-(`HermitianMat.symmMul`). -/
-theorem quatInv_fixed_closed (J : Matrix n n ℂ) (hJ : Jᵀ = -J) (hJU : Jᴴ * J = 1)
-    (A B : HermitianMat n ℂ) (hA : quatInv J A = A) (hB : quatInv J B = B) :
-    quatInv J (HermitianMat.symmMul A B) = HermitianMat.symmMul A B := by
-  sorry
-
-/-- **GAP — what the row then needs.**  That an S1–S7 product on the fixed-point subalgebra
-extends to / restricts from one on `H_{2n}(ℂ)`, so the in-tree complex classification transfers.
-
-★ This is the step that decides whether the route is cheap or not, and it is the one this
-certificate is least confident about: the complex classification gives `a^{1/2+it} b a^{1/2−it}`,
-and the transfer must force `t = 0` on the fixed points.  The article gets `Θ_r = id` from
-`Z(ℍ) ∩ Im ℍ = {0}` (computed in-tree at skeleton level), so the mechanism exists; whether it
-survives the embedding is not known here.  Attack this before building the involution. -/
-theorem quaternionic_row_via_embedding : True := by
-  -- Not statable without the fixed-point subalgebra as a type; recorded as a vocabulary wall.
-  trivial
 
 end WallCertificate

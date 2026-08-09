@@ -32,8 +32,16 @@ never see it: the `sorry`s here cannot leak into the census, and the tree's "cus
 `[]`" claim is unaffected. Verify with:
 
 ```
-grep -rn WallCertificates RadicalRelativity/ RadicalRelativity.lean lakefile.toml   # expect no hits
+grep -rn "^import.*WallCertificates" RadicalRelativity/ RadicalRelativity.lean   # expect no hits
+grep -n "lean_lib\|defaultTargets" lakefile.toml    # expect only RadicalRelativity
 ```
+
+★ **The first version of this recipe was `grep -rn WallCertificates …` with "expect no hits", and it
+was wrong** — caught 2026-08-09 by the certificate-refutation review. That pattern returns two hits
+(`Necessity/LeftMultiplication.lean` and `Necessity/FrameConstancy.lean`), both harmless prose
+cross-references inside docstrings. A verification recipe that reports failure on a healthy tree is
+worse than none: it trains the reader to ignore it. The substance was independently confirmed —
+`lakefile.toml` declares exactly one `lean_lib`, so `lake build` never compiles this directory.
 
 Compile a certificate deliberately, one at a time:
 

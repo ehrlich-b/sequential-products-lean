@@ -54,12 +54,20 @@ ATTACK EVIDENCE
   evidence this project accepts, and it is labelled as such rather than dressed up.
 
 ABSENCE CLAIMS AND THEIR SCOPE
-  * "there is no Jordan algebra / EJA class in the tree, so EJA generality is not statable":
+  * "there is no Jordan algebra / EJA class in the tree":
       grep -rn 'class.*Jordan\|structure.*Jordan\|EuclideanJordan\|class EJA' RadicalRelativity/
       -> no hits (whole first-party tree incl. Vendor/, 2026-08-09).  `Vendor/HermitianMat/Jordan.lean`
-      supplies Jordan-algebra LEMMAS about `HermitianMat`, not a class.  This was confirmed
-      independently by the ARC-6 cold review, which used it to refute the claim that
-      `lem:cone-ext` "covers every EJA".
+      supplies Jordan-algebra LEMMAS about `HermitianMat`, not a class.  Confirmed independently by
+      the ARC-6 cold review.  **The TREE claim holds.**
+    ★★ **BUT THE INFERENCE DRAWN FROM IT — "so EJA generality is not statable" — IS OVERSTATED, and
+    was corrected 2026-08-09 by the certificate-refutation review.**  Mathlib HAS
+    `class IsJordan` and `class IsCommJordan`
+    (`.lake/packages/mathlib/Mathlib/Algebra/Jordan/Basic.lean:82,90`).  What Mathlib lacks is
+    **formal reality** (no `FormallyReal` anywhere in Mathlib) and a **Jordan-frame API**.  So the
+    accurate statement is: "EJA generality would require *defining* formal reality and a Jordan
+    frame; the Jordan-algebra part is available from Mathlib."  This was a tree-scoped grep supporting
+    a scope-free claim — the recorded failure mode — and it is **load-bearing for rows 16/17/18 and
+    cited by `abstract-tier.lean`**, so the correction propagates to both files.
   * "no `HasDerivAt`/`fderiv` statement about Theta or chi":
       grep -rn 'HasDerivAt\|fderiv' RadicalRelativity/Necessity/ -> no hits mentioning chi/Theta.
       (Confirmed independently by the ARC-6 review.)
