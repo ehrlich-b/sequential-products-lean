@@ -280,7 +280,7 @@ theorem cfc_transpose (f : ℝ → ℝ) {A : Matrix n n ℂ} (hA : IsSelfAdjoint
   rw [transpose_eq_conj_of_isHermitian hcfc, transpose_eq_conj_of_isHermitian hherm]
   have hmap := StarAlgHomClass.map_cfc (conjMatStarAlg (n := n)) f A hf
     continuous_conjMatStarAlg hA (by
-      show IsSelfAdjoint (conjMatStarAlg A)
+      change IsSelfAdjoint (conjMatStarAlg A)
       rw [conjMatStarAlg_apply, ← transpose_eq_conj_of_isHermitian hherm]
       exact (Matrix.isHermitian_transpose_iff A).mpr hherm)
   simpa using hmap
@@ -336,5 +336,112 @@ theorem transposeMap_cfc (f : ℝ → ℝ) (A : HermitianMat n ℂ) :
   exact cfc_transpose_unconditional f A.mat
 
 end CfcTranspose
+
+/-! ## `cor:selectors` clause (iii): covariance under transposition selects Lüders
+
+★★ **Closed 2026-08-09 (ARC-7 block 7.3).**  The module docstring above recorded that clause
+(iii) needed exactly one ingredient, `(cfc f a)ᵀ = cfc f (aᵀ)`, and that ARC-6 supplied it; what
+remained was "the assembly, not an ingredient", with the sign reasoning checked on paper. This is
+that assembly, and the paper check held: the whole thing is three short lemmas.
+
+The mechanism, stated so it is not mistaken for a computation: transposition **flips the twist**,
+because the twist factor is built from two real functional calculi and `transposeMap` commutes
+with each of them while conjugating the explicit `i`. So a product that commutes with
+transposition has a classified parameter equal to its own negative, and `∃!` finishes. -/
+
+section SelectorTranspose
+
+variable {n : Type*} [Fintype n] [DecidableEq n]
+
+omit [Fintype n] in
+theorem transposeMap_involutive (x : HermitianMat n ℂ) :
+    transposeMap (transposeMap x) = x := by
+  ext1
+  rw [transposeMap_mat, transposeMap_mat, Matrix.transpose_transpose]
+
+/-- **Transposition commutes with the twist factor.**  Immediate from `transposeMap_cfc`: the
+twist factor is `cfc(…) + i • cfc(…)` and transposition is ℝ-linear. -/
+theorem twistFactor_transposeMap (a : HermitianMat n ℂ) (s : ℝ) :
+    HermitianMat.twistFactor (transposeMap a) s = (HermitianMat.twistFactor a s)ᵀ := by
+  unfold HermitianMat.twistFactor HermitianMat.twistRe HermitianMat.twistIm
+  rw [← transposeMap_cfc, ← transposeMap_cfc, transposeMap_mat, transposeMap_mat,
+    Matrix.transpose_add, Matrix.transpose_smul]
+
+/-- **Transposition flips the twist**: `(a ∘_t b)ᵀ = (aᵀ) ∘_{−t} (bᵀ)`.
+
+This is the clause's whole content.  The sign flip does *not* come from `cos` even / `sin` odd
+directly — it comes from `twistFactor_conjTranspose` together with `(Mᵀ)ᴴ = (Mᴴ)ᵀ`, so the two
+outer factors trade places under transposition. -/
+theorem transposeMap_twistSeq (t : ℝ) (a b : HermitianMat n ℂ) :
+    transposeMap (HermitianMat.twistSeq t a b)
+      = HermitianMat.twistSeq (-t) (transposeMap a) (transposeMap b) := by
+  ext1
+  have hswap : ∀ M : Matrix n n ℂ, (Mᵀ)ᴴ = (Mᴴ)ᵀ := by
+    intro M
+    ext i j
+    simp [Matrix.conjTranspose_apply, Matrix.transpose_apply]
+  rw [transposeMap_mat, HermitianMat.twistSeq_mat, HermitianMat.twistSeq_mat,
+    transposeMap_mat, twistFactor_transposeMap,
+    HermitianMat.twistFactor_conjTranspose,
+    hswap, HermitianMat.twistFactor_conjTranspose, neg_neg,
+    Matrix.transpose_mul, Matrix.transpose_mul]
+  simp only [Matrix.mul_assoc]
+
+end SelectorTranspose
+
+section SelectorTransposeMain
+
+variable {N : ℕ}
+
+/-- Transposition preserves effects, being a unital order automorphism. -/
+theorem transposeMap_isEffect {a : HermitianMat (Fin N) ℂ} (ha : IsEffect a) :
+    IsEffect (transposeMap a) := by
+  refine ⟨?_, ?_⟩
+  · have h := (transposeMap_le_iff (0 : HermitianMat (Fin N) ℂ) a).mpr ha.1
+    rwa [map_zero] at h
+  · have h := (transposeMap_le_iff a 1).mpr ha.2
+    rwa [transposeMap_one] at h
+
+/-- **`cor:selectors` clause (iii).**  Covariance under transposition selects the Lüders product:
+for an S1–S7 product with S2 on `H_N(ℂ)`, `N ≥ 3`, if the product commutes with transposition on
+effects then `a · b = √a · b · √a`.
+
+The article states clause (iii) for covariance under *every* unital order automorphism and notes
+that on `H_N(ℂ)` the transpose already suffices; this is the statement with that hypothesis, so it
+is the article's own sufficient condition rather than a weakening. -/
+theorem selector_transpose (hN : 3 ≤ N)
+    (P : SequentialProductOn (HermitianMat (Fin N) ℂ)) (hS2 : P.FirstArgContinuous)
+    (hcov : ∀ a b : HermitianMat (Fin N) ℂ, IsEffect a → IsEffect b →
+      transposeMap (P.sp a b) = P.sp (transposeMap a) (transposeMap b)) :
+    ∀ a b : HermitianMat (Fin N) ℂ, IsEffect a → IsEffect b →
+      P.sp a b = HermitianMat.twistSeq 0 a b := by
+  obtain ⟨t, ht, huniq⟩ := complex_classification_unconditional hN P hS2
+  have hneg : ∀ c d : HermitianMat (Fin N) ℂ, IsEffect c → IsEffect d →
+      P.sp c d = HermitianMat.twistSeq (-t) c d := by
+    intro c d hc hd
+    have ha : IsEffect (transposeMap c) := transposeMap_isEffect hc
+    have hb : IsEffect (transposeMap d) := transposeMap_isEffect hd
+    calc P.sp c d
+        = transposeMap (P.sp (transposeMap c) (transposeMap d)) := by
+          rw [hcov _ _ ha hb, transposeMap_involutive, transposeMap_involutive]
+      _ = transposeMap (HermitianMat.twistSeq t (transposeMap c) (transposeMap d)) := by
+          rw [ht _ _ ha hb]
+      _ = HermitianMat.twistSeq (-t) c d := by
+          rw [transposeMap_twistSeq, transposeMap_involutive, transposeMap_involutive]
+  have ht0 : t = 0 := by have h := huniq (-t) hneg; linarith
+  intro a b ha hb
+  rw [ht a b ha hb, ht0]
+
+/-- Clause (iii) with the Lüders product written out as `b.conj √a`. -/
+theorem selector_transpose_luders (hN : 3 ≤ N)
+    (P : SequentialProductOn (HermitianMat (Fin N) ℂ)) (hS2 : P.FirstArgContinuous)
+    (hcov : ∀ a b : HermitianMat (Fin N) ℂ, IsEffect a → IsEffect b →
+      transposeMap (P.sp a b) = P.sp (transposeMap a) (transposeMap b)) :
+    ∀ a b : HermitianMat (Fin N) ℂ, IsEffect a → IsEffect b →
+      P.sp a b = b.conj ((a.cfc Real.sqrt) : Matrix (Fin N) (Fin N) ℂ) := by
+  intro a b ha hb
+  rw [selector_transpose hN P hS2 hcov a b ha hb, HermitianMat.twistSeq_zero]
+
+end SelectorTransposeMain
 
 end Necessity
