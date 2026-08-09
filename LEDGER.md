@@ -259,6 +259,17 @@ therefore *proved* necessary. Use this form on every hypothesis whose necessity 
 weaker form is what left `cfc_transpose`'s two inert hypotheses standing until a reviewer
 found them.
 
+**Which hypotheses actually got the strong test — recorded, because the distinction is what let
+`cfc_transpose` slip.** STRONG (disproved without it, hence *certified* load-bearing):
+`abs_le_of_phase_near_one`'s `hδ`. FOUND SPURIOUS and removed: `n2FrameTwist_eq_of_base_eq`'s
+`hs` (automatically true for every `m : Fin 2`, so it was an obligation no caller ever needed
+to discharge). WEAK ONLY (reasoned load-bearing, not certified): `n2Readout_eq`'s `hb`/`hx`
+and `adU_conj_twistSeq`'s `hU`/`hU'`. The obstacle for those four is real rather than laziness:
+refuting them needs a *bespoke* product that agrees with the twist product on effects and
+differs off them — for the twist product itself `sp = twistSeq` everywhere, so it cannot witness
+the failure. On paper `adU_conj_twistSeq` does fail at `U = 2·1` (both sides scale by different
+powers), which is the sketch to formalize if these ever need certifying.
+
 **On the limits of the WEAK inert-hypothesis test, stated so the record is not overclaimed.** The
 test has real teeth *when the conclusion is actually provable without the hypothesis*: that is
 how `rhoChi_eq_smul_generator`'s `i ≠ j` was caught this arc (proof found, theorem strengthened)
