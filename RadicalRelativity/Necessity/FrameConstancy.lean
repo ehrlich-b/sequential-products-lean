@@ -818,7 +818,9 @@ theorem n2Readout_apply (b : HermitianMat (Fin 2) ℂ) (x : ℝ)
 
 S2 gives continuity in the FIRST argument only. Had the test effect `b` needed to vary with `U`,
 the composite would not obviously be continuous and the route would be worthless. **Keeping `b`
-fixed is exactly what makes it go through**, and no second-argument continuity is used anywhere.
+fixed is exactly what makes it go through**: no continuity of `P.sp` in its *second* argument is
+used. (Continuity of `adU` in both of its arguments *is* used — `continuous_adU_pair` — but that
+is a property of conjugation, not of the unknown product.)
 
 Note the shape of the proof, because a naive version does not compile: proving continuity of an
 *explicit lambda* and transferring with `ContinuousOn.congr` avoids asking `whnf` to unify the
@@ -882,9 +884,14 @@ noncomputable def n2Weight (b₁ b₂ : HermitianMat (Fin 2) ℂ)
     (U : Matrix.unitaryGroup (Fin 2) ℂ) : ℝ :=
   Complex.normSq (n2Coef b₁ U) + Complex.normSq (n2Coef b₂ U)
 
-/-- **The combined readout is the weight times the pure phase.**  With the weight bounded away
-from zero, this exhibits `exp(-i t(U) x)` as a continuous function of `(x, U)` — the last
-algebraic step before the compactness argument of `lem:n2-bounded`. -/
+/-- **The combined readout is the weight times the pure phase.**
+
+Scope, stated carefully because the tempting phrasing overclaims: this is an *algebraic
+identity only*.  It does **not** by itself exhibit `exp(-i t(U) x)` as a continuous function of
+`(x, U)` — that additionally needs the weight bounded away from zero, which is
+`frameProj_pairProj_not_commute` upgraded to `0 < n2Weight` plus compactness of `U(2)`, and that
+upgrade is not yet assembled.  What this identity does is isolate the phase as the only
+non-explicit factor. -/
 theorem n2Comb_eq (hS2 : P.FirstArgContinuous) {b₁ b₂ : HermitianMat (Fin 2) ℂ}
     (hb₁ : IsEffect b₁) (hb₂ : IsEffect b₂) {x : ℝ} (hx : 0 ≤ x)
     (U : Matrix.unitaryGroup (Fin 2) ℂ) :
