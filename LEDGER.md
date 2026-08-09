@@ -357,17 +357,21 @@ leg. And replacing `frameProj 0` with the projection onto `(e₀ + i e₁)/√2`
 bound `max ≥ 1/(2√2)` from column orthogonality alone, removing compactness from the weight leg
 too. **If the assembly is picked up, take that route rather than mine.**
 
-**What genuinely remains as review debt, narrowly:****What genuinely remains as review debt, narrowly:** the four weakly-tested hypotheses
-(`n2Readout_eq`'s `hb`/`hx`, `adU_conj_twistSeq`'s `hU`/`hU'`), whose certification needs a
-bespoke product agreeing with the twist product on effects and differing off them; and the
-*overall* rank-two derivation has still had no adversarial outside reading. **The next arc should
-put an outside reviewer on this block first**, with the `SendMessage` instruction in the brief.
+**What remains as review debt, now genuinely narrow.** Only `n2Readout_eq`'s `hb` and `hx` are
+weakly tested, and their obstruction is the real one: certifying them needs a *bespoke* product
+that agrees with the twist product on effects and differs off them, because for the twist product
+itself the identity holds without either hypothesis (a reviewer compiled that). `hU` is certified
+and `hU'` is gone. **The rank-two block has now had adversarial outside reading**, so the earlier
+instruction to review it first is discharged; what the next arc should review first is whatever
+it *builds* first.
 
-**Process note for the next arc, corrected by what actually happened.** A narrowly-scoped
-reviewer works; a whole-arc brief does not. And one reviewer's reports vanished because it
-wrote them as **plain text instead of calling `SendMessage`** — a subagent's prose is not
-delivered, so say so in the brief. Do ask for an early interim report, but **do not conclude
-failure from silence**: two of these reviewers were still working when I wrote them off.
+**Process note for the next arc, corrected twice by what actually happened.** A narrowly-scoped
+reviewer works; a whole-arc brief does not. **Put "call `SendMessage`; your prose is not
+delivered" in every brief** — one reviewer's reports "returned success" and still never arrived
+until told this, and another sent the same finding four times. Ask for an early interim report,
+demand an `ACK` as the *first* tool call, and **never conclude failure from silence**: I twice
+declared this channel dead while reviewers were still working, and both times they came back with
+findings I could not have produced myself.
 
 **Review protocol (binding).** Three isolated cold reviews: after 6.1(f), after 6.3, and
 at end of arc. Each reviewer reads the diffs at source and COMPILES probes
