@@ -61,10 +61,26 @@ ABSENCE CLAIMS AND THEIR SCOPE
   * "no frame-dependent sequential-product structure is constructed for a general t":
       grep -rn 'SequentialProduct.*tau\|tauSeq\|frameDependent' RadicalRelativity/  -> no hits
       (whole first-party tree incl. Vendor/, 2026-08-09).
-  * "'compatible effects share a spectral frame' is not stated":
-      grep -rn 'Compatible.*frame\|frame.*compatible' RadicalRelativity/ -> no hits with that
-      content; `compatible_ortho`/`compatible_add`/`compatible_sp` are the S4/S6/S7 axiom fields,
-      not this lemma.
+  * ★★★ "'compatible effects share a spectral frame' is not stated" — the grep is accurate and the
+    INFERENCE IS FALSE.  **The hard half of it was already in the tree**:
+    `HermitianMat.commute_of_twistSeq_comm` (`Hermitian/Sequential.lean`) is
+    "twist-product compatibility ⟹ matrix commutation" — the Gudder–Nagy normality trick via the
+    Frobenius certificate `C = b^{1/2+it}·a − a·b^{1/2+it}` — with the converse
+    `twistSeq_comm_of_commute` alongside.  So twist-product compatibility is fully CHARACTERIZED.
+    The grep pattern `Compatible.*frame|frame.*compatible` could not see it because the lemma is
+    named after commutation, not frames.  **NINTH false absence claim on this project, and the
+    third in one day whose grep was accurate and whose name-guess was wrong.**
+    ★ What the rank-two application actually needed was the TWO-PARAMETER shape, because
+    `n2_sp_eq_twistSeq_frame` gives the two orders with the parameters of *different* frames
+    (`P.sp a b = twistSeq t_U a b` but `P.sp b a = twistSeq t_V b a`).  That generalization is now
+    in the tree as `commute_of_twistSeq_comm_param`, and it was essentially free: the parameter
+    enters the proof only through the Frobenius certificate, which lives on the `b`-side parameter,
+    while the `a`-side appears in exactly one place supplying a trace value that is itself
+    parameter-independent.
+    ★ So the honest remaining price of "compatible ⟹ same frame" is: (1) transport
+    `commute_of_twistSeq_comm_param` through `n2_sp_eq_twistSeq_frame` to an arbitrary `P`, and
+    (2) "commuting non-scalar Hermitian 2×2 matrices share an eigenbasis", which is elementary.
+    Neither is a new theory, and (1) is now a one-lemma step rather than a missing fact.
 
 NOT imported from RadicalRelativity/.
 -/
