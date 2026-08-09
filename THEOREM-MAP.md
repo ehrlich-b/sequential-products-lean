@@ -817,6 +817,14 @@ the one claim in the arc I had argued rather than computed; it now checks out. T
 trust in `cfc_transpose` sits on Mathlib's `StarAlgHomClass.map_cfc`, which is where it
 belongs.
 
+ALSO PASSED — **the sign in `n2Readout_eq`, checked three independent ways** (this was the
+claim in the arc I had argued rather than computed, and a sign error here would have poisoned
+the banked route to `lem:n2-bounded`). (1) The **crown probe re-run**:
+`n2FrameTwist (twistProductOn t) hS2 U = t` at *every* frame `U` — so the frame function
+returns the known parameter, with no sign or factor error. (2) `basePt x` computed entrywise is
+`diag(e^{−x}, 1)`, not `diag(1, e^{−x})` or `diag(e^{x}, 1)`. (3) Hence the ordered log-ratio
+`r₀ − r₁` is `−x`, which is exactly the sign `n2Readout_eq`'s `exp(−(t·x)·I)` carries.
+
 Where the article spans the hyperplane `{rᵢ = rⱼ}` by differences of coalesced orthant
 vectors, Lean takes the vanishing directly from the differentiated coalescence
 (`dChi_kills_corner` / `rhoField_dChi_coalesced`) and then factors a linear functional that
