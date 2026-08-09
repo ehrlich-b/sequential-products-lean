@@ -1,0 +1,107 @@
+# EJA-DIVIDEND.md — what the EJA axiomatization would buy Paper A
+
+**Created 2026-08-09, ARC-8 block 8.6. Required deliverable of the ARC-8 ORDERS.**
+**Pin:** `STATEMENT-MANIFEST.md`'s 36 rows, main.tex blob `205fdf5a` (never re-pinned).
+**Status snapshot this table is written against:** 12 FORMALIZED / 19 PARTIAL / 5 ABSENT.
+
+---
+
+## What "the EJA axiomatization" means here, precisely
+
+`RadicalRelativity/MasterTheorem/Interface.lean`'s `structure ComparisonSetup` carries the abstract
+Jordan-algebra layer the master theorem runs on: a Jordan product `jordan`, a unit `e`, a rank `n`
+with `rank_ge : 3 ≤ n`, a Jordan frame `p : Fin n → J`, a cone `nonneg`, `Inv`, `aOf`, and
+`Theta : J → (J ≃ₗ[ℝ] J)` with `Theta_unital` / `Theta_orderIso` / `Theta_jordan`. Its own docstring
+states the limitation: it **does not encode the JB-algebra premises** — the Jordan identity, formal
+reality, and the cone-of-squares reading of `nonneg`.
+
+So the axiomatization is: **encode those premises, and derive as theorems what the structure now
+carries as fields.** Concretely the deliverables would be
+
+* **(E1) a Jordan spectral theorem** at f.d. formally-real Jordan generality — spectral resolution
+  into a Jordan frame with real eigenvalues, and a functional calculus on it;
+* **(E2) the Peirce decomposition** `J = ⊕ J_{ij}` for a Jordan frame, with the Faraut–Korányi
+  multiplication rules — currently carried as `CoalescenceSetup` fields;
+* **(E3) `Theta_jordan` derivable** — van Imhoff–Roelands: an order isomorphism of the cone that is
+  unital preserves the Jordan product. Currently a field, and pre-registered EXTERNAL as row 14.
+
+**★ Scope warning that governs every line below.** (E3) is *the content of a cited external theorem*
+(row 14, `prop:theta`, pre-registered external at vIR generality). Building the axiomatization does
+NOT prove it; it makes it *statable* at the right generality so it can be cited or proved separately.
+Rows whose only residue is (E3) therefore move from "carried as an unexaminable field" to
+"EJA-GATED behind a named external theorem" — a real gain in honesty, **not** a move to FORMALIZED.
+Any reading of this table that converts (E3)-dependence into FORMALIZED is wrong.
+
+---
+
+## The table
+
+Column meaning: **CLOSES** = the axiomatization would move the row to FORMALIZED.
+**PARTIAL** = it removes some but not all of the residue. **NOTHING** = the residue is orthogonal.
+
+| # | row | residue today | axiomatization would… | why |
+|---|-----|---------------|------------------------|-----|
+| 1 | `mthm:master` | the one-theorem form (JvNW), pre-registered external | **NOTHING** | the residue is a cited classification theorem, not the Jordan layer |
+| 2 | `mthm:omnibus` | one-theorem form; external | **NOTHING** | same |
+| 3 | `def:sp` | Lean *packaging* of the article's eight clauses + restriction/extension maps | **NOTHING** | pure interface work on an order-unit space; no Jordan structure enters |
+| 4 | `thm:vdw1` | external (vdW) | **NOTHING** | cited theorem |
+| 5 | `lem:span` | the article's **abstract Peirce generality** | **CLOSES** | the statement is a Peirce-span identity; with (E2) it is statable and provable where today only the concrete carrier is |
+| 6 | `lem:homog` | EJA generality | **CLOSES** | homogeneity of the quadratic representation is a Jordan-spectral fact — (E1) |
+| 8 | `lem:simple-bridge` | clause (ii) at EJA generality (clauses i/iii/iv cited to vdW) | **PARTIAL** | (E1) gives clause (ii) — "every effect is simple" IS the Jordan spectral theorem. Clauses (i), (iii), (iv) stay cited, so the row is ~3/4 external either way |
+| 9 | `lem:normality` | order-**infimum** form; abstract f.d. order-unit generality | **NOTHING** | needs `⨅` for the Loewner/order-unit order and Loewner monotone convergence. An order-theoretic gap, not a Jordan one |
+| 10 | `prop:bridge` | external | **NOTHING** | cited |
+| 12 | `prop:central` | the **restriction** direction (= `prop:central`'s splitting) | **NOTHING** | needs "a product is compatible with each central idempotent"; the carrier is `V × W` order-unit spaces, no Jordan layer involved |
+| 13 | `prop:pseudo-transfer` | EJA generality (proved on the concrete carrier in normalized form) | **CLOSES** | the pseudo-inverse is defined by functional calculus — (E1) |
+| 14 | `prop:theta` | vIR generality; **pre-registered external** | **PARTIAL** | (E3) *is* this row. The axiomatization makes it statable at vIR generality; proving it is the external import. Improving the interior form is in scope, closing it is not |
+| 15 | `lem:frame-fix` | the non-EJA content is closed; the rest | **CLOSES** | frame-fixing is a Peirce-level statement — (E2) |
+| 16 | `lem:coalescence` | **citation/axiomatization gap only** — both clauses are already proved over `ComparisonSetup` | **CLOSES** | this is the cleanest case in the table: the mathematics is done at the interface's generality; what is missing is that `Theta_jordan` and the FK fields are *carried* rather than derived. (E2)+(E3) |
+| 17 | `lem:homomorphism` | generality only (hyperplane clause closed ARC-6) | **CLOSES** | same shape as row 16 |
+| 18 | `prop:stabilizers` | the `T^{n-1}` packaging; the ℝ/ℍ/𝕆 rows | **NOTHING** | ℂ row is done in `U(n)`; the remainder is a quotient-by-global-phase packaging and three concrete type-specific computations. No Jordan generality needed |
+| 20 | `thm:quaternionic` | the **transfer** (`Θ_r = id` for an arbitrary product) | **NOTHING** | the carrier is concrete (`QuatCarrier n`, symplectic-fixed subspace of `H_{2n}(ℂ)`) and the product now exists on it; the open question is whether `Z(ℍ) ∩ Im ℍ = {0}` survives the embedding — a concrete computation |
+| 21 | `thm:albert` | Albert M2 equational machinery; **pre-registered external** | **NOTHING** | not blocked on octonions (`Octonions.lean` is built, 0 sorries); blocked on weeks of equational algebra |
+| 22 | `lem:orientation` | the coherence space as a carrier (`J_{q,k}`, splitting-independence, `Ad_{a^{it}}`) | **PARTIAL** | (E2) supplies the Peirce/coherence vocabulary the statement needs; the `Ad_{a^{it}}` formula and splitting-independence are additional work |
+| 26 | `lem:frame-connectivity` | Givens/Jacobi factorization into rank-two block rotations | **NOTHING** | absent from the tree AND from Mathlib; a matrix-group fact, orthogonal to the Jordan layer. Standalone Mathlib contribution |
+| 29 | `prop:n2-necessity` | gap (b): the Θ-level vs product-level equivalence | **NOTHING** | rank two, concrete carrier |
+| 31 | `thm:qubit-boundary` | unimodular cocycle subcases; clause (iii) in the `(Φ,t)`-conjugation form | **NOTHING** | rank two, concrete |
+| 35 | `cor:qubit-classification` | the "onto" half at **singular** effects (an S2 limiting argument) | **NOTHING** | rank two, concrete; needs continuity, not Jordan structure |
+| 36 | `cor:selectors` | clause (i): the Peirce-exchange action on `H_N(ℂ)` | **NOTHING** | the carrier is concrete `H_N(ℂ)`; the missing object is a concrete coherence-block action, and the mechanism is already machine-checked at rank two |
+
+---
+
+## The decision, on this evidence
+
+**Counting: CLOSES 6 rows (5, 6, 13, 15, 16, 17); PARTIAL on 3 (8, 14, 22); NOTHING on 15.**
+
+So the axiomatization is **not** nothing — it is the single largest remaining block of row movement
+available, and it is the *only* thing that moves rows 5, 6, 13, 15, 16, 17 at all. The
+do-it-unless-it-does-literally-nothing test is therefore **passed with room to spare**: the ARC-8
+orders' pre-registered condition for skipping it does not fire.
+
+**★★ But three qualifications, and they are why this table exists rather than a headline number.**
+
+1. **The six CLOSES rows are all "generality-only" rows.** Each is already proved on the concrete
+   carrier or over `ComparisonSetup`; what the axiomatization buys is that the *article's own*
+   hypothesis class becomes expressible. That is exactly the standing bar ("FORMALIZED at the
+   article's own generality, no located hypothesis"), so the movement is real — but a reader should
+   know that none of these six is a row where the *mathematics* is missing.
+2. **Row 14 is the load-bearing one and it is external.** Rows 16 and 17 close only if
+   `Theta_jordan` becomes derivable, and deriving it *is* `prop:theta` at vIR generality — a
+   pre-registered external import. So the honest form of "16 and 17 close" is: **they become
+   EJA-GATED behind a named citation instead of carrying an unexaminable field.** If the
+   axiomatization is built and vIR is still cited, rows 16/17 end at EJA-GATED, not FORMALIZED.
+   ★ This is the single most likely way this table gets misread.
+3. **Nothing in the rank-two lane depends on it.** Rows 29–36 — the whole qubit crown, including the
+   two that closed today — are concrete-carrier work. The axiomatization and the rank-two lane are
+   independent programs, and the rank-two lane is the one with a paper-facing headline.
+
+**Estimated shape of the work, for the record and not as a commitment:** (E1) a Jordan spectral
+theorem is the large piece and has no Mathlib support (`lean-formalization-landscape`: essentially
+none of the Jordan/EJA stack is formalized in any prover); (E2) Peirce decomposition depends on
+(E1); (E3) is a citation. So the axiomatization is one big theorem plus its corollaries, and its
+natural home is upstream of this paper — a Mathlib-grade EJA layer — not inside `RadicalRelativity`.
+
+**What would change this verdict:** if (E1) turns out to require the spectral theorem only for the
+*specific* frames the article uses (rather than in general), the six CLOSES rows might be reachable
+by a much smaller "Peirce-facts-as-hypotheses" refactor of `ComparisonSetup` that keeps them
+EJA-GATED but removes the unexaminable-field objection. That refactor is cheap and has not been
+priced; it is the first thing to test before committing to (E1).
