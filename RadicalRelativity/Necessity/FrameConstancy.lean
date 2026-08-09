@@ -702,6 +702,46 @@ theorem basePt_exponent_nonpos {x : ℝ} (hx : 0 ≤ x) :
   · rw [if_pos h]; nlinarith
   · rw [if_neg h, mul_zero]
 
+/-! The two halves of the joint continuity the banked `lem:n2-bounded` route needs.
+
+Both are proved; **the assembly into `ContinuousOn` of the readout is NOT**, and the obstruction
+is elaboration cost rather than mathematics — four distinct formulations all hit a `whnf`
+heartbeat timeout while unifying the composite against `n2Readout`'s unfolding, even at
+`maxHeartbeats 1000000`. Recorded in `LEDGER.md`. The mathematical point that mattered is
+settled by these two: because the test effect `b` is *fixed*, S2's first-argument-only
+continuity is enough, and no continuity in the second argument is required. -/
+
+theorem continuous_basePt : Continuous (basePt) := by
+  show Continuous fun x : ℝ => diagFamily (x • axisSplit (0 : Fin 2))
+  refine Continuous.subtype_mk ?_ _
+  show Continuous fun x : ℝ => (HermitianMat.diagonal ℂ
+    (fun i => Real.exp ((x • axisSplit (0 : Fin 2)) i))).mat
+  simp only [HermitianMat.diagonal_mat]
+  refine continuous_matrix ?_
+  intro i j
+  by_cases h : i = j
+  · subst h
+    simp only [Matrix.diagonal_apply_eq]
+    exact Complex.continuous_ofReal.comp (Real.continuous_exp.comp (by fun_prop))
+  · simp only [Matrix.diagonal_apply_ne _ h]
+    exact continuous_const
+
+/-- `Ad` is jointly continuous in the unitary and its argument. -/
+theorem continuous_adU_pair :
+    Continuous fun p : Matrix.unitaryGroup (Fin 2) ℂ × HermitianMat (Fin 2) ℂ =>
+      adU ((p.1 : Matrix (Fin 2) (Fin 2) ℂ)) p.2 := by
+  refine Continuous.subtype_mk ?_ _
+  show Continuous fun p : Matrix.unitaryGroup (Fin 2) ℂ × HermitianMat (Fin 2) ℂ =>
+    (p.1 : Matrix (Fin 2) (Fin 2) ℂ) * (p.2).mat * (p.1 : Matrix (Fin 2) (Fin 2) ℂ)ᴴ
+  have hU : Continuous fun p : Matrix.unitaryGroup (Fin 2) ℂ × HermitianMat (Fin 2) ℂ =>
+      (p.1 : Matrix (Fin 2) (Fin 2) ℂ) := continuous_subtype_val.comp continuous_fst
+  have hy : Continuous fun p : Matrix.unitaryGroup (Fin 2) ℂ × HermitianMat (Fin 2) ℂ =>
+      (p.2).mat := HermitianMat.continuous_mat.comp continuous_snd
+  have hstar : Continuous fun p : Matrix.unitaryGroup (Fin 2) ℂ × HermitianMat (Fin 2) ℂ =>
+      (p.1 : Matrix (Fin 2) (Fin 2) ℂ)ᴴ := by
+    simp only [← Matrix.star_eq_conjTranspose]; exact continuous_star.comp hU
+  exact (hU.mul hy).mul hstar
+
 /-- The frame coefficient of a test effect: its `(0,1)` entry pulled back to the standard
 frame. -/
 noncomputable def n2Coef (b : HermitianMat (Fin 2) ℂ)

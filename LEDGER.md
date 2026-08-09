@@ -302,6 +302,25 @@ produced improvements to the code.
 | Is `π/(3δ)` the right constant? | **Derived as sharp, and the lemma strengthened.** The premise says `cos(tx) > 1/2`, which as `x` sweeps `[0,δ]` in the principal branch forces `|t|δ < π/3` — so the constant is right *and* the inequality is strict. `abs_lt_of_phase_near_one` now states that; the old `≤` form is its corollary. |
 | Does the fibre theorem really give the `ℝP²` descent? | **Machine-checked**, `n2FrameTwist_mul_diagonal_swap`: at rank two the diagonal torus plus the single transposition is the *full* monomial group, so invariance under both generators is invariance under the whole unordered-frame stabilizer — not merely two of its elements. |
 
+★★ **The joint-continuity question — reviewer B's item 1 — is SETTLED in the direction that
+matters, and the residue is engineering, not mathematics.** The worry was real: S2 gives
+continuity in the *first* argument only, so if the test effect had to vary with `U` the composite
+would not obviously be continuous, and the whole banked route would be worthless. It does not
+have to: **because `b` is fixed, S2 suffices, and no second-argument continuity is needed
+anywhere.** Both halves are now proved and in the tree — `continuous_basePt` and
+`continuous_adU_pair` (`Ad` jointly continuous in the unitary and its argument).
+
+**The assembly into `ContinuousOn (n2Readout …)` is NOT proved, and the obstruction is
+elaboration cost.** Four distinct formulations — composition through `continuous_adU_pair`,
+a direct `subtype_mk` proof, a flattened outer map avoiding the double conjTranspose, and an
+explicit `show` to pre-match the goal — all hit a `whnf` heartbeat timeout unifying the
+composite against `n2Readout`'s unfolding, even at `maxHeartbeats 1000000`. That is a wall by
+the three-strategies rule, but it is an **engineering** wall: no mathematical step is missing,
+and the two halves compile in seconds on their own. The likely fix is to restate `n2Readout` as
+a composition of named continuous pieces so nothing has to unfold, or to prove the composite
+against an `abbrev` with `@[simp]` projection lemmas. Cheap for whoever picks it up; not a
+research problem.
+
 **What genuinely remains as review debt, narrowly:** the four weakly-tested hypotheses
 (`n2Readout_eq`'s `hb`/`hx`, `adU_conj_twistSeq`'s `hU`/`hU'`), whose certification needs a
 bespoke product agreeing with the twist product on effects and differing off them; and the
