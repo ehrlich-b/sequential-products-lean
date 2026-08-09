@@ -257,6 +257,7 @@ theorem continuous_conjMatStarAlg :
   intro j
   exact Complex.continuous_conj.comp ((continuous_apply j).comp (continuous_apply i))
 
+omit [Fintype n] [DecidableEq n] in
 /-- For a Hermitian matrix, the transpose is the entrywise conjugate. -/
 theorem transpose_eq_conj_of_isHermitian {A : Matrix n n ℂ} (hA : A.IsHermitian) :
     A.transpose = A.map (starRingEnd ℂ) := by
