@@ -201,11 +201,74 @@ a scalar `c·𝟙` with `c > 0` the twist factor factors as a **global phase** `
 converges. The global-phase factorization is the step that needs writing (it mixes the two real
 `cfc`s), and it is why "S2 is a genuine estimate rather than plumbing" was the right call.
 
-**Block 8.2 — row 18's ℂ converse: NOT WORK, already in the tree** (see 8.0). Row 18's residue
-is now the ℝ/ℍ/𝕆 rows only, i.e. block 8.5. ★ Row 12's "restriction direction" is **also
-mispriced in these orders**: `DirectSum.lean`'s own docstring says the missing statement is that
-*every* product on a direct sum is of the form `P.prod Q`, which is `prop:central`'s splitting —
-the half the manuscript carries as a paper proof. It is not a cheap-sweep item.
+**Block 8.2 — row 18's ℂ converse: NOT WORK, already in the tree** (see 8.0). ★ **CORRECTED at
+checkpoint 1: "row 18's residue is now the ℝ/ℍ/𝕆 rows only" was too strong.** The tree proved
+*diagonality*; the certificate's name `frame_stabilizer_is_torus` claimed the torus, and the
+article's clause asks for the **identity component `T^{n-1}`**, which is a third thing again. The
+unimodularity step is now in (`Necessity.normSq_diag_eq_one_of_fixes_frameProj`), so the stabilizer
+in `U(n)` is exactly `T^n`; the `T^{n-1}` packaging — the quotient by the globally-acting phase — is
+stated nowhere, though its mathematical content (the action sees only phase *differences*) is
+`torusU_block`. ★ **An over-strong theorem NAME is a prose price too**; it is read as the claim.
+★ Row 12's "restriction direction" is **also mispriced in these orders**: `DirectSum.lean`'s own
+docstring says the missing statement is that *every* product on a direct sum is of the form
+`P.prod Q`, which is `prop:central`'s splitting — the half the manuscript carries as a paper proof.
+It is not a cheap-sweep item.
+
+**Block 8.2 — row 9's compatibility clause, landed.** `Necessity.compatible_of_tendsto`: `a`
+compatible with every term of a convergent sequence of effects is compatible with the limit.
+★ **And unlike the convergence clause it DOES need S2** — `a·b_k → a·b` is free from `seqLeftMul`'s
+linearity, but `b_k·a → b·a` is *first*-argument continuity. A reader carrying the previous clause's
+"S2 is not used at all" forward would be wrong. Residue: the article's order-infimum form (needs
+Loewner monotone convergence, absent — grep scope recorded at the theorem) and the abstract f.d.
+order-unit generality.
+
+### CHECKPOINT 1 (tag `paperA-arc8-cp1`, two cold reviewers, one concern each)
+
+Both verified the build independently (0 errors over full output, Census PASS, no `sorryAx`), and
+both returned findings I verified at source before acting. Net: **the two "gap closed" claims are
+true as stated, and both were FRAMED wrong.** The framing errors were the valuable part.
+
+★★★ **FINDING 1 — a closed gap that was not on the row's path.** `n2FrameTwist_eq_of_compatible`
+(block 8.1(a)) has **zero consumers in the tree**, and row 30 was closed by a *different*,
+**P-free** mechanism (`RankTwo.n2Tau_eq_of_commute`). It could not have been otherwise: the
+certificate's form is quantified over a `SequentialProductOn P`, and the compatibility facts are
+needed *before* the structure is assembled, so instantiating at `P := n2SequentialProduct t` is
+circular. Verified: `grep -rn n2FrameTwist_eq_of_compatible` finds only its own docstring, its
+statement, and the certificate. ★ **RULE: "the certificate's named gap is closed" and "the row
+moved" are two different claims, and a certificate must say which it is asserting.**
+`n2FrameTwist_eq_of_compatible` is a *necessity*-side lemma (it extracts from an arbitrary product —
+rows 29/34/35) that this certificate had mis-filed under a *sufficiency* row. My own block-8.1(a)
+headline, "THE CHAIN, CLOSED", inherited the mis-filing.
+
+★★★ **FINDING 2 — two rows in two encodings the tree never linked read as one result.** Row 30
+certified that the axioms hold for arbitrary `t`; row 31 certified "frame dependence is real"
+(`sp_luders_ne_unit_twist`) — but that theorem is about the **entry-level** family
+`MasterTheorem.RankTwo.sp = Fdiag·b·Fdiagᴴ`, and no theorem identified it with
+`HermitianMat.twistSeq`. So a reader combining the rows would conclude the qubit's escape from
+`mthm:master` was machine-checked while the two halves did not meet. **CLOSED, not merely
+recorded**: `RankTwo.exists_twistSeq_diagFamily_ne` (the twist product separates its parameter —
+pick the spectral gap so the phase difference is exactly `π`, so no `2π` ambiguity survives),
+`RankTwo.surjective_colFrame` (every `ℂP¹` point is a unitary's first-column ray, via
+`Necessity.frameU`), hence `exists_n2Sp_ne_twistSeq_of_nonconstant` and
+`exists_n2Sp_tau_ne_twistSeq`. ★ **RULE: when two rows are about the same mathematics in two
+encodings, the missing theorem is the identification, and its absence is invisible to both rows'
+status cells.** Scope kept honest: this is "not *literally* a constant twist"; the article's
+`(Φ, t)`-conjugation form is stronger and is not proved.
+
+★★★ **FINDING 3 — a status cell went on issuing a retracted work order.** `STATEMENT-MANIFEST.md`
+row 18 still instructed the reader that the ℂ converse was unwritten and "writable today",
+**citing a grep as its evidence**, for a theorem in the tree since ARC-7 — while `LEDGER.md` had
+already retracted the corresponding order. This is "fix the row, not just the footnote" in its
+purest form, and it is how the staleness got into these orders in the first place (block 8.2 was
+written from that row). ★ **RULE: a status cell that carries a grep as its absence evidence must be
+re-checked against the tree, not against its own prose.**
+
+★ Minor, applied: row 30's pinning is on the **open posdef cone** (silent at singular effects and
+non-psd first arguments); the frame identification is proved at posdef effects with **distinct**
+eigenvalues; and `blochFrame` appears nowhere in `Necessity/`, so nothing ties row 30's frame
+coordinate to row 29's `n2FrameTwist` — both use column 0, but that agreement is prose. All three
+now recorded in the row. Row 31 updated in the same commit (clause (ii) gets S1, S3–S7; clause (iii)
+gets the `twistSeq`-encoding form).
 
 ---
 

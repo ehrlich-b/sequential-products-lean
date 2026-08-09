@@ -713,4 +713,144 @@ theorem exists_sequentialProduct_of_continuous_moduli (t : C(RP2, ℝ)) :
             (Necessity.adU (U : Matrix (Fin 2) (Fin 2) ℂ) (Necessity.diagFamily r)) b :=
   ⟨n2SequentialProduct t, fun U r b => n2Sp_eq_twistSeq_at_frame t U r b⟩
 
+/-! ### Non-collapse: the frame-dependent product is not a constant twist
+
+★★★ New 2026-08-09 (ARC-8 checkpoint 1), and it exists because a cold reviewer named its absence as
+the most dangerous thing about this row.  Everything above certifies that the *axioms* hold for an
+arbitrary `t`; nothing above rules out that the resulting operation is secretly some single
+`twistSeq s`, in which case row 30 would carry none of its intended force.
+
+★ **Why the tree's existing frame-dependence theorem did not cover it.**
+`RankTwo.sp_luders_ne_unit_twist` (`RankTwo/Separation.lean`) is `thm:qubit-boundary`(iii) — "frame
+dependence is real at the level of the operation" — but it lives in the **entry-level encoding**
+`MasterTheorem.RankTwo.sp = Fdiag · b · Fdiagᴴ`, and no theorem in the tree identifies that family
+with `HermitianMat.twistSeq`.  So rows 30 and 31 were statements about two objects the tree never
+linked, and a reader combining them would have concluded more than was proved.  The separation below
+is in the `twistSeq` encoding, which is the one row 30 uses.
+
+★ Scope, stated so it is not overread: this proves the product is not **literally** any constant
+twist product.  The article's clause (iii) is stronger — no pair `(Φ, t)` with `Φ` a unital order
+automorphism conjugates it to a constant twist — and that stronger form is not proved here. -/
+
+/-- **The twist product separates its parameter**, on the diagonal family with a freely chosen
+spectral gap.  The gap is chosen so the phase difference is exactly `π`, which is why no `2π`
+ambiguity survives. -/
+theorem exists_twistSeq_diagFamily_ne {t₁ t₂ : ℝ} (h : t₁ ≠ t₂) :
+    ∃ (r : Fin 2 → ℝ) (b : HermitianMat (Fin 2) ℂ),
+      HermitianMat.twistSeq t₁ (Necessity.diagFamily r) b
+        ≠ HermitianMat.twistSeq t₂ (Necessity.diagFamily r) b := by
+  have hd : t₁ - t₂ ≠ 0 := sub_ne_zero.mpr h
+  set δ : ℝ := Real.pi / (t₁ - t₂) with hδ
+  have hphase : (t₁ - t₂) * δ = Real.pi := by
+    rw [hδ]; field_simp
+  refine ⟨fun k => if k = 0 then δ else 0, Necessity.pairProj 0 1, ?_⟩
+  intro hcon
+  have hentry := congrFun (congrFun (congrArg HermitianMat.mat hcon) 0) 1
+  rw [Necessity.twistSeq_diagFamily_entry, Necessity.twistSeq_diagFamily_entry] at hentry
+  simp only [if_pos, if_neg (by decide : ¬ (1 : Fin 2) = 0), Real.exp_zero, Real.sqrt_one,
+    Complex.ofReal_one, one_mul, mul_zero, Complex.ofReal_zero, zero_mul, Complex.exp_zero,
+    star_one] at hentry
+  -- cancel the (nonzero) amplitude and the (nonzero) probe entry
+  have hamp : ((Real.sqrt (Real.exp δ) : ℝ) : ℂ) ≠ 0 :=
+    Complex.ofReal_ne_zero.mpr (ne_of_gt (Real.sqrt_pos.mpr (Real.exp_pos _)))
+  have hb : (Necessity.pairProj (0 : Fin 2) 1) 0 1 ≠ 0 := by
+    have := Necessity.pairProj_entry (by decide : (0 : Fin 2) ≠ 1)
+    rw [show (Necessity.pairProj (0 : Fin 2) 1) 0 1
+        = (Necessity.pairProj (0 : Fin 2) 1).mat 0 1 from rfl, this]
+    norm_num
+  have hexp : Complex.exp (((t₁ * δ : ℝ) : ℂ) * Complex.I)
+      = Complex.exp (((t₂ * δ : ℝ) : ℂ) * Complex.I) := by
+    have h1 : ((Real.sqrt (Real.exp δ) : ℝ) : ℂ)
+          * (Complex.exp (((t₁ * δ : ℝ) : ℂ) * Complex.I)
+            * (Necessity.pairProj (0 : Fin 2) 1) 0 1)
+        = ((Real.sqrt (Real.exp δ) : ℝ) : ℂ)
+          * (Complex.exp (((t₂ * δ : ℝ) : ℂ) * Complex.I)
+            * (Necessity.pairProj (0 : Fin 2) 1) 0 1) := by
+      linear_combination hentry
+    exact mul_right_cancel₀ hb (mul_left_cancel₀ hamp h1)
+  -- but the two phases differ by exactly `e^{iπ} = −1`
+  have hdiff : Complex.exp (((Real.pi : ℝ) : ℂ) * Complex.I) = 1 := by
+    have h3 : Complex.exp ((((t₁ - t₂) * δ : ℝ) : ℂ) * Complex.I) = 1 := by
+      rw [show (((t₁ - t₂) * δ : ℝ) : ℂ) * Complex.I
+          = ((t₁ * δ : ℝ) : ℂ) * Complex.I - ((t₂ * δ : ℝ) : ℂ) * Complex.I from by
+        push_cast; ring, Complex.exp_sub, hexp]
+      exact div_self (Complex.exp_ne_zero _)
+    rwa [hphase] at h3
+  rw [Complex.exp_pi_mul_I] at hdiff
+  norm_num at hdiff
+
+/-- **The frame-dependent product is not a constant twist product**, whenever the frame function
+takes a value at some presented frame other than the constant. -/
+theorem exists_n2Sp_ne_twistSeq (t : C(RP2, ℝ)) (U : Matrix.unitaryGroup (Fin 2) ℂ) {s : ℝ}
+    (hne : t (blochFrame (colFrame U)) ≠ s) :
+    ∃ a b : HermitianMat (Fin 2) ℂ, n2Sp t a b ≠ HermitianMat.twistSeq s a b := by
+  obtain ⟨r, b, hrb⟩ := exists_twistSeq_diagFamily_ne hne
+  have hUc : (U : Matrix (Fin 2) (Fin 2) ℂ)ᴴ * (U : Matrix (Fin 2) (Fin 2) ℂ) = 1 :=
+    Necessity.unitaryGroup_conjTranspose_mul U
+  refine ⟨Necessity.adU (U : Matrix (Fin 2) (Fin 2) ℂ) (Necessity.diagFamily r),
+    Necessity.adU (U : Matrix (Fin 2) (Fin 2) ℂ) b, ?_⟩
+  intro hcon
+  rw [n2Sp_eq_twistSeq_at_frame] at hcon
+  -- conjugation is injective, so the two parameters would have to agree at `(r, b)`
+  refine hrb ?_
+  have key : ∀ τ : ℝ, Necessity.adU ((U : Matrix (Fin 2) (Fin 2) ℂ)ᴴ)
+      (HermitianMat.twistSeq τ (Necessity.adU (U : Matrix (Fin 2) (Fin 2) ℂ)
+        (Necessity.diagFamily r)) (Necessity.adU (U : Matrix (Fin 2) (Fin 2) ℂ) b))
+      = HermitianMat.twistSeq τ (Necessity.diagFamily r) b := by
+    intro τ
+    rw [Necessity.adU_conj_twistSeq τ hUc, Necessity.adU_cancel hUc]
+  rw [← key (t (blochFrame (colFrame U))), ← key s, hcon]
+
+/-! ### Every frame is presented, so the separation is unconditional -/
+
+/-- Every point of `ℂP¹` is the first-column ray of a unitary — `Necessity.frameU` writes one
+down, and its first column is the vector itself. -/
+theorem surjective_colFrame : Function.Surjective colFrame := by
+  intro p
+  induction p using Projectivization.ind with
+  | h v hv =>
+    have hw : HermitianMat.nsq (WithLp.ofLp v) ≠ 0 :=
+      Necessity.nsq_ne_zero_of_ne_zero (fun h => hv ((WithLp.ofLp_eq_zero (p := 2)).mp h))
+    have hnsq : HermitianMat.nsq (Necessity.unitVec hw) = 1 := by
+      have h1 := Necessity.unitVec_unit hw
+      rw [HermitianMat.dot_self_eq_nsq] at h1
+      exact_mod_cast h1
+    refine ⟨⟨Necessity.frameU (Necessity.unitVec hw), Necessity.frameU_unitary hnsq⟩, ?_⟩
+    refine (Projectivization.mk_eq_mk_iff' ℂ _ v (firstCol_ne_zero _) hv).mpr
+      ⟨(((Real.sqrt (HermitianMat.nsq (WithLp.ofLp v)))⁻¹ : ℝ) : ℂ), ?_⟩
+    apply (WithLp.ofLp_injective (p := 2) (V := Fin 2 → ℂ))
+    funext i
+    fin_cases i <;> simp [firstCol, Necessity.frameU, Necessity.unitVec]
+
+theorem surjective_blochFrame_colFrame :
+    Function.Surjective (fun U : Matrix.unitaryGroup (Fin 2) ℂ => blochFrame (colFrame U)) :=
+  blochFrame_surjective.comp surjective_colFrame
+
+/-- **The frame-dependent product of a nonconstant moduli function is not ANY constant twist
+product.**  Unconditional: every `ℝP²` point is presented by some unitary
+(`surjective_blochFrame_colFrame`), so a nonconstant `t` must differ from `s` at a presented
+frame. -/
+theorem exists_n2Sp_ne_twistSeq_of_nonconstant (t : C(RP2, ℝ)) {p q : RP2} (hpq : t p ≠ t q)
+    (s : ℝ) :
+    ∃ a b : HermitianMat (Fin 2) ℂ, n2Sp t a b ≠ HermitianMat.twistSeq s a b := by
+  have hex : ∃ x : RP2, t x ≠ s := by
+    by_contra hc
+    push_neg at hc
+    exact hpq (by rw [hc p, hc q])
+  obtain ⟨x, hx⟩ := hex
+  obtain ⟨U, hU⟩ := surjective_blochFrame_colFrame x
+  refine exists_n2Sp_ne_twistSeq t U ?_
+  rw [show blochFrame (colFrame U) = x from hU]
+  exact hx
+
+/-- **`thm:qubit-boundary`(iii), in the `twistSeq` encoding row 30 uses.**  The article's own `τ`
+family — `RankTwo.tauModuliRP2`, which is defined *through* `MasterTheorem.RankTwo.tau` — gives a
+product that is not any constant twist product.  This is the statement that was missing when rows
+30 and 31 sat side by side in two unlinked encodings. -/
+theorem exists_n2Sp_tau_ne_twistSeq (s : ℝ) :
+    ∃ a b : HermitianMat (Fin 2) ℂ,
+      n2Sp tauModuliRP2 a b ≠ HermitianMat.twistSeq s a b := by
+  obtain ⟨p, q, hpq⟩ := tauModuliRP2_nonconstant
+  exact exists_n2Sp_ne_twistSeq_of_nonconstant tauModuliRP2 hpq s
+
 end RankTwo

@@ -2371,6 +2371,37 @@ theorem offdiag_eq_zero_of_fixes_frameProj {n : Type*} [Fintype n] [DecidableEq 
   rw [frameProj_mat_eq_single] at hentry
   simpa [Matrix.mul_apply, Matrix.single, Ne.symm hik] using hentry
 
+/-- **The stabilizer's diagonal entries are unimodular**, so "frame-fixing unitary" is exactly
+"element of the diagonal torus `T^n`", not merely "diagonal matrix".
+
+★★ New 2026-08-09 (ARC-8 checkpoint 1).  A cold reviewer pointed out that
+`offdiag_eq_zero_of_fixes_frameProj` proves *diagonality* while its certificate's name
+(`frame_stabilizer_is_torus`) and row 18's article statement claim the torus — one trivial unstated
+step apart.  This is that step.  ★ It does **not** supply the article's "identity component
+`T^{n-1}`": `T^n` is connected, so the article's `T^{n-1}` is the stabilizer's image in the
+*automorphism* group, i.e. `T^n` modulo the globally-acting phase.  That quotient is not stated
+anywhere in this tree (grep `identityComponent|IsConnected|ConnectedComponent|identity component`
+over `RadicalRelativity/`, 2026-08-09: three hits, two of them docstring prose in this file and one
+unrelated).  What *is* proved is the mathematical content the quotient exists to express — that the
+stabilizer's action on the `(i,j)` Peirce block depends only on the phase **difference**
+`θ_i − θ_j`, which is `torusU_block`, and phase differences are exactly what the global phase
+cannot move. -/
+theorem normSq_diag_eq_one_of_fixes_frameProj {n : Type*} [Fintype n] [DecidableEq n]
+    {U : Matrix n n ℂ} (hU : Uᴴ * U = 1)
+    (hfix : ∀ k, adU U (frameProj k) = frameProj k) (k : n) :
+    Complex.normSq (U k k) = 1 := by
+  have hoff := offdiag_eq_zero_of_fixes_frameProj hU hfix
+  have h := congrFun (congrFun hU k) k
+  rw [Matrix.mul_apply, Matrix.one_apply_eq] at h
+  rw [Finset.sum_eq_single k (fun i _ hik => by
+      rw [Matrix.conjTranspose_apply, hoff i k hik, star_zero, zero_mul])
+    (fun hk => absurd (Finset.mem_univ k) hk)] at h
+  rw [Matrix.conjTranspose_apply] at h
+  have hc : (Complex.normSq (U k k) : ℂ) = 1 := by
+    rw [Complex.normSq_eq_conj_mul_self]
+    exact h
+  exact_mod_cast hc
+
 /-- **The certificate's stated gap, verbatim and proved**: an arbitrary product's coefficient
 `tvalCoef` is realized by the frame-stabilizer element `torusU (tvalCoef …) r`, acting on the `(i,j)`
 block by the phase the article predicts. -/

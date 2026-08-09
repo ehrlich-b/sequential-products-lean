@@ -3,6 +3,30 @@ WALL CERTIFICATE — `prop:n2-sufficiency`  (row 30)  and  `cor:qubit-classifica
 Date: 2026-08-09, ARC-7 block 7.5.  Tag `paperA-arc7-cp1`.  Pin: main.tex blob 205fdf5a.
 Row status on this date: 30 = ABSENT, 35 = ABSENT.
 
+★★★ SUPERSEDED IN PART, 2026-08-09 (ARC-8 block 8.1(b) + checkpoint 1).  ROW 30 IS NO LONGER ABSENT:
+its ALGEBRAIC CORE IS IN THE TREE — `RankTwo.n2SequentialProduct` /
+`RankTwo.exists_sequentialProduct_of_continuous_moduli` in `RadicalRelativity/RankTwo/Sufficiency.lean`,
+for an arbitrary `t : C(RP2, R)`, with only S2 open.  Row 35 is still ABSENT.
+
+★★★ AND THE MORE USEFUL FINDING, FROM THE CHECKPOINT-1 COLD REVIEW: THE GAP THIS CERTIFICATE NAMED
+AS LOAD-BEARING IS NOT ON ROW 30'S PATH.  This file told the reader to attack
+"compatible ==> same frame ==> same parameter" FIRST, and the ARC-8 work closed exactly that
+(`Necessity.n2FrameTwist_eq_of_compatible`, cited below in place of the old `sorry`).  But that
+theorem has ZERO consumers in the tree, and row 30 was closed by a DIFFERENT mechanism:
+`RankTwo.n2Tau_eq_of_commute`, which is P-FREE.  It could not have been otherwise — the certificate's
+form is quantified over a `SequentialProductOn P`, and the compatibility facts are needed BEFORE the
+structure is assembled, so instantiating at `P := n2SequentialProduct t` is circular.
+  ★ THE TRANSFERABLE RULE: a certificate's named gap can be closed, correctly and at the stated
+  price, and still not be the thing the row needed.  `n2FrameTwist_eq_of_compatible` is a
+  NECESSITY-side lemma (it extracts from an arbitrary product, which is rows 29/34/35 territory);
+  this certificate mis-filed it under a SUFFICIENCY row.  So "the gap is closed" is not the same
+  claim as "the row moved", and a certificate should say which of the two it is asserting.
+  ★ A second observation from the same review, kept because it is uncomfortable: every instance of
+  the `hcomm` hypothesis constructible in the tree today already has its conclusion available from
+  `n2FrameTwist_eq_of_frameMap_eq`, `n2FrameTwist_reverse`, or `n2FrameTwist_mul_diagonal`.  The
+  informative statement of the pair is `frameMap_eq_or_compl_of_compatible`, whose content is the
+  contrapositive; the theorem this file cites is the weaker packaging.
+
 WHAT THE ARTICLE ASSERTS
   (30) For every continuous t : RP^2 -> R the operation  a . b := a^{1/2+i t_a} b a^{1/2-i t_a}
        (t_a = t(fr a), and 0 for scalar a) is a norm-continuous S1-S7 sequential product on H_2(C).

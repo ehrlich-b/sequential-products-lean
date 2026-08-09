@@ -147,7 +147,16 @@ against the tree, because the certificate is the thing most likely to be out of 
 whose gap has closed is worse than a prose price: it is a prose price wearing a compiler's badge. -/
 
 /-- **NO LONGER A GAP** — the frame stabilizer is exactly the diagonal subgroup.  Kept, with the
-`sorry` replaced by the tree's theorem, so the retraction above is checkable here. -/
+`sorry` replaced by the tree's theorem, so the retraction above is checkable here.
+
+★★ THE NAME OVERSHOOTS THE STATEMENT, and a checkpoint-1 reviewer caught it: what is proved here is
+DIAGONALITY.  "Is the torus" needs one more trivial step — the diagonal entries are unimodular —
+which is now `Necessity.normSq_diag_eq_one_of_fixes_frameProj`, added for exactly this reason.  And
+the article's row-18 clause asks for the **identity component `T^{n-1}`**, which is a third thing
+again: `T^n` is connected, so `T^{n-1}` is the stabilizer's image in the *automorphism* group
+(`T^n` modulo the globally-acting phase), and that quotient is stated nowhere in the tree.  Its
+mathematical content is `torusU_block` — the action sees only phase *differences* — so the residue
+is packaging.  ★ Rule: an over-strong theorem NAME is a prose price too.  It is read as the claim. -/
 theorem frame_stabilizer_is_torus {n : Type*} [Fintype n] [DecidableEq n]
     (U : Matrix n n ℂ) (hU : Uᴴ * U = 1)
     (hfix : ∀ k, adU U (frameProj k) = frameProj k) :
