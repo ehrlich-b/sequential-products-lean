@@ -95,6 +95,39 @@ rank-two block rotations — a Givens/Jacobi decomposition — where the tree cu
 `exists_axisFixing_factor`, three axis-fixing Householder factors. That row stays PARTIAL and
 the remainder is exactly the Givens decomposition.
 
+### `lem:homog`(ii) — at abstract order-unit-space generality (2026-08-08, ARC-6 rung 6.3)
+
+`SequentialProductOn.sp_smul_left` : for `[OrderUnitSpace V]`, a `SequentialProductOn V`,
+`OrderUnitSpace.IsArchimedean V`, S2, and effects `a b` with `t ∈ [0,1]`,
+`P.sp (t • a) b = t • P.sp a b`.
+
+**Why this counts at the article's generality.** The article states `lem:homog` with ambient
+`J`; a Euclidean Jordan algebra is in particular an order unit space, and the proof here uses
+*nothing* about the carrier beyond the order-unit structure — no Jordan product, no norm
+beyond the class's, no matrices. So the abstract statement subsumes the article's. The one
+hypothesis added, `IsArchimedean`, is part of the *definition* of the article's order unit
+space (the class's `archimedean` field is order-unit boundedness only — the long-standing
+caveat 1), not a located stand-in for a cited result. Note also that the article merely
+*cites* this clause — van de Wetering's Proposition 3.9, with S2 substituted for his σ-SEA
+infimum passage — whereas Lean proves it from S1–S7 + S2.
+
+**The ladder, all abstract, in `SequentialProduct.lean`:** second argument —
+`sp_natSmul_right`, `sp_divNat_smul_right`, `sp_ratSmul_right`,
+`sp_smul_right_of_unitInterval` (this is where Archimedean is consumed, as the ε-squeeze);
+first argument — `sp_comm_natSmul`, `sp_comm_ratSmul_self`, `sp_comm_ratOneSmul`,
+`sp_ratOneSmul_left`, `sp_smulOne_left` (the single S2 use, by rational approximation),
+`sp_smul_left`. Closure `[propext, Classical.choice, Quot.sound]` throughout; census still
+149 modules, custom axioms exactly `[]`. Three small order lemmas were added to
+`OrderUnitSpace.lean` for the port (`sub_le_sub_right'`, `sub_le_sub_left'`,
+`le_of_sub_nonpos`) because Mathlib's versions need ordered-group instances this class does
+not provide.
+
+★ **This discharges the obstruction recorded at rung 5.1** ("generalizing is not a change of
+variable block"). It was correct that Archimedean is needed and that the class does not carry
+it; it was *incomplete* in implying the work was therefore large. Supplied as a `Prop`, the
+ladder ports essentially verbatim. The concrete versions in
+`Necessity/LeftMultiplication.lean` and `Necessity/FirstArgument.lean` are untouched.
+
 ### `lem:span` — the two load-bearing clauses, at full abstract generality (2026-08-08)
 
 `OrderUnitSpace.span_isEffect_eq_top` and `OrderUnitSpace.linearMap_eq_of_eq_on_effects`

@@ -110,6 +110,27 @@ theorem le_of_sub_nonneg {a b : V} (h : (0 : V) ≤ b - a) : a ≤ b := by
   rw [add_zero, add_sub_cancel] at h1
   exact h1
 
+/-- Subtracting a fixed element preserves order. -/
+theorem sub_le_sub_right' {a b : V} (h : a ≤ b) (c : V) : a - c ≤ b - c := by
+  refine le_of_sub_nonneg ?_
+  have hrw : (b - c) - (a - c) = b - a := by abel
+  rw [hrw]
+  exact sub_nonneg_of_le h
+
+/-- Subtracting from a fixed element reverses order. -/
+theorem sub_le_sub_left' {a b : V} (h : a ≤ b) (c : V) : c - b ≤ c - a := by
+  refine le_of_sub_nonneg ?_
+  have hrw : (c - a) - (c - b) = b - a := by abel
+  rw [hrw]
+  exact sub_nonneg_of_le h
+
+/-- A nonpositive difference gives an inequality. -/
+theorem le_of_sub_nonpos {a b : V} (h : a - b ≤ 0) : a ≤ b := by
+  refine le_of_sub_nonneg ?_
+  have h1 : (0 : V) ≤ -(a - b) := neg_nonneg_of_nonpos h
+  have hrw : -(a - b) = b - a := by abel
+  rwa [hrw] at h1
+
 /-- **Monotonicity in the SCALAR**: on a nonnegative element, a larger scalar gives a
 larger multiple.  (`smul_nonneg_mono` is monotonicity in the *element*; this is the
 companion the class was missing, and the direct-sum carrier's order-unit bound needs it
@@ -225,5 +246,22 @@ equal.  This is the use the article makes of the spanning property. -/
 theorem linearMap_eq_of_eq_on_effects {W : Type*} [AddCommGroup W] [Module ℝ W]
     (f g : V →ₗ[ℝ] W) (h : ∀ a : V, IsEffect a → f a = g a) : f = g :=
   LinearMap.ext_on span_isEffect_eq_top (fun a ha => h a ha)
+
+/-- **The Archimedean property**, in the sense the article's "order unit space" carries and
+this class does not.
+
+The class's `archimedean` field is order-unit *boundedness* only — every element is under
+*some* multiple of the unit.  This is the genuine Archimedean squeeze: an element under
+*every* positive multiple of the unit is nonpositive.  The two are different, and the
+difference is exactly what the second-argument homogeneity ladder consumes at its last step.
+
+It is supplied as an explicit `Prop` rather than added to the class for two reasons.
+`AxiomAudit.lean` Layer 5 freezes the printed constructor type of
+`SequentialProductCore.mk`, so extending the class would break the audit.  More importantly,
+this *is* part of the definition of the article's order unit space — not a located stand-in
+for a cited result — so a row proved under it still counts as formalized at the article's own
+generality. -/
+def IsArchimedean (V : Type*) [OrderUnitSpace V] : Prop :=
+  ∀ x : V, (∀ ε : ℝ, 0 < ε → x ≤ ε • ousUnit) → x ≤ 0
 
 end OrderUnitSpace
