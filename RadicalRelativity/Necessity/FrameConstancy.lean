@@ -1917,6 +1917,51 @@ theorem hx_is_load_bearing :
   rw [hlhs] at hbad
   exact (mul_ne_zero (mul_ne_zero hsq (Complex.exp_ne_zero _)) hcoef) hbad.symm
 
+/-! ### `prop:stabilizers`' ℂ row: the coefficient IS realized by a frame-stabilizer element
+
+★★★ **New 2026-08-09, and it discharges a gap a wall certificate had called unstatable.**
+
+`WallCertificates/differential-trio.lean` recorded row 18's remaining content as "that the
+coefficient `tvalCoef` is realized by an element of the frame stabilizer's identity component acting
+as `z ↦ i(θ_i − θ_j)z`", and parked it behind a `True` placeholder justified by "the missing object's
+*type* needs the stabilizer group as a Lie group with an identity component, which the tree does not
+have."
+
+**No Lie-group vocabulary is needed to say it.**  The reviewer who was sent at that certificate wrote
+the statement and proved it in four lines from `torusU_block` and `tvalLm_eq_coef_mul`, both already
+in the tree.  `torusU t r` (`Necessity/TorusAction.lean`) is the diagonal unitary `diag(e^{i t r_k})`;
+`torusU_fixes_frameProj` says it fixes every frame projection — i.e. it *is* in the frame stabilizer —
+and `torusU_block` says it rotates the `(i,j)` Peirce block by the phase difference.  That is the
+article's `z ↦ i(θ_i − θ_j)z`, in group form.
+
+★ **This is the same failure mode as the quaternionic certificate, one directory over**: the
+placeholder's justification was about a *type* I assumed would be needed, not about anything I had
+looked for.  A `True` placeholder recorded awkwardness and got read as depth. -/
+
+/-- The torus element fixes the whole Jordan frame **and** rotates each Peirce block by the phase
+difference — the frame-stabilizer action of `prop:stabilizers`' ℂ row, in group form. -/
+theorem stabilizer_group_action_complex {n : Type*} [Fintype n] [DecidableEq n]
+    (t : ℝ) (r : n → ℝ) :
+    (∀ k, adU (torusU t r) (frameProj k) = frameProj k)
+      ∧ ∀ (i j : n), i ≠ j → ∀ z : ℂ,
+          adU (torusU t r) (blockHerm i j z)
+            = blockHerm i j (Complex.exp ((↑(t * (r i - r j)) : ℂ) * Complex.I) * z) :=
+  ⟨fun k => torusU_fixes_frameProj t r k, fun _ _ hij z => torusU_block t r hij z⟩
+
+/-- **The certificate's stated gap, verbatim and proved**: an arbitrary product's coefficient
+`tvalCoef` is realized by the frame-stabilizer element `torusU (tvalCoef …) r`, acting on the `(i,j)`
+block by the phase the article predicts. -/
+theorem tvalCoef_realized_by_stabilizer {N : ℕ}
+    (P : SequentialProductOn (HermitianMat (Fin N) ℂ)) (hS2 : P.FirstArgContinuous)
+    (hjord : ThetaPreservesJordan P) (i j : Fin N) (hij : i ≠ j) (r : Fin N → ℝ) (z : ℂ) :
+    adU (torusU (tvalCoef P hS2 hjord i j) r) (blockHerm i j z)
+      = blockHerm i j
+          (Complex.exp ((↑(tvalLm P hS2 hjord i j r) : ℂ) * Complex.I) * z) := by
+  rw [torusU_block _ r hij z, tvalLm_eq_coef_mul P hS2 hjord hij r]
+  congr 3
+  push_cast
+  ring
+
 /-! ### The parameter is PINNED by the product — so its construction cannot make it wrong
 
 ★★★ **New 2026-08-09, and it closes what was the arc's largest unexamined risk by removing the

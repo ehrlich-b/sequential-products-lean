@@ -256,7 +256,15 @@ now hold. -/
 section ArticleForm
 
 /-- The **spectral inverse** `∑_μ (1/μ) • P_μ` — the article's `a⁻¹`, unnormalized, hence
-generally *not* an effect (its eigenvalues are `≥ 1` for an effect `b`). -/
+generally *not* an effect (its eigenvalues are `≥ 1` for an effect `b`).
+
+★ Identification, from the ARC-7 independent review: this is `b.cfc (fun x => 1/x)`, so it is the
+spectral inverse in the functional-calculus sense and not merely a suggestive sum.
+★★ **HYGIENE WARNING, and it is about a future caller rather than a present defect.**  The definition
+is total and `1/0 = 0` in Lean, so at a **singular** `b` the kernel term drops and this is the
+Moore–Penrose *pseudo*-inverse, satisfying `b · specInv b = 𝟙 − P₀` rather than `𝟙`.  Every theorem
+below carries `hbd : PosDef`, so nothing is wrong today — but the *name* invites dropping `hbd`, and
+then the object is silently the wrong one.  Do not weaken `hbd` without renaming. -/
 noncomputable def specInv (b : HermitianMat n 𝕜) : HermitianMat n 𝕜 :=
   ∑ μ ∈ b.eigFinset, (1 / μ) • b.specProj μ
 
@@ -269,11 +277,15 @@ theorem specInv_eq_smul_pseudoInv (hbd : b.mat.PosDef) :
   have hc : pseudoInvCoef b ≠ 0 := ne_of_gt (pseudoInvCoef_pos hbd)
   field_simp
 
-theorem specInv_nonneg (hb : IsEffect b) (hbd : b.mat.PosDef) :
+/-- Positivity of the spectral inverse.  ★ `IsEffect b` was carried here and found INERT by the
+ARC-7 independent review: positive-definiteness alone suffices, since every coefficient `1/μ` is
+positive on the spectrum.  Removed. -/
+theorem specInv_nonneg (hbd : b.mat.PosDef) :
     (0 : HermitianMat n 𝕜) ≤ specInv b := by
-  rw [specInv_eq_smul_pseudoInv hbd]
-  exact smul_nonneg (le_of_lt (inv_pos.mpr (pseudoInvCoef_pos hbd)))
-    (pseudoInv_isEffect hb hbd).1
+  rw [specInv]
+  refine Finset.sum_nonneg fun μ hμ => ?_
+  exact smul_nonneg (le_of_lt (one_div_pos.mpr (eigFinset_pos hbd μ hμ)))
+    (specProj_isProjection b μ).isEffect.1
 
 /-- `1/c` is an admissible normalization for the spectral inverse — indeed the one that returns
 the normalized pseudo-inverse exactly. -/
@@ -296,7 +308,7 @@ theorem spCone_specInv_eq_one (hS2 : P.FirstArgContinuous) (hb : IsEffect b)
     (hbd : b.mat.PosDef) :
     P.spCone (specInv b) b = 1 := by
   have hc : pseudoInvCoef b ≠ 0 := ne_of_gt (pseudoInvCoef_pos hbd)
-  rw [P.spCone_eq HermitianMat.isArchimedean hS2 (specInv_nonneg hb hbd)
+  rw [P.spCone_eq HermitianMat.isArchimedean hS2 (specInv_nonneg hbd)
       (isConeNorm_specInv hb hbd) hb]
   rw [specInv_eq_smul_pseudoInv hbd, smul_smul, inv_inv, mul_inv_cancel₀ hc, one_smul,
     sp_pseudoInv_eq_smul_one P hS2 hb hbd, smul_smul, inv_mul_cancel₀ hc, one_smul]
@@ -307,15 +319,25 @@ section recorded as unreachable.
 ★★ Landed 2026-08-09 after the certificate-refutation review discharged the missing extension. The
 note above said this half "puts the non-effect in the *second* slot, which no lemma in this tree
 covers" and that it "is **not** proved here — do not read this as the full row". Both sentences were
-correct when written and both are now retired: `SequentialProductOn.spConeRight` exists, and it was
-*cheaper* than the first-slot extension, because second-argument homogeneity needs no S2.
+correct when written and both are now retired: `SequentialProductOn.spConeRight` exists.
 
-**So the article's identity `a · a⁻¹ = a⁻¹ · a = 𝟙` now holds in both slots on this carrier.** -/
+★ **Two wording corrections from the ARC-7 independent review, both about what "cheaper" means.**
+(1) The right-slot *extension* is derivable with `IsArchimedean` and **no S2**, and the tree's route
+to the left slot does use S2 — but that is **not** an independence result. "The left slot NEEDS S2"
+would require a counterexample: an S1,S3–S7 + Archimedean product on which left-slot homogeneity
+fails.  None is banked, so say "the right slot is proved without S2; the tree's left-slot route uses
+it", never "needs".  (2) **This theorem itself DOES consume S2** — through `sp_pseudoInv_comm` and
+`sp_pseudoInv_eq_smul_one`.  The "no S2" property belongs to the *extension*, not to the identity, and
+carrying it across is a mistake a reader will make if the docstring lets them.
+
+**So the article's identity `a · a⁻¹ = a⁻¹ · a = 𝟙` now holds in both slots on this carrier** — a
+**fidelity** upgrade (the article's coefficient-free form) rather than new reach; see the manifest row
+for why. -/
 theorem spConeRight_specInv_eq_one (hS2 : P.FirstArgContinuous) (hb : IsEffect b)
     (hbd : b.mat.PosDef) :
     P.spConeRight b (specInv b) = 1 := by
   have hc : pseudoInvCoef b ≠ 0 := ne_of_gt (pseudoInvCoef_pos hbd)
-  rw [P.spConeRight_eq HermitianMat.isArchimedean hb (specInv_nonneg hb hbd)
+  rw [P.spConeRight_eq HermitianMat.isArchimedean hb (specInv_nonneg hbd)
       (isConeNorm_specInv hb hbd)]
   rw [specInv_eq_smul_pseudoInv hbd, smul_smul, inv_inv, mul_inv_cancel₀ hc, one_smul,
     ← sp_pseudoInv_comm P hS2 hb hbd, sp_pseudoInv_eq_smul_one P hS2 hb hbd,
