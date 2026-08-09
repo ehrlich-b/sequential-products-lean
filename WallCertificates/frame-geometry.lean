@@ -79,6 +79,19 @@ ABSENCE CLAIMS AND THEIR SCOPE
       statements, not a complex structure on a carrier — but the recorded result did not.
   * "no Peirce exchange automorphism":
       grep -rn 'peirceExchange\|exchangeAuto\|PeirceExchange' RadicalRelativity/ -> no hits.
+    ★★ CLAIM SURVIVES, PATTERN AGAIN TOO NARROW (2026-08-09 dry pass, using the declaration-list rule
+    rather than a name guess).  Two ADJACENT things exist and neither is the object, but both should be
+    named so nobody rebuilds the mechanism:
+      - `MasterTheorem/RankTwo.lean:488` `n2_exchange_selects_luders` — **exchange covariance forces
+        Lueders at RANK TWO, at generator level** (`rem:n2-selection`, the paper's Remark 6.2).  So the
+        MECHANISM of clause (i) is already machine-checked in the rank-two case: swap-invariance of the
+        angle plus its antisymmetry in `r_0 - r_1` kills the twist.  ★ It does NOT move row 36:
+        `rem:n2-selection` is one of the SEVEN EXCLUDED REMARKS of the denominator (main.tex:1550), and
+        clause (i) is about `H_N(C)` with `N >= 3` and Peirce exchange, not rank two.
+      - `Necessity/ThetaCocycle.lean:139` `theta_conj_exchange` — vdW 5.7(1), a DIFFERENT "exchange"
+        (Theta_b commuting with Lueders conjugation at a commuting base point), not an atom swap.
+    So clause (i) still needs the Peirce exchange automorphism WITH its coherence-block action; what it
+    does not need is a new idea about why exchange covariance kills the twist.
 
 NOT imported from RadicalRelativity/.
 -/
