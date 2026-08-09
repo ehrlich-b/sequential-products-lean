@@ -94,6 +94,20 @@ ABSENCE CLAIMS AND THEIR SCOPE
     ★ So the remainder is steps 3(b) and 4: matrix plumbing over `Fin 2`, no new mathematics and no
     missing vocabulary.  Attempted 2026-08-09 and not finished — the two elementary lemmas landed, the
     assembly did not, and that is recorded as budget rather than resistance.
+    ★★★ **DISCHARGED 2026-08-09, ARC-8 block 8.1(a).**  The chain is closed in the tree as
+    `Necessity.n2FrameTwist_eq_of_compatible`, and the gap statement below is a citation rather than a
+    `sorry`.  The price was right about size and WRONG ABOUT ROUTE: step 3's "`M` is not a scalar, so
+    `eigen_diagonal_fin2` puts `W e₀` on one coordinate" is **not needed at all**.  Writing the two-level
+    family as `e^{s₁}·𝟙 + (e^{s₀} − e^{s₁})·p₀` makes the conjugated frame projection an *affine*
+    function of the conjugated family, so one invertible coefficient transfers the vanishing off-diagonal
+    entry; then a diagonal projection of trace one over `Fin 2` is a frame projection
+    (`eq_frameProj_of_diag_projection`).  So the mapped chain's step 3 named a longer route than the one
+    that worked, and `eigen_diagonal_fin2` — landed the day before *for this very purpose* — is not on
+    the path.
+    ★ **The lesson, and this directory keeps re-learning it:** a four-step map written from the article's
+    own proof is evidence about the article's route, not about the cheapest Lean route.  The map was
+    still worth having — it turned the remainder into a stated size — but "no new mathematics and no
+    missing vocabulary" was the load-bearing half of that estimate, and the step count was not.
 
 NOT imported from RadicalRelativity/.
 -/
@@ -186,7 +200,13 @@ been wrong four times here.
 is commuting with *every* Hermitian (the commutant of the whole algebra), strictly stronger than
 commuting with one non-scalar `a`.  Related machinery, wrong shape.
 
-Restated below with the diagonalizing idiom and non-scalar hypotheses. -/
+Restated below with the diagonalizing idiom and non-scalar hypotheses.
+
+★★★ **AND NOW PROVED, ARC-8 block 8.1(a) — this is no longer a gap.**  Kept in the file, with its
+`sorry` replaced by the tree's theorem, because the retraction above is the content: the same
+proposition that was self-defeating in one presentation is true and cheap in another, and a reader
+checking that claim should be able to see both in one place.  The `sorry` count of this file drops
+by one for a reason that is *not* new mathematics. -/
 theorem frame_param_eq_of_compatible
     (P : SequentialProductOn (HermitianMat (Fin 2) ℂ)) (hS2 : P.FirstArgContinuous)
     {r s : Fin 2 → ℝ} (hr : ∀ i, r i ≤ 0) (hs : ∀ i, s i ≤ 0)
@@ -196,8 +216,8 @@ theorem frame_param_eq_of_compatible
         (Necessity.adU (V : Matrix (Fin 2) (Fin 2) ℂ) (Necessity.diagFamily s))
       = P.sp (Necessity.adU (V : Matrix (Fin 2) (Fin 2) ℂ) (Necessity.diagFamily s))
         (Necessity.adU (U : Matrix (Fin 2) (Fin 2) ℂ) (Necessity.diagFamily r))) :
-    Necessity.n2FrameTwist P hS2 U = Necessity.n2FrameTwist P hS2 V := by
-  sorry
+    Necessity.n2FrameTwist P hS2 U = Necessity.n2FrameTwist P hS2 V :=
+  Necessity.n2FrameTwist_eq_of_compatible P hS2 hr hs hrne hsne U V hcomm
 
 /-! ### The row itself, stated at the article's generality
 

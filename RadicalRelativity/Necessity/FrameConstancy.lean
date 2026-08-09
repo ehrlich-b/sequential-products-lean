@@ -1717,6 +1717,237 @@ theorem frameMap_mul_swap (V : Matrix.unitaryGroup (Fin 2) ℂ) :
     linear_combination (norm := module) h
   rw [hstep, hsum, adU_sub, adU_unital (unitaryGroup_mul_conjTranspose V), frameMap]
 
+/-! ### "Compatible ⟹ same parameter": steps 3(b) and 4, and the chain closed
+
+★★★ New 2026-08-09, ARC-8 block 8.1(a).  The section above mapped the chain in four steps and
+banked steps 1 and 2; `WallCertificates/prop-n2-sufficiency.lean` recorded the remainder as
+"steps 3(b) and 4: matrix plumbing over `Fin 2`, no new mathematics and no missing vocabulary".
+That price is now **paid**, and the chain ends in `n2FrameTwist_eq_of_compatible`.
+
+★ **The route taken is not the route the certificate mapped, and the difference is a
+simplification worth recording.**  The certificate's step 3 was "`M` is not a scalar, so its
+diagonal entries are distinct, so `eigen_diagonal_fin2` puts `W e₀` on one coordinate".  That
+"`M` is not a scalar" step is **not needed at all**.  Writing the two-level family as
+`diagFamily s = e^{s₁}·𝟙 + (e^{s₀} − e^{s₁})·p₀` makes the conjugated frame projection an
+*affine* function of the conjugated family, so the vanishing of one off-diagonal entry
+transfers directly — the coefficient `e^{s₀} − e^{s₁}` is invertible by the non-scalar
+hypothesis alone.  Then a diagonal projection of trace one over `Fin 2` is a frame projection
+(`eq_frameProj_of_diag_projection`), which is the whole of step 4's "`Ad_W p₀ ∈ {p₀, p₁}`".
+So `eigen_diagonal_fin2` is not on the path; it stays in the tree as the eigenvector fact it
+is, and the estimate that named it was pricing a longer route than the one that worked.
+
+★ **The statement is the RESTATED one.**  The certificate's first attempt at this fact was
+SELF-DEFEATING (its hypotheses said "`U` commutes with `a`", which `𝟙` satisfies for every
+`U`, so it implied the frame function was globally constant — the negation of what rows 34/35
+need).  The version below uses the diagonalizing idiom `a = Ad_U (diagFamily r)` and carries
+the non-scalar hypotheses `r 0 ≠ r 1`, `s 0 ≠ s 1` that the certificate's own prose asked for
+and its Lean did not.  Applying that defect kind's test — assume the gap, check it does not
+contradict the row it feeds — the conclusion here is that *compatible* non-scalar effects share
+an **unordered** frame, which is consistent with `RankTwo.tauModuliRP2_nonconstant`: effects at
+different frames are simply not compatible.  And the hypothesis is not vacuous, since `V = U`
+with `r ≠ s` satisfies it (commuting effects are compatible, `twistSeq_comm_of_commute`). -/
+
+/-- Conjugation by a unitary preserves idempotence at the matrix level. -/
+theorem adU_mul_self {n : Type*} [Fintype n] [DecidableEq n]
+    {U : Matrix n n ℂ} (hU : Uᴴ * U = 1)
+    {x : HermitianMat n ℂ} (hx : x.mat * x.mat = x.mat) :
+    (adU U x).mat * (adU U x).mat = (adU U x).mat := by
+  rw [adU_apply, HermitianMat.conj_apply_mat]
+  calc U * x.mat * Uᴴ * (U * x.mat * Uᴴ)
+      = U * (x.mat * ((Uᴴ * U) * x.mat)) * Uᴴ := by simp only [Matrix.mul_assoc]
+    _ = U * x.mat * Uᴴ := by rw [hU, Matrix.one_mul, hx]
+
+/-- Conjugation by a unitary preserves the trace. -/
+theorem trace_adU {n : Type*} [Fintype n] [DecidableEq n]
+    {U : Matrix n n ℂ} (hU : Uᴴ * U = 1) (x : HermitianMat n ℂ) :
+    (adU U x).mat.trace = x.mat.trace := by
+  rw [adU_apply, HermitianMat.conj_apply_mat, Matrix.trace_mul_cycle, hU, Matrix.one_mul]
+
+theorem trace_frameProj {n : Type*} [Fintype n] [DecidableEq n] (i : n) :
+    (frameProj i).mat.trace = 1 := by
+  rw [frameProj_mat, Matrix.trace_diagonal]
+  simp
+
+/-- Conjugation by a unitary preserves commutation. -/
+theorem commute_adU {n : Type*} [Fintype n] [DecidableEq n]
+    {W : Matrix n n ℂ} (hW : Wᴴ * W = 1) {x y : HermitianMat n ℂ}
+    (h : Commute x.mat y.mat) : Commute (adU W x).mat (adU W y).mat := by
+  show _ * _ = _ * _
+  rw [adU_apply, adU_apply, HermitianMat.conj_apply_mat, HermitianMat.conj_apply_mat]
+  calc W * x.mat * Wᴴ * (W * y.mat * Wᴴ)
+      = W * (x.mat * ((Wᴴ * W) * y.mat)) * Wᴴ := by simp only [Matrix.mul_assoc]
+    _ = W * (x.mat * y.mat) * Wᴴ := by rw [hW, Matrix.one_mul]
+    _ = W * (y.mat * ((Wᴴ * W) * x.mat)) * Wᴴ := by rw [hW, Matrix.one_mul, h.eq]
+    _ = W * y.mat * Wᴴ * (W * x.mat * Wᴴ) := by simp only [Matrix.mul_assoc]
+
+/-- **Step 4's combinatorial core.**  A projection of trace one on `H_2(ℂ)` whose off-diagonal
+entry vanishes is one of the two frame projections.  This replaces the certificate's
+eigenvector route, and it needs no distinctness hypothesis on the projection's own entries. -/
+theorem eq_frameProj_of_diag_projection {Q : HermitianMat (Fin 2) ℂ}
+    (hoff : Q.mat 0 1 = 0) (hidem : Q.mat * Q.mat = Q.mat) (htr : Q.mat.trace = 1) :
+    Q = frameProj (0 : Fin 2) ∨ Q = frameProj (1 : Fin 2) := by
+  have hoff' : Q.mat 1 0 = 0 := by
+    have h := congrFun (congrFun Q.H 0) 1
+    rw [Matrix.conjTranspose_apply, hoff] at h
+    simpa using congrArg star h
+  have h00 : Q.mat 0 0 * Q.mat 0 0 = Q.mat 0 0 := by
+    have h := congrFun (congrFun hidem 0) 0
+    rw [Matrix.mul_apply, Fin.sum_univ_two, hoff, zero_mul, add_zero] at h
+    exact h
+  have htr2 : Q.mat 0 0 + Q.mat 1 1 = 1 := by
+    rw [Matrix.trace_fin_two] at htr
+    exact htr
+  -- the entry facts, in the `FunLike` form the `Matrix.ext_iff` goals are stated in
+  have e01 : Q 0 1 = 0 := hoff
+  have e10 : Q 1 0 = 0 := hoff'
+  have hcase : Q.mat 0 0 = 0 ∨ Q.mat 0 0 = 1 := by
+    rcases mul_eq_zero.mp (by linear_combination h00 : Q.mat 0 0 * (Q.mat 0 0 - 1) = 0) with h | h
+    · exact Or.inl h
+    · exact Or.inr (sub_eq_zero.mp h)
+  rcases hcase with h | h
+  · refine Or.inr ?_
+    have h11 : Q.mat 1 1 = 1 := by rw [h] at htr2; linear_combination htr2
+    have e00 : Q 0 0 = 0 := h
+    have e11 : Q 1 1 = 1 := h11
+    ext1
+    rw [frameProj_mat, ← Matrix.ext_iff]
+    simp only [Fin.forall_fin_two]
+    refine ⟨⟨?_, ?_⟩, ?_, ?_⟩ <;> simp [e00, e11, e01, e10]
+  · refine Or.inl ?_
+    have h11 : Q.mat 1 1 = 0 := by rw [h] at htr2; linear_combination htr2
+    have e00 : Q 0 0 = 1 := h
+    have e11 : Q 1 1 = 0 := h11
+    ext1
+    rw [frameProj_mat, ← Matrix.ext_iff]
+    simp only [Fin.forall_fin_two]
+    refine ⟨⟨?_, ?_⟩, ?_, ?_⟩ <;> simp [e00, e11, e01, e10]
+
+/-- **Compatible non-scalar effects present the same unordered frame.**  Steps 1–4 of the
+chain, assembled: the frame map of the second unitary is either the frame map of the first or
+its complement. -/
+theorem frameMap_eq_or_compl_of_compatible (hS2 : P.FirstArgContinuous)
+    {r s : Fin 2 → ℝ} (hr : ∀ i, r i ≤ 0) (hs : ∀ i, s i ≤ 0)
+    (hrne : r 0 ≠ r 1) (hsne : s 0 ≠ s 1)
+    (U V : Matrix.unitaryGroup (Fin 2) ℂ)
+    (hcomm : P.sp (adU (U : Matrix (Fin 2) (Fin 2) ℂ) (diagFamily r))
+          (adU (V : Matrix (Fin 2) (Fin 2) ℂ) (diagFamily s))
+        = P.sp (adU (V : Matrix (Fin 2) (Fin 2) ℂ) (diagFamily s))
+          (adU (U : Matrix (Fin 2) (Fin 2) ℂ) (diagFamily r))) :
+    frameMap V = frameMap U ∨ frameMap V = 1 - frameMap U := by
+  have hUc : (U : Matrix (Fin 2) (Fin 2) ℂ)ᴴ * (U : Matrix (Fin 2) (Fin 2) ℂ) = 1 :=
+    unitaryGroup_conjTranspose_mul U
+  have hUc' : (U : Matrix (Fin 2) (Fin 2) ℂ) * (U : Matrix (Fin 2) (Fin 2) ℂ)ᴴ = 1 :=
+    unitaryGroup_mul_conjTranspose U
+  have hVc : (V : Matrix (Fin 2) (Fin 2) ℂ)ᴴ * (V : Matrix (Fin 2) (Fin 2) ℂ) = 1 :=
+    unitaryGroup_conjTranspose_mul V
+  have hVc' : (V : Matrix (Fin 2) (Fin 2) ℂ) * (V : Matrix (Fin 2) (Fin 2) ℂ)ᴴ = 1 :=
+    unitaryGroup_mul_conjTranspose V
+  have hUstar : ((U : Matrix (Fin 2) (Fin 2) ℂ)ᴴ)ᴴ * (U : Matrix (Fin 2) (Fin 2) ℂ)ᴴ = 1 := by
+    rw [Matrix.conjTranspose_conjTranspose]; exact hUc'
+  -- step 1: compatibility ⟹ commutation, at the two frames' *different* parameters
+  have ha : IsEffect (adU (U : Matrix (Fin 2) (Fin 2) ℂ) (diagFamily r)) :=
+    adU_isEffect hUc hUc' (diagFamily_isEffect hr)
+  have hb : IsEffect (adU (V : Matrix (Fin 2) (Fin 2) ℂ) (diagFamily s)) :=
+    adU_isEffect hVc hVc' (diagFamily_isEffect hs)
+  have h1 := n2_sp_eq_twistSeq_frame P hS2 U hr
+    (a := adU (U : Matrix (Fin 2) (Fin 2) ℂ) (diagFamily r)) rfl hb
+  have h2 := n2_sp_eq_twistSeq_frame P hS2 V hs
+    (a := adU (V : Matrix (Fin 2) (Fin 2) ℂ) (diagFamily s)) rfl ha
+  have hcm : Commute (adU (U : Matrix (Fin 2) (Fin 2) ℂ) (diagFamily r)).mat
+      (adU (V : Matrix (Fin 2) (Fin 2) ℂ) (diagFamily s)).mat :=
+    HermitianMat.commute_of_twistSeq_comm_param ha.1 hb.1 (h1.symm.trans (hcomm.trans h2))
+  -- step 2: conjugate by `Uᴴ`; the left factor becomes the diagonal family
+  have hcm2 := commute_adU hUstar hcm
+  rw [adU_cancel hUc (diagFamily r)] at hcm2
+  -- step 3: the off-diagonal of the conjugated right factor vanishes
+  have hoffM : ∀ i j : Fin 2, i ≠ j →
+      (adU ((U : Matrix (Fin 2) (Fin 2) ℂ)ᴴ)
+        (adU (V : Matrix (Fin 2) (Fin 2) ℂ) (diagFamily s))).mat i j = 0 := by
+    refine offdiag_zero_of_commute_diagonal (d := fun i => (Real.exp (r i) : ℂ)) ?_ ?_
+    · intro i j hij
+      rcases fin2_ne_cases i j hij with ⟨hi, hj⟩ | ⟨hi, hj⟩ <;> subst hi <;> subst hj <;>
+        simp only [ne_eq, Complex.ofReal_inj, Real.exp_eq_exp]
+      · exact hrne
+      · exact hrne.symm
+    · have h := hcm2.eq
+      rw [diagFamily_mat] at h
+      exact h.symm
+  -- the conjugated frame projection
+  set Q : HermitianMat (Fin 2) ℂ :=
+    adU ((U : Matrix (Fin 2) (Fin 2) ℂ)ᴴ) (frameMap V) with hQ
+  -- step 3(b), the replacement: the family is an affine function of the frame projection, so
+  -- one invertible coefficient transfers the vanishing off-diagonal entry
+  have hDs : (diagFamily s).mat
+      = ((Real.exp (s 1) : ℂ)) • (1 : Matrix (Fin 2) (Fin 2) ℂ)
+        + ((Real.exp (s 0) : ℂ) - (Real.exp (s 1) : ℂ)) • (frameProj (0 : Fin 2)).mat := by
+    rw [diagFamily_mat, frameProj_mat, ← Matrix.ext_iff]
+    simp only [Fin.forall_fin_two]
+    refine ⟨⟨?_, ?_⟩, ?_, ?_⟩ <;> simp
+  have hexpand : (adU ((U : Matrix (Fin 2) (Fin 2) ℂ)ᴴ)
+        (adU (V : Matrix (Fin 2) (Fin 2) ℂ) (diagFamily s))).mat
+      = ((Real.exp (s 1) : ℂ)) • (1 : Matrix (Fin 2) (Fin 2) ℂ)
+        + ((Real.exp (s 0) : ℂ) - (Real.exp (s 1) : ℂ)) • Q.mat := by
+    rw [hQ, frameMap]
+    simp only [adU_apply, HermitianMat.conj_apply_mat, Matrix.conjTranspose_conjTranspose]
+    rw [hDs]
+    rw [Matrix.mul_add, Matrix.add_mul, Matrix.mul_add, Matrix.add_mul,
+      Matrix.mul_smul, Matrix.smul_mul, Matrix.mul_smul, Matrix.smul_mul,
+      Matrix.mul_smul, Matrix.smul_mul, Matrix.mul_smul, Matrix.smul_mul]
+    congr 1
+    rw [Matrix.mul_one, hVc', Matrix.mul_one, hUc]
+  have hcne : ((Real.exp (s 0) : ℂ) - (Real.exp (s 1) : ℂ)) ≠ 0 := by
+    rw [sub_ne_zero, ne_eq, Complex.ofReal_inj, Real.exp_eq_exp]
+    exact hsne
+  have hQoff : Q.mat 0 1 = 0 := by
+    have h := hoffM 0 1 (by decide)
+    rw [hexpand] at h
+    simp only [Matrix.add_apply, Matrix.smul_apply, Matrix.one_apply, smul_eq_mul] at h
+    simp only [if_neg (by decide : ¬ (0 : Fin 2) = 1), mul_zero, zero_add] at h
+    exact (mul_eq_zero.mp h).resolve_left hcne
+  -- step 4: a diagonal projection of trace one is a frame projection
+  have hQidem : Q.mat * Q.mat = Q.mat := by
+    rw [hQ, frameMap]
+    refine adU_mul_self hUstar ?_
+    exact adU_mul_self hVc
+      (HermitianMat.isProjection_iff_mat_mul_self.mp (frameProj_isProjection (0 : Fin 2)))
+  have hQtr : Q.mat.trace = 1 := by
+    rw [hQ, frameMap, trace_adU hUstar, trace_adU hVc, trace_frameProj]
+  have hQV : adU (U : Matrix (Fin 2) (Fin 2) ℂ) Q = frameMap V := by
+    rw [hQ]; exact adU_cancel' hUc' (frameMap V)
+  rcases eq_frameProj_of_diag_projection hQoff hQidem hQtr with h | h
+  · refine Or.inl ?_
+    rw [← hQV, h, frameMap]
+  · refine Or.inr ?_
+    have hsum : frameProj (1 : Fin 2) = 1 - frameProj (0 : Fin 2) := by
+      have hh := sum_frameProj (n := Fin 2)
+      rw [Fin.sum_univ_two] at hh
+      linear_combination (norm := module) hh
+    rw [← hQV, h, hsum, adU_sub, adU_unital hUc', frameMap]
+
+/-- **THE CHAIN, CLOSED: compatible non-scalar effects carry the same twist parameter.**  This
+is the fact `WallCertificates/prop-n2-sufficiency.lean` names load-bearing for
+`prop:n2-sufficiency`'s S5 and S7 clauses — the inner and outer products of `a & (b & c)` carry
+`t_a` and `t_b`, and this is what makes them equal when the effects are compatible.
+
+Both halves of the frame alternative land on the same value: `frameMap V = frameMap U` by
+fibre-constancy, and `frameMap V = 𝟙 − frameMap U` by frame reversal. -/
+theorem n2FrameTwist_eq_of_compatible (hS2 : P.FirstArgContinuous)
+    {r s : Fin 2 → ℝ} (hr : ∀ i, r i ≤ 0) (hs : ∀ i, s i ≤ 0)
+    (hrne : r 0 ≠ r 1) (hsne : s 0 ≠ s 1)
+    (U V : Matrix.unitaryGroup (Fin 2) ℂ)
+    (hcomm : P.sp (adU (U : Matrix (Fin 2) (Fin 2) ℂ) (diagFamily r))
+          (adU (V : Matrix (Fin 2) (Fin 2) ℂ) (diagFamily s))
+        = P.sp (adU (V : Matrix (Fin 2) (Fin 2) ℂ) (diagFamily s))
+          (adU (U : Matrix (Fin 2) (Fin 2) ℂ) (diagFamily r))) :
+    n2FrameTwist P hS2 U = n2FrameTwist P hS2 V := by
+  rcases frameMap_eq_or_compl_of_compatible P hS2 hr hs hrne hsne U V hcomm with h | h
+  · exact (n2FrameTwist_eq_of_frameMap_eq P U V hS2 h).symm
+  · have hswap : frameMap V = frameMap (U * swapU) := by
+      rw [frameMap_mul_swap]; exact h
+    have h1 : n2FrameTwist P hS2 V = n2FrameTwist P hS2 (U * swapU) :=
+      n2FrameTwist_eq_of_frameMap_eq P (U * swapU) V hS2 hswap
+    rw [h1, n2FrameTwist_reverse]
+
 /-! ### Surjectivity of the frame map onto the unit-vector rank-one projections
 
 ★★ New 2026-08-09, from the independent review of residual item (a).  This closes the first of the
