@@ -559,6 +559,37 @@ mispricing and this one. That is an argument for keeping a reviewer on a target 
 its earlier reports, not only the code, and it is the opposite of the instinct to rotate reviewers for
 freshness.
 
+★★★ **THE DRY PASS WENT DRY — round 2 produced ZERO movement, and here is the evidence.**
+
+The terminal condition asks for a 7.5 pass over every non-FORMALIZED row that finds nothing. Earlier
+rounds kept finding things, so the pass was run again after every flagged-cheap item had been either
+closed or attempted:
+
+* **Round 1** (declaration-list sweep over the remaining rows' subject areas — Peirce/`J₂` carriers,
+  restriction-to-a-summand, coherence space, Peirce exchange): **no row moved.** It found two pieces of
+  *adjacent* machinery worth naming rather than a false absence claim —
+  `n2_exchange_selects_luders` (`MasterTheorem/RankTwo.lean`), which machine-checks the **mechanism**
+  of `cor:selectors`(i) at rank two, and `theta_conj_exchange` (vdW 5.7(1)), a different "exchange".
+  ★ Neither moves row 36, because `rem:n2-selection` is one of the **seven excluded remarks** of the
+  denominator and clause (i) is about `H_N(ℂ)`, `N ≥ 3`, with Peirce exchange. Recorded in the
+  certificate so nobody rebuilds the idea while looking for the object.
+* **Round 2** (declaration-list sweep for *every* remaining missing object: the `ouNorm` ball,
+  `J₂(q)` as a carrier, effect simplicity, order-infima, Givens/Jacobi, the coherence-space complex
+  structure, a product on `QuatCarrier`): **zero declaration hits.** Every remaining missing object is
+  genuinely absent.
+
+Round 2 is the dry round. What made it possible was exhausting the cheap items first — the last four
+closed in this final stretch were row 18's converse (`offdiag_eq_zero_of_fixes_frameProj`), the frame-map
+surjectivity (`exists_frameMap_eq_rankOne`), residual item (c) (`frameMap_mul_swap`), and two of the
+four steps of the compatibility chain (`offdiag_zero_of_commute_diagonal`, `eigen_diagonal_fin2`) —
+after which nothing left in the manifest was priced cheap on evidence rather than on a guess.
+
+★ **What is honestly NOT claimed by "dry".** It means a full audit round found no movement, not that
+the remaining rows are unreachable. Three items were attempted and not finished, and each is recorded
+as budget rather than resistance: the compatibility chain's steps 3(b) and 4 (matrix plumbing over
+`Fin 2`, no new mathematics), residual item (b) (the `QubitFrame`/`FrameSpace` homeomorphism, priced by
+a reviewer at 40–60 lines and never tested), and the ℍ transfer onto the carrier that already exists.
+
 ★ **Running total of this arc's own corrections, stated plainly because the pattern is the finding:**
 five false absence claims (quaternionic carrier, direct sum, direct-sum assembly, twist-product
 compatibility, and the article's own generality being unstatable — nos. 6-10),
