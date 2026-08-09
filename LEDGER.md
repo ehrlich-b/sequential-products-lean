@@ -343,9 +343,14 @@ contradicting `frameProj_pairProj_not_commute`. Entirely matrix-level.
 cross-check `readout_direct`), `continuousOn_n2Readout` (joint continuity), `n2Comb_eq`
 (combination = weight × pure phase), `n2Weight_pos` (weight never vanishes),
 `abs_lt_of_phase_near_one` (sharp, `hδ` certified necessary), and `CompactSpace (unitaryGroup …)`
-already in-tree. **Remaining: extract `ε > 0` as the minimum of the continuous positive weight on
-the compact `U(2)`, apply uniform continuity of `n2Comb` on `[0,δ] × U(2)`, and feed the
-numerical step.** That is assembly of proved pieces — no mathematics and no missing theorem.
+already in-tree. **The `ε` extraction is also done now**: `continuous_n2Coef`, `continuous_n2Weight`, and
+**`exists_n2Weight_lower_bound`** — the weight is continuous and positive on a compact group, so
+it attains a positive minimum. **Exactly one step remains for the row:** uniform continuity of
+`n2Comb` on the compact `[0,δ] × U(2)` (it is continuous, by `continuousOn_n2Readout`), applied
+at `(x,U)` against `(0,U)` where `n2Comb 0 U = weight`, to make `|phase − 1|` small uniformly in
+`U` — then `abs_lt_of_phase_near_one` gives the bound `π/(3δ)`. Nothing but plumbing of already
+proved pieces stands between here and `lem:n2-bounded`, and through it the rest of the rank-two
+lane.
 
 ★ **Reviewer B's third question — can the combined weight vanish? — is answered NO, and
 proved.** `n2Coef b U = ⟪u, b v⟫` vanishes exactly when the second column of `U` is an

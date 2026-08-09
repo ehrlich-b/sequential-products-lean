@@ -1010,6 +1010,43 @@ theorem n2Weight_pos (U : Matrix.unitaryGroup (Fin 2) ℂ) :
           simp only [Matrix.mul_assoc, hUUL, Matrix.mul_one]
   exact frameProj_pairProj_not_commute hstrip
 
+/-! ### From positivity to a uniform lower bound, by compactness of `U(2)` -/
+
+/-- `n2Coef b` is continuous in the unitary. -/
+theorem continuous_n2Coef (b : HermitianMat (Fin 2) ℂ) :
+    Continuous (n2Coef b) := by
+  show Continuous fun U : Matrix.unitaryGroup (Fin 2) ℂ => n2Coef b U
+  have hrw : (fun U : Matrix.unitaryGroup (Fin 2) ℂ => n2Coef b U)
+      = fun U : Matrix.unitaryGroup (Fin 2) ℂ => ((U : Matrix (Fin 2) (Fin 2) ℂ)ᴴ * b.mat
+          * (U : Matrix (Fin 2) (Fin 2) ℂ)) 0 1 := by
+    funext U
+    rw [n2Coef, adU_apply, HermitianMat.conj_apply_mat, Matrix.conjTranspose_conjTranspose]
+  rw [hrw]
+  have hc : Continuous fun U : Matrix.unitaryGroup (Fin 2) ℂ =>
+      (U : Matrix (Fin 2) (Fin 2) ℂ) := continuous_subtype_val
+  have h1 : Continuous fun U : Matrix.unitaryGroup (Fin 2) ℂ =>
+      (U : Matrix (Fin 2) (Fin 2) ℂ)ᴴ := by
+    simp only [← Matrix.star_eq_conjTranspose]; exact continuous_star.comp hc
+  exact (continuous_apply (1 : Fin 2)).comp
+    ((continuous_apply (0 : Fin 2)).comp ((h1.mul continuous_const).mul hc))
+
+/-- The weight is continuous. -/
+theorem continuous_n2Weight (b₁ b₂ : HermitianMat (Fin 2) ℂ) :
+    Continuous (n2Weight b₁ b₂) := by
+  show Continuous fun U => Complex.normSq (n2Coef b₁ U) + Complex.normSq (n2Coef b₂ U)
+  exact (Complex.continuous_normSq.comp (continuous_n2Coef b₁)).add
+    (Complex.continuous_normSq.comp (continuous_n2Coef b₂))
+
+/-- **The weight has a positive lower bound**, by compactness of `U(2)`. -/
+theorem exists_n2Weight_lower_bound :
+    ∃ ε : ℝ, 0 < ε ∧ ∀ U : Matrix.unitaryGroup (Fin 2) ℂ,
+      ε ≤ n2Weight (frameProj (0 : Fin 2)) (pairProj (0 : Fin 2) 1) U := by
+  obtain ⟨U₀, -, hmin⟩ := isCompact_univ.exists_isMinOn (Set.univ_nonempty)
+    (continuous_n2Weight (frameProj (0 : Fin 2)) (pairProj (0 : Fin 2) 1)).continuousOn
+  refine ⟨n2Weight (frameProj (0 : Fin 2)) (pairProj (0 : Fin 2) 1) U₀, n2Weight_pos U₀, ?_⟩
+  intro U
+  exact hmin (Set.mem_univ U)
+
 /-- **An independent derivation of the readout formula, as a standing cross-check on the sign.**
 
 `n2Readout_eq` reaches the formula through `n2_sp_eq_twistSeq_frame` and `adU_conj_twistSeq`.
