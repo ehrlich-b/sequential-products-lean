@@ -771,4 +771,42 @@ theorem sp_coneNorm_smul {v : V} {μ lam : ℝ} (h : IsConeNorm v μ) (hlam : 0 
     (lam * μ) • P.sp ((lam * μ)⁻¹ • (lam • v)) b = lam • (μ • P.sp (μ⁻¹ • v) b) := by
   rw [coneNorm_smul_rescale (ne_of_gt h.1) (ne_of_gt hlam), smul_smul]
 
+open Classical in
+/-- **The positive-cone extension, as a function.**  `spCone v b` is the article's
+`μ (v/μ · b)` evaluated at some admissible normalization; `spCone_eq` shows the choice does
+not matter, so this really is the article's extension and not merely a family of
+representatives. -/
+noncomputable def spCone (v b : V) : V :=
+  if h : (0 : V) ≤ v then
+    (Classical.choose (exists_isConeNorm h)) •
+      P.sp ((Classical.choose (exists_isConeNorm h))⁻¹ • v) b
+  else 0
+
+/-- **`lem:cone-ext`, well-definedness**: the extension agrees with *every* admissible
+normalization, not just the chosen one. -/
+theorem spCone_eq (harch : IsArchimedean V) (hS2 : P.FirstArgContinuous)
+    {v : V} (hv : (0 : V) ≤ v) {μ : ℝ} (h : IsConeNorm v μ)
+    {b : V} (hb : IsEffect b) :
+    P.spCone v b = μ • P.sp (μ⁻¹ • v) b := by
+  rw [spCone, dif_pos hv]
+  exact sp_coneNorm_indep P harch hS2 (Classical.choose_spec (exists_isConeNorm hv)) h hb
+
+/-- **`lem:cone-ext`, agreement with the original operation on effects.** -/
+theorem spCone_of_isEffect (harch : IsArchimedean V) (hS2 : P.FirstArgContinuous)
+    {v : V} (hv : IsEffect v) {b : V} (hb : IsEffect b) :
+    P.spCone v b = P.sp v b := by
+  rw [spCone_eq P harch hS2 hv.1 (isConeNorm_one hv) hb, inv_one, one_smul, one_smul]
+
+/-- **`lem:cone-ext`, positive homogeneity in the first argument**, now as a statement about
+the extension itself. -/
+theorem spCone_smul (harch : IsArchimedean V) (hS2 : P.FirstArgContinuous)
+    {v : V} (hv : (0 : V) ≤ v) {lam : ℝ} (hlam : 0 < lam)
+    {b : V} (hb : IsEffect b) :
+    P.spCone (lam • v) b = lam • P.spCone v b := by
+  obtain ⟨μ, hμ⟩ := exists_isConeNorm hv
+  have hlamv : (0 : V) ≤ lam • v := smul_nonneg' (le_of_lt hlam) hv
+  rw [spCone_eq P harch hS2 hlamv (isConeNorm_smul hμ hlam) hb,
+    spCone_eq P harch hS2 hv hμ hb]
+  exact sp_coneNorm_smul P hμ hlam b
+
 end SequentialProductOn
