@@ -6,6 +6,7 @@ Authors: Bryan Ehrlich
 import RadicalRelativity.RankTwo.Bloch
 import RadicalRelativity.Necessity.FrameConstancy
 import RadicalRelativity.Hermitian.CfcSqrtContinuous
+import RadicalRelativity.Necessity.OrderUnitS2
 
 set_option linter.style.longLine false
 
@@ -1293,5 +1294,61 @@ theorem qubit_classification :
   show (n2SequentialProduct t₁).sp _ _ = _
   rw [hsp']
   exact n2Sp_eq_twistSeq_at_frame t₂ U _ _
+
+/-! ### Two corrections from checkpoint 2, both from cold review
+
+★★★ **(1) THE NON-COLLAPSE THEOREM ABOVE IS TRUE BUT ITS WITNESS IS NOT AN EFFECT.**  A reviewer
+found that `exists_twistSeq_diagFamily_ne` chooses `δ = π/(t₁ − t₂)`, which is **positive** whenever
+`t₁ > t₂`, so the separating first argument `diagFamily (δ, 0)` has an eigenvalue `e^δ > 1` and lies
+*outside* the effect interval (`Necessity.diagFamily_isEffect` needs `∀ i, r i ≤ 0`).  Since S1–S7 and
+the article's operation constrain **effects only**, the theorems above do not by themselves exclude
+that `n2Sp t` and `twistSeq s` agree on every effect and differ only on the total extension — which is
+exactly the reading "a genuinely frame-dependent product satisfies all seven axioms" needs.
+★ The content was present but unstated; the effect-level statement below is the one to cite, and it
+does not go through the entry probe at all — it uses `n2FrameTwist_unique_param`, whose own
+quantifiers are already `r ≤ 0` and `IsEffect b`.
+★ **Transferable: a separation theorem is only as strong as the class its witnesses live in.**  "∃ a b"
+with no `IsEffect` guard reads as a separation of the operations and is a separation of their
+extensions.
+
+★★ **(2) S2 was proved in the carried (Frobenius) topology; the article's S2 is the ORDER-UNIT norm.**
+The bridge is generic and already in the tree (`Necessity.firstArgContinuousOu_iff`), but nothing
+connected the rank-two product to it.  Instantiated below, so row 30's "norm-continuous" is the
+article's norm and not merely a topology that happens to agree. -/
+
+/-- **`prop:n2-sufficiency`'s S2 in the ARTICLE'S norm** — the order-unit norm, via the tree's
+generic equivalence. -/
+theorem n2SequentialProduct_firstArgContinuousOu (t : C(RP2, ℝ)) :
+    Necessity.FirstArgContinuousOu (n2SequentialProduct t) :=
+  (Necessity.firstArgContinuousOu_iff _).mpr (n2SequentialProduct_firstArgContinuous t)
+
+/-- **NON-COLLAPSE, AT THE EFFECTS.**  For a nonconstant moduli function the frame-dependent product
+does not agree with any constant twist product **on the effects** — which is the class the axioms and
+the article's operation are about. -/
+theorem not_forall_effects_eq_twistSeq (t : C(RP2, ℝ)) {p q : RP2} (hpq : t p ≠ t q) (s : ℝ) :
+    ¬ (∀ a b : HermitianMat (Fin 2) ℂ, IsEffect a → IsEffect b →
+        n2Sp t a b = HermitianMat.twistSeq s a b) := by
+  intro hall
+  have hconst : ∀ U : Matrix.unitaryGroup (Fin 2) ℂ, t (frameRP2 U) = s := by
+    intro U
+    rw [apply_frameRP2_eq t U]
+    refine (Necessity.n2FrameTwist_unique_param (n2SequentialProduct t)
+      (n2SequentialProduct_firstArgContinuous t) U).unique
+        (fun r hr b hb => Necessity.n2_sp_eq_twistSeq_frame _ _ U hr rfl hb)
+        (fun r hr b hb => ?_)
+    exact hall _ b (Necessity.adU_isEffect (Necessity.unitaryGroup_conjTranspose_mul U)
+      (Necessity.unitaryGroup_mul_conjTranspose U) (Necessity.diagFamily_isEffect hr)) hb
+  obtain ⟨U, hU⟩ := surjective_frameRP2 p
+  obtain ⟨V, hV⟩ := surjective_frameRP2 q
+  rw [← hU, ← hV, hconst U, hconst V] at hpq
+  exact hpq rfl
+
+/-- **`thm:qubit-boundary`(iii) at the effects**, for the article's own `τ`.  This is the statement
+row 31 should be read against; the entry-probe version above separates the total extensions. -/
+theorem not_forall_effects_tau_eq_twistSeq (s : ℝ) :
+    ¬ (∀ a b : HermitianMat (Fin 2) ℂ, IsEffect a → IsEffect b →
+        n2Sp tauModuliRP2 a b = HermitianMat.twistSeq s a b) := by
+  obtain ⟨p, q, hpq⟩ := tauModuliRP2_nonconstant
+  exact not_forall_effects_eq_twistSeq tauModuliRP2 hpq s
 
 end RankTwo
