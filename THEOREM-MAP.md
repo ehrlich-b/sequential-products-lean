@@ -674,18 +674,21 @@ machine-checked on the concrete carrier: `lem:twist-sufficiency` in §1.)
   ★★ **SUPERSEDED AGAIN, 2026-08-09 (ARC-7 block 7.1a): `lem:n2-bounded` IS PROVED.**
   `Necessity.exists_n2FrameTwist_bound` — for every S1–S7 product carrying the article's S2 on
   `H₂(ℂ)` there is an `M > 0` with `|n2FrameTwist P hS2 U| ≤ M` at every frame. The row moved
-  ABSENT → **FORMALIZED**; count `8/19/9` → **`9/19/8`**. Read the row with the indexing caveat
+  ABSENT → **FORMALIZED**; and `lem:n2-continuity` followed the same day
+  (`Necessity.continuous_n2FrameTwist`, block 7.1b), PARTIAL → **FORMALIZED**: count
+  `8/19/9` → **`10/18/8`**. Read both rows with the indexing caveat
   stated in `STATEMENT-MANIFEST.md` row 32 (Lean indexes by `U ∈ U(2)`, the article by `n ∈ S²`;
   fibre-constancy plus surjectivity make these the same content, but the `S²`-indexed *object*
   for an arbitrary product is still row 33/34's work). **Every sentence below that says the frame
-  function is not known to be bounded is superseded**; continuity and the `ℝP²` descent remain
-  open, and `lem:n2-continuity`'s recorded blocker — that it cannot be attempted before
-  boundedness — is now **lifted**.
+  function is not known to be bounded is superseded**; `lem:n2-continuity`'s recorded blocker — that it cannot be
+  attempted before boundedness — was **lifted the same day and the row closed**
+  (`continuous_n2FrameTwist`). What remains of the rank-two lane is the `ℝP²` descent as a
+  constructed quotient function, `prop:n2-sufficiency`, and the assembled bijection.
 
   **What is still open, stated exactly** (as of 2026-08-08; boundedness struck 2026-08-09). The
   frame function exists; nothing yet proves it
-  ~~**bounded** (`lem:n2-bounded`)~~ **[PROVED 2026-08-09, see above]**, **continuous**
-  (`lem:n2-continuity`), or **invariant under
+  ~~**bounded** (`lem:n2-bounded`)~~ **[PROVED 2026-08-09]**, ~~**continuous**
+  (`lem:n2-continuity`)~~ **[PROVED 2026-08-09]**, or **invariant under
   reversing the frame** so as to descend to `ℝP²` (`lem:n2-descent`), and so
   `cor:qubit-classification` is not assembled. Those three lemmas are now statements *about
   a function that exists*, which they were not before. `prop:n2-necessity` itself remains
@@ -712,9 +715,9 @@ is exactly why building the map was the rank-two work that remained. **SUPERSEDE
   rank-two product now exists (`Necessity.n2FrameTwist`, `n2_sp_eq_twistSeq_frame`,
   `n2FrameTwist_reverse`), and the `StabilizerCoupling` `rank_ge : 3 ≤ n` worry did not
   bite because none of the needed machinery was rank-gated.** What remains of this row is
-  boundedness and continuity of that function, plus `prop:n2-sufficiency`. **Boundedness landed
-  2026-08-09 (`exists_n2FrameTwist_bound`); what remains of this row is continuity, the `ℝP²`
-  descent, and `prop:n2-sufficiency`.**
+  boundedness and continuity of that function, plus `prop:n2-sufficiency`. **Boundedness AND continuity both landed
+  2026-08-09 (`exists_n2FrameTwist_bound`, `continuous_n2FrameTwist`); what remains of this row is
+  the `ℝP²` descent (building the quotient function itself) and `prop:n2-sufficiency`.**
 - **`mthm:omnibus`** (the finite-dimensional omnibus classification).
 - ~~**`prop:pseudo-transfer`**~~ — **CORRECTED 2026-08-08.** Not "no counterpart":
   `Necessity/PseudoInverse.lean` proves it on the concrete carrier in *normalized* form.

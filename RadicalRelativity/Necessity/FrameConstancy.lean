@@ -1387,6 +1387,147 @@ theorem exists_n2FrameTwist_bound (hS2 : P.FirstArgContinuous) :
   intro U
   exact abs_le_of_phase_near_one hδpos (fun x hx0 hxδ => hδ U x hx0 hxδ)
 
+/-! ### `lem:n2-continuity`, via `arg` rather than the article's `SO(3)` logarithm
+
+With boundedness in hand this row is cheap, and its recorded blocker is exactly what lifted.
+Row 33 had priced it as unreachable before `lem:n2-bounded` and had refuted three routes that
+tried to bypass boundedness — correctly. The route here is the article's *order* (bound, then
+continuity) but not the article's *argument*: no principal branch of a logarithm on `SO(3)` and no
+trace formula.
+
+The shape: fix one scale `δ` with `M·δ = π/4`. The readout at that fixed scale exhibits
+`U ↦ exp(-i·t̃(U)·δ)` as an explicit *quotient* of continuous functions — numerator the combined
+readout, denominator the weight, which never vanishes — hence continuous. The a priori bound then
+confines the exponent to `[-π/4, π/4]`, where `Complex.arg` is continuous and inverts the
+exponential, so `t̃ = -arg(phase)/δ`.
+
+★ **Why this is not the lifting problem row 33 refuted.** That refutation was of recovering `t̃`
+from its phase *without* a bound: a discontinuous section of a covering need not agree with a
+continuous lift, and two incommensurable scales pin the value but not continuity. The bound
+removes the covering entirely — with `|t̃·δ| ≤ π/4` the phase never leaves one sheet, so `arg` is
+an honest inverse rather than a choice of branch. The moral is that the bound was not merely
+*prior* to continuity, it was the whole difficulty.
+
+★ Note also that `continuousOn_n2Readout` **is** load-bearing here, though the ARC-7 review
+correctly found it is *not* on the critical path of the bound. Same theorem, two rungs, opposite
+verdicts — which is why "is X needed?" has to be asked per rung and not per file. -/
+
+theorem arg_exp_ofReal_mul_I {θ : ℝ} (h1 : -Real.pi < θ) (h2 : θ ≤ Real.pi) :
+    Complex.arg (Complex.exp ((θ : ℂ) * Complex.I)) = θ := by
+  rw [Complex.exp_mul_I]
+  exact Complex.arg_cos_add_sin_mul_I ⟨h1, h2⟩
+
+theorem exp_ofReal_mul_I_mem_slitPlane {θ : ℝ} (h1 : -(Real.pi / 2) < θ)
+    (h2 : θ < Real.pi / 2) :
+    Complex.exp ((θ : ℂ) * Complex.I) ∈ Complex.slitPlane := by
+  refine Or.inl ?_
+  rw [Complex.exp_ofReal_mul_I_re]
+  exact Real.cos_pos_of_mem_Ioo ⟨h1, h2⟩
+
+/-- **The lifting step, with no covering-space argument.**  A real parameter whose phase at one
+fixed scale is continuous, and which is a priori small enough to keep that phase inside the
+principal branch, is itself continuous — because there `arg` inverts the exponential outright. -/
+theorem continuous_of_continuous_phase {X : Type*} [TopologicalSpace X] {f : X → ℝ} {δ : ℝ}
+    (hδ : 0 < δ) (hbd : ∀ x, |f x * δ| ≤ Real.pi / 4)
+    (hcont : Continuous fun x => Complex.exp (((-(f x * δ) : ℝ) : ℂ) * Complex.I)) :
+    Continuous f := by
+  have hpi := Real.pi_pos
+  have hslit : ∀ x, Complex.exp (((-(f x * δ) : ℝ) : ℂ) * Complex.I) ∈ Complex.slitPlane := by
+    intro x
+    have h := hbd x
+    rw [abs_le] at h
+    exact exp_ofReal_mul_I_mem_slitPlane (by linarith [h.2]) (by linarith [h.1])
+  have harg : ∀ x, Complex.arg (Complex.exp (((-(f x * δ) : ℝ) : ℂ) * Complex.I))
+      = -(f x * δ) := by
+    intro x
+    have h := hbd x
+    rw [abs_le] at h
+    exact arg_exp_ofReal_mul_I (by linarith [h.2]) (by linarith [h.1])
+  have hargcont : Continuous fun x =>
+      Complex.arg (Complex.exp (((-(f x * δ) : ℝ) : ℂ) * Complex.I)) := by
+    rw [continuous_iff_continuousAt]
+    intro x
+    have hcomp : ContinuousAt (Complex.arg ∘ fun y =>
+        Complex.exp (((-(f y * δ) : ℝ) : ℂ) * Complex.I)) x :=
+      ContinuousAt.comp (Complex.continuousAt_arg (hslit x)) hcont.continuousAt
+    exact hcomp
+  refine ((hargcont.neg).div_const δ).congr ?_
+  intro x
+  rw [harg x]
+  field_simp
+
+/-- The readout at a *fixed* scale is continuous in the frame.
+
+Note the proof shape, which is the file's standing anti-`whnf` discipline: prove continuity of the
+explicit composite and transfer with `Continuous.congr`.  Writing this as a direct term
+`(continuousOn_n2Readout …).comp_continuous …` asks the unifier to match a composite against
+`n2Readout`'s unfolding and **times out at a million heartbeats**, exactly as four earlier
+formulations of `continuousOn_n2Readout` itself did. -/
+theorem continuous_n2Readout_fixed (hS2 : P.FirstArgContinuous) {b : HermitianMat (Fin 2) ℂ}
+    (hb : IsEffect b) {x : ℝ} (hx : 0 ≤ x) :
+    Continuous (fun U : Matrix.unitaryGroup (Fin 2) ℂ => n2Readout P b x U) := by
+  have hpair : Continuous fun U : Matrix.unitaryGroup (Fin 2) ℂ => ((x : ℝ), U) := by fun_prop
+  have h : Continuous ((fun p : ℝ × Matrix.unitaryGroup (Fin 2) ℂ => n2Readout P b p.1 p.2)
+      ∘ fun U : Matrix.unitaryGroup (Fin 2) ℂ => ((x : ℝ), U)) :=
+    (continuousOn_n2Readout P hS2 hb).comp_continuous hpair (fun U => ⟨hx, Set.mem_univ U⟩)
+  refine h.congr ?_
+  intro U
+  simp only [Function.comp_apply]
+
+/-- The combined readout at a fixed scale is continuous in the frame. -/
+theorem continuous_n2Comb_fixed (hS2 : P.FirstArgContinuous) {b₁ b₂ : HermitianMat (Fin 2) ℂ}
+    (hb₁ : IsEffect b₁) (hb₂ : IsEffect b₂) {x : ℝ} (hx : 0 ≤ x) :
+    Continuous (fun U : Matrix.unitaryGroup (Fin 2) ℂ => n2Comb P b₁ b₂ x U) := by
+  change Continuous fun U => n2Readout P b₁ x U * star (n2Coef b₁ U)
+      + n2Readout P b₂ x U * star (n2Coef b₂ U)
+  exact ((continuous_n2Readout_fixed P hS2 hb₁ hx).mul
+      (continuous_star.comp (continuous_n2Coef b₁))).add
+    ((continuous_n2Readout_fixed P hS2 hb₂ hx).mul
+      (continuous_star.comp (continuous_n2Coef b₂)))
+
+/-- **`lem:n2-continuity`.**  For any S1–S7 product with S2 on `H₂(ℂ)` the ordered-frame
+parameter is continuous.
+
+Carries S1–S7 + S2 and nothing else.  As with `lem:n2-bounded`, Lean indexes frames by
+`U ∈ U(2)` where the article uses `n ∈ S²`; continuity here is continuity of the pullback, which
+with fibre-constancy (`n2FrameTwist_mul_diagonal`, `n2FrameTwist_reverse`) is continuity for the
+quotient topology. -/
+theorem continuous_n2FrameTwist (hS2 : P.FirstArgContinuous) :
+    Continuous (n2FrameTwist P hS2) := by
+  obtain ⟨M, hMpos, hM⟩ := exists_n2FrameTwist_bound P hS2
+  have hb₁ : IsEffect (frameProj (0 : Fin 2)) := (frameProj_isProjection (0 : Fin 2)).isEffect
+  have hb₂ : IsEffect (pairProj (0 : Fin 2) 1) :=
+    pairProj_isEffect (by decide : (0 : Fin 2) ≠ 1)
+  obtain ⟨δ, hδpos, hMδ⟩ : ∃ δ : ℝ, 0 < δ ∧ M * δ = Real.pi / 4 :=
+    ⟨Real.pi / (4 * M), by positivity, by field_simp⟩
+  have hspos : 0 < Real.sqrt (Real.exp (-δ)) := Real.sqrt_pos.mpr (Real.exp_pos _)
+  have hsne : ((Real.sqrt (Real.exp (-δ)) : ℝ) : ℂ) ≠ 0 :=
+    Complex.ofReal_ne_zero.mpr (ne_of_gt hspos)
+  have hWne : ∀ U : Matrix.unitaryGroup (Fin 2) ℂ,
+      ((n2Weight (frameProj (0 : Fin 2)) (pairProj (0 : Fin 2) 1) U : ℝ) : ℂ) ≠ 0 :=
+    fun U => Complex.ofReal_ne_zero.mpr (ne_of_gt (n2Weight_pos U))
+  have hquot : Continuous fun U : Matrix.unitaryGroup (Fin 2) ℂ =>
+      n2Comb P (frameProj (0 : Fin 2)) (pairProj (0 : Fin 2) 1) δ U
+        / (((Real.sqrt (Real.exp (-δ)) : ℝ) : ℂ)
+            * ((n2Weight (frameProj (0 : Fin 2)) (pairProj (0 : Fin 2) 1) U : ℝ) : ℂ)) := by
+    refine (continuous_n2Comb_fixed P hS2 hb₁ hb₂ hδpos.le).div
+      (continuous_const.mul
+        (Complex.continuous_ofReal.comp (continuous_n2Weight _ _))) ?_
+    intro U
+    exact mul_ne_zero hsne (hWne U)
+  have hphase : Continuous fun U : Matrix.unitaryGroup (Fin 2) ℂ =>
+      Complex.exp (((-(n2FrameTwist P hS2 U * δ) : ℝ) : ℂ) * Complex.I) := by
+    refine hquot.congr ?_
+    intro U
+    have hw := hWne U
+    rw [n2Comb_eq P hS2 hb₁ hb₂ hδpos.le U]
+    field_simp
+  refine continuous_of_continuous_phase hδpos ?_ hphase
+  intro U
+  rw [abs_mul, abs_of_pos hδpos]
+  calc |n2FrameTwist P hS2 U| * δ ≤ M * δ := mul_le_mul_of_nonneg_right (hM U) hδpos.le
+    _ = Real.pi / 4 := hMδ
+
 end RankTwoExtraction
 
 /-! ## A product that is garbage off the effect set — certifying effect hypotheses
