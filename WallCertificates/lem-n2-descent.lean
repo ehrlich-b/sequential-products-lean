@@ -3,6 +3,14 @@ WALL CERTIFICATE — `lem:n2-descent`  (row 34 of STATEMENT-MANIFEST.md)
 Date: 2026-08-09, ARC-7 block 7.5.  Commit at issue: see `git log`; tag `paperA-arc7-cp1`.
 Denominator pin: main.tex blob 205fdf5a.  Row status on this date: PARTIAL.
 
+★★★ ROW 34 IS NOW FORMALIZED (2026-08-09, ARC-8 block 8.1(d)).  THIS FILE'S HEADER IS STALE FROM
+HERE DOWN AND IS KEPT ONLY FOR THE RETRACTIONS INSIDE IT.  The descent object is
+`RankTwo.n2QubitModuli P hS2 : C(RP2, R)`, and this file's own row conclusion `exists_rp2_moduli`
+is discharged below rather than `sorry`-ed.  Two `sorry`s remain and BOTH ARE OFF-ROUTE: the
+diagonal/monomial step and the ray-complementation identity were never used.
+  ★ In particular the phrase below — "what is missing is the DESCENT ITSELF as a constructed
+  object" — was true when written and is false now.
+
 WHAT THE ARTICLE ASSERTS
   t~(-n) = t~(n) — the two sign changes cancel — so the frame parameter descends to a single
   continuous bounded  t : RP^2 -> R  with no residual line-bundle twist.

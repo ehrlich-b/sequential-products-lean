@@ -59,9 +59,9 @@ apart. So a file is named for its primary row and its header lists every row it 
 
 | File | Rows covered |
 | --- | --- |
-| `lem-n2-descent.lean` | 34 |
-| `prop-n2-sufficiency.lean` | 30, 35 |
-| `differential-trio.lean` | 16, 17, 18 |
+| `lem-n2-descent.lean` | 34 — ★ **row now FORMALIZED (ARC-8 8.1(d))**; the file's row conclusion is discharged in-file and its two surviving `sorry`s are labelled off-route. Kept for the retractions, not as a live price |
+| `prop-n2-sufficiency.lean` | 30, 35 — ★ **ZERO gaps (ARC-8)**: row 30 FORMALIZED, and row 35's gap statement (the `∃!`-moduli claim) is discharged. ★★ Note that discharge does NOT close row 35 — the gap statement was weaker than the row, which is the under-specified-price defect kind |
+| `differential-trio.lean` | 16, 17, 18 — ★ **ZERO gaps (ARC-8)**; the ℂ converse was already in the tree when the file was written |
 | `abstract-tier.lean` | 3, 5, 6(i), 8, 9, 12, 13 |
 | `frame-geometry.lean` | 15, 22, 26, 29(b), 31, 36(i) |
 | `thm-quaternionic.lean` | 20 |

@@ -314,6 +314,47 @@ the status word. Found by scanning the manifest's own status fields, not by re-r
 **Fourth instance of "fix the row, not just the footnote" this arc, and the first committed by the
 agent that wrote the rule down.**
 
+**CHECKPOINT 2, second reviewer (rows 34/35) — reported; all findings verified at source and
+applied.** Row 34's FORMALIZED status **confirmed**: every clause of the article's sentence maps to a
+Lean statement, `surjInv` is choice-independent (the pullback identity pins the value at every point,
+and `frameRP2` is surjective), and "no residual line-bundle twist" is excluded by landing in the type
+`C(ℝP², ℝ)` at all. The quotient-map instances are real and vendored.
+
+★★★ **FINDING 6 — ROW 35's RESIDUE WAS WRONG, AND THE TREE ALREADY HELD THE REFUTATION.** I recorded
+the residue as "the onto half at singular effects — and that is the whole residue". The onto half is
+**FALSE, not unwritten**: `Necessity.badP t` is a genuine S1–S7 + S2 product equal to the twist
+product *on effects* and `0` off them, so it has the **same** moduli function as
+`n2SequentialProduct (const t)` and a **different** `.sp`. Now in-tree and kernel-checked:
+`moduli_collide`, `badP_sp_differs`, `not_exists_moduli_of_badP`. So `product ↦ moduli` is not
+injective on `SequentialProductOn` values and no bijection onto the products-as-`.sp`-functions
+exists; the honest target is **products up to agreement on effects**.
+★ **This is the second recorded instance of the same rule: a totalizing phrase inside a residual
+claim is where the error lives.** "…and that is the whole residue" was the false clause. The rule has
+now caught itself being violated by the agent that wrote it down, twice in one arc (this and the
+row-34 status word).
+★ **And note WHERE the counterexample came from: the tree's own `badP`**, built in an earlier arc
+precisely to exploit the `IsEffect`-guarding of the axioms. The refutation was one grep away from
+anyone who asked "does the tree contain a product that is not of this form?" — which is the question
+a surjectivity claim should always trigger.
+
+★ **FINDING 7 — a citation that did not say what it was cited for.** The row claimed "the products
+are proved to agree at every positive-definite first argument (`sp_eq_twistSeq_n2QubitModuli`)", but
+that theorem equates `P.sp` with the **constant-parameter** `HermitianMat.twistSeq`, not with `n2Sp`.
+Two-line bridge added as `sp_eq_n2Sp_of_moduli`. Reading a cited theorem's statement rather than its
+name is the same discipline as the grep rule, applied to one's own citations.
+
+★ **FINDING 8 — certificate/README staleness, third and fourth instances.**
+`WallCertificates/lem-n2-descent.lean`'s header still said "what is missing is the DESCENT ITSELF as
+a constructed object", and `WallCertificates/README.md` still indexed it as a live price for row 34.
+Both annotated. The README now also records that `prop-n2-sufficiency.lean`'s row-35 gap statement was
+**weaker than the row** — discharging it did not close row 35 — which is the under-specified-price
+defect kind, and is the reason "zero gaps" and "row closed" must never be read as the same claim.
+
+★ **FINDING 9 — my `git add -A` swept a reviewer's probe in again** (`ColdRevCollide.lean`, second
+occurrence in one arc). The probe's content is now proper in-tree theorems and the file is deleted;
+`Scratch*.lean` and `ColdRev*.lean` are gitignored. **Two identical hygiene failures in one arc means
+the habit, not the incident, is the defect.**
+
 ### Block 8.6 — DRY PASS, first round (partial; the full round is still owed)
 
 Method: for each non-FORMALIZED row whose residue names a concrete object, run the declaration-list
