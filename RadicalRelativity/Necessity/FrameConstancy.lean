@@ -733,6 +733,31 @@ theorem n2Readout_eq (hS2 : P.FirstArgContinuous) {b : HermitianMat (Fin 2) ℂ}
   push_cast
   ring
 
+/-- **An independent derivation of the readout formula, as a standing cross-check on the sign.**
+
+`n2Readout_eq` reaches the formula through `n2_sp_eq_twistSeq_frame` and `adU_conj_twistSeq`.
+This states the same formula for the twist product at the standard frame, derived directly from
+`twistSeq_diagFamily_entry` and nothing else.  Two routes, one formula: if a refactor ever flips
+the phase in either chain, these stop agreeing.
+
+Kept because the sign here is load-bearing for the banked route to `lem:n2-bounded`, and it was
+the one claim in that route argued rather than computed. -/
+theorem readout_direct (t x : ℝ) (b : HermitianMat (Fin 2) ℂ) :
+    (HermitianMat.twistSeq t (basePt x) b).mat 0 1
+      = ((Real.sqrt (Real.exp (-x)) : ℝ) : ℂ)
+        * Complex.exp (((-(t * x) : ℝ) : ℂ) * Complex.I)
+        * b.mat 0 1 := by
+  show (HermitianMat.twistSeq t (diagFamily (x • axisSplit (0 : Fin 2))) b).mat 0 1 = _
+  rw [twistSeq_diagFamily_entry]
+  have h0 : (x • axisSplit (0 : Fin 2)) 0 = -x := by
+    simp only [Pi.smul_apply, smul_eq_mul, axisSplit, if_pos]; ring
+  have h1 : (x • axisSplit (0 : Fin 2)) 1 = 0 := by simp [axisSplit]
+  rw [h0, h1]
+  simp only [Real.exp_zero, Real.sqrt_one, Complex.ofReal_one, mul_zero,
+    Complex.ofReal_zero, zero_mul, Complex.exp_zero, mul_one, star_one]
+  congr 2
+  push_cast; ring
+
 end RankTwoExtraction
 
 /-! ## The article's own frame adjacency

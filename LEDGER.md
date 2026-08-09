@@ -294,7 +294,10 @@ never reviewed**: its reviewer went idle without reporting, so `n2Readout_eq` (i
 phase sign), `n2FrameTwist_mul_diagonal`, `n2FrameTwist_eq_of_base_eq`, and
 `abs_le_of_phase_near_one` carry **only my own probes**. I checked the sign three independent
 ways (crown probe `n2FrameTwist (twistProductOn t) U = t`; `basePt x = diag(e^{−x},1)`;
-log-ratio `−x`) and non-vacuity at `diag(i,1)`, and the `π/(3δ)` constant is now
+log-ratio `−x`) and non-vacuity at `diag(i,1)`, the phase sign now has an **independent
+derivation in the tree** (`readout_direct`: the same formula for the twist product at the standard
+frame, derived straight from `twistSeq_diagFamily_entry` and nothing else — two routes, one
+formula, so a refactor that flips either chain breaks the agreement), and the `π/(3δ)` constant is
 cross-checked (`normSq (exp(iπ/3) − 1) = 1` exactly, and at `t = π/(3δ)` the phase reaches
 distance 1 at `x = δ` — so the strict hypothesis excludes that `t` and the `≤` conclusion is a
 valid, if not sharp, bound). What remains unreviewed there is the *derivation as a whole*, not
