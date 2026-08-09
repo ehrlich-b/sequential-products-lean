@@ -420,4 +420,58 @@ theorem sp_eq_luders_of_effect (hS2 : P.FirstArgContinuous)
     (fun x hx => sp_eq_luders_of_posDef P hS2 hjordAll x.property hx hb)
   exact congrFun hkey ⟨a, ha⟩
 
+section FrameStabilizerGen
+
+variable {𝕜 : Type*} [RCLike 𝕜]
+
+/-! ## The frame stabilizer, at field generality
+
+★★ New 2026-08-09 (ARC-8 block 8.5).  `FrameConstancy.lean`'s `offdiag_eq_zero_of_fixes_frameProj`
+and `normSq_diag_eq_one_of_fixes_frameProj` are ℂ-only, and `prop:stabilizers` (row 18) asks the same
+question for **each of the four simple types**.  Both proofs use nothing but `adU`, `frameProj` and
+matrix algebra, so they generalize to every `RCLike 𝕜` verbatim — which covers the ℝ row as well as
+the ℂ row, and is the reason the ℝ row was never the work the row's status implied.
+
+★ What this does NOT give: the article's *identity component* clauses (`{1}` for ℝ, `T^{n-1}` for ℂ).
+Those are quotient/connectedness statements about the stabilizer as a group, and no connectedness
+vocabulary for these groups exists in the tree (grep `identityComponent|IsConnected|ConnectedComponent`
+over `RadicalRelativity/`, 2026-08-09: three hits, two docstring prose and one unrelated).  What is
+proved is the stabilizer's *elementwise* description, which is what the Peirce-action computations
+actually consume. -/
+
+/-- **A unitary fixing every frame projection is diagonal** — at every `RCLike` field, so this is the
+ℝ row and the ℂ row at once. -/
+theorem offdiag_eq_zero_of_fixes_frameProjG {U : Matrix n n 𝕜} (hU : Uᴴ * U = 1)
+    (hfix : ∀ k, adUG U (frameProjG 𝕜 k) = frameProjG 𝕜 k) :
+    ∀ i k, i ≠ k → U i k = 0 := by
+  intro i k hik
+  have hmat : U * (frameProjG 𝕜 k).mat = (frameProjG 𝕜 k).mat * U := by
+    have h := congrArg HermitianMat.mat (hfix k)
+    rw [adU_applyG, HermitianMat.conj_apply_mat] at h
+    calc U * (frameProjG 𝕜 k).mat
+        = (U * (frameProjG 𝕜 k).mat * Uᴴ) * U := by
+          rw [Matrix.mul_assoc, Matrix.mul_assoc, hU, Matrix.mul_one]
+      _ = (frameProjG 𝕜 k).mat * U := by rw [h]
+  have hentry := congrFun (congrFun hmat i) k
+  rw [frameProj_mat_eq_singleG] at hentry
+  simpa [Matrix.mul_apply, Matrix.single, Ne.symm hik] using hentry
+
+/-- **And its diagonal entries are unimodular**, so the frame stabilizer is exactly the diagonal
+torus of the unitary group — at every `RCLike` field.  Over ℝ this says the entries are `±1`. -/
+theorem normSq_diag_eq_one_of_fixes_frameProjG {U : Matrix n n 𝕜} (hU : Uᴴ * U = 1)
+    (hfix : ∀ k, adUG U (frameProjG 𝕜 k) = frameProjG 𝕜 k) (k : n) :
+    ‖U k k‖ = 1 := by
+  have hoff := offdiag_eq_zero_of_fixes_frameProjG hU hfix
+  have h := congrFun (congrFun hU k) k
+  rw [Matrix.mul_apply, Matrix.one_apply_eq] at h
+  rw [Finset.sum_eq_single k (fun i _ hik => by
+      rw [Matrix.conjTranspose_apply, hoff i k hik, star_zero, zero_mul])
+    (fun hk => absurd (Finset.mem_univ k) hk)] at h
+  rw [Matrix.conjTranspose_apply] at h
+  rw [RCLike.star_def, RCLike.conj_mul] at h
+  have hn : ‖U k k‖ ^ 2 = 1 := by exact_mod_cast h
+  nlinarith [hn, norm_nonneg (U k k)]
+
+end FrameStabilizerGen
+
 end Necessity
