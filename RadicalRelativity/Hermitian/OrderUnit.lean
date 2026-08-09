@@ -257,4 +257,104 @@ theorem norm_le_sqrt_card_mul_ouNorm (a : HermitianMat n 𝕜) :
     _ = Real.sqrt (Fintype.card n) * ouNorm a := by
         rw [Real.sqrt_mul (by positivity), Real.sqrt_sq (ouNorm_nonneg a)]
 
+/-! ## The carrier is Archimedean
+
+★★ **New 2026-08-09 (ARC-7 block 7.3), and it retires a real caveat.**
+
+`OrderUnitSpace`'s own `archimedean` field is order-unit *boundedness* only.  The genuine
+Archimedean squeeze — `(∀ ε > 0, x ≤ ε•𝟙) ⟹ x ≤ 0` — is supplied separately as the `Prop`
+`OrderUnitSpace.IsArchimedean`, because putting it in the class would change
+`SequentialProductCore.mk`'s printed constructor type, which `AxiomAudit.lean` Layer 5 freezes.
+
+ARC-6 proved `lem:homog`(ii) and `lem:cone-ext` at abstract order-unit-space generality **carrying
+that `Prop` as a hypothesis**, and defended the FORMALIZED labels on the ground that the squeeze is
+part of the *definition* of the article's order unit space rather than a located stand-in for a
+cited result.  That defense is sound but it left an unpleasant gap: nothing in the tree exhibited a
+*single* carrier satisfying it, so those results applied, as far as the machine knew, to nothing.
+
+This closes that.  `H_n(𝕜)` — the paper's own carrier for the real and complex rows — satisfies
+`IsArchimedean`, so the abstract tier is instantiated where the paper uses it and the hypothesis is
+**discharged rather than assumed**.  The proof is the quadratic-form characterization
+(`le_iff_mulVec_le`) plus one real ε-argument: no spectral theorem, no topology, no closedness of
+the positive cone. -/
+
+section Archimedean
+
+open ComplexOrder
+open scoped _root_.Matrix
+
+omit [DecidableEq n] in
+theorem quadForm_zero (v : n → 𝕜) :
+    star v ⬝ᵥ ((0 : HermitianMat n 𝕜).mat) *ᵥ v = 0 := by simp
+
+theorem quadForm_smul_one (v : n → 𝕜) (ε : ℝ) :
+    star v ⬝ᵥ ((ε • (1 : HermitianMat n 𝕜)).mat) *ᵥ v = (ε : 𝕜) * (star v ⬝ᵥ v) := by
+  rw [HermitianMat.mat_smul, HermitianMat.mat_one, Matrix.smul_mulVec, Matrix.one_mulVec,
+    dotProduct_smul, RCLike.real_smul_eq_coe_mul]
+
+omit [DecidableEq n] in
+theorem quadForm_nonneg (v : n → 𝕜) : (0 : 𝕜) ≤ star v ⬝ᵥ v := by
+  rw [dotProduct]
+  refine Finset.sum_nonneg (fun i _ => ?_)
+  simpa [Pi.star_apply] using star_mul_self_nonneg (v i)
+
+/-- **`H_n(𝕜)` is Archimedean.**  If `x ≤ ε•𝟙` for every `ε > 0` then `x ≤ 0`.
+
+Read through `le_iff_mulVec_le` this is a statement about one real number per vector: the
+quadratic form `⟪v, xv⟫` is below `ε⟪v,v⟫` for every `ε > 0`, hence below `0`.  The imaginary part
+is pinned by the same inequality at `ε = 1`. -/
+theorem isArchimedean : OrderUnitSpace.IsArchimedean (HermitianMat n 𝕜) := by
+  intro x hx
+  simp only [HermitianMat.ousUnit_eq_one] at hx
+  rw [HermitianMat.le_iff_mulVec_le]
+  intro v
+  rw [quadForm_zero]
+  have hs := quadForm_nonneg (𝕜 := 𝕜) v
+  have hkey : ∀ ε : ℝ, 0 < ε →
+      star v ⬝ᵥ x.mat *ᵥ v ≤ (ε : 𝕜) * (star v ⬝ᵥ v) := by
+    intro ε hε
+    have h := (HermitianMat.le_iff_mulVec_le).mp (hx ε hε) v
+    rwa [quadForm_smul_one] at h
+  have hsim : RCLike.im (star v ⬝ᵥ v) = 0 := by
+    have h := (RCLike.le_iff_re_im.mp hs).2
+    simpa using h.symm
+  have hsre : (0 : ℝ) ≤ RCLike.re (star v ⬝ᵥ v) := by
+    have h := (RCLike.le_iff_re_im.mp hs).1
+    simpa using h
+  have hre : ∀ ε : ℝ, 0 < ε →
+      RCLike.re (star v ⬝ᵥ x.mat *ᵥ v) ≤ ε * RCLike.re (star v ⬝ᵥ v) := by
+    intro ε hε
+    have h := (RCLike.le_iff_re_im.mp (hkey ε hε)).1
+    rwa [show RCLike.re ((ε : 𝕜) * (star v ⬝ᵥ v)) = ε * RCLike.re (star v ⬝ᵥ v) from by
+      simp [RCLike.mul_re]] at h
+  have him : RCLike.im (star v ⬝ᵥ x.mat *ᵥ v) = 0 := by
+    have h := (RCLike.le_iff_re_im.mp (hkey 1 one_pos)).2
+    rw [show RCLike.im (((1 : ℝ) : 𝕜) * (star v ⬝ᵥ v))
+        = RCLike.im (star v ⬝ᵥ v) from by simp] at h
+    rw [h, hsim]
+  rw [RCLike.le_iff_re_im]
+  refine ⟨?_, ?_⟩
+  · simp only [map_zero]
+    rcases eq_or_lt_of_le hsre with hs0 | hspos
+    · have h := hre 1 one_pos
+      rw [← hs0] at h
+      linarith
+    · by_contra hcon
+      push_neg at hcon
+      have hεpos : 0 < RCLike.re (star v ⬝ᵥ x.mat *ᵥ v) / (2 * RCLike.re (star v ⬝ᵥ v)) := by
+        positivity
+      have h := hre _ hεpos
+      rw [show RCLike.re (star v ⬝ᵥ x.mat *ᵥ v) / (2 * RCLike.re (star v ⬝ᵥ v))
+            * RCLike.re (star v ⬝ᵥ v) = RCLike.re (star v ⬝ᵥ x.mat *ᵥ v) / 2 from by
+          field_simp] at h
+      linarith
+  · simp only [map_zero, him]
+
+/-- The textbook ℕ-form of the Archimedean property also holds on the carrier, via
+`OrderUnitSpace.arch_iff`. -/
+theorem isArchNat : OrderUnitSpace.IsArchNat (HermitianMat n 𝕜) :=
+  OrderUnitSpace.arch_iff.mp isArchimedean
+
+end Archimedean
+
 end HermitianMat

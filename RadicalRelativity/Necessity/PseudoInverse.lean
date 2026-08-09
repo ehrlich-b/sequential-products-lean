@@ -231,4 +231,75 @@ theorem seqLeftMul_injective (hS2 : P.FirstArgContinuous) (hb : IsEffect b)
   rw [h x, h y] at hc
   exact smul_right_injective _ (ne_of_gt (pseudoInvCoef_pos hbd)) hc
 
+/-! ## `prop:pseudo-transfer` in the article's own form: `a⁻¹ · a = 𝟙`
+
+★★ **New 2026-08-09 (ARC-7 block 7.3), and this is what `lem:cone-ext` was built for.**
+
+Everything above is stated with the **normalized** pseudo-inverse, so the identities carry a
+`pseudoInvCoef b •` where the article has a bare `𝟙`.  That normalization was forced: Lean's
+`pseudoInv` is rescaled into the effect interval because the unknown product is only defined on
+effects, while the article's `a⁻¹ = ∑ μ⁻¹ P_μ` has eigenvalues `≥ 1` and is *not* an effect.
+
+The cone extension `SequentialProductOn.spCone` removes exactly that obstruction — it is the
+article's own `v · b := μ((v/μ) · b)` — and its use here needed one further thing that did not
+exist until today: `OrderUnitSpace.IsArchimedean` for the concrete carrier
+(`HermitianMat.isArchimedean`).  With both, the coefficient divides out and the article's form is
+literal.
+
+**Scope, stated precisely.**  `spCone` extends the **first** argument only, so this gives the
+article's `a⁻¹ · a = 𝟙`.  The companion `a · a⁻¹ = 𝟙` puts the non-effect in the *second* slot,
+which no lemma in this tree covers; the article gets it from S4-symmetry of the extended product,
+which would need a second-argument extension. That half is **not** proved here — do not read this
+as the full row. -/
+
+section ArticleForm
+
+/-- The **spectral inverse** `∑_μ (1/μ) • P_μ` — the article's `a⁻¹`, unnormalized, hence
+generally *not* an effect (its eigenvalues are `≥ 1` for an effect `b`). -/
+noncomputable def specInv (b : HermitianMat n 𝕜) : HermitianMat n 𝕜 :=
+  ∑ μ ∈ b.eigFinset, (1 / μ) • b.specProj μ
+
+theorem specInv_eq_smul_pseudoInv (hbd : b.mat.PosDef) :
+    specInv b = (pseudoInvCoef b)⁻¹ • pseudoInv b := by
+  rw [specInv, pseudoInv, Finset.smul_sum]
+  refine Finset.sum_congr rfl fun μ hμ => ?_
+  rw [smul_smul]
+  congr 1
+  have hc : pseudoInvCoef b ≠ 0 := ne_of_gt (pseudoInvCoef_pos hbd)
+  field_simp
+
+theorem specInv_nonneg (hb : IsEffect b) (hbd : b.mat.PosDef) :
+    (0 : HermitianMat n 𝕜) ≤ specInv b := by
+  rw [specInv_eq_smul_pseudoInv hbd]
+  exact smul_nonneg (le_of_lt (inv_pos.mpr (pseudoInvCoef_pos hbd)))
+    (pseudoInv_isEffect hb hbd).1
+
+/-- `1/c` is an admissible normalization for the spectral inverse — indeed the one that returns
+the normalized pseudo-inverse exactly. -/
+theorem isConeNorm_specInv (hb : IsEffect b) (hbd : b.mat.PosDef) :
+    SequentialProductOn.IsConeNorm (specInv b) (pseudoInvCoef b)⁻¹ := by
+  refine ⟨inv_pos.mpr (pseudoInvCoef_pos hbd), ?_⟩
+  have hc : pseudoInvCoef b ≠ 0 := ne_of_gt (pseudoInvCoef_pos hbd)
+  rw [specInv_eq_smul_pseudoInv hbd, smul_smul, inv_inv, mul_inv_cancel₀ hc, one_smul]
+  exact pseudoInv_isEffect hb hbd
+
+variable (P : SequentialProductOn (HermitianMat n 𝕜))
+
+/-- **`prop:pseudo-transfer`, first slot, at the article's own normalization**: for every
+invertible effect `b`, the cone-extended unknown product satisfies `b⁻¹ · b = 𝟙` — with the true
+spectral inverse and **no** coefficient.
+
+Carries S1–S7 + the article's S2 and nothing located: the Archimedean input is discharged by
+`HermitianMat.isArchimedean` rather than assumed. -/
+theorem spCone_specInv_eq_one (hS2 : P.FirstArgContinuous) (hb : IsEffect b)
+    (hbd : b.mat.PosDef) :
+    P.spCone (specInv b) b = 1 := by
+  have hc : pseudoInvCoef b ≠ 0 := ne_of_gt (pseudoInvCoef_pos hbd)
+  rw [P.spCone_eq HermitianMat.isArchimedean hS2 (specInv_nonneg hb hbd)
+      (isConeNorm_specInv hb hbd) hb]
+  rw [specInv_eq_smul_pseudoInv hbd, smul_smul, inv_inv, mul_inv_cancel₀ hc, one_smul,
+    sp_pseudoInv_eq_smul_one P hS2 hb hbd, smul_smul, inv_mul_cancel₀ hc, one_smul]
+
+end ArticleForm
+
 end Necessity
