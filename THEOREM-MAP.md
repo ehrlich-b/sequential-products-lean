@@ -808,6 +808,15 @@ asserts something about a real diagonal-phase change rather than being trivially
 (A vacuous fibre theorem would have left the `U(2) → S²` gap open while looking closed — the
 precise failure the arc-5 review taught us to probe for.)
 
+ALSO PASSED — **`cfc_transpose`'s load-bearing algebraic step, computed on a concrete
+non-symmetric Hermitian matrix.** For `A = [[1, i], [−i, 1]]`: `A` is Hermitian, `A ≠ Aᵀ` (so
+nothing here is vacuous), entrywise conjugation of `A` **equals** `Aᵀ` by entrywise
+computation, `conjMatStarAlg A ≠ A` (so the star-algebra hom is not secretly the identity), and
+the general `transpose_eq_conj_of_isHermitian` agrees with that computation at `A`. This was
+the one claim in the arc I had argued rather than computed; it now checks out. The remaining
+trust in `cfc_transpose` sits on Mathlib's `StarAlgHomClass.map_cfc`, which is where it
+belongs.
+
 Where the article spans the hyperplane `{rᵢ = rⱼ}` by differences of coalesced orthant
 vectors, Lean takes the vanishing directly from the differentiated coalescence
 (`dChi_kills_corner` / `rhoField_dChi_coalesced`) and then factors a linear functional that
