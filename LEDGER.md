@@ -357,6 +357,57 @@ leg. And replacing `frameProj 0` with the projection onto `(e₀ + i e₁)/√2`
 bound `max ≥ 1/(2√2)` from column orthogonality alone, removing compactness from the weight leg
 too. **If the assembly is picked up, take that route rather than mine.**
 
+### ★★ WHERE `lem:n2-bounded` ACTUALLY STANDS — and a retraction of my own "one step" claim
+
+**Every ingredient is proved, all Lean-core:** `n2Readout_eq` (with `readout_direct` guarding the
+classification chain), `continuousOn_n2Readout` (joint continuity), `n2Comb_eq` (combination =
+scalar × pure phase × weight), `n2Weight_pos` and `exists_n2Weight_lower_bound` (weight positive
+pointwise, and bounded below on the compact `U(2)`), `abs_lt_of_phase_near_one` (sharp, with
+`hδ` certified necessary by the banked `not_abs_le_of_phase_near_one_without_pos`), plus the
+in-tree `CompactSpace` instance.
+
+★★ **RETRACTED: I wrote that "exactly one uniform-continuity step" remained and that "nothing but
+plumbing" stood in the way. Both overstate. A cold reviewer itemized four gaps, and one of them is
+mathematics I had simply not noticed:**
+
+1. ★ **The modulus is never stripped — the real gap.** `n2Comb_eq`'s scalar factor is
+   `√(e^{−x})·e^{−itx}`, so bounding `|n2Comb x U − W(U)|` bounds `W·|√(e^{−x})e^{−itx} − 1|`,
+   whereas `abs_lt_of_phase_near_one` needs `normSq(e^{−itx} − 1) < 1`. Bridging them needs a
+   triangle inequality plus a `δ` small enough that `1 − √(e^{−δ})` eats only part of the budget:
+   `|e^{−itx} − 1| ≤ |√(e^{−x})e^{−itx} − 1| + (1 − √(e^{−x}))`. **Nothing in the tree does this,
+   and my recorded plan never mentioned it.**
+2. **There is no metric to state the comparison in.** `PseudoMetricSpace (Matrix.unitaryGroup
+   (Fin 2) ℂ)` does **not** synthesize — verified: `UniformSpace` does, `PseudoMetricSpace` does
+   not — so `Metric.uniformContinuousOn_iff` will not typecheck, and my phrase "control at `(x,U)`
+   versus `(0,U)` in the product metric" names a metric that does not exist. The step is still
+   sound in entourage form (`((x,U),(0,U))` lies in a basic `W₁ ×ᵤ W₂` once `(x,0) ∈ W₁`, by
+   reflexivity in the second factor), but that is a filter argument. Cheaper still, per the
+   reviewer: a tube-lemma argument from continuity at each `(0,U)` plus `continuous_n2Weight`,
+   using no uniform continuity at all.
+3. **`n2Comb`'s own continuity is not proved** — `continuousOn_n2Readout` and `continuous_n2Coef`
+   exist separately; the sum-of-products has not been assembled.
+4. **`Ici 0 ×ˢ univ` is not compact**, so a `ContinuousOn.mono` down to `Icc 0 δ₀ ×ˢ univ` comes
+   first; and `ε` must be chosen *after* the weight bound, since it is divided by it.
+
+**Honest status: ingredients complete, assembly is four steps, one of them genuinely analytic.**
+"One step, no missing theorem" was wrong — the same overclaim pattern this arc produced repeatedly,
+in my freshest prose, caught by review rather than by me.
+
+★ **Two of that reviewer's own claims were retracted by it, confirming rejections I had already
+made at source.** It had said the compactness leg was "a hidden build" because Mathlib lacks a
+unitary-compactness result, and that no `ℝP²` object exists in Lean. Both wrong: the instance is
+vendored in this tree and compiles, and `RP2`/`QubitFrame`/`tauModuli` exist in `RankTwo/`. The
+second retraction also **narrowed my own over-correction** — I had written "nor is any `ℝP² → ℝ`
+object constructed", which overshot; the accurate statement is that none is constructed *for an
+arbitrary product's* `n2FrameTwist`, while `tauModuli` exists for the concrete `τ` family. Fixed
+in `FrameConstancy.lean`.
+
+★ **And two findings in that report were already fixed before it arrived** — the stale "assembly
+is NOT proved" note and the `frameProj_pairProj_not_commute` "It cannot" inference were both
+corrected in `bbb8ee5`; the reviewer was reading `871caa7`. Verified at source rather than
+re-applied. **A reviewer reading a stale checkout reports fixed defects as live** — worth pinning
+the review to a tag and telling the reviewer which one.
+
 **What remains as review debt, now genuinely narrow.** Only `n2Readout_eq`'s `hb` and `hx` are
 weakly tested, and their obstruction is the real one: certifying them needs a *bespoke* product
 that agrees with the twist product on effects and differs off them, because for the twist product
