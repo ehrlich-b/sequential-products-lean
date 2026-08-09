@@ -458,14 +458,74 @@ not be attacked as stated at all. Discharged (`col_ne_zero`). ★ And the review
 and its proposition fail independently — getting the price right is no evidence that the statement says
 it.**
 
+★★★ **THE FOURTH AND FIFTH REVIEW ROUNDS BROKE OPEN THE TWO CERTIFICATES NOBODY HAD ATTACKED, AND
+PRODUCED THE PROJECT'S NINTH AND TENTH FALSE ABSENCE CLAIMS.**
+
+**`differential-trio.lean` was substantially refuted, and rows 16 and 18 were understated by a
+level.** Row 18's status text said the stabilizer representations are "stated as a constructor's
+conclusion rather than constructed from Θ" — false: `Necessity/StabilizerInstance.lean` builds
+`rhoField`, `dChiStab`, `blockSkewSubmodule`, `diagonalHomSetup` and `stabilizerCoupling` all from
+`(P, hS2, hjord)`, and its docstring says it "produces the coupling". Row 16's said the tree has "a
+differential shadow" and the gap is identifying it with the article's differential — false:
+`coalescence_J2q` and `coalescence_block` are the article's **two clauses, proved at the Θ (group)
+level, at abstract generality**, and instantiated at the concrete carrier with the three Faraut–Korányi
+fields proved. **Row 18's remaining content, which I had parked behind a `True` placeholder justified
+as needing "the stabilizer group as a Lie group with an identity component", is now a THEOREM IN THE
+TREE** (`tvalCoef_realized_by_stabilizer`, `stabilizer_group_action_complex`): `torusU` fixes every
+frame projection and rotates each Peirce block by the predicted phase, four lines, no Lie theory.
+What remains for the ℂ row is only the **converse** — a frame-fixing unitary must be such a torus
+element — which is writable today and is now the certificate's single stated gap.
+
+★★★ **THE TENTH FALSE ABSENCE CLAIM: that the article's own generality is unstatable.**
+`MasterTheorem/Interface.lean`'s `structure ComparisonSetup` carries a Jordan product (a **field**
+named `jordan`), a unit, `jordan_comm`, `rank_ge : 3 ≤ n`, **a Jordan frame** `p : Fin n → J`, a cone,
+`Inv`, and `Θ` with its three properties — and row 16 is proved over it. My grep
+(`class.*Jordan|structure.*Jordan|EuclideanJordan|class EJA`) structurally could not see it. **Same
+failure mode as the quaternionic `Quaternion` grep, one file over in the same directory, on the same
+day.** ★ Over-correction guard, preserved from the reviewer: this is *not* an EJA class —
+`Interface.lean` says it "does not encode the JB-algebra premises". So rows 16/17 at the article's
+generality **are** statable; what is absent is an axiomatization making the cited vIR/FK fields
+derivable rather than carried. That reframing propagates to `abstract-tier.lean`'s rows 5 and 6(i),
+which had leaned on "not statable".
+
+★ Two further defects in that certificate: "the exp-generator route bypasses differentiation entirely"
+is **false** — `CoalescenceDiff.lean` differentiates the χ̃ curve; what the tree never does is *state*
+a `HasDerivAt` about Θ or χ (keep the nuance, drop the clause). And a recorded grep **misreported its
+own output** (written "no hits", returns five, all docstrings) — the substantive reading survived, the
+recorded result did not, which is exactly what the README says trains readers to ignore recipes.
+
+**`prop-n2-sufficiency.lean`'s load-bearing ingredient was SELF-DEFEATING** (recorded above), and the
+independent review of the `spConeRight` layer added three corrections that do not touch soundness but
+do touch the record:
+* ★★ **The pseudo-inverse row is BIGGER than my brief said, and what landed is FIDELITY, not reach.**
+  `prop:pseudo-transfer` has three clauses; I described one. Clauses (ii) and (iii) — order
+  preservation and vdW Prop. 5.3's hypotheses, which is the payload the proposition exists to deliver
+  — were **already in the tree** via the *normalized* route (`seqLeftMul_reflectsNonneg`,
+  `seqLeftMul_injective`, `theta_one` and the order-iso), because a positive scalar affects neither
+  order-reflection nor injectivity. So `specInv`/`spConeRight` buy the article's literal
+  coefficient-free form of clause (i) and nothing more. Both docstrings read as reach and now say
+  fidelity.
+* ★★ **My asymmetry claim was HALF-CERTIFIED, and it had gone into the ledger as a general fact about
+  the axioms.** "The right slot is cheaper because it needs no S2": the *no-S2* half is compiled; the
+  *needs-S2* half is not established at all — there is no independence result, and by this project's
+  own strong-form standard it would require a counterexample. Reworded to "proved without S2; the
+  tree's left-slot route uses it". ★ And `spConeRight_specInv_eq_one` **itself consumes S2**: the
+  no-S2 property belongs to the extension, not the identity.
+* `specInv` is confirmed to be `b.cfc (1/·)`. **Hygiene warning added**: the def is total and
+  `1/0 = 0`, so at a singular `b` it is the Moore–Penrose pseudo-inverse — no present defect, since
+  every theorem carries `PosDef`, but the *name* invites dropping it. One inert hypothesis removed
+  (`specInv_nonneg`'s `IsEffect`).
+
 ★ **Running total of this arc's own corrections, stated plainly because the pattern is the finding:**
-three false absence claims (quaternionic carrier, direct sum, direct-sum assembly — nos. 6, 7, 8),
+five false absence claims (quaternionic carrier, direct sum, direct-sum assembly, twist-product
+compatibility, and the article's own generality being unstatable — nos. 6-10),
 one FALSE gap statement (`lem:orientation`), one VACUOUS gap statement (`exists_peirce_exchange`), one
 SELF-DEFEATING gap statement (`frameRay_eq_of_compatible`), two propositions with sorries hidden inside
 them, two dependencies mispriced as fatal (the sign and the `tvalLm` identification — both retracted by
-the reviewer who raised them, both accepted uncritically by me), one totalizing residual claim, three
-inaccurately recorded greps, one broken verification recipe, and one timeout "fixed" three times before
-its real cause was found. **Every one of them was mine or a reviewer's,
+the reviewer who raised them, both accepted uncritically by me), one totalizing residual claim, one half-certified
+claim about the axioms, one row whose three clauses I described as one, five inaccurately recorded
+greps, one broken verification recipe, two `True` placeholders that recorded awkwardness and got read
+as depth, and one timeout "fixed" three times before its real cause was found. **Every one of them was mine or a reviewer's,
 and every one was caught inside a single day by making the claims falsifiable instead of asserting
 them.** That is the case for the certificate format, and it is stronger than any coverage number.
 
