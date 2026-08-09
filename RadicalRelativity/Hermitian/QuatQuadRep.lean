@@ -5,6 +5,7 @@ Authors: Bryan Ehrlich
 -/
 import RadicalRelativity.Hermitian.Symplectic
 import RadicalRelativity.Necessity.Theta
+import RadicalRelativity.Hermitian.Sequential
 
 set_option linter.style.longLine false
 
@@ -158,5 +159,180 @@ def quatQuadRepEquiv {a : HermitianMat (n ⊕ n) ℂ} (ha : IsQuaternionic a)
       show Necessity.quadRepInv a (Necessity.quadRep a x.val) = x.val
       show (x.val.conj _).conj _ = x.val
       rw [Necessity.conj_conj_mat, Necessity.invSqrt_mul_sqrt hbd, Necessity.conj_one_mat])
+
+
+/-! ## The Lüders product ON the quaternionic carrier
+
+★★★ New 2026-08-09 (ARC-8 block 8.3).  `WallCertificates/thm-quaternionic.lean` records the honest
+state of row 20 as: the carrier `QuatCarrier n` exists, `quatQuadRep` exists, and **no product is
+defined on the carrier at all** (its absence claim, with grep scope, is
+`SequentialProductOn (QuatCarrier …)` → no hits).  This closes that half.
+
+★ **Nothing here is a new S1–S7 verification.**  Every axiom is the ambient one at `t = 0`, read
+through the subtype coercion: the quaternionic set is closed under `Q_{√a}` (`IsQuaternionic.quadRep`,
+which is `IsQuaternionic.cfc_of_effect` plus `IsQuaternionic.conj`), the order and unit on the carrier
+are the restrictions, and the axioms are pointwise identities or implications between them.  So the
+content is the closure, and the closure was already in the tree.
+
+★★ **What this does NOT do, stated plainly, because it is the row's actual statement.**
+`thm:quaternionic` says an *arbitrary* S1–S7 product on `H_n(ℍ)`, `n ≥ 3`, **must** be this one
+(`Θ_r = id`).  That is the transfer, it is what the certificate names as the row's only honest
+residue, and it is untouched here.  What lands is the *sufficiency* direction: this product exists.
+The row stays PARTIAL. -/
+
+section LudersProduct
+
+/-- Being an effect of the quaternionic carrier is being an effect of the ambient algebra. -/
+theorem quatCarrier_isEffect_iff {a : QuatCarrier n} :
+    OrderUnitSpace.IsEffect a ↔ OrderUnitSpace.IsEffect (a : HermitianMat (n ⊕ n) ℂ) := by
+  constructor
+  · intro h
+    refine ⟨h.1, ?_⟩
+    have h2 := h.2
+    rw [HermitianMat.ousUnit_eq_one]
+    exact h2
+  · intro h
+    refine ⟨h.1, ?_⟩
+    have h2 := h.2
+    rw [HermitianMat.ousUnit_eq_one] at h2
+    exact h2
+
+/-- The Lüders product of quaternionic elements is quaternionic. -/
+theorem isQuaternionic_twistSeq_zero {a b : HermitianMat (n ⊕ n) ℂ}
+    (ha : IsQuaternionic a) (hae : OrderUnitSpace.IsEffect a) (hb : IsQuaternionic b) :
+    IsQuaternionic (twistSeq 0 a b) := by
+  rw [twistSeq_zero]
+  exact hb.conj (ha.sqrt hae)
+
+/-- **The Lüders product on `H_n(ℍ)`.**  Total, as the interface requires; off the effects of the
+first argument it is `0`, exactly as `badP` is in the rank-two lane. -/
+noncomputable def quatSp (a b : QuatCarrier n) : QuatCarrier n :=
+  letI := Classical.dec (OrderUnitSpace.IsEffect (a : HermitianMat (n ⊕ n) ℂ))
+  if h : OrderUnitSpace.IsEffect (a : HermitianMat (n ⊕ n) ℂ) then
+    ⟨twistSeq 0 (a : HermitianMat (n ⊕ n) ℂ) (b : HermitianMat (n ⊕ n) ℂ),
+      mem_quatSubmodule.mpr (isQuaternionic_twistSeq_zero
+        (mem_quatSubmodule.mp a.property) h (mem_quatSubmodule.mp b.property))⟩
+  else 0
+
+theorem quatSp_coe {a b : QuatCarrier n}
+    (ha : OrderUnitSpace.IsEffect (a : HermitianMat (n ⊕ n) ℂ)) :
+    ((quatSp a b : QuatCarrier n) : HermitianMat (n ⊕ n) ℂ)
+      = twistSeq 0 (a : HermitianMat (n ⊕ n) ℂ) (b : HermitianMat (n ⊕ n) ℂ) := by
+  rw [quatSp, dif_pos ha]
+
+/-- **The product IS `Q_{√a}`**, i.e. the article's `a·b = Q_{√a} b` — stated against the tree's
+own `quatQuadRep`, so the operation is the article's and not a lookalike. -/
+theorem quatSp_eq_quatQuadRep {a b : QuatCarrier n}
+    (ha : OrderUnitSpace.IsEffect (a : HermitianMat (n ⊕ n) ℂ)) :
+    quatSp a b = quatQuadRep (mem_quatSubmodule.mp a.property) ha b := by
+  apply Subtype.ext
+  rw [quatSp_coe ha, quatQuadRep_coe, twistSeq_zero]
+  rfl
+
+/-- **`H_n(ℍ)` carries the Lüders product as an S1, S3–S7 sequential product.** -/
+noncomputable def quatLuders : SequentialProductOn (QuatCarrier n) where
+  sp := quatSp
+  sp_add_right := fun {a b c} ha hb hc _ => by
+    have ha' := quatCarrier_isEffect_iff.mp ha
+    apply Subtype.ext
+    rw [quatSp_coe ha']
+    push_cast
+    rw [twistSeq_add_right, ← quatSp_coe (a := a) (b := b) ha',
+      ← quatSp_coe (a := a) (b := c) ha']
+  sp_unit_left := fun {a} _ => by
+    have h1 : OrderUnitSpace.IsEffect
+        ((OrderUnitSpace.ousUnit : QuatCarrier n) : HermitianMat (n ⊕ n) ℂ) := by
+      rw [quatCarrier_ousUnit_coe, ← HermitianMat.ousUnit_eq_one]
+      exact OrderUnitSpace.isEffect_unit
+    apply Subtype.ext
+    rw [quatSp_coe h1, quatCarrier_ousUnit_coe, twistSeq_one_left]
+  sp_zero_symm := fun {a b} ha hb h => by
+    have ha' := quatCarrier_isEffect_iff.mp ha
+    have hb' := quatCarrier_isEffect_iff.mp hb
+    apply Subtype.ext
+    rw [quatSp_coe hb']
+    refine twistSeq_zero_symm 0 ha'.1 hb'.1 ?_
+    rw [← quatSp_coe ha', congrArg (fun x : QuatCarrier n => (x : HermitianMat (n ⊕ n) ℂ)) h]
+    rfl
+  sp_assoc_of_compatible := fun {a b c} ha hb _ hcomm => by
+    have ha' := quatCarrier_isEffect_iff.mp ha
+    have hb' := quatCarrier_isEffect_iff.mp hb
+    have hab : OrderUnitSpace.IsEffect
+        ((quatSp a b : QuatCarrier n) : HermitianMat (n ⊕ n) ℂ) := by
+      rw [quatSp_coe ha']
+      exact twistSeq_isEffect 0 ha'.1 ha'.2 hb'.1 hb'.2
+    have hcomm' : twistSeq 0 (a : HermitianMat (n ⊕ n) ℂ) (b : HermitianMat (n ⊕ n) ℂ)
+        = twistSeq 0 (b : HermitianMat (n ⊕ n) ℂ) (a : HermitianMat (n ⊕ n) ℂ) := by
+      rw [← quatSp_coe ha', ← quatSp_coe hb',
+        congrArg (fun x : QuatCarrier n => (x : HermitianMat (n ⊕ n) ℂ)) hcomm]
+    apply Subtype.ext
+    rw [quatSp_coe ha', quatSp_coe hab, quatSp_coe ha', quatSp_coe hb']
+    exact twistSeq_assoc_of_comm 0 ha'.1 hb'.1 hcomm' _
+  compatible_ortho := fun {a b} ha hb hcomm => by
+    have ha' := quatCarrier_isEffect_iff.mp ha
+    have hb' := quatCarrier_isEffect_iff.mp hb
+    have hb1 : (b : HermitianMat (n ⊕ n) ℂ) ≤ 1 := by
+      have := hb'.2; rwa [HermitianMat.ousUnit_eq_one] at this
+    have hsub : OrderUnitSpace.IsEffect
+        (((OrderUnitSpace.ousUnit - b : QuatCarrier n)) : HermitianMat (n ⊕ n) ℂ) := by
+      push_cast
+      rw [quatCarrier_ousUnit_coe]
+      refine ⟨sub_nonneg.mpr hb1, ?_⟩
+      rw [HermitianMat.ousUnit_eq_one]
+      exact sub_le_self _ hb'.1
+    have hcomm' : twistSeq 0 (a : HermitianMat (n ⊕ n) ℂ) (b : HermitianMat (n ⊕ n) ℂ)
+        = twistSeq 0 (b : HermitianMat (n ⊕ n) ℂ) (a : HermitianMat (n ⊕ n) ℂ) := by
+      rw [← quatSp_coe ha', ← quatSp_coe hb',
+        congrArg (fun x : QuatCarrier n => (x : HermitianMat (n ⊕ n) ℂ)) hcomm]
+    apply Subtype.ext
+    rw [quatSp_coe ha', quatSp_coe hsub]
+    push_cast
+    rw [quatCarrier_ousUnit_coe]
+    exact twistSeq_compat_one_sub 0 ha'.1 hb'.1 hb1 hcomm'
+  compatible_add := fun {a b c} ha hb hc hbcle h1 h2 => by
+    have ha' := quatCarrier_isEffect_iff.mp ha
+    have hb' := quatCarrier_isEffect_iff.mp hb
+    have hc' := quatCarrier_isEffect_iff.mp hc
+    have hbc' : OrderUnitSpace.IsEffect (((b + c : QuatCarrier n)) : HermitianMat (n ⊕ n) ℂ) :=
+      quatCarrier_isEffect_iff.mp ⟨OrderUnitSpace.add_nonneg hb.1 hc.1, hbcle⟩
+    have e1 : twistSeq 0 (a : HermitianMat (n ⊕ n) ℂ) (b : HermitianMat (n ⊕ n) ℂ)
+        = twistSeq 0 (b : HermitianMat (n ⊕ n) ℂ) (a : HermitianMat (n ⊕ n) ℂ) := by
+      rw [← quatSp_coe ha', ← quatSp_coe hb',
+        congrArg (fun x : QuatCarrier n => (x : HermitianMat (n ⊕ n) ℂ)) h1]
+    have e2 : twistSeq 0 (a : HermitianMat (n ⊕ n) ℂ) (c : HermitianMat (n ⊕ n) ℂ)
+        = twistSeq 0 (c : HermitianMat (n ⊕ n) ℂ) (a : HermitianMat (n ⊕ n) ℂ) := by
+      rw [← quatSp_coe ha', ← quatSp_coe hc',
+        congrArg (fun x : QuatCarrier n => (x : HermitianMat (n ⊕ n) ℂ)) h2]
+    apply Subtype.ext
+    rw [quatSp_coe ha', quatSp_coe hbc']
+    push_cast
+    exact twistSeq_compat_add 0 ha'.1 hb'.1 hc'.1 e1 e2
+  compatible_sp := fun {a b c} ha hb hc h1 h2 => by
+    have ha' := quatCarrier_isEffect_iff.mp ha
+    have hb' := quatCarrier_isEffect_iff.mp hb
+    have hc' := quatCarrier_isEffect_iff.mp hc
+    have hbcE : OrderUnitSpace.IsEffect
+        ((quatSp b c : QuatCarrier n) : HermitianMat (n ⊕ n) ℂ) := by
+      rw [quatSp_coe hb']
+      exact twistSeq_isEffect 0 hb'.1 hb'.2 hc'.1 hc'.2
+    have e1 : twistSeq 0 (a : HermitianMat (n ⊕ n) ℂ) (b : HermitianMat (n ⊕ n) ℂ)
+        = twistSeq 0 (b : HermitianMat (n ⊕ n) ℂ) (a : HermitianMat (n ⊕ n) ℂ) := by
+      rw [← quatSp_coe ha', ← quatSp_coe hb',
+        congrArg (fun x : QuatCarrier n => (x : HermitianMat (n ⊕ n) ℂ)) h1]
+    have e2 : twistSeq 0 (a : HermitianMat (n ⊕ n) ℂ) (c : HermitianMat (n ⊕ n) ℂ)
+        = twistSeq 0 (c : HermitianMat (n ⊕ n) ℂ) (a : HermitianMat (n ⊕ n) ℂ) := by
+      rw [← quatSp_coe ha', ← quatSp_coe hc',
+        congrArg (fun x : QuatCarrier n => (x : HermitianMat (n ⊕ n) ℂ)) h2]
+    apply Subtype.ext
+    rw [quatSp_coe ha', quatSp_coe hbcE, quatSp_coe hb']
+    exact twistSeq_compat_sp 0 ha'.1 hb'.1 hc'.1 e1 e2
+  sp_effect := fun {a b} ha hb => by
+    have ha' := quatCarrier_isEffect_iff.mp ha
+    have hb' := quatCarrier_isEffect_iff.mp hb
+    refine quatCarrier_isEffect_iff.mpr ?_
+    rw [quatSp_coe ha']
+    exact twistSeq_isEffect 0 ha'.1 ha'.2 hb'.1 hb'.2
+
+end LudersProduct
 
 end HermitianMat

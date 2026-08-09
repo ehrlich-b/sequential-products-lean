@@ -74,6 +74,18 @@ ABSENCE CLAIMS AND THEIR SCOPE (rewritten; the first version's were false)
       grep -rn 'SequentialProductOn (HermitianMat.QuatCarrier\|SequentialProductOn (QuatCarrier' RadicalRelativity/
       -> no hits, whole first-party tree incl. Vendor/, 2026-08-09.  So the CARRIER exists and no
       product is defined on it.  That is the honest statement of where the row stands.
+    ★★★ HALF-DISCHARGED 2026-08-09 (ARC-8 block 8.3): `HermitianMat.quatLuders` IS a
+    `SequentialProductOn (QuatCarrier n)` — the Lüders product, with S1 and S3-S7 — and
+    `HermitianMat.quatSp_eq_quatQuadRep` identifies it with the tree's own `quatQuadRep`, i.e. with
+    the article's `a . b = Q_{sqrt a} b`.  So the grep above is now FALSE and the sentence after it
+    is superseded: the carrier has a product.
+    ★ NOTHING NEW WAS PROVED ABOUT S1-S7 to get it.  Every axiom is the ambient one at t = 0 read
+    through the subtype coercion; the only content is closure of the quaternionic set under
+    Q_{sqrt a}, and that was already in the tree (`IsQuaternionic.quadRep`, which is
+    `IsQuaternionic.cfc_of_effect` plus `IsQuaternionic.conj`).  This is the SUFFICIENCY direction.
+    ★★ THE ROW'S OWN STATEMENT IS UNTOUCHED.  `thm:quaternionic` says an ARBITRARY S1-S7 product on
+    H_n(H), n >= 3, MUST be this one (Theta_r = id).  That is the transfer, it is still the only
+    honest residue, and the gap below is still a gap.
   * "H is not `RCLike`": Mathlib v4.28.0, `Mathlib/Analysis/RCLike/Basic.lean` — read at source.
 
 NOT imported from RadicalRelativity/.

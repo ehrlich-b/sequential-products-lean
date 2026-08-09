@@ -222,6 +222,18 @@ linearity, but `b_k·a → b·a` is *first*-argument continuity. A reader carryi
 Loewner monotone convergence, absent — grep scope recorded at the theorem) and the abstract f.d.
 order-unit generality.
 
+**Block 8.3 — the quaternionic carrier now has a product (sufficiency half).**
+`HermitianMat.quatLuders : SequentialProductOn (QuatCarrier n)` plus
+`quatSp_eq_quatQuadRep` (it IS `Q_{√a}`, against the tree's own `quatQuadRep`). This **falsifies
+the certificate's remaining absence claim** — its grep for `SequentialProductOn (QuatCarrier` now
+has a hit. ★ **Nothing new about S1–S7 was proved**: every axiom is the ambient one at `t = 0`
+through the subtype coercion, and the only content is closure of the quaternionic set under
+`Q_{√a}`, which was already in the tree. Recording *that* rather than eight field names is the
+honest description. ★★ **The row's own statement is untouched** — `thm:quaternionic` is the
+*necessity* direction (`Θ_r = id` for an arbitrary product), i.e. the transfer, still the only
+honest residue. Mechanical note for the next attempt: `QuatQuadRep.lean` was a leaf that did not
+reach `Hermitian/Sequential.lean`; that import was added.
+
 ### CHECKPOINT 1 (tag `paperA-arc8-cp1`, two cold reviewers, one concern each)
 
 Both verified the build independently (0 errors over full output, Census PASS, no `sorryAx`), and
