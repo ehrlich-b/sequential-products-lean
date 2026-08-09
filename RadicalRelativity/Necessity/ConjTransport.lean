@@ -67,6 +67,57 @@ theorem adU_unital {U : Matrix n n ℂ} (hU : U * Uᴴ = 1) :
   rw [adU_apply, HermitianMat.conj_apply_mat, HermitianMat.mat_one,
     Matrix.mul_one, hU]
 
+/-! ### `Ad_U` is a Frobenius isometry
+
+Two elementary norm facts about conjugation, and they carry more weight than their size
+suggests: together they are what makes S2 at the *single* point `𝟙` yield a scale valid at
+**every** frame, which is the step `lem:n2-bounded` turns on (`FrameConstancy.lean`).
+
+`LEDGER-ARCHIVE-M1-M7.md` recorded that Mathlib has `frobenius_norm_def` "but no congruence
+invariance". That is still true of Mathlib, and it is why these are proved here — but the proof
+is three lines, because on `HermitianMat` the Frobenius norm is `√⟪a,a⟫ = √(re tr(a·a))` and
+trace cyclicity does all the work. No entrywise argument is needed. -/
+
+/-- Conjugation by a unitary preserves the Frobenius norm. Proved by trace cyclicity, not
+entrywise. -/
+theorem norm_conj_unitary (U : Matrix n n ℂ) (hU : Uᴴ * U = 1) (a : HermitianMat n ℂ) :
+    ‖a.conj U‖ = ‖a‖ := by
+  rw [HermitianMat.norm_eq_sqrt_inner_self, HermitianMat.norm_eq_sqrt_inner_self]
+  congr 1
+  rw [HermitianMat.inner_eq_re_trace, HermitianMat.inner_eq_re_trace]
+  congr 1
+  rw [HermitianMat.conj_apply_mat]
+  calc (U * a.mat * Uᴴ * (U * a.mat * Uᴴ)).trace
+      = (U * (a.mat * a.mat) * Uᴴ).trace := by
+        congr 1
+        simp only [Matrix.mul_assoc]
+        rw [show Uᴴ * (U * (a.mat * Uᴴ)) = (Uᴴ * U) * (a.mat * Uᴴ) by
+          simp only [Matrix.mul_assoc]]
+        rw [hU, Matrix.one_mul]
+    _ = (a.mat * a.mat).trace := by
+        rw [Matrix.trace_mul_cycle, ← Matrix.mul_assoc, hU, Matrix.one_mul]
+
+/-- `Ad_U` is an isometry for the Frobenius norm. -/
+theorem norm_adU (U : Matrix n n ℂ) (hU : Uᴴ * U = 1) (a : HermitianMat n ℂ) :
+    ‖adU U a‖ = ‖a‖ := norm_conj_unitary U hU a
+
+omit [DecidableEq n] in
+/-- Every entry is bounded by the Frobenius norm.  With `norm_adU`, this is how a *matrix
+entry* of a conjugated difference gets controlled by the difference's norm. -/
+theorem norm_entry_le_norm (a : HermitianMat n ℂ) (i j : n) :
+    ‖a.mat i j‖ ≤ ‖a‖ := by
+  rw [HermitianMat.norm_eq_frobenius, ← Real.sqrt_eq_rpow,
+    show ‖a.mat i j‖ = √(‖a.mat i j‖ ^ 2) from (Real.sqrt_sq (norm_nonneg _)).symm]
+  refine Real.sqrt_le_sqrt ?_
+  simp only [HermitianMat.mat_apply]
+  have hinner : ‖a i j‖ ^ 2 ≤ ∑ j' : n, ‖a i j'‖ ^ 2 :=
+    Finset.single_le_sum (f := fun j' : n => ‖a i j'‖ ^ 2)
+      (fun _ _ => by positivity) (Finset.mem_univ j)
+  have houter : (∑ j' : n, ‖a i j'‖ ^ 2) ≤ ∑ i' : n, ∑ j' : n, ‖a i' j'‖ ^ 2 :=
+    Finset.single_le_sum (f := fun i' : n => ∑ j' : n, ‖a i' j'‖ ^ 2)
+      (fun _ _ => by positivity) (Finset.mem_univ i)
+  linarith
+
 /-- `Ad_{U*}` undoes `Ad_U` when `U* U = 1`. -/
 theorem adU_cancel {U : Matrix n n ℂ} (hU : Uᴴ * U = 1) (x : HermitianMat n ℂ) :
     adU Uᴴ (adU U x) = x := by

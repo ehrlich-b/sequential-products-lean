@@ -736,7 +736,12 @@ eigenframe. That is exactly why the construction below uses **two** test effects
 eigenbasis, and it is why `n2Weight_pos` is a theorem about a *pair*. The old sentence also
 contradicted the very plan it was describing.
 
-**What actually remains** is one uniform-continuity step; see the inventory in `LEDGER.md`. -/
+★★ **Status, 2026-08-09: nothing remains — `lem:n2-bounded` is PROVED**
+(`exists_n2FrameTwist_bound`, at the end of this section, where the four steps and what each
+cost are itemized).  The wording that used to close this paragraph — "what actually remains is
+one uniform-continuity step" — was the *second* mispricing of this row and is retracted: the
+review that refuted it counted four steps, and it was right. Notably, none of the four turned out
+to be a uniform-continuity step. -/
 
 /-- The base-point family: spectrum `{e^{-x}, 1}`, hence ordered log-ratio `-x`, tending to
 the unit effect as `x → 0`. -/
@@ -947,9 +952,14 @@ noncomputable def n2Weight (b₁ b₂ : HermitianMat (Fin 2) ℂ)
 Scope, stated carefully because the tempting phrasing overclaims: this is an *algebraic
 identity only*.  It does **not** by itself exhibit `exp(-i t(U) x)` as a continuous function of
 `(x, U)` — that additionally needs the weight bounded away from zero, which is
-`frameProj_pairProj_not_commute` upgraded to `0 < n2Weight` plus compactness of `U(2)`, and that
-upgrade is not yet assembled.  What this identity does is isolate the phase as the only
-non-explicit factor. -/
+`frameProj_pairProj_not_commute` upgraded to `0 < n2Weight` plus compactness of `U(2)`.
+
+★ **Correction (2026-08-09, ARC-7 cold review): that upgrade IS assembled**, and has been since
+ARC-6 — `n2Weight_pos` and `exists_n2Weight_lower_bound`, both below in this file.  The sentence
+that used to end this docstring said it "is not yet assembled", which is the **second** instance
+in this file of telling a top-down reader that a theorem sixty lines beneath them does not exist
+(the first is corrected at the `basePt` section head).  When a claim of absence is written into a
+docstring, it has to be re-read every time the file grows. -/
 theorem n2Comb_eq (hS2 : P.FirstArgContinuous) {b₁ b₂ : HermitianMat (Fin 2) ℂ}
     (hb₁ : IsEffect b₁) (hb₂ : IsEffect b₂) {x : ℝ} (hx : 0 ≤ x)
     (U : Matrix.unitaryGroup (Fin 2) ℂ) :
@@ -1004,7 +1014,11 @@ theorem commute_of_isDiag {A B : Matrix (Fin 2) (Fin 2) ℂ}
   · rcases fin2_ne_cases i j hij with ⟨hi, hj⟩ | ⟨hi, hj⟩ <;> subst hi <;> subst hj <;>
       simp [hA01, hA10, hB01, hB10]
 
-/-- **The two-effect weight never vanishes.** -/
+/-- **The weight of *this* pair never vanishes, at every frame.**  Scope, narrowed after the
+ARC-7 cold review read the old one-line version ("the two-effect weight never vanishes") as a
+claim about an arbitrary pair: it is not.  `U` is arbitrary; the pair is *fixed* to
+`(frameProj 0, pairProj 0 1)`, and that is essential — the statement is false for a pair with a
+common eigenvector, which is what `frameProj_pairProj_not_commute` rules out here. -/
 theorem n2Weight_pos (U : Matrix.unitaryGroup (Fin 2) ℂ) :
     0 < n2Weight (frameProj (0 : Fin 2)) (pairProj (0 : Fin 2) 1) U := by
   have hw : n2Weight (frameProj (0 : Fin 2)) (pairProj (0 : Fin 2) 1) U
@@ -1135,7 +1149,464 @@ theorem readout_direct (t x : ℝ) (b : HermitianMat (Fin 2) ℂ) :
   congr 2
   push_cast; ring
 
+/-! ### `lem:n2-bounded`, assembled
+
+The four steps the ARC-6 cold review itemized, in order.  Recorded because the *pricing* was
+wrong twice: this was first banked as "one uniform-continuity step, nothing but plumbing", then
+retracted to four steps with one of them genuinely analytic.  The four steps, as executed:
+
+* **(i) the uniform scale.** `exists_uniform_sp_close`. S2 is continuity at *each* effect; what
+  the bound needs is one scale good at *every* frame. The bridge is that conjugation is a
+  Frobenius isometry (`norm_adU`), so `‖Ad_U(basePt x) − 𝟙‖ = ‖basePt x − 𝟙‖` with the frame
+  gone. S2 is then used at the single point `a = 𝟙` and nowhere else. **No compactness.**
+* **(ii) stripping the modulus** — the step that had been missed. `n2Comb_eq`'s scalar factor is
+  `√(e^{−x})·e^{−itx}`, while `abs_lt_of_phase_near_one` needs `|e^{−itx} − 1|`.
+  `norm_phase_sub_one_le` bridges them for the cost of the modulus defect `|1 − √(e^{−x})|`,
+  which `exists_sqrtExp_close` makes small on a right interval.
+* **(iii) the weight.** `exists_n2Weight_lower_bound` (already in the tree) keeps the divisor off
+  zero uniformly. This is the *one* place compactness of `U(2)` enters the route.
+* **(iv) the budget, spent in the right order.** `ε` is chosen *after* the weight bound
+  `ε₀`, as `ε₀/(4(C+1))` with `C = ‖b₁‖ + ‖b₂‖`; each of the two defects then eats a quarter and
+  the total stays under the `< 1` that `abs_lt_of_phase_near_one` demands.
+
+★ Two things the earlier plan got wrong are worth keeping visible. There is no "product metric"
+argument available — `PseudoMetricSpace` does not synthesize on `Matrix.unitaryGroup`, only
+`UniformSpace` does — and none is needed: the scale is uniform because of an *algebraic* identity
+(isometry), not a compactness or uniform-continuity argument. And `Ici 0 ×ˢ univ` is not compact,
+which is why nothing here integrates or extremizes over it. -/
+
+/-- A continuous function vanishing at `0` is small on a right interval `[0,δ]`. -/
+theorem exists_small_of_continuousAt_zero {f : ℝ → ℝ} (hf : ContinuousAt f 0) (h0 : f 0 = 0)
+    {η : ℝ} (hη : 0 < η) : ∃ δ : ℝ, 0 < δ ∧ ∀ x : ℝ, 0 ≤ x → x ≤ δ → |f x| < η := by
+  rw [Metric.continuousAt_iff] at hf
+  obtain ⟨δ, hδpos, hδ⟩ := hf η hη
+  refine ⟨δ / 2, by positivity, ?_⟩
+  intro x hx0 hxle
+  have hdx : dist x (0:ℝ) < δ := by
+    rw [Real.dist_eq, sub_zero, abs_of_nonneg hx0]; linarith
+  have hres := hδ hdx
+  rwa [Real.dist_eq, h0, sub_zero] at hres
+
+@[simp]
+theorem basePt_zero : basePt 0 = 1 := by
+  rw [basePt, show (0 : ℝ) • axisSplit (0 : Fin 2) = 0 from zero_smul _ _, diagFamily_zero]
+
+/-- The base point approaches the unit effect. -/
+theorem exists_basePt_close {η : ℝ} (hη : 0 < η) :
+    ∃ δ : ℝ, 0 < δ ∧ ∀ x : ℝ, 0 ≤ x → x ≤ δ → ‖basePt x - 1‖ < η := by
+  obtain ⟨δ, hδpos, hδ⟩ := exists_small_of_continuousAt_zero
+    (f := fun x : ℝ => ‖basePt x - 1‖)
+    (continuous_norm.comp (continuous_basePt.sub continuous_const)).continuousAt
+    (by simp) hη
+  exact ⟨δ, hδpos, fun x hx0 hxle => by
+    have h := hδ x hx0 hxle; rwa [abs_of_nonneg (norm_nonneg _)] at h⟩
+
+/-- The modulus defect of the base point's square root is small on a right interval — step (ii)'s
+numerical input. -/
+theorem exists_sqrtExp_close {η : ℝ} (hη : 0 < η) :
+    ∃ δ : ℝ, 0 < δ ∧ ∀ x : ℝ, 0 ≤ x → x ≤ δ →
+      |1 - Real.sqrt (Real.exp (-x))| < η :=
+  exists_small_of_continuousAt_zero
+    (f := fun x : ℝ => 1 - Real.sqrt (Real.exp (-x)))
+    (by fun_prop) (by simp) hη
+
+/-- **Step (ii): stripping the modulus.**  `n2Comb_eq` controls `‖s·E − 1‖` where `s` is a
+positive real modulus; the numerical step needs `‖E − 1‖`.  A triangle inequality bridges them
+at the cost of the modulus defect `|1 − s|`, and costs nothing else — in particular the phase `E`
+is never written as an exponential of a chosen logarithm. -/
+theorem norm_phase_sub_one_le {s : ℝ} {E : ℂ} (hE : ‖E‖ = 1) :
+    ‖E - 1‖ ≤ |1 - s| + ‖(s : ℂ) * E - 1‖ := by
+  calc ‖E - 1‖ = ‖(1 - (s:ℂ)) * E + ((s:ℂ) * E - 1)‖ := by ring_nf
+    _ ≤ ‖(1 - (s:ℂ)) * E‖ + ‖(s:ℂ) * E - 1‖ := norm_add_le _ _
+    _ = |1 - s| + ‖(s:ℂ) * E - 1‖ := by
+        rw [norm_mul, hE, mul_one]
+        congr 1
+        rw [← Complex.ofReal_one, ← Complex.ofReal_sub, Complex.norm_real, Real.norm_eq_abs]
+
+/-- **Step (i): one scale for every frame.**  S2 is applied at the single effect `a = 𝟙`; the
+scale it returns is uniform in `U` because conjugation is a Frobenius isometry, so the frame
+drops out of `‖Ad_U(basePt x) − 𝟙‖` entirely.
+
+This is the leg the ARC-6 review banked as cheap, and it is: no compactness of `U(2)`, and not
+even the explicit value of `‖basePt x − 𝟙‖` (which is `|e^{−x} − 1|`) — continuity of `basePt` at
+`0` together with `basePt 0 = 𝟙` is enough. -/
+theorem exists_uniform_sp_close (hS2 : P.FirstArgContinuous) {b : HermitianMat (Fin 2) ℂ}
+    (hb : IsEffect b) {ε : ℝ} (hε : 0 < ε) :
+    ∃ δ : ℝ, 0 < δ ∧ ∀ x : ℝ, 0 ≤ x → x ≤ δ →
+      ∀ U : Matrix.unitaryGroup (Fin 2) ℂ,
+        ‖P.sp (adU (U : Matrix (Fin 2) (Fin 2) ℂ) (basePt x)) b - b‖ < ε := by
+  have hcont := (hS2 hb).continuousWithinAt
+    (show (1 : HermitianMat (Fin 2) ℂ) ∈ {a : HermitianMat (Fin 2) ℂ | IsEffect a} from
+      isEffect_unit)
+  rw [Metric.continuousWithinAt_iff] at hcont
+  obtain ⟨η, hηpos, hη⟩ := hcont ε hε
+  obtain ⟨δ, hδpos, hδ⟩ := exists_basePt_close hηpos
+  refine ⟨δ, hδpos, ?_⟩
+  intro x hx0 hxle U
+  have heff : IsEffect (adU (U : Matrix (Fin 2) (Fin 2) ℂ) (basePt x)) :=
+    adU_isEffect (unitaryGroup_conjTranspose_mul U) (unitaryGroup_mul_conjTranspose U)
+      (diagFamily_isEffect (basePt_exponent_nonpos hx0))
+  have hdist : dist (adU (U : Matrix (Fin 2) (Fin 2) ℂ) (basePt x))
+      (1 : HermitianMat (Fin 2) ℂ) < η := by
+    rw [dist_eq_norm,
+      show (1 : HermitianMat (Fin 2) ℂ) = adU (U : Matrix (Fin 2) (Fin 2) ℂ) 1 from
+        (adU_unital (unitaryGroup_mul_conjTranspose U)).symm,
+      ← adU_sub, norm_adU _ (unitaryGroup_conjTranspose_mul U)]
+    exact hδ x hx0 hxle
+  have hres := hη heff hdist
+  rw [dist_eq_norm, show (1 : HermitianMat (Fin 2) ℂ) = OrderUnitSpace.ousUnit from rfl,
+    P.sp_unit_left hb] at hres
+  exact hres
+
+/-- The frame coefficient is bounded by its test effect's norm, uniformly in the frame. -/
+theorem n2Coef_norm_le (b : HermitianMat (Fin 2) ℂ) (U : Matrix.unitaryGroup (Fin 2) ℂ) :
+    ‖n2Coef b U‖ ≤ ‖b‖ := by
+  have hUh : ((U : Matrix (Fin 2) (Fin 2) ℂ)ᴴ)ᴴ * (U : Matrix (Fin 2) (Fin 2) ℂ)ᴴ = 1 := by
+    rw [Matrix.conjTranspose_conjTranspose]; exact unitaryGroup_mul_conjTranspose U
+  calc ‖n2Coef b U‖ ≤ ‖adU ((U : Matrix (Fin 2) (Fin 2) ℂ)ᴴ) b‖ :=
+        norm_entry_le_norm (adU ((U : Matrix (Fin 2) (Fin 2) ℂ)ᴴ) b) 0 1
+    _ = ‖b‖ := norm_adU _ hUh b
+
+/-- The readout deviates from the frame coefficient by at most the product's own deviation from
+the unital value. -/
+theorem norm_n2Readout_sub_n2Coef (b : HermitianMat (Fin 2) ℂ) (x : ℝ)
+    (U : Matrix.unitaryGroup (Fin 2) ℂ) :
+    ‖n2Readout P b x U - n2Coef b U‖
+      ≤ ‖P.sp (adU (U : Matrix (Fin 2) (Fin 2) ℂ) (basePt x)) b - b‖ := by
+  have hUh : ((U : Matrix (Fin 2) (Fin 2) ℂ)ᴴ)ᴴ * (U : Matrix (Fin 2) (Fin 2) ℂ)ᴴ = 1 := by
+    rw [Matrix.conjTranspose_conjTranspose]; exact unitaryGroup_mul_conjTranspose U
+  have hsub : n2Readout P b x U - n2Coef b U
+      = (adU ((U : Matrix (Fin 2) (Fin 2) ℂ)ᴴ)
+          (P.sp (adU (U : Matrix (Fin 2) (Fin 2) ℂ) (basePt x)) b - b)).mat 0 1 := by
+    rw [adU_sub]; rfl
+  rw [hsub]
+  calc ‖(adU ((U : Matrix (Fin 2) (Fin 2) ℂ)ᴴ)
+          (P.sp (adU (U : Matrix (Fin 2) (Fin 2) ℂ) (basePt x)) b - b)).mat 0 1‖
+      ≤ ‖adU ((U : Matrix (Fin 2) (Fin 2) ℂ)ᴴ)
+          (P.sp (adU (U : Matrix (Fin 2) (Fin 2) ℂ) (basePt x)) b - b)‖ :=
+        norm_entry_le_norm _ 0 1
+    _ = ‖P.sp (adU (U : Matrix (Fin 2) (Fin 2) ℂ) (basePt x)) b - b‖ := norm_adU _ hUh _
+
+/-- The combined readout's deviation from the weight, resolved into the two per-effect
+deviations.  Each readout is paired with the conjugate of its *own* coefficient, so the
+coefficients enter as squared moduli and cannot cancel. -/
+theorem n2Comb_sub_weight (b₁ b₂ : HermitianMat (Fin 2) ℂ) (x : ℝ)
+    (U : Matrix.unitaryGroup (Fin 2) ℂ) :
+    n2Comb P b₁ b₂ x U - ((n2Weight b₁ b₂ U : ℝ) : ℂ)
+      = (n2Readout P b₁ x U - n2Coef b₁ U) * star (n2Coef b₁ U)
+        + (n2Readout P b₂ x U - n2Coef b₂ U) * star (n2Coef b₂ U) := by
+  unfold n2Comb n2Weight
+  have hsq : ∀ z : ℂ, ((Complex.normSq z : ℝ) : ℂ) = z * star z := fun z => by
+    rw [Complex.star_def]; exact (Complex.mul_conj z).symm
+  push_cast
+  rw [hsq, hsq]
+  ring
+
+/-- **The core estimate: one scale `δ` at which the phase is near `1` for every frame.**
+
+The budget is spent in the order step (iv) requires: the weight bound `ε₀` comes first, then
+`ε := ε₀/(4(C+1))` is chosen against it, then the two scales S2 returns, then the modulus
+scale.  Each defect eats a quarter, so the total is at most `1/2 < 1`. -/
+theorem exists_uniform_phase_near_one
+    (hS2 : P.FirstArgContinuous) {b₁ b₂ : HermitianMat (Fin 2) ℂ}
+    (hb₁ : IsEffect b₁) (hb₂ : IsEffect b₂)
+    {ε₀ : ℝ} (hε₀pos : 0 < ε₀)
+    (hε₀ : ∀ U : Matrix.unitaryGroup (Fin 2) ℂ, ε₀ ≤ n2Weight b₁ b₂ U) :
+    ∃ δ : ℝ, 0 < δ ∧ ∀ (U : Matrix.unitaryGroup (Fin 2) ℂ) (x : ℝ), 0 ≤ x → x ≤ δ →
+      Complex.normSq
+        (Complex.exp (((-(n2FrameTwist P hS2 U * x) : ℝ) : ℂ) * Complex.I) - 1) < 1 := by
+  have hC0 : (0:ℝ) ≤ ‖b₁‖ + ‖b₂‖ := by positivity
+  have hden : (0:ℝ) < 4 * ((‖b₁‖ + ‖b₂‖) + 1) := by linarith
+  obtain ⟨δ₁, hδ₁pos, hδ₁⟩ := exists_uniform_sp_close P hS2 hb₁ (div_pos hε₀pos hden)
+  obtain ⟨δ₂, hδ₂pos, hδ₂⟩ := exists_uniform_sp_close P hS2 hb₂ (div_pos hε₀pos hden)
+  obtain ⟨δ₃, hδ₃pos, hδ₃⟩ := exists_sqrtExp_close (η := 1/4) (by norm_num)
+  refine ⟨min δ₁ (min δ₂ δ₃), lt_min hδ₁pos (lt_min hδ₂pos hδ₃pos), ?_⟩
+  intro U x hx0 hxδ
+  have hx1 : x ≤ δ₁ := le_trans hxδ (min_le_left _ _)
+  have hx2 : x ≤ δ₂ := le_trans hxδ (le_trans (min_le_right _ _) (min_le_left _ _))
+  have hx3 : x ≤ δ₃ := le_trans hxδ (le_trans (min_le_right _ _) (min_le_right _ _))
+  set ε : ℝ := ε₀ / (4 * ((‖b₁‖ + ‖b₂‖) + 1)) with hεdef
+  set E : ℂ := Complex.exp (((-(n2FrameTwist P hS2 U * x) : ℝ) : ℂ) * Complex.I) with hEdef
+  set s : ℝ := Real.sqrt (Real.exp (-x)) with hsdef
+  set W : ℝ := n2Weight b₁ b₂ U with hWdef
+  have hE : ‖E‖ = 1 := by rw [hEdef]; exact Complex.norm_exp_ofReal_mul_I _
+  have hWge : ε₀ ≤ W := hε₀ U
+  have hWpos : 0 < W := lt_of_lt_of_le hε₀pos hWge
+  have hfac : n2Comb P b₁ b₂ x U - ((W : ℝ) : ℂ) = ((s : ℂ) * E - 1) * ((W : ℝ) : ℂ) := by
+    rw [n2Comb_eq P hS2 hb₁ hb₂ hx0 U]; ring
+  have hd1 : ‖n2Readout P b₁ x U - n2Coef b₁ U‖ < ε :=
+    lt_of_le_of_lt (norm_n2Readout_sub_n2Coef P b₁ x U) (hδ₁ x hx0 hx1 U)
+  have hd2 : ‖n2Readout P b₂ x U - n2Coef b₂ U‖ < ε :=
+    lt_of_le_of_lt (norm_n2Readout_sub_n2Coef P b₂ x U) (hδ₂ x hx0 hx2 U)
+  have hnum : ‖n2Comb P b₁ b₂ x U - ((W : ℝ) : ℂ)‖ ≤ ε * (‖b₁‖ + ‖b₂‖) := by
+    rw [n2Comb_sub_weight]
+    have hbd1 : ‖(n2Readout P b₁ x U - n2Coef b₁ U) * star (n2Coef b₁ U)‖ ≤ ε * ‖b₁‖ := by
+      rw [norm_mul, norm_star]
+      exact mul_le_mul hd1.le (n2Coef_norm_le b₁ U) (norm_nonneg _) (div_pos hε₀pos hden).le
+    have hbd2 : ‖(n2Readout P b₂ x U - n2Coef b₂ U) * star (n2Coef b₂ U)‖ ≤ ε * ‖b₂‖ := by
+      rw [norm_mul, norm_star]
+      exact mul_le_mul hd2.le (n2Coef_norm_le b₂ U) (norm_nonneg _) (div_pos hε₀pos hden).le
+    calc ‖(n2Readout P b₁ x U - n2Coef b₁ U) * star (n2Coef b₁ U)
+            + (n2Readout P b₂ x U - n2Coef b₂ U) * star (n2Coef b₂ U)‖
+        ≤ ‖(n2Readout P b₁ x U - n2Coef b₁ U) * star (n2Coef b₁ U)‖
+            + ‖(n2Readout P b₂ x U - n2Coef b₂ U) * star (n2Coef b₂ U)‖ := norm_add_le _ _
+      _ ≤ ε * ‖b₁‖ + ε * ‖b₂‖ := add_le_add hbd1 hbd2
+      _ = ε * (‖b₁‖ + ‖b₂‖) := by ring
+  have hprod : ‖(s : ℂ) * E - 1‖ * W ≤ ε * (‖b₁‖ + ‖b₂‖) := by
+    have h := hnum
+    rw [hfac, norm_mul, Complex.norm_real, Real.norm_eq_abs, abs_of_pos hWpos] at h
+    exact h
+  have hphase : ‖(s : ℂ) * E - 1‖ ≤ 1/4 := by
+    have hstep : ‖(s : ℂ) * E - 1‖ * ε₀ ≤ ε * (‖b₁‖ + ‖b₂‖) :=
+      le_trans (mul_le_mul_of_nonneg_left hWge (norm_nonneg _)) hprod
+    have hεC : ε * (‖b₁‖ + ‖b₂‖) ≤ ε₀ / 4 := by
+      rw [hεdef, div_mul_eq_mul_div, div_le_div_iff₀ hden (by norm_num : (0:ℝ) < 4)]
+      nlinarith [hε₀pos.le, hC0]
+    nlinarith [norm_nonneg ((s : ℂ) * E - 1), hε₀pos]
+  have hmod : |1 - s| < 1/4 := hδ₃ x hx0 hx3
+  have hEsub : ‖E - 1‖ < 1/2 := by
+    have h := norm_phase_sub_one_le (s := s) hE
+    linarith
+  rw [Complex.normSq_eq_norm_sq]
+  nlinarith [norm_nonneg (E - 1), hEsub]
+
+/-- **`lem:n2-bounded`.**  For any S1–S7 product with S2 on `H₂(ℂ)`, the ordered-frame parameter
+is bounded over *all* frames: `sup_U |t̃(U)| < ∞`.
+
+The article proves this by a contradiction argument needing operator-norm continuity of
+`a ↦ Θ_a` in the matrix argument.  This route never mentions `Θ`, never chooses a branch of a
+logarithm, and needs compactness of `U(2)` at exactly one point (the weight bound). -/
+theorem exists_n2FrameTwist_bound (hS2 : P.FirstArgContinuous) :
+    ∃ M : ℝ, 0 < M ∧ ∀ U : Matrix.unitaryGroup (Fin 2) ℂ,
+      |n2FrameTwist P hS2 U| ≤ M := by
+  obtain ⟨ε₀, hε₀pos, hε₀⟩ := exists_n2Weight_lower_bound
+  obtain ⟨δ, hδpos, hδ⟩ := exists_uniform_phase_near_one P hS2
+    (frameProj_isProjection (0 : Fin 2)).isEffect
+    (pairProj_isEffect (i := (0 : Fin 2)) (j := 1) (by decide)) hε₀pos hε₀
+  refine ⟨Real.pi / (3 * δ), by positivity, ?_⟩
+  intro U
+  exact abs_le_of_phase_near_one hδpos (fun x hx0 hxδ => hδ U x hx0 hxδ)
+
 end RankTwoExtraction
+
+/-! ## A product that is garbage off the effect set — certifying effect hypotheses
+
+★★ **Contributed by the ARC-7 cold review (2026-08-09), and it discharges a standing debt.**
+
+The project's *strong* inert-hypothesis test is: to certify a hypothesis load-bearing, **disprove
+the hypothesis-free statement**.  Failing to find a proof certifies nothing.  Four hypotheses in
+this file were stuck at the weak form — reasoned load-bearing, not certified — and the recorded
+obstacle was real: for the twist product `sp = twistSeq` *everywhere*, and
+`twistSeq_diagFamily_entry` holds for every `r` with no sign condition, so the twist product
+cannot witness any failure.  What was needed was a **bespoke** product agreeing with the twist
+product on effects and differing off them.
+
+`badP` is that product, and it exists for a structural reason worth stating: **every** field of
+`SequentialProductOn` guards all of its arguments with `IsEffect`, and `FirstArgContinuous` is a
+`ContinuousOn` over `{a | IsEffect a}`.  So the axioms say *nothing* about off-effect values, and
+setting them to `0` costs nothing.  The only field needing a thought is `compatible_ortho`, where
+`IsEffect (𝟙 - b)` may fail — and then both sides are `0` anyway.
+
+Consequence, stated generally because it is the reusable part: **one construction certifies any
+hypothesis whose only job is to place an argument inside the effect set.** The two theorems below
+do it for `n2Readout_eq`'s `hb` and `hx`; nothing further is needed for hypotheses of that shape. -/
+
+section EffectHypothesisWitness
+
+open Classical in
+/-- The twist product on effects, `0` anywhere else. -/
+noncomputable def badSp (t : ℝ) (a b : HermitianMat (Fin 2) ℂ) : HermitianMat (Fin 2) ℂ :=
+  if IsEffect a ∧ IsEffect b then (twistProductOn t).sp a b else 0
+
+theorem badSp_eq {t : ℝ} {a b : HermitianMat (Fin 2) ℂ} (ha : IsEffect a) (hb : IsEffect b) :
+    badSp t a b = (twistProductOn t).sp a b := if_pos ⟨ha, hb⟩
+
+theorem badSp_eq_zero {t : ℝ} {a b : HermitianMat (Fin 2) ℂ}
+    (h : ¬ (IsEffect a ∧ IsEffect b)) : badSp t a b = 0 := if_neg h
+
+/-- **A genuine S1–S7 sequential product that agrees with the twist product on effects and is
+`0` off them.**  Every clause reduces to the twist product's, because every clause is guarded by
+`IsEffect` on all of its arguments. -/
+noncomputable def badP (t : ℝ) : SequentialProductOn (HermitianMat (Fin 2) ℂ) where
+  sp := badSp t
+  sp_add_right := by
+    intro a b c ha hb hc hbc
+    have hbc' : IsEffect (b + c) := ⟨_root_.add_nonneg hb.1 hc.1, hbc⟩
+    rw [badSp_eq ha hbc', badSp_eq ha hb, badSp_eq ha hc]
+    exact (twistProductOn t).sp_add_right ha hb hc hbc
+  sp_unit_left := by
+    intro a ha
+    rw [badSp_eq isEffect_unit ha]
+    exact (twistProductOn t).sp_unit_left ha
+  sp_zero_symm := by
+    intro a b ha hb h
+    rw [badSp_eq ha hb] at h
+    rw [badSp_eq hb ha]
+    exact (twistProductOn t).sp_zero_symm ha hb h
+  sp_assoc_of_compatible := by
+    intro a b c ha hb hc hcomm
+    rw [badSp_eq ha hb, badSp_eq hb ha] at hcomm
+    rw [badSp_eq hb hc, badSp_eq ha hb,
+      badSp_eq ha ((twistProductOn t).sp_effect hb hc),
+      badSp_eq ((twistProductOn t).sp_effect ha hb) hc]
+    exact (twistProductOn t).sp_assoc_of_compatible ha hb hc hcomm
+  compatible_ortho := by
+    intro a b ha hb hcomm
+    rw [badSp_eq ha hb, badSp_eq hb ha] at hcomm
+    by_cases hob : IsEffect (OrderUnitSpace.ousUnit - b)
+    · rw [badSp_eq ha hob, badSp_eq hob ha]
+      exact (twistProductOn t).compatible_ortho ha hb hcomm
+    · rw [badSp_eq_zero (fun h => hob h.2), badSp_eq_zero (fun h => hob h.1)]
+  compatible_add := by
+    intro a b c ha hb hc hbc hab hac
+    have hbc' : IsEffect (b + c) := ⟨_root_.add_nonneg hb.1 hc.1, hbc⟩
+    rw [badSp_eq ha hb, badSp_eq hb ha] at hab
+    rw [badSp_eq ha hc, badSp_eq hc ha] at hac
+    rw [badSp_eq ha hbc', badSp_eq hbc' ha]
+    exact (twistProductOn t).compatible_add ha hb hc hbc hab hac
+  compatible_sp := by
+    intro a b c ha hb hc hab hac
+    rw [badSp_eq ha hb, badSp_eq hb ha] at hab
+    rw [badSp_eq ha hc, badSp_eq hc ha] at hac
+    rw [badSp_eq hb hc, badSp_eq ha ((twistProductOn t).sp_effect hb hc),
+      badSp_eq ((twistProductOn t).sp_effect hb hc) ha]
+    exact (twistProductOn t).compatible_sp ha hb hc hab hac
+  sp_effect := by
+    intro a b ha hb
+    rw [badSp_eq ha hb]
+    exact (twistProductOn t).sp_effect ha hb
+
+theorem badP_sp (t : ℝ) (a b : HermitianMat (Fin 2) ℂ) :
+    (badP t).sp a b = badSp t a b := rfl
+
+/-- `badP` satisfies S2 as well, so it is a witness against the *full* hypothesis set. -/
+theorem badP_S2 (t : ℝ) : (badP t).FirstArgContinuous := by
+  intro b hb
+  refine ContinuousOn.congr (twistProductOn_firstArgContinuous t hb) ?_
+  intro a ha
+  exact badSp_eq ha hb
+
+theorem n2Coef_one (b : HermitianMat (Fin 2) ℂ) : n2Coef b 1 = b.mat 0 1 := by
+  simp [n2Coef, adU_apply]
+
+theorem adU_zero_entry (M : Matrix (Fin 2) (Fin 2) ℂ) :
+    (adU M (0 : HermitianMat (Fin 2) ℂ)).mat 0 1 = 0 := by
+  rw [adU_apply, HermitianMat.conj_apply_mat]
+  simp
+
+theorem negPair_not_effect : ¬ IsEffect ((-1 : ℝ) • pairProj (0 : Fin 2) 1) := by
+  intro h
+  have h0 : (0 : HermitianMat (Fin 2) ℂ) ≤ (-1 : ℝ) • pairProj (0 : Fin 2) 1 := h.1
+  rw [show ((-1 : ℝ) • pairProj (0 : Fin 2) 1) = -(pairProj (0 : Fin 2) 1) by simp] at h0
+  have hzero : pairProj (0 : Fin 2) 1 = 0 :=
+    le_antisymm (neg_nonneg.mp h0) (pairProj_isEffect (by decide : (0 : Fin 2) ≠ 1)).1
+  have hentry : (pairProj (0 : Fin 2) 1).mat 0 1 = (0 : HermitianMat (Fin 2) ℂ).mat 0 1 := by
+    rw [hzero]
+  rw [pairProj_entry (by decide : (0 : Fin 2) ≠ 1)] at hentry
+  simp at hentry
+
+/-- **`n2Readout_eq`'s `hb` is load-bearing — the hypothesis-free statement is FALSE.**  Witness:
+`badP 0`, second argument `-pairProj 0 1` (not an effect), `x = 1`, `U = 1`.  The left side is `0`
+because the product is garbage there; the right side is a product of three nonzero factors — and
+note the value of `n2FrameTwist` is never needed, since `Complex.exp` never vanishes. -/
+theorem hb_is_load_bearing :
+    ¬ (∀ (P : SequentialProductOn (HermitianMat (Fin 2) ℂ)) (hS2 : P.FirstArgContinuous)
+        (b : HermitianMat (Fin 2) ℂ) (x : ℝ), 0 ≤ x →
+        ∀ U : Matrix.unitaryGroup (Fin 2) ℂ,
+        n2Readout P b x U
+          = ((Real.sqrt (Real.exp (-x)) : ℝ) : ℂ)
+            * Complex.exp (((-(n2FrameTwist P hS2 U * x) : ℝ) : ℂ) * Complex.I)
+            * n2Coef b U) := by
+  intro hall
+  have hbad := hall (badP 0) (badP_S2 0) ((-1 : ℝ) • pairProj (0 : Fin 2) 1) 1 zero_le_one 1
+  have hlhs : n2Readout (badP 0) ((-1 : ℝ) • pairProj (0 : Fin 2) 1) 1 1 = 0 := by
+    unfold n2Readout
+    rw [badP_sp, badSp_eq_zero (fun h => negPair_not_effect h.2), adU_zero_entry]
+  have hcoef : n2Coef ((-1 : ℝ) • pairProj (0 : Fin 2) 1) 1 ≠ 0 := by
+    rw [n2Coef_one, HermitianMat.mat_smul, Matrix.smul_apply,
+      pairProj_entry (by decide : (0 : Fin 2) ≠ 1)]
+    norm_num
+  have hsq : ((Real.sqrt (Real.exp (-(1:ℝ))) : ℝ) : ℂ) ≠ 0 :=
+    Complex.ofReal_ne_zero.mpr (ne_of_gt (Real.sqrt_pos.mpr (Real.exp_pos _)))
+  rw [hlhs] at hbad
+  exact (mul_ne_zero (mul_ne_zero hsq (Complex.exp_ne_zero _)) hcoef) hbad.symm
+
+theorem basePt_neg_not_effect_core : ¬ IsEffect (basePt (-1)) := by
+  intro h
+  have hpos : (0 : HermitianMat (Fin 2) ℂ) ≤ 1 - basePt (-1) := sub_nonneg.mpr h.2
+  rw [show basePt (-1 : ℝ) = diagFamily ((-1 : ℝ) • axisSplit (0 : Fin 2)) from rfl] at hpos
+  have hsub : (1 : HermitianMat (Fin 2) ℂ) - diagFamily ((-1 : ℝ) • axisSplit (0 : Fin 2))
+      = HermitianMat.diagonal ℂ
+        (fun i => 1 - Real.exp (((-1 : ℝ) • axisSplit (0 : Fin 2)) i)) := by
+    rw [show (fun i : Fin 2 => 1 - Real.exp (((-1 : ℝ) • axisSplit (0 : Fin 2)) i))
+        = (1 : Fin 2 → ℝ) - fun i => Real.exp (((-1 : ℝ) • axisSplit (0 : Fin 2)) i) from rfl,
+      HermitianMat.diagonal_sub, HermitianMat.diagonal_one]
+    rfl
+  rw [hsub, HermitianMat.zero_le_iff, HermitianMat.diagonal_mat] at hpos
+  have hd := hpos.diag_nonneg (i := (0 : Fin 2))
+  rw [Matrix.diagonal_apply_eq,
+    show ((-1 : ℝ) • axisSplit (0 : Fin 2)) 0 = 1 by
+      simp only [Pi.smul_apply, smul_eq_mul, axisSplit, if_pos]; ring] at hd
+  have hreal : (0 : ℝ) ≤ 1 - Real.exp 1 := (Complex.le_def.mp hd).1
+  nlinarith [Real.add_one_le_exp (1 : ℝ)]
+
+theorem adU_one_eq (y : HermitianMat (Fin 2) ℂ) :
+    adU ((1 : Matrix.unitaryGroup (Fin 2) ℂ) : Matrix (Fin 2) (Fin 2) ℂ) y = y := by
+  apply HermitianMat.ext
+  simp [adU_apply]
+
+theorem basePt_neg_not_effect :
+    ¬ IsEffect (adU ((1 : Matrix.unitaryGroup (Fin 2) ℂ) : Matrix (Fin 2) (Fin 2) ℂ)
+      (basePt (-1))) := by
+  rw [adU_one_eq]
+  exact basePt_neg_not_effect_core
+
+/-- **`n2Readout_eq`'s `hx` is load-bearing — the hypothesis-free statement is FALSE.**  Witness:
+`badP 0`, `b = pairProj 0 1` (an effect this time), `x = -1`, `U = 1`.  At a negative scale the
+base point `diag(e, 1)` is not an effect, so the *first* argument leaves the guarded region. -/
+theorem hx_is_load_bearing :
+    ¬ (∀ (P : SequentialProductOn (HermitianMat (Fin 2) ℂ)) (hS2 : P.FirstArgContinuous)
+        {b : HermitianMat (Fin 2) ℂ}, IsEffect b → ∀ (x : ℝ)
+        (U : Matrix.unitaryGroup (Fin 2) ℂ),
+        n2Readout P b x U
+          = ((Real.sqrt (Real.exp (-x)) : ℝ) : ℂ)
+            * Complex.exp (((-(n2FrameTwist P hS2 U * x) : ℝ) : ℂ) * Complex.I)
+            * n2Coef b U) := by
+  intro hall
+  have hbad := hall (badP 0) (badP_S2 0)
+    (pairProj_isEffect (by decide : (0 : Fin 2) ≠ 1)) (-1) 1
+  have hlhs : n2Readout (badP 0) (pairProj (0 : Fin 2) 1) (-1) 1 = 0 := by
+    unfold n2Readout
+    rw [badP_sp, badSp_eq_zero (fun h => basePt_neg_not_effect (by simpa using h.1)),
+      adU_zero_entry]
+  have hcoef : n2Coef (pairProj (0 : Fin 2) 1) 1 ≠ 0 := by
+    rw [n2Coef_one, pairProj_entry (by decide : (0 : Fin 2) ≠ 1)]
+    norm_num
+  have hsq : ((Real.sqrt (Real.exp (-(-1 : ℝ))) : ℝ) : ℂ) ≠ 0 :=
+    Complex.ofReal_ne_zero.mpr (ne_of_gt (Real.sqrt_pos.mpr (Real.exp_pos _)))
+  rw [hlhs] at hbad
+  exact (mul_ne_zero (mul_ne_zero hsq (Complex.exp_ne_zero _)) hcoef) hbad.symm
+
+/-- **A sign check that bypasses `twistSeq_diagFamily_entry`.**  Also from the ARC-7 review.
+
+`readout_direct` was kept as a cross-check on the sign, and a reviewer correctly observed it is
+*not* independent: it and `n2Readout_eq` both rewrite with `twistSeq_diagFamily_entry`, so an
+error there would flip both and they would still agree.  This one goes through
+`twistFactor_diagFamily_diagonal` instead, never touching the entry lemma, and localizes the sign
+to the twist factor's own `(0,0)` entry — where it is forced by the `+ Complex.I •` in
+`twistFactor` and by `Real.log_exp`. -/
+theorem sign_check (t x : ℝ) :
+    HermitianMat.twistFactor (basePt x) t 0 0
+      = ((Real.sqrt (Real.exp (-x)) : ℝ) : ℂ)
+        * Complex.exp (((-(t * x) : ℝ) : ℂ) * Complex.I) := by
+  rw [basePt, twistFactor_diagFamily_diagonal, Matrix.diagonal_apply_eq,
+    show (x • axisSplit (0 : Fin 2)) 0 = -x by
+      simp only [Pi.smul_apply, smul_eq_mul, axisSplit, if_pos]; ring]
+  congr 2
+  push_cast
+  ring
+
+end EffectHypothesisWitness
 
 /-! ## The article's own frame adjacency
 

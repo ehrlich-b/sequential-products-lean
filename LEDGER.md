@@ -160,6 +160,60 @@ sentence commit messages; all commits LOCAL (repo is public — never push, neve
 manuscript untouched (blob `205fdf5a` must survive the arc); everything outward
 Bryan-gated. Never say "fully formalized".
 
+### ARC-7 EXECUTION RECORD (append per block; the orders above stay as written)
+
+**7.0 reviewer-first on the readout block — DELIVERED, and it paid for itself immediately.** One
+narrow reviewer, pinned to tag `paperA-arc7-cp0` (`d0f1312`), briefed on four concerns and told
+explicitly that plain text is not delivered and it must call `SendMessage`. It reported. Findings,
+each verified at source before applying **or** rejecting:
+
+| Finding | Disposition |
+| --- | --- |
+| ★★ **`n2Readout_eq`'s `hb` and `hx` are BOTH load-bearing in the STRONG form** — not "reasoned", *disproved without them*, with compiled witnesses and axioms `[propext, Classical.choice, Quot.sound]`. The vehicle is `badP`: the twist product on effects, `0` off them. It is a genuine S1–S7+S2 product because **every** `SequentialProductOn` field guards all arguments with `IsEffect` and `FirstArgContinuous` is a `ContinuousOn` over the effects, so off-effect values are unconstrained. | **ADOPTED AND BANKED IN-TREE** (`badSp`, `badP`, `badP_S2`, `hb_is_load_bearing`, `hx_is_load_bearing`, `FrameConstancy.lean` section `EffectHypothesisWitness`). ★ This **discharges the whole "four hypotheses needing a bespoke product" debt**, not just two of them: one construction certifies *any* hypothesis whose only job is to place an argument in the effect set. The debt had stood since ARC-6 with a correct diagnosis of why it was hard and no route; the route was "the axioms say nothing off the effect set", which was in the class docstring the whole time. |
+| **A sign check that bypasses `twistSeq_diagFamily_entry`.** `readout_direct` was known non-independent (both chains rewrite that lemma); this one goes through `twistFactor_diagFamily_diagonal` instead. | **ADOPTED** as `sign_check`. The sign is now guarded *below* the entry lemma, which `readout_direct` could not do. |
+| **STALE DOCSTRING** at `n2Comb_eq`: "that upgrade is not yet assembled", of the weight-positivity upgrade — which is assembled sixty lines below (`n2Weight_pos`, `exists_n2Weight_lower_bound`). | **FIXED.** ★ This is the **second** instance in this one file of telling a top-down reader that a theorem beneath them does not exist. The transferable rule: **a docstring that asserts an absence has to be re-read every time the file grows**, because the file grows underneath it. |
+| `n2Weight_pos`'s one-line docstring ("the two-effect weight never vanishes") reads as a claim about an arbitrary pair; it holds for a *fixed* pair (`U` is arbitrary, the pair is not). | **FIXED** — scope now in the docstring, with why the fixed pair is essential. |
+| **Step (iii) of the banked plan — "assemble continuity of `n2Comb`" — is UNNECESSARY.** The argument needs only a two-point comparison against `x = 0`, which the one-point S2 argument gives directly; joint continuity does not yield U-uniformity anyway. | **CONFIRMED BY THE COMPILED PROOF** — `exists_n2FrameTwist_bound` never uses `n2Comb`'s continuity, and `continuousOn_n2Readout` is **not on the critical path**. See the pricing note below. |
+| Advice: route the ε–δ extraction through `ouNorm` (`Necessity/OrderUnitS2.lean`), because "`FirstArgContinuous` is a topological `ContinuousOn`, so the extraction MUST route through" it. | ★ **REJECTED WITH EVIDENCE.** `FirstArgContinuous` is `ContinuousOn` in the *carrier's own* norm topology, and on `HermitianMat` that norm **is** Frobenius (`Vendor/HermitianMat/Inner.lean` `instNormedGroup`). So `Metric.continuousWithinAt_iff` applies directly and no norm-equivalence bridge is needed. The compiled proof is the certificate. The reviewer's route is sound but strictly more work. *Reviewers are confidently wrong in both directions — this arc's first instance was the reviewer, not me.* |
+| Its account of *why* step (i) gives a U-uniform scale: "not from a norm identity" but from anchoring at the same point. | **HALF ADOPTED.** Both are needed and the proof uses both: anchoring (`basePt 0 = 𝟙`, `Ad_U 𝟙 = 𝟙`) is why one point suffices, and the isometry (`norm_adU`) is what makes the *distance* U-independent. Neither alone closes it. |
+| Toolchain note: `lake env lean` from any cwd other than the repo root silently picks up elan default v4.32.2 and fails with "unknown module prefix RadicalRelativity". | **RECORDED** (already a standing hazard in the ARC-7 orders; now confirmed by an outside party). |
+
+**7.1(a) `lem:n2-bounded` — PROVED. `Necessity.exists_n2FrameTwist_bound`.** Row 32 ABSENT →
+**FORMALIZED**; coverage **8/19/9 → 9/19/8**. Gates at the commit: `lake build` 3106 jobs, census
+149, custom axioms exactly `[]`, and **zero warnings anywhere in the added region** (the file's
+pre-existing `show`-style warnings are all above it). New infrastructure, in
+`Necessity/ConjTransport.lean`: `norm_conj_unitary` / `norm_adU` (conjugation is a Frobenius
+isometry — by *trace cyclicity*, three lines, no entrywise argument) and `norm_entry_le_norm`.
+`LEDGER-ARCHIVE-M1-M7.md` had recorded that Mathlib has `frobenius_norm_def` "but no congruence
+invariance"; that remains true of Mathlib and is why these are first-party, but the price was
+nothing like what "no congruence invariance" suggests.
+
+★★ **THE ROW WAS MISPRICED TWICE, IN OPPOSITE DIRECTIONS, AND BOTH PRICINGS WERE MINE.**
+ARC-6 banked "one uniform-continuity step, nothing but plumbing" — too cheap, and a review
+retracted it. On 2026-08-09 I replaced that with "four steps, one genuinely analytic" — **too
+expensive**. The real count is **three**, and *none of them is a uniform-continuity step*: the
+fourth item ("assemble continuity of `n2Comb`") was never needed, and the outside reviewer said so
+before the proof existed. What the two errors have in common is that both were estimates written
+*instead of* an attempt. The lesson is not "price more carefully"; it is **that a price quoted
+without an attempt is a guess, and this project's guesses have been wrong in both directions about
+the same row.** Prefer attempting the cheapest step to re-pricing the whole row.
+
+The three steps as executed, and what each actually cost: (i) **the uniform scale** —
+`exists_uniform_sp_close`, S2 applied at the *single* effect `a = 𝟙`, uniform in `U` because
+conjugation is an isometry; **no compactness**, and not even the explicit value of
+`‖Ad_U(basePt x) − 𝟙‖` (continuity of `basePt` at `0` plus `basePt 0 = 𝟙` suffices — cheaper than
+the reviewer's own explicit-`|e^{−x}−1|` route). (ii) **stripping the modulus** —
+`norm_phase_sub_one_le`, the step ARC-6 missed entirely; genuinely analytic but small. (iii) **the
+budget in order** — `ε := ε₀/(4(C+1))` chosen *after* the weight bound, each defect eating a
+quarter. Compactness of `U(2)` enters at exactly one point, `exists_n2Weight_lower_bound`, which
+was already in the tree.
+
+Two earlier plan errors are recorded in `STATEMENT-MANIFEST.md` row 32 rather than repeated here:
+there is no "product metric" argument available and **none is needed** (the uniformity is
+algebraic), and `Ici 0 ×ˢ univ` is not compact, which is why nothing extremizes over it.
+Consequence for the next rung: `lem:n2-continuity`'s recorded blocker — "cannot be attempted
+before boundedness" — is **lifted**.
+
 ---
 
 ## ★★ ARC-6 ORDERS (2026-08-08, Fable design pass — the big-chunk climb). **Superseded as campaign SSOT by ARC-7 above (2026-08-09); the execution record and lessons below remain binding.**
