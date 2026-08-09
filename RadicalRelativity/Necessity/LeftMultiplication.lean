@@ -426,4 +426,41 @@ theorem sp_tendsto_of_tendsto {a : HermitianMat n 𝕜} (ha : IsEffect a)
   rw [← seqLeftMul_apply_effect P ha hblim]
   exact h.congr (fun k => seqLeftMul_apply_effect P ha (hb k))
 
+/-! ### `lem:normality`'s second clause: compatibility passes to limits
+
+★★ New 2026-08-09 (ARC-8 block 8.2).  The article's phrasing is "compatibility passes to
+order-infima"; this is that clause in the form this carrier can state it — a convergent sequence
+rather than a `⨅`, matching the convergence clause above.
+
+★ **This clause DOES need S2, and the asymmetry is the content.**  The clause is a statement about
+two limits: `a · b_k → a · b` is free (second-argument continuity, from `seqLeftMul`'s linearity —
+see the note above), but `b_k · a → b · a` is first-argument continuity, which is exactly S2 and is
+*not* free.  So the previous clause's "S2 is not used at all" does not extend here, and a reader who
+carried that sentence forward would be wrong.
+
+Scope, stated so it is not overread: this is the sequential form.  Deriving the article's
+order-infimum form from it additionally needs "a decreasing sequence of effects converges to its
+infimum" for the Loewner order, which is **not** in the tree: grepping
+`iInf|⨅|Antitone|antitone|tendsto_of_antitone` over `RadicalRelativity/` (2026-08-09) returns only
+`Submodule`-kernel infima and one vendored `Set.Icc`-subtype lemma, nothing about this order.  So
+row 9 stays PARTIAL. -/
+
+/-- **`lem:normality`, compatibility clause.**  If `a` is compatible with every term of a
+convergent sequence of effects, it is compatible with the limit. -/
+theorem compatible_of_tendsto (hS2 : P.FirstArgContinuous)
+    {a : HermitianMat n 𝕜} (ha : IsEffect a)
+    (b : ℕ → HermitianMat n 𝕜) (hb : ∀ k, IsEffect (b k))
+    (blim : HermitianMat n 𝕜) (hblim : IsEffect blim)
+    (hconv : Filter.Tendsto b Filter.atTop (nhds blim))
+    (hcomp : ∀ k, P.sp a (b k) = P.sp (b k) a) :
+    P.sp a blim = P.sp blim a := by
+  have hleft : Filter.Tendsto (fun k => P.sp a (b k)) Filter.atTop (nhds (P.sp a blim)) :=
+    sp_tendsto_of_tendsto P ha b hb blim hblim hconv
+  have hwithin : Filter.Tendsto b Filter.atTop
+      (nhdsWithin blim {x : HermitianMat n 𝕜 | IsEffect x}) :=
+    tendsto_nhdsWithin_iff.mpr ⟨hconv, Filter.Eventually.of_forall hb⟩
+  have hright : Filter.Tendsto (fun k => P.sp (b k) a) Filter.atTop (nhds (P.sp blim a)) :=
+    (hS2 ha blim hblim).tendsto.comp hwithin
+  exact tendsto_nhds_unique (hleft.congr hcomp) hright
+
 end Necessity
