@@ -748,6 +748,27 @@ noncomputable def n2Coef (b : HermitianMat (Fin 2) ℂ)
     (U : Matrix.unitaryGroup (Fin 2) ℂ) : ℂ :=
   (adU ((U : Matrix (Fin 2) (Fin 2) ℂ)ᴴ) b).mat 0 1
 
+/-- **The two test effects share no eigenbasis** — so the banked boundedness route's combined
+weight never vanishes.
+
+`n2Coef b U = (Uᴴ b U) 0 1 = ⟪u, b v⟫` for `u, v` the columns of `U`, and it vanishes for a
+given `b` exactly when `v` is an eigenvector of `b`.  So a *single* test effect is not enough:
+every non-scalar `b` is blind at the frames that diagonalize it.  Two effects suffice provided
+they have no common eigenvector — equivalently, for rank-one projections in dimension two, that
+they do not commute.  That is this lemma, and it is why `frameProj 0` together with
+`pairProj 0 1` is the right pair.
+
+Settled in response to a cold reviewer asking whether the weight could vanish at some `U`. It
+cannot. -/
+theorem frameProj_pairProj_not_commute :
+    (frameProj (0 : Fin 2)).mat * (pairProj (0 : Fin 2) 1).mat
+      ≠ (pairProj (0 : Fin 2) 1).mat * (frameProj (0 : Fin 2)).mat := by
+  intro h
+  have h01 := congrFun (congrFun h 0) 1
+  have h10 := congrFun (congrFun h 1) 0
+  simp [frameProj_mat_eq_single, pairProj, HermitianMat.rankOne, Matrix.mul_apply,
+    Matrix.single, Pi.single_apply, Matrix.vecMulVec_apply] at h01 h10
+
 /-- The readout: the `(0,1)` entry of `P.sp (base point in the frame of `U`) b`, pulled back
 to the standard frame. -/
 noncomputable def n2Readout (b : HermitianMat (Fin 2) ℂ) (x : ℝ)

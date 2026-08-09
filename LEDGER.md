@@ -321,6 +321,13 @@ a composition of named continuous pieces so nothing has to unfold, or to prove t
 against an `abbrev` with `@[simp]` projection lemmas. Cheap for whoever picks it up; not a
 research problem.
 
+★ **Reviewer B's third question — can the combined weight vanish? — is answered NO, and
+proved.** `n2Coef b U = ⟪u, b v⟫` vanishes exactly when the second column of `U` is an
+eigenvector of `b`, so a single test effect is never enough: every non-scalar `b` is blind at
+the frames that diagonalize it. Two suffice iff they share no eigenvector, which for rank-one
+projections in dimension two means they do not commute — `frameProj_pairProj_not_commute`. So
+`frameProj 0` with `pairProj 0 1` is a valid pair and the banked route has no hole here.
+
 **What genuinely remains as review debt, narrowly:** the four weakly-tested hypotheses
 (`n2Readout_eq`'s `hb`/`hx`, `adU_conj_twistSeq`'s `hU`/`hU'`), whose certification needs a
 bespoke product agreeing with the twist product on effects and differing off them; and the
