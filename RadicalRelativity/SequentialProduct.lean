@@ -693,4 +693,82 @@ theorem sp_smul_left (harch : IsArchimedean V) (hS2 : P.FirstArgContinuous) {a b
     rw [sp_smul_right_of_unitInterval P harch ha isEffect_unit ht0 ht1, hu]] at hassoc
   exact hassoc.symm
 
+/-! ## `lem:cone-ext`: the positive-cone extension in the first argument -/
+
+/-- `μ` is an admissible normalization for `v`: positive, and `v/μ` is an effect.
+
+The article's condition is `μ ≥ ‖v‖`, `μ > 0`; this is the same requirement stated without
+the norm, which is what the argument actually uses.  Stating it this way makes the row
+independent of whether the carrier's norm *is* the order-unit norm — the article gets
+`v ≤ μ𝟙` from `‖v‖ ≤ μ` "in an order unit space", and here the class's own order-unit
+boundedness supplies an admissible `μ` directly. -/
+def IsConeNorm (v : V) (μ : ℝ) : Prop := 0 < μ ∧ IsEffect (μ⁻¹ • v)
+
+/-- Admissible normalizations exist for every positive-cone element — from order-unit
+boundedness alone, with no reference to the norm. -/
+theorem exists_isConeNorm {v : V} (hv : (0 : V) ≤ v) : ∃ μ : ℝ, IsConeNorm v μ := by
+  obtain ⟨r, hr0, hr⟩ := archimedean v
+  refine ⟨r + 1, by linarith, smul_nonneg' (by positivity) hv, ?_⟩
+  have hle : v ≤ (r + 1) • (𝟙 : V) :=
+    le_trans hr (smul_le_smul_of_le_of_nonneg (by linarith) ousUnit_nonneg)
+  have h := smul_nonneg_mono (r + 1)⁻¹ (by positivity) hle
+  rwa [smul_smul, inv_mul_cancel₀ (by positivity), one_smul] at h
+
+/-- An effect is its own normalization at `μ = 1`. -/
+theorem isConeNorm_one {v : V} (hv : IsEffect v) : IsConeNorm v 1 := by
+  refine ⟨zero_lt_one, ?_⟩
+  rwa [inv_one, one_smul]
+
+/-- **`lem:cone-ext`, independence of the normalization.**  Any two admissible
+normalizations give the same extended value. -/
+theorem sp_coneNorm_indep (harch : IsArchimedean V) (hS2 : P.FirstArgContinuous)
+    {v : V} {μ μ' : ℝ} (h : IsConeNorm v μ) (h' : IsConeNorm v μ')
+    {b : V} (hb : IsEffect b) :
+    μ • P.sp (μ⁻¹ • v) b = μ' • P.sp (μ'⁻¹ • v) b := by
+  -- symmetric in `μ, μ'`, so prove the `μ ≤ μ'` case and apply it both ways
+  have key : ∀ {c d : ℝ}, IsConeNorm v c → IsConeNorm v d → c ≤ d →
+      c • P.sp (c⁻¹ • v) b = d • P.sp (d⁻¹ • v) b := by
+    intro c d hc hd hcd
+    have hc0 : 0 < c := hc.1
+    have hd0 : 0 < d := hd.1
+    have hratio0 : 0 ≤ c / d := by positivity
+    have hratio1 : c / d ≤ 1 := by
+      rw [div_le_one hd0]; exact hcd
+    have hsplit : d⁻¹ • v = (c / d) • (c⁻¹ • v) := by
+      rw [smul_smul, div_mul_eq_mul_div, mul_inv_cancel₀ (ne_of_gt hc0), one_div]
+    rw [hsplit, sp_smul_left P harch hS2 hc.2 hb hratio0 hratio1, smul_smul]
+    congr 1
+    field_simp
+  rcases le_total μ μ' with hle | hle
+  · exact key h h' hle
+  · exact (key h' h hle).symm
+
+/-- **`lem:cone-ext`, agreement with the original operation on effects.** -/
+theorem sp_coneNorm_eq_of_isEffect (harch : IsArchimedean V) (hS2 : P.FirstArgContinuous)
+    {v : V} (hv : IsEffect v) {μ : ℝ} (h : IsConeNorm v μ)
+    {b : V} (hb : IsEffect b) :
+    μ • P.sp (μ⁻¹ • v) b = P.sp v b := by
+  have h1 := sp_coneNorm_indep P harch hS2 h (isConeNorm_one hv) hb
+  rwa [inv_one, one_smul, one_smul] at h1
+
+/-- **`lem:cone-ext`, positive homogeneity in the first argument.**  Scaling `v` by
+`lam > 0` scales the extended value by `lam`: an admissible normalization for `lam • v` is
+`lam * μ`. -/
+theorem coneNorm_smul_rescale {v : V} {μ lam : ℝ} (hμ : μ ≠ 0) (hlam : lam ≠ 0) :
+    (lam * μ)⁻¹ • (lam • v) = μ⁻¹ • v := by
+  rw [smul_smul]
+  congr 1
+  field_simp
+
+theorem isConeNorm_smul {v : V} {μ lam : ℝ} (h : IsConeNorm v μ) (hlam : 0 < lam) :
+    IsConeNorm (lam • v) (lam * μ) := by
+  refine ⟨mul_pos hlam h.1, ?_⟩
+  rw [coneNorm_smul_rescale (ne_of_gt h.1) (ne_of_gt hlam)]
+  exact h.2
+
+theorem sp_coneNorm_smul {v : V} {μ lam : ℝ} (h : IsConeNorm v μ) (hlam : 0 < lam)
+    (b : V) :
+    (lam * μ) • P.sp ((lam * μ)⁻¹ • (lam • v)) b = lam • (μ • P.sp (μ⁻¹ • v) b) := by
+  rw [coneNorm_smul_rescale (ne_of_gt h.1) (ne_of_gt hlam), smul_smul]
+
 end SequentialProductOn
