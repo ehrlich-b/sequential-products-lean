@@ -386,20 +386,20 @@ everywhere else in this file — no branch of a logarithm is chosen.
 version, not merely by failing to prove it): at `δ = 0` the premise quantifies over `0 ≤ x ≤ 0`,
 so only `x = 0`, where the distance is `0 < 1` — the premise then holds for *every* `t`, while
 `π / (3 * 0) = 0` in Lean would force `|t| ≤ 0`.  `t = 1` refutes it. -/
-theorem abs_le_of_phase_near_one {t δ : ℝ} (hδ : 0 < δ)
+theorem abs_lt_of_phase_near_one {t δ : ℝ} (hδ : 0 < δ)
     (h : ∀ x : ℝ, 0 ≤ x → x ≤ δ →
       Complex.normSq (Complex.exp (((-(t * x) : ℝ) : ℂ) * Complex.I) - 1) < 1) :
-    |t| ≤ Real.pi / (3 * δ) := by
+    |t| < Real.pi / (3 * δ) := by
   by_contra hcon
   push_neg at hcon
   have hpi : 0 < Real.pi := Real.pi_pos
   have hnum : 0 < Real.pi / (3 * δ) := by positivity
-  have habs : 0 < |t| := lt_trans hnum hcon
+  have habs : 0 < |t| := lt_of_lt_of_le hnum hcon
   set x : ℝ := Real.pi / (3 * |t|) with hx
   have hxpos : 0 < x := by rw [hx]; positivity
   have hxle : x ≤ δ := by
     rw [hx, div_le_iff₀ (by positivity)]
-    rw [div_lt_iff₀ (by positivity)] at hcon
+    rw [div_le_iff₀ (by positivity)] at hcon
     nlinarith
   have hcos : Real.cos (-(t * x)) = 1 / 2 := by
     rw [Real.cos_neg]
@@ -413,6 +413,17 @@ theorem abs_le_of_phase_near_one {t δ : ℝ} (hδ : 0 < δ)
   have hval := h x hxpos.le hxle
   rw [normSq_exp_I_sub_one, hcos] at hval
   norm_num at hval
+
+/-- The non-strict form, kept for callers.  ★ Sharpness note (2026-08-08): the strict version
+above is the correct statement — the premise `normSq(e^{-itx} − 1) < 1` says `cos(tx) > 1/2`,
+which as `x` sweeps `[0,δ]` in the principal branch forces `|t|δ < π/3`.  So the constant `π/3`
+is right and the inequality is strict; the earlier `≤` form was correct but weaker.  Found by
+doing the sharpness analysis a cold reviewer was asked for. -/
+theorem abs_le_of_phase_near_one {t δ : ℝ} (hδ : 0 < δ)
+    (h : ∀ x : ℝ, 0 ≤ x → x ≤ δ →
+      Complex.normSq (Complex.exp (((-(t * x) : ℝ) : ℂ) * Complex.I) - 1) < 1) :
+    |t| ≤ Real.pi / (3 * δ) :=
+  le_of_lt (abs_lt_of_phase_near_one hδ h)
 
 section RankTwoExtraction
 

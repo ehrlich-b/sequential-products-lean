@@ -297,8 +297,10 @@ ways (crown probe `n2FrameTwist (twistProductOn t) U = t`; `basePt x = diag(e^{�
 log-ratio `−x`) and non-vacuity at `diag(i,1)`, the phase sign now has an **independent
 derivation in the tree** (`readout_direct`: the same formula for the twist product at the standard
 frame, derived straight from `twistSeq_diagFamily_entry` and nothing else — two routes, one
-formula, so a refactor that flips either chain breaks the agreement), and the `π/(3δ)` constant is
-cross-checked (`normSq (exp(iπ/3) − 1) = 1` exactly, and at `t = π/(3δ)` the phase reaches
+formula, so a refactor that flips either chain breaks the agreement), the `π/(3δ)` constant is now **derived as sharp** — the premise says
+`cos(tx) > 1/2`, which as `x` sweeps `[0,δ]` in the principal branch forces `|t|δ < π/3`, so the
+constant is right and the inequality is **strict**; `abs_lt_of_phase_near_one` now states that and
+`abs_le_of_phase_near_one` is its corollary — and the constant is also (`normSq (exp(iπ/3) − 1) = 1` exactly, and at `t = π/(3δ)` the phase reaches
 distance 1 at `x = δ` — so the strict hypothesis excludes that `t` and the `≤` conclusion is a
 valid, if not sharp, bound). What remains unreviewed there is the *derivation as a whole*, not
 any one constant. **The next
