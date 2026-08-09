@@ -214,6 +214,102 @@ algebraic), and `Ici 0 ×ˢ univ` is not compact, which is why nothing extremize
 Consequence for the next rung: `lem:n2-continuity`'s recorded blocker — "cannot be attempted
 before boundedness" — is **lifted**.
 
+**7.1(c) the rank-two descent — CLOSED, and by a route a reviewer supplied after refuting mine.**
+`RankTwo.blochFrame_eq_iff` first: the Bloch map's fibres on the frame space are **exactly**
+complementary pairs. That is the converse of the in-tree `blochFrame_orthoFrame` and was the
+descent's documented missing ingredient — the tree knew `blochFrame` identifies a ray with its
+complement, and a descent needs that it identifies *nothing else*. Content is one positive-scalar
+computation; the negative case is free from `blochVec_orthoVec`. The step that makes it work is
+`blochVec_normSq` pinning the *scale* of the proportionality, after which the coordinates determine
+the ray.
+
+★★ **Then checkpoint 1 refuted the caveat I had written on rows 32/33 and I rebuilt instead of
+re-wording.** The caveat said fibre-constancy plus surjectivity of "the frame map" made those rows
+the article's frame-indexed statements. Two things were wrong. (a) **No map from `U(2)` to any frame
+space existed anywhere in the tree**, so the surjectivity clause was prose about an undefined
+object. (b) For CONTINUITY the inference is not merely unproved but **invalid**: continuity of a
+pullback along a bare surjection does not give continuity downstairs — that needs a quotient map.
+The reviewer recommended downgrading row 33. Landed instead: `frameMap`, `FrameSpace`,
+`toFrameSpace`, `isQuotientMap_toFrameSpace`, `n2Moduli`, **`continuous_n2Moduli`**,
+**`exists_n2Moduli_bound`** — both rows now hold for a genuine *frame-indexed* function.
+
+★★ **The reviewer also found something stronger already latent in the tree, and it deleted the
+expensive step of my own wall certificate.** `n2FrameTwist_eq_of_base_eq` at `m = m' = 0` gives
+constancy on the fibres of `U ↦ Ad_U(frameProj 0)` — genuine fibre-constancy, not invariance at two
+group words — because `basePt x = 𝟙 + (e^{−x}−1)·frameProj 0`. `WallCertificates/lem-n2-descent.lean`
+had priced the descent's first leg at ~200 lines of `ℂ²` ray algebra; **rays are unnecessary if one
+descends along the projection**. The quotient step is then free: `U(2)` compact + frame space
+Hausdorff ⟹ closed ⟹ quotient map. **Why I missed it, because this is the transferable part: I
+reached for rays because `RankTwo/` is written in `ℂP¹`, and never asked whether the parameter's own
+defining identity already descended along something cheaper.** A reviewer with no attachment to that
+vocabulary saw it at once.
+
+**7.3 abstract/vdW tier — three rows moved.**
+* **`cor:selectors` clause (iii) CLOSED** (`selector_transpose`): transposition **flips the twist**
+  (`transposeMap_twistSeq`), so covariance forces the parameter to equal its own negative and the
+  `∃!` closes it. ARC-6 predicted "assembly, not an ingredient" and the prediction held — three
+  short lemmas. ★ One correction to that prediction: the sign flip does *not* come from cos-even /
+  sin-odd as banked, but from `twistFactor_conjTranspose` plus `(Mᵀ)ᴴ = (Mᴴ)ᵀ`.
+* **`HermitianMat.isArchimedean` PROVED** — and this retires a real caveat. ARC-6 landed
+  `lem:homog`(ii) and `lem:cone-ext` FORMALIZED *carrying* `IsArchimedean` as a hypothesis, defended
+  on the ground that the squeeze is part of the article's definition. Sound, but it left the gap
+  that **no carrier was known to satisfy it**, so the abstract tier applied, as far as the machine
+  knew, to nothing. `H_n(𝕜)` satisfies it — quadratic-form characterization plus one real
+  ε-argument, no spectral theorem, no topology, no closedness of the cone.
+* **`prop:pseudo-transfer` in the article's own form** (`spCone_specInv_eq_one`): `a⁻¹ · a = 𝟙` with
+  the *true* spectral inverse and **no coefficient**, via `spCone` at the admissible normalization
+  `1/c`. This is what `lem:cone-ext` was built for in ARC-6, and it needed `isArchimedean` to be
+  usable at all — so the cone extension went from a formality to load-bearing on the same day.
+  ★ Scope: `spCone` extends the FIRST argument only, so `a · a⁻¹ = 𝟙` is NOT proved.
+
+**7.5 the dry pass — `WallCertificates/`, and the format falsified two of its own entries the day it
+was created.** Prose prices are replaced by compiling Lean: each certificate states the missing step
+at the article's generality with `sorry` at exactly the gap, plus dated absence claims *with the
+scope of the grep that supports them*. Hygiene: nothing in that directory is imported from
+`RadicalRelativity/`, so the `sorry`s cannot reach `lake build` or the census — verified, and the
+census still reports custom axioms exactly `[]`. Coverage: all 36 rows are now FORMALIZED (10),
+pre-registered external (6), or certificated (20).
+
+★★ **The format works, and the evidence is that it refuted itself twice within the hour.**
+`lem:normality` (row 9) was certificated "plausibly cheap; never attempted" and then closed —
+`sp_tendsto_of_tendsto`, **and it needs no S2 at all**, since additivity alone gives the linear map
+`seqLeftMul` and a linear map on a finite-dimensional space is automatically continuous. That makes
+the result *stronger than the article's own statement*, which assumes S1 and S2. `lem:n2-descent`
+(row 34) had its step (1) deleted by the checkpoint-1 review. Both corrections are recorded **inside
+the certificates**, not appended elsewhere.
+
+★★ **A NEW LEAN LESSON, and it is a sharpening of the standing one.** The standing lesson is "a
+heartbeat timeout is about the unification path, not goal difficulty". Sharper version, learned
+landing the descent: **a timeout can be a symptom of arguments supplied in the WRONG SLOTS.** Three
+attempts hit `(deterministic) timeout at isDefEq`; I "fixed" it twice by changing the formulation
+(`abbrev` for `def`, `surjInv` for `Classical.choose`) and once by raising `maxHeartbeats` to
+1000000 with a comment blaming the range subtype. All three were wrong. The real cause: I had
+reordered `n2FrameTwist_eq_of_frameMap_eq`'s parameters when landing it, so `refine … P _ U hS2 ?_`
+put the metavariable in the `U` slot instead of `V` and asked the unifier to match `n2Moduli …`
+against `n2FrameTwist …`. With the order fixed it compiles at the file's **default** budget and the
+`set_option` is gone. **Had I kept the raise, I would have banked a false explanation for a
+timeout** — the prose-price failure mode, in Lean.
+
+**Coverage at end of ARC-7's landed work: 10 FORMALIZED / 19 PARTIAL / 7 ABSENT.** Gates green at
+every commit: `lake build` 3106 jobs, census 149 modules, custom axioms exactly `[]`, zero warnings
+in every region touched. Tags `paperA-arc7-cp0` (`d0f1312`), `paperA-arc7-cp1` (`ab87ed3`),
+`paperA-arc7-cp2` (`fd53252`).
+
+**Reviews: three checkpoints delivered, all findings verified at source before applying OR
+rejecting.** Checkpoint 0 (readout block, its first outside read) **certified `n2Readout_eq`'s `hb`
+and `hx` load-bearing in the STRONG form** with compiled counterexamples, via `badP` — the twist
+product on effects and `0` off them, a genuine S1–S7+S2 product because every
+`SequentialProductOn` field guards its arguments with `IsEffect`. That single construction
+**discharges the whole "four hypotheses needing a bespoke product" debt**: it certifies any
+hypothesis whose only job is to place an argument in the effect set. It also supplied `sign_check`,
+a sign guard below `twistSeq_diagFamily_entry` which `readout_direct` could not provide, and caught
+a **second** instance in one file of a docstring asserting that a theorem sixty lines below did not
+exist. ★ I **rejected** one piece of its advice with evidence — that the ε–δ extraction "MUST route
+through `ouNorm`" — because `FirstArgContinuous` is `ContinuousOn` in the carrier's *own* norm
+topology, which on `HermitianMat` is Frobenius; checkpoint 1 independently **confirmed** I was right,
+and went further by compiling the row with `FirstArgContinuousOu` as its hypothesis. **Reviewers are
+confidently wrong in both directions too** — this arc's first such instance was a reviewer, not me.
+
 ---
 
 ## ★★ ARC-6 ORDERS (2026-08-08, Fable design pass — the big-chunk climb). **Superseded as campaign SSOT by ARC-7 above (2026-08-09); the execution record and lessons below remain binding.**
