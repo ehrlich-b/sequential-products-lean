@@ -314,6 +314,37 @@ the status word. Found by scanning the manifest's own status fields, not by re-r
 **Fourth instance of "fix the row, not just the footnote" this arc, and the first committed by the
 agent that wrote the rule down.**
 
+### CHECKPOINT 2 (tag `paperA-arc8-cp4`, two cold reviewers, one concern each)
+
+Reviewer on S2 reported; both of its findings verified at source and **applied**. Reviewer on rows
+34/35 still out at the time of writing.
+
+★★★ **FINDING 4 — the non-collapse theorems separated the wrong things.** Checkpoint 1's
+`exists_n2Sp_tau_ne_twistSeq` and friends are true, but their separating witness takes
+`δ = π/(t₁ − t₂)`, which is **positive whenever `t₁ > t₂`**, so the first argument has an eigenvalue
+`e^δ > 1` and is **not an effect**. Since S1–S7 and the article's operation constrain effects only,
+those statements separate the *total extensions*, not the operations — and the reading they exist to
+support ("a genuinely frame-dependent product satisfies all seven axioms") needs the effects.
+**FIXED**: `not_forall_effects_eq_twistSeq` / `not_forall_effects_tau_eq_twistSeq`, which go through
+`n2FrameTwist_unique_param` (whose quantifiers are already `r ≤ 0` and `IsEffect b`) and never touch
+an entry probe. ★ **RULE: a separation theorem is only as strong as the class its witnesses live in.**
+An `∃ a b` with no `IsEffect` guard *reads* as a separation of operations and *is* a separation of
+extensions. This one is worth generalizing beyond separations: any existential witness in this project
+should be checked against the class the surrounding theory quantifies over.
+
+★★ **FINDING 5 — S2 was proved in the wrong norm's topology.** The tree's `FirstArgContinuous` is the
+carried Frobenius topology; the article's S2 is the **order-unit** norm. The bridge was already
+generic in the tree (`Necessity.firstArgContinuousOu_iff`, `Necessity/OrderUnitS2.lean`) and simply
+was not connected to the rank-two product. **FIXED**: `n2SequentialProduct_firstArgContinuousOu`.
+★ Note the shape: this is not a hole in the proof, it is a hole in the *claim* — "norm-continuous"
+was true in a norm the row never named. A recorded nit, not fixed: `PaperA/AuditPins.lean` freezes the
+*class-side* S2 predicate, not the `SequentialProductOn` spelling row 30 proves; the two bodies were
+read and are identical, but the pin does not cover this spelling.
+
+★ **FINDING 10 — my own hygiene defect.** `git add -A` swept two reviewers' scratch files into the
+repo at `d6768b7`. Removed, and `Scratch*.lean` is now in `.gitignore`. A blanket `add -A` in a repo
+that concurrent agents are writing scratch files into is a commit of other people's work product.
+
 ### CHECKPOINT 1 (tag `paperA-arc8-cp1`, two cold reviewers, one concern each)
 
 Both verified the build independently (0 errors over full output, Census PASS, no `sorryAx`), and
