@@ -371,7 +371,7 @@ associating with every pair forces all seven imaginary coordinates to vanish, i.
 `nucleus(𝕆) = ℝ·1`. Axioms `[propext, Classical.choice, Quot.sound]`, no `native_decide`,
 that project's `lake build` green at 2862 jobs. **It is OUT-OF-TREE**: it lives in the
 `lean/` project, not in `twist-normal-form-lean/`, so it is outside this campaign's census
-and manifest and contributes nothing to the coverage count (7/36 as of 2026-08-08) until ported.
+and manifest and contributes nothing to the coverage count (**8/36** as of 2026-08-08, after ARC-6) until ported.
 
 The supporting field-general infrastructure (of independent interest, all
 `RCLike 𝕜`): `HermitianMat.sqrt_mul_of_commute` (square roots multiply on commuting
@@ -686,7 +686,14 @@ is exactly why building the map was the rank-two work that remained. **SUPERSEDE
   `sp_pseudoInv_eq_smul_one : P.sp b (pseudoInv b) = pseudoInvCoef b • 1` and
   `sp_pseudoInv_comm`/`sp_pseudoInv_cancel`, together with the order-preservation
   consequences the article draws (`seqLeftMul_reflectsNonneg`, `seqLeftMul_injective`).
-  What is missing is exactly the division by that positive scalar, i.e. `lem:cone-ext`.
+  What was missing is exactly the division by that positive scalar, i.e. `lem:cone-ext`.
+  ★ **UPDATED 2026-08-08 (ARC-6): both extensions that division needs now exist** — the
+  first-argument one abstractly (`SequentialProductOn.spCone`, `lem:cone-ext`, this arc) and
+  the second-argument one concretely (`Necessity.seqLeftMul`, `lem:homog`(i), which this file
+  had wrongly said was absent). So this row is **assembly-only**: what remains is
+  instantiating the abstract cone extension on the concrete carrier and matching Lean's
+  `pseudoInvCoef` normalization to the article's `a⁻¹ ∈ J⁺`. Not attempted this arc, and the
+  remaining step is bookkeeping about a normalization, not a missing theorem.
   Status: **PARTIAL**, not absent.
 - **`prop:singular`** is not invoked by `master_chain` (the abstract skeleton).
   **UPDATED 2026-08-06**: it IS invoked on the concrete carrier, by both finished
