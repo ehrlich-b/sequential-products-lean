@@ -103,8 +103,17 @@ the remainder is exactly the Givens decomposition.
 
 **Why this counts at the article's generality.** The article states `lem:homog` with ambient
 `J`; a Euclidean Jordan algebra is in particular an order unit space, and the proof here uses
-*nothing* about the carrier beyond the order-unit structure — no Jordan product, no norm
-beyond the class's, no matrices. So the abstract statement subsumes the article's. The one
+*nothing* about the carrier beyond the order-unit structure — no Jordan product, no norm, no
+matrices. So the abstract statement subsumes the article's.
+
+★ **The precise scope, stated so it cannot drift** (this is the correction arc-5's cold review
+forced on `lem:span`, applied here pre-emptively): the `OrderUnitSpace` *class* extends
+`NormedAddCommGroup`, so this is not a statement about every mathematician's order unit space —
+those carry no norm. It is a statement about every instance of this interface, and the norm
+plays no role in either the statement or the proof of `sp_smul_left`. What matters for the row
+is that **every EJA instantiates the interface**, which is the article's ambient, so nothing
+the article claims is left uncovered. Say "at the generality of this tree's order-unit
+interface, which covers every EJA" — never "at full order-unit-space generality". The one
 hypothesis added, `IsArchimedean`, is part of the *definition* of the article's order unit
 space (the class's `archimedean` field is order-unit boundedness only — the long-standing
 caveat 1), not a located stand-in for a cited result. Note also that the article merely
