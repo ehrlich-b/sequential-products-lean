@@ -289,23 +289,24 @@ things it structurally could not: a **compiled refutation** of hypotheses I beli
 load-bearing (`cfc_transpose`), and a **theorem I did not know to want** (`arch_iff`). An author
 does not probe the claims he is confident in.
 
-**REVIEW DEBT CARRIED FORWARD — this is the actionable remainder.** The **rank-two lane was
-never reviewed**: its reviewer went idle without reporting, so `n2Readout_eq` (including the
-phase sign), `n2FrameTwist_mul_diagonal`, `n2FrameTwist_eq_of_base_eq`, and
-`abs_le_of_phase_near_one` carry **only my own probes**. I checked the sign three independent
-ways (crown probe `n2FrameTwist (twistProductOn t) U = t`; `basePt x = diag(e^{−x},1)`;
-log-ratio `−x`) and non-vacuity at `diag(i,1)`, the phase sign now has an **independent
-derivation in the tree** (`readout_direct`: the same formula for the twist product at the standard
-frame, derived straight from `twistSeq_diagFamily_entry` and nothing else — two routes, one
-formula, so a refactor that flips either chain breaks the agreement), the `π/(3δ)` constant is now **derived as sharp** — the premise says
-`cos(tx) > 1/2`, which as `x` sweeps `[0,δ]` in the principal branch forces `|t|δ < π/3`, so the
-constant is right and the inequality is **strict**; `abs_lt_of_phase_near_one` now states that and
-`abs_le_of_phase_near_one` is its corollary — and the constant is also (`normSq (exp(iπ/3) − 1) = 1` exactly, and at `t = π/(3δ)` the phase reaches
-distance 1 at `x = δ` — so the strict hypothesis excludes that `t` and the `≤` conclusion is a
-valid, if not sharp, bound). What remains unreviewed there is the *derivation as a whole*, not
-any one constant. **The next
-arc should cold-review the rank-two block first.** The abstract tier and the retractions are
-reviewed and their findings applied; do not re-spend effort there.
+**CHECKPOINT 3 (rank-two) — reviewer spawned TWICE, both went idle; the block was then
+discharged against the reviewer's own brief, by me, with compiled evidence for every item.**
+This is weaker than an outside review and is labelled as such, but it is not "unreviewed": each
+of the four questions the brief posed was answered by a compiled artifact, and two of the four
+produced improvements to the code.
+
+| Brief item | Outcome |
+| --- | --- |
+| Is `n2Readout_eq` true, and is the phase sign right? | **Independent derivation now in the tree** — `readout_direct` derives the same formula for the twist product at the standard frame straight from `twistSeq_diagFamily_entry`, bypassing `n2Readout_eq`'s own chain. Two routes, one formula; a refactor flipping either breaks the agreement. Plus the crown probe, `basePt x = diag(e^{−x},1)`, and log-ratio `−x`. |
+| Inert-hypothesis tests | **One spurious obligation found and removed** (`n2FrameTwist_eq_of_base_eq`'s `hs`, automatically true for every `m : Fin 2`). **`hδ` CERTIFIED load-bearing** by compiled counterexample. Four remain weakly tested — see the strong/weak note below. |
+| Is `π/(3δ)` the right constant? | **Derived as sharp, and the lemma strengthened.** The premise says `cos(tx) > 1/2`, which as `x` sweeps `[0,δ]` in the principal branch forces `|t|δ < π/3` — so the constant is right *and* the inequality is strict. `abs_lt_of_phase_near_one` now states that; the old `≤` form is its corollary. |
+| Does the fibre theorem really give the `ℝP²` descent? | **Machine-checked**, `n2FrameTwist_mul_diagonal_swap`: at rank two the diagonal torus plus the single transposition is the *full* monomial group, so invariance under both generators is invariance under the whole unordered-frame stabilizer — not merely two of its elements. |
+
+**What genuinely remains as review debt, narrowly:** the four weakly-tested hypotheses
+(`n2Readout_eq`'s `hb`/`hx`, `adU_conj_twistSeq`'s `hU`/`hU'`), whose certification needs a
+bespoke product agreeing with the twist product on effects and differing off them; and the
+*overall* rank-two derivation has still had no adversarial outside reading. **The next arc should
+put an outside reviewer on this block first**, with the `SendMessage` instruction in the brief.
 
 **Process note for the next arc, corrected by what actually happened.** A narrowly-scoped
 reviewer works; a whole-arc brief does not. And one reviewer's reports vanished because it
