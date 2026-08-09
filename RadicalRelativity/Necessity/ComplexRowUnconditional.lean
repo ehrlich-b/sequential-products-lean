@@ -139,8 +139,12 @@ it: `-t = t`.  No new analysis is involved; the selector is a corollary of uniqu
 
 **Clauses (i) and (iii) are NOT proved here** — see `THEOREM-MAP.md`.  Clause (iii)
 (covariance under every unital order automorphism; the article notes the transpose
-suffices) needs one missing ingredient, and only one: that transposition commutes with
-the real functional calculus, `(cfc f a)ᵀ = cfc f (aᵀ)`.  Nothing in this tree has it.
+suffices) needed one missing ingredient, and only one: that transposition commutes with
+the real functional calculus, `(cfc f a)ᵀ = cfc f (aᵀ)`.  ★ **That ingredient is now in
+this tree** — `Necessity.cfc_transpose` and `Necessity.transposeMap_cfc`, added
+2026-08-08 (ARC-6 rung 6.4) by exactly the route below; the sentence that used to stand
+here, "Nothing in this tree has it", is retired.  What remains for clause (iii) is the
+assembly, not an ingredient.
 The route is `StarAlgHomClass.map_cfc` (Mathlib) applied to entrywise complex
 conjugation — which is an ℝ-star-algebra hom of `Matrix n n ℂ` because conjugation
 does *not* reverse products and `star (conj A) = conj (star A)` — built from
@@ -214,5 +218,80 @@ theorem selector_traceSymm_luders (hN : 3 ≤ N)
       P.sp a b = b.conj ((a.cfc Real.sqrt) : Matrix (Fin N) (Fin N) ℂ) := by
   intro a b ha hb
   rw [selector_traceSymm hN P hS2 hsym a b ha hb, HermitianMat.twistSeq_zero]
+
+/-! ## Transposition commutes with the real functional calculus
+
+The one ingredient `cor:selectors` clause (iii) was missing.  Landed 2026-08-08 (ARC-6 rung
+6.4) by exactly the route this file's module docstring recorded: entrywise complex
+conjugation is an ℝ-star-algebra homomorphism of `Matrix n n ℂ` (conjugation does not reverse
+products, and it commutes with `star`), so `StarAlgHomClass.map_cfc` applies to it; and for a
+Hermitian matrix `Aᵀ = conj A`, which converts the statement about conjugation into the
+statement about transposition. -/
+
+section CfcTranspose
+
+variable {n : Type*} [Fintype n] [DecidableEq n]
+
+/-- Entrywise complex conjugation of matrices, as an ℝ-star-algebra homomorphism.
+
+Conjugation, unlike transposition, does *not* reverse products, so it is a genuine algebra
+homomorphism; and `star (conj A) = conj (star A)`, so it is a star homomorphism.  The
+ℝ-algebra structure is what makes it a hom at all: it is only conjugate-linear over ℂ. -/
+def conjMatStarAlg : Matrix n n ℂ →⋆ₐ[ℝ] Matrix n n ℂ :=
+  { AlgHom.mapMatrix (Complex.conjAe.toAlgHom) with
+    map_star' := by
+      intro A
+      ext i j
+      simp [Matrix.star_eq_conjTranspose, Matrix.conjTranspose_apply,
+        AlgHom.mapMatrix, Matrix.map_apply] }
+
+@[simp]
+theorem conjMatStarAlg_apply (A : Matrix n n ℂ) :
+    conjMatStarAlg A = A.map (starRingEnd ℂ) := rfl
+
+theorem continuous_conjMatStarAlg :
+    Continuous (conjMatStarAlg : Matrix n n ℂ → Matrix n n ℂ) := by
+  rw [continuous_pi_iff]
+  intro i
+  rw [continuous_pi_iff]
+  intro j
+  exact Complex.continuous_conj.comp ((continuous_apply j).comp (continuous_apply i))
+
+/-- For a Hermitian matrix, the transpose is the entrywise conjugate. -/
+theorem transpose_eq_conj_of_isHermitian {A : Matrix n n ℂ} (hA : A.IsHermitian) :
+    A.transpose = A.map (starRingEnd ℂ) := by
+  ext i j
+  have h : star (A j i) = A i j := by
+    have h0 := congrFun (congrFun hA i) j
+    simpa [Matrix.conjTranspose_apply] using h0
+  rw [Matrix.transpose_apply, Matrix.map_apply, ← h]
+  simp
+
+/-- **Transposition commutes with the real functional calculus** — the one lemma
+`cor:selectors` clause (iii) was missing. -/
+theorem cfc_transpose (f : ℝ → ℝ) {A : Matrix n n ℂ} (hA : IsSelfAdjoint A)
+    (hf : ContinuousOn f (spectrum ℝ A)) :
+    (cfc f A).transpose = cfc f A.transpose := by
+  have hherm : A.IsHermitian := hA
+  have hcfc : (cfc f A).IsHermitian := by
+    have : IsSelfAdjoint (cfc f A) := cfc_predicate f A
+    exact this
+  rw [transpose_eq_conj_of_isHermitian hcfc, transpose_eq_conj_of_isHermitian hherm]
+  have hmap := StarAlgHomClass.map_cfc (conjMatStarAlg (n := n)) f A hf
+    continuous_conjMatStarAlg hA (by
+      show IsSelfAdjoint (conjMatStarAlg A)
+      rw [conjMatStarAlg_apply, ← transpose_eq_conj_of_isHermitian hherm]
+      exact (Matrix.isHermitian_transpose_iff A).mpr hherm)
+  simpa using hmap
+
+/-- The `HermitianMat` form. -/
+theorem transposeMap_cfc (f : ℝ → ℝ) (A : HermitianMat n ℂ)
+    (hf : ContinuousOn f (spectrum ℝ A.mat)) :
+    transposeMap (A.cfc f) = (transposeMap A).cfc f := by
+  rw [HermitianMat.ext_iff]
+  rw [transposeMap_mat, HermitianMat.mat_cfc, HermitianMat.mat_cfc, transposeMap_mat]
+  exact cfc_transpose f A.H hf
+
+end CfcTranspose
 
 end Necessity
