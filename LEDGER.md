@@ -355,6 +355,47 @@ occurrence in one arc). The probe's content is now proper in-tree theorems and t
 `Scratch*.lean` and `ColdRev*.lean` are gitignored. **Two identical hygiene failures in one arc means
 the habit, not the incident, is the defect.**
 
+### Block 8.6 — ALL 36 ROWS NOW IN A TERMINAL STATE (2026-08-10)
+
+`STATEMENT-MANIFEST.md` carries a TERMINAL-STATE LEDGER: **12 FORMALIZED + 6 EXTERNAL + 6 EJA-GATED +
+12 WALL-CERTIFIED-this-arc = 36.** Status words in the table stay FORMALIZED/PARTIAL/ABSENT because the
+census depends on that taxonomy; the terminal state is recorded separately, per the row-20 rule.
+
+`WallCertificates/eja-gated.lean` (new) gates rows 5, 6, 13, 15, 16, 17 on (E1)/(E2)/(E3), one `sorry`
+per gate. ★★ **(E3) IS row 14, pre-registered external — so rows 16/17 cannot reach FORMALIZED by
+axiomatization work at all.** `abstract-tier.lean` and `frame-geometry.lean` were refreshed with
+this-arc evidence for rows 3, 8, 9, 12 and 22, 26, 29, 31, 36.
+
+★★ **Two vacuous gaps became real ones, which is the refutation review doing its job on this
+directory's own placeholders.** Row 29(b)'s `theorem … : True` is replaced by the Θ-level conclusion
+itself (`Necessity.theta` + `blockHerm` + `n2FrameTwist` — **no vocabulary wall existed; the sentence
+was never written**, the same failure mode already retracted at row 18). Row 26's connectivity is
+**stated for the first time**, in `AdjBlock` + `Relation.ReflTransGen`, again with no new vocabulary —
+and its ingredient re-confirmed absent from the tree AND from Mathlib.
+
+★ **Two rows were deliberately NOT restated, and the refusals are findings.** Row 36(i): the obvious
+restatement (exchange = conjugation by a permutation matrix) would be **inert a second time**, because
+conjugation commutes with the twist so every twist product is covariant under it — so the article's
+clause must carry an anti-linear ingredient, and that needs `main.tex` at source. Row 22: the last
+attempt to sidestep the missing carrier produced a FALSE statement. **A row already broken once by a
+plausible guess does not get a second guess.**
+
+★ **Row 8 is blocked on a missing DEFINITION from vdW, not on Lean** — a different kind of blocker from
+every other row here, and the next action on it is a reading task. **Row 12's refutation attempt
+FAILED**, and informatively: unlike row 35, the unit axiom reaches into both summands, so no totality
+trick refutes it — the row is genuinely open in the positive direction.
+
+★★★ **A PROCESS DEFECT OF MINE, caught by its own inconsistency.** Two earlier certificate edits used
+`str.replace` **without an assert** and silently no-op'd, so `prop-n2-sufficiency.lean` kept a stale
+"GAP … cannot be written down until row 34's object exists" docstring *and* lacked the `badP` evidence —
+while the manifest's new terminal-state ledger already cited that certificate for row 35. I committed
+that inconsistency and then caught it by grepping the file for `badP`. **RULE: an edit that isn't
+asserted isn't an edit. A no-op `replace` is the textual form of the empty-glob failure the project
+already has a rule about** ("verify the verifier saw data") — it exits successfully and reads as done.
+
+**Still owed:** the dry pass repeated until a full round produces zero movement (rounds so far have all
+moved something), and the certificate-refutation review applied to every standing certificate.
+
 ### Block 8.6 — DRY PASS, first round (partial; the full round is still owed)
 
 Method: for each non-FORMALIZED row whose residue names a concrete object, run the declaration-list

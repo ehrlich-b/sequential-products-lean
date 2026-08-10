@@ -280,15 +280,47 @@ theorem exists_sequentialProduct_of_continuous_moduli (t : C(RankTwo.RP2, ℝ)) 
 
 /-! ### `cor:qubit-classification` (row 35): the bijection
 
+★★★ THE PRICE BELOW IS SUPERSEDED AND THE ROW'S RESIDUE WAS WRONG — ARC-8 (2026-08-10).  Row 30 and
+row 34 both closed, so "attempt it only after both" is discharged, and the statement below is PROVED
+(`RankTwo.exists_unique_qubitModuli`).  But the important correction is not about the price:
+
+  ★★ **THE "ONTO" HALF IS FALSE, NOT UNWRITTEN, and the counterexample was already in the tree.**  I
+  had recorded row 35's residue as "the onto half at singular effects — and that is the whole residue".
+  A checkpoint-2 cold reviewer refuted it with `Necessity.badP t`: a genuine S1-S7 product with S2 that
+  equals the twist product ON EFFECTS and is 0 off them — it exists precisely because every
+  `SequentialProductOn` axiom is `IsEffect`-guarded.  So it has the SAME element of C(RP2,R) as
+  `n2SequentialProduct (const t)` and a DIFFERENT `.sp`.  Machine-checked in-tree now:
+  `RankTwo.moduli_collide`, `RankTwo.badP_sp_differs`, `RankTwo.not_exists_moduli_of_badP`.
+  ⟹ `product |-> moduli` is NOT injective on `SequentialProductOn` values, and no bijection onto the
+  products-as-`.sp`-functions exists.  **The honest target is products UP TO AGREEMENT ON EFFECTS.**
+  Residue restated: agreement on effect x effect — proved at positive-definite first arguments
+  (`RankTwo.sp_eq_n2Sp_of_moduli`), open at singular ones.
+  ★ Second instance on this project of "a totalizing phrase inside a residual claim is where the error
+  lives": "and that is the whole residue" was the false clause.
+  ★ And note where the counterexample came from — the tree's own `badP`, one grep from anyone asking
+  "does the tree contain a product that is NOT of this form?"  That is the question a surjectivity claim
+  should always trigger.
+
+  ★ A SECOND, SMALLER DEFECT from the same review: a claim elsewhere cited `sp_eq_twistSeq_n2QubitModuli`
+  for "the products agree at posdef first arguments", but that theorem equates `P.sp` with the
+  CONSTANT-parameter `twistSeq`, not with `n2Sp`.  Bridge added as `RankTwo.sp_eq_n2Sp_of_moduli`.
+  Read a cited theorem's STATEMENT, not its name.
+
+The superseded ARC-7 price follows.
+
 Injectivity is the cheap half and is nearly in reach: two continuous `ℝP²` functions inducing the
 same product agree, because `n2FrameTwist` recovers the parameter at every frame
 (`Necessity.n2_sp_eq_twistSeq_frame`, in-tree).  Surjectivity is rows 32/33/34 assembled, of which
 only 34's constructed quotient function is missing.  So the honest price of row 35 is
 **row 30 plus row 34**, and it should be attempted only after both. -/
 
-/-- **GAP — the classification map is a bijection.**  Stated as a two-sided correspondence rather
-than as `Function.Bijective` of a named map, because the map itself cannot be written down until
-row 34's `ℝP² → ℝ` object exists. -/
+/-- **NO LONGER A GAP** (proved via `RankTwo.exists_unique_qubitModuli`).  Stated as a two-sided
+correspondence rather than as `Function.Bijective` of a named map, because — when written — "the map
+itself cannot be written down until row 34's `ℝP² → ℝ` object exists".  That object now exists
+(`RankTwo.n2QubitModuli`).
+★★ BUT DISCHARGING THIS DOES **NOT** CLOSE ROW 35: this gap statement is only the `∃!`-moduli claim,
+which is WEAKER than the row.  That is the under-specified-price defect kind, and it is why "this file
+has zero gaps" and "its rows are closed" must never be read as the same claim. -/
 theorem qubit_classification
     (P : SequentialProductOn (HermitianMat (Fin 2) ℂ)) (hS2 : P.FirstArgContinuous) :
     ∃! t : C(RankTwo.RP2, ℝ),
