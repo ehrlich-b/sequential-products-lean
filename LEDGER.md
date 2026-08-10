@@ -355,6 +355,36 @@ occurrence in one arc). The probe's content is now proper in-tree theorems and t
 `Scratch*.lean` and `ColdRev*.lean` are gitignored. **Two identical hygiene failures in one arc means
 the habit, not the incident, is the defect.**
 
+### Block 8.6 — DRY PASS ROUND 7 (post-refutation-review) WENT DRY; ARC-8's TERMINAL CONDITION IS MET
+
+Re-run after the eight refutation-review fixes, because those fixes touched six of the seven
+certificates and a dry round before them would not have counted.
+
+**Round 7 moved nothing.** Build errors 0 (using the corrected recipe —
+`grep -E ': error' | grep -vc '^warning:'`; the naive count reports 2 on a green tree); census PASS at
+150 modules, custom axioms `[]`; all seven certificates compile, and **every one's `sorry`-term count
+now equals its `sorry`-declaration count** — the two apparent discrepancies were prose mentions of the
+word inside docstrings, checked line by line, so no `sorry` hides inside a statement anywhere;
+no certificate imported from `RadicalRelativity/`; manifest counts re-derived from the table
+(12 FORMALIZED / 3 EJA-GATED / 16 PARTIAL / 5 ABSENT = 36); terminal-state ledger re-derived from its
+own cells (12 + 6 + 3 + 15 = 36); no stray tracked files; working tree clean.
+
+**TERMINAL CONDITION — all four requirements now met:**
+1. every one of the 36 rows is in one of the four terminal states (ledger above, re-derived);
+2. `EJA-DIVIDEND.md` exists and states per row what the axiomatization would buy — and was itself
+   corrected twice this arc (a refuted residue for row 35, then the CLOSES column after rows 5/6/15
+   were withdrawn);
+3. the dry pass has produced a round with zero movement (round 7; rounds 2–6 each moved something,
+   and round 6's dryness was invalidated by the review that followed it);
+4. the certificate-refutation review has been applied to every standing certificate, with all eight
+   findings verified at source and fixed.
+
+★★ **The honest summary of this arc's last day: the review process found more defects in my own
+two-day-old work than in the two arcs before it, and the two worst were FALSE statements inside the
+certificate written to prevent false statements.** The count that matters is not 12/6/3/15 — it is
+that eight defects were found by asking, mechanically and repeatedly, "does this statement say what
+its prose says, and is its complement really empty?"
+
 ### CERTIFICATE-REFUTATION REVIEW (tag `paperA-arc8-cp5`; one cold reviewer, all seven certificates)
 
 **Eight confirmed defects, seven of them in work I did in the last two days, two of them FALSE
