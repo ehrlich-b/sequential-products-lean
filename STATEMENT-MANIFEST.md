@@ -65,7 +65,42 @@ written for those three corrections — the tree was undercounted.** The lesson 
 mirror image of the `H₃(𝕆)` over-claim: a coverage table maintained by prose drifts in
 *both* directions, so every row now names its declaration or says ABSENT.
 **Count at end of ARC-6's landed work (2026-08-08): 8 FORMALIZED / 19 PARTIAL / 9 ABSENT.**
-**Count in progress, ARC-8 (2026-08-10): 12 FORMALIZED / 6 EJA-GATED / 13 PARTIAL / 5 ABSENT** — EJA-GATED is the ARC-8 orders' fourth terminal state (rows 5, 6, 13, 15, 16, 17; certificate `WallCertificates/eja-gated.lean`). ★ It is a TERMINAL state, not a FORMALIZED one: rows 16/17's gate is row 14, pre-registered external. Earlier the same day: 12 FORMALIZED / 19 PARTIAL / 5 ABSENT** — `prop:n2-sufficiency` ABSENT → **FORMALIZED** (8.1(b): S1, S3–S7 *and* S2, for an arbitrary continuous `t` on ℝP², at the article's own operation); `lem:n2-descent` PARTIAL → **FORMALIZED** (8.1(d)); `cor:qubit-classification` ABSENT → PARTIAL (8.1(f)). ★ The wall certificate `WallCertificates/prop-n2-sufficiency.lean` now has **zero gaps**.
+**Count in progress, ARC-8 (2026-08-10): 12 FORMALIZED / 6 EJA-GATED / 13 PARTIAL / 5 ABSENT**
+
+### TERMINAL-STATE LEDGER (ARC-8, 2026-08-10) — all 36 rows
+
+The ARC-8 orders' terminal condition is over four states. This block makes it auditable at a glance.
+★ **The status words in the table below stay FORMALIZED / PARTIAL / ABSENT**, because the coverage
+count and the census depend on that taxonomy; a terminal state is a *separate* fact about a row and is
+recorded here, exactly as the row-20 note insists ("status words stay inside the taxonomy; the
+obstruction goes in prose").
+
+| terminal state | rows | count | evidence |
+| --- | --- | --- | --- |
+| **FORMALIZED** at the article's own generality | 7, 11, 19, 23, 24, 25, 27, 28, 30, 32, 33, 34 | 12 | in-tree, census-covered |
+| **EXTERNAL by pre-registration** (not re-litigated) | 1, 2, 4, 10, 14, 21 | 6 | `WallCertificates/external-rows.md` |
+| **EJA-GATED** | 5, 6, 13, 15, 16, 17 | 6 | `WallCertificates/eja-gated.lean` — gates (E1)/(E2)/(E3), `sorry` at each gap, ★ (E3) *is* row 14 and is external, so rows 16/17 cannot reach FORMALIZED by axiomatization alone |
+| **WALL-CERTIFIED with attack evidence FROM THIS ARC** | 3, 8, 9, 12, 18, 20, 22, 26, 29, 31, 35, 36 | 12 | `abstract-tier.lean` (3, 8, 9, 12), `frame-geometry.lean` (22, 26, 29, 31, 36), `differential-trio.lean` (18), `thm-quaternionic.lean` (20), `prop-n2-sufficiency.lean` (35) — each refreshed 2026-08-09/10 |
+
+**★★ What "attack evidence from this arc" bought, per row, beyond a date stamp:** row 3 — the cost is
+transcription, not difficulty (`extendByZero` landed); row 8 — **blocked on a missing DEFINITION from
+vdW, not on Lean**, so the next action is a reading task; row 9 — clause landed, and the S2 asymmetry
+between its two clauses recorded; row 12 — a refutation attempt FAILED (unlike row 35's, the unit axiom
+reaches both summands), so the row is genuinely open rather than mis-stated; row 18 — the ℂ converse
+was already in-tree and the ℝ row came free at `RCLike` generality; row 20 — the carrier finally
+carries a product; row 22 — absence re-confirmed, restatement deliberately refused; row 26 — **stated
+for the first time**, and the ingredient re-confirmed absent from the tree AND Mathlib; row 29 — a
+`True` placeholder **replaced by the Θ-level conclusion itself**; row 31 — clause (ii) closed, and the
+row-30/31 *encoding split* found and closed; row 35 — **my own residue claim refuted** by the tree's
+own `badP`; row 36 — a near-miss recorded and the restatement deliberately refused because the obvious
+one would be inert a second time.
+
+★ **Still owed for the terminal condition:** the 8.6 dry pass must be run over every non-FORMALIZED
+row until a full round produces **zero movement** (one partial round so far, and it moved three rows'
+prose), and the certificate-refutation review must be applied to **every** standing certificate with
+the three defect-kind tests (FALSE, VACUOUS, SELF-DEFEATING). Two vacuous gaps were already found and
+replaced this arc (rows 29 and, by refusal, 36).
+ — EJA-GATED is the ARC-8 orders' fourth terminal state (rows 5, 6, 13, 15, 16, 17; certificate `WallCertificates/eja-gated.lean`). ★ It is a TERMINAL state, not a FORMALIZED one: rows 16/17's gate is row 14, pre-registered external. Earlier the same day: 12 FORMALIZED / 19 PARTIAL / 5 ABSENT** — `prop:n2-sufficiency` ABSENT → **FORMALIZED** (8.1(b): S1, S3–S7 *and* S2, for an arbitrary continuous `t` on ℝP², at the article's own operation); `lem:n2-descent` PARTIAL → **FORMALIZED** (8.1(d)); `cor:qubit-classification` ABSENT → PARTIAL (8.1(f)). ★ The wall certificate `WallCertificates/prop-n2-sufficiency.lean` now has **zero gaps**.
 
 **Count at end of ARC-7 (2026-08-09): 10 FORMALIZED / 19 PARTIAL / 7 ABSENT** — `lem:n2-bounded` ABSENT → FORMALIZED (7.1a), `lem:n2-continuity` PARTIAL → FORMALIZED (7.1b), `lem:normality` ABSENT → PARTIAL (7.5). Primed rows (32′, 33′, 34′, 36′) are provenance only and are NOT counted; the denominator is still the 36 numbered rows 1–36.
 `lem:cone-ext` moved PARTIAL → FORMALIZED (rung 6.3, abstract, with a norm-free *admissibility condition*; the row itself still carries S2, which is a norm-topology hypothesis — ARC-6 review correction). Earlier in the arc: 

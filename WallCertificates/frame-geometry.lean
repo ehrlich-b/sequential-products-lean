@@ -54,7 +54,59 @@ PER-ROW STATUS AND GAP
     anything (ii) or (iii) used: (ii) went through the trace form, (iii) through the functional
     calculus, and neither touches Peirce exchange.  So clause (i)'s price is NOT "the same again".
 
-ATTACK EVIDENCE
+ATTACK EVIDENCE — REFRESHED FOR ARC-8 (2026-08-10).  The ARC-8 orders require attack evidence FROM
+THIS ARC ("a certificate that was not re-attacked this arc is a prose price with a `.lean` extension"),
+so the ARC-7 evidence below is retained as provenance and superseded by this block.
+
+  row 15 `lem:frame-fix` — MOVED OUT of this certificate: it is now **EJA-GATED**
+    (`WallCertificates/eja-gated.lean`, gate (E2) Peirce).  Its residue is the Peirce-block clauses,
+    which are gated on the axiomatization, not on anything in this file.
+
+  row 22 `lem:orientation` — attacked this arc by DRY PASS, and the absence CONFIRMED: no declaration
+    in `Necessity/` matches `coheren|orientat|J_q` (2026-08-10).  The coherence space is a carrier the
+    tree does not have.  ★ NOT restated: the previous attempt to sidestep the carrier produced a FALSE
+    statement (see the retraction at `orientation_complex_structure`), and repeating that without the
+    article's definition of `J_{q,k}` in front of me would repeat the defect.  Recorded as
+    attacked-and-deliberately-not-restated.
+
+  row 26 `lem:frame-connectivity` — attacked this arc and **STATED for the first time**:
+    `adjBlock_connected` below.  Two findings.  (a) The statement needs **no new vocabulary** —
+    `Necessity.AdjBlock` plus `Relation.ReflTransGen`, exactly the shape `adjAxis_connected` already
+    uses — so the row's residue was never "unstatable", only unwritten.  (b) The INGREDIENT absence is
+    re-verified this arc and holds twice over: `Givens|jacobiRot|blockRotation` over
+    `RadicalRelativity/` returns one hit and it is the prose sentence recording the gap, and `Givens`
+    over **Mathlib v4.28.0 returns zero hits**.  So this is a standalone contribution, not an assembly.
+
+  row 29 gap (b) — attacked this arc and **RESTATED NON-VACUOUSLY**: the previous
+    `n2_necessity_theta_level : True` is replaced by the Θ-level conclusion itself, using
+    `Necessity.theta`, `Necessity.blockHerm` and `Necessity.n2FrameTwist`.  ★ Finding: there was no
+    vocabulary wall — the sentence was simply never written, which is the same failure mode this
+    directory already retracted at row 18.  GATE: none; priced as ordinary work.
+
+  row 31 `thm:qubit-boundary` — attacked this arc, and clause (ii) is now CLOSED as predicted:
+    `RankTwo.n2SequentialProduct RankTwo.tauModuliRP2` supplies S1, S3–S7 *and* S2 for the article's
+    own τ, because row 30 closed for an arbitrary `t`.  ★ And a defect this file could not have known
+    about was found and fixed: clause (iii) existed only in the **entry-level `Fdiag` encoding**, which
+    no theorem identified with `HermitianMat.twistSeq` — so rows 30 and 31 were about two unlinked
+    objects.  Now linked (`RankTwo.not_forall_effects_tau_eq_twistSeq`, at the effects).  Residue: the
+    unimodular cocycle subcases, and clause (iii) in the article's stronger `(Φ,t)`-conjugation form.
+
+  row 36 clause (i) — attacked this arc by DRY PASS, with a near-miss worth recording:
+    `Necessity.theta_conj_exchange` exists and has "exchange" in its name, so the obvious grep finds
+    it — but it is **vdW 5.7(1)** (Θ commutes with Lüders conjugation at a commuting base point), not
+    the frame-atom exchange automorphism.  Reading the statement rather than the name settled it, so
+    this file's "different machinery" claim STANDS.
+    ★★ **DELIBERATELY NOT RESTATED, and the reason is a finding.**  This file instructs the next
+    person to restate `exists_peirce_exchange` with the coherence-block action as an explicit
+    conclusion.  The obvious restatement — exchange = conjugation by a permutation matrix — would be
+    **INERT FOR A SECOND TIME**, because conjugation commutes with the twist product, so *every* twist
+    product is covariant under it and covariance would carry no information.  So the article's clause
+    (i) must involve an anti-linear ingredient, as clause (iii)'s transpose did.  Getting that right
+    needs `main.tex`'s definition of Peirce exchange at source.  **A row that has already been broken
+    once by a plausible guess does not get a second guess.**
+
+PRIOR (ARC-7) ATTACK EVIDENCE, provenance only:
+
   Row 36 clause (iii) was attacked and CLOSED today.  Row 29 gap (a) was attacked and closed in
   ARC-6.  Rows 15, 22, 26, 29(b), 31 were NOT attempted in ARC-6 or ARC-7.  ★★ Row 22 WAS probed on
   2026-08-09, and the probe refuted this file's own pricing of it rather than advancing the row: the
@@ -154,12 +206,54 @@ theorem frameProj_mul_orthogonal_eq_zero :
 Lean proves the product-level identity; the article states the Θ-level one.  Written out so the
 gap is a proposition rather than a remark about "the route". -/
 
-/-- **GAP — row 29's Θ-level form.**  That the in-tree product-level identity is equivalent to the
-article's statement about `Θ_a` restricted to the coherence space `W_n`.  Not statable without
-`W_n` as a carrier, so recorded as a vocabulary wall with the statable half noted: the
-product-level identity itself is `Necessity.n2_sp_eq_twistSeq_frame`, in the tree. -/
-theorem n2_necessity_theta_level : True := by
-  trivial
+/-- **GAP — row 29's Θ-level form, RESTATED NON-VACUOUSLY (2026-08-10, ARC-8 block 8.6).**
+
+★★★ The previous version of this gap was `theorem n2_necessity_theta_level : True`, flagged in this
+same file as VACUOUS: provable in one token, moving nothing.  That flag was right, and leaving the
+placeholder in place was the wrong call — a reader discharges it and the row does not move.  It is
+replaced here by a statement with content.
+
+The article's `prop:n2-necessity` concludes about `Θ_a` restricted to the coherence space `W_n`:
+`Θ_a|_{W_n} = exp(ℓ · t̃(n) · 𝒥_n)` with `ℓ = log(λ₊/λ₋)`.  Lean's in-tree form
+(`Necessity.n2_sp_eq_twistSeq_frame`) is the PRODUCT-level identity.  The equivalence is the route,
+not a theorem — and the honest way to say that is to state the Θ-level conclusion itself.
+
+★ **No missing vocabulary, and that is the point.**  `Necessity.theta` is the comparison map,
+`Necessity.blockHerm i j z` is the coherence block, and `Necessity.n2FrameTwist` is `t̃`.  So the
+Θ-level conclusion IS statable with what the tree has — which means the previous `True` placeholder
+was not recording a vocabulary wall, it was recording that nobody had written the sentence.  Compare
+the identical, already-retracted mistake at row 18 in `differential-trio.lean`.
+
+GATE: none.  This is ordinary work: relate `theta` to `seqLeftMul`/`quadRep` on the block and read off
+the phase.  It is priced as such rather than as a wall. -/
+theorem n2_necessity_theta_level
+    (P : SequentialProductOn (HermitianMat (Fin 2) ℂ)) (hS2 : P.FirstArgContinuous)
+    {a : HermitianMat (Fin 2) ℂ} (ha : IsEffect a) (hbd : a.mat.PosDef)
+    (U : Matrix.unitaryGroup (Fin 2) ℂ) {r : Fin 2 → ℝ} (hr : ∀ i, r i ≤ 0)
+    (hU : a = Necessity.adU (U : Matrix (Fin 2) (Fin 2) ℂ) (Necessity.diagFamily r))
+    (z : ℂ) :
+    Necessity.theta P ha hbd (Necessity.blockHerm 0 1 z)
+      = Necessity.blockHerm 0 1
+          (Complex.exp ((↑(Necessity.n2FrameTwist P hS2 U * (r 0 - r 1)) : ℂ) * Complex.I) * z) := by
+  sorry
+
+/-- **GAP — row 26 `lem:frame-connectivity`, STATED for the first time (2026-08-10, ARC-8 8.6).**
+
+Until now this row's residue lived only in prose ("needs a Givens/Jacobi factorization").  ★ The
+statement needs **no new vocabulary either**: `Necessity.AdjBlock` is the article's adjacency and
+`Relation.ReflTransGen` is the connectivity the tree already uses for `AdjAxis`
+(`Necessity.adjAxis_connected`).  So this is the article's graph-connectivity claim, written down.
+
+★ Keep the two standing corrections attached to it: `AdjBlock` is **strictly finer** than `AdjAxis`,
+so this does NOT follow from `adjAxis_connected`; and the claim that `AdjBlock` is a *superset* of the
+article's relation is FALSE and must never be repeated.
+
+GATE: none — but the ingredient is absent from the tree **and from Mathlib** (re-verified this arc:
+`Givens` over Mathlib v4.28.0 returns zero hits), so this is a standalone contribution rather than an
+assembly. -/
+theorem adjBlock_connected {N : ℕ} (hN : 3 ≤ N) (F G : Matrix.unitaryGroup (Fin N) ℂ) :
+    Relation.ReflTransGen (MasterTheorem.Globalization.SymmStep (Necessity.AdjBlock (N := N))) F G := by
+  sorry
 
 /-! ### Row 36 clause (i) — Peirce exchange covariance
 

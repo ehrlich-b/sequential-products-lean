@@ -76,7 +76,59 @@ PER-ROW STATUS AND GAP
     `a · a⁻¹ = 𝟙`, which puts the non-effect in the SECOND slot — `spCone` extends the first slot
     only, so this needs a second-argument extension nothing in the tree has; and (b) EJA generality.
 
-ATTACK EVIDENCE
+ATTACK EVIDENCE — REFRESHED FOR ARC-8 (2026-08-10).  The ARC-8 orders require evidence FROM THIS ARC,
+so the ARC-7 block below is provenance only.
+
+  rows 5, 6, 13 — MOVED OUT of this certificate: all three are now **EJA-GATED**
+    (`WallCertificates/eja-gated.lean`; row 5 and row 15 on gate (E2) Peirce, rows 6 and 13 on gate
+    (E1) the Jordan spectral theorem).  ★ Row 6's clause (ii) `(λa)·b = λ(a·b)` was also CLOSED on the
+    concrete carrier this arc as `HermitianMat.twistSeq_smul_left`, and the way it closed is worth
+    keeping: it came out of the **constant-parameter S5 instantiated at a scalar left factor**, not
+    from a functional-calculus scaling identity.  An axiom the tree already has, applied at a
+    degenerate argument, replaced a lemma about the construction.
+
+  row 3 `def:sp` — attacked this arc; see the block at `extendByZero` below.  Net: the restriction
+    direction is trivial, the extension direction has a canonical construction now in this file (and
+    already in the tree, instantiated, as `Necessity.badP`), and the row's real cost is **transcribing
+    the article's seven clauses over the effect subtype** — statement size, not proof difficulty.
+    Deliberately not `sorry`-ed without `main.tex:363-392` open, for the reason row 22 and row 36(i)
+    illustrate.
+
+  row 8 `lem:simple-bridge` — attacked this arc and **BLOCKED ON THE ARTICLE, not on Lean.** The only
+    interior clause is (ii) "every effect is simple (E = E₀)", and `simple` here is vdW's SES notion.
+    I could not state clause (ii) faithfully without vdW's definition, and declined to guess it.
+    ★ That is a different kind of blocker from every other row in this file and it should be labelled
+    as such: the obstruction is a missing DEFINITION from a cited source, so the next action is a
+    reading task, not a proving task.  Clauses (i), (iii), (iv) remain assigned to vdW by the article's
+    own proof, so this row is ~3/4 external either way.
+
+  row 9 `lem:normality` — attacked this arc and ADVANCED: `Necessity.compatible_of_tendsto` closes the
+    compatibility clause (compatibility passes to limits of effect sequences).  ★★ And the finding is
+    an asymmetry this certificate's earlier note would have led a reader to get wrong: the convergence
+    clause needs **no S2** (linearity of `seqLeftMul` plus finite dimensionality), but the compatibility
+    clause **does** — `a·b_k → a·b` is free, `b_k·a → b·a` is first-argument continuity.  Anyone
+    carrying "S2 is not used at all" forward from the convergence clause is wrong.  Residue: the
+    article's order-INFIMUM form, which additionally needs Loewner monotone convergence — absent, grep
+    scope recorded at the theorem (`iInf|⨅|Antitone|tendsto_of_antitone` over `RadicalRelativity/`,
+    2026-08-09: only `Submodule`-kernel infima and one vendored `Set.Icc` lemma).
+
+  row 12 `prop:central` — attacked this arc from BOTH directions.
+    (a) Positive direction: the residue is confirmed to be the **restriction** half only — that every
+    product on `V × W` is of the form `P.prod Q` — and `DirectSum.lean`'s own docstring says so.  This
+    is `prop:central`'s splitting via central idempotents, the half the manuscript carries as a paper
+    proof.  So the ARC-8 orders' listing of it under the "cheap interior sweep" was a MISPRICING, now
+    corrected in `LEDGER.md`.
+    (b) ★★ Refutation direction, prompted by the row-35 result this arc (where the analogous "onto"
+    claim turned out FALSE because `badP` exploits the `IsEffect`-guarding): I tried to build a
+    NON-split product on `V × W`.  The obvious candidates fail, and they fail at **S3**: any
+    construction that discards a summand (e.g. `Q.sp a b := (P.sp a.1 b.1, 0)`) breaks
+    `sp_unit_left`, since `Q.sp ousUnit a = (a.1, 0) ≠ a`.  So unlike row 35, row 12's claim is **not**
+    refutable by a totality trick — the unit axiom reaches into both summands.  A failed refutation is
+    evidence, and this one says the row is genuinely open in the positive direction rather than
+    mis-stated.
+
+PRIOR (ARC-7) ATTACK EVIDENCE, provenance only:
+
   Rows 6(ii) and 7 were attacked and CLOSED in ARC-6 at abstract generality.  Row 13's first half
   was attacked and closed today.  Rows 3, 5(a), 5(b), 8(ii), 9, 12 were NOT attempted in either
   arc — their prices above are reasoned from the article's own proofs plus the tree's contents, and
@@ -191,6 +243,38 @@ theorem def_sp_clauses (P : SequentialProductOn V) :
     fun a ha => P.sp_unit_left ha,
     fun a b ha hb => P.sp_effect ha hb⟩
 
+/-- The extension-by-zero of an operation defined only on the effects.  ★ This is the object row 3's
+packaging turns on, and it is `badP`'s template (`Necessity.badP` is exactly this construction for the
+twist product), so the totality of Lean's `sp` is **not** a strengthening of the article's definition:
+every total operation the axioms can see is an extension of an effect-domain one. -/
+noncomputable def extendByZero {V : Type*} [OrderUnitSpace V]
+    (op : {a : V // IsEffect a} → {a : V // IsEffect a} → {a : V // IsEffect a}) : V → V → V :=
+  fun a b =>
+    letI := Classical.dec (IsEffect a ∧ IsEffect b)
+    if h : IsEffect a ∧ IsEffect b then ((op ⟨a, h.1⟩ ⟨b, h.2⟩ : {a : V // IsEffect a}) : V) else 0
+
+theorem extendByZero_apply {V : Type*} [OrderUnitSpace V]
+    (op : {a : V // IsEffect a} → {a : V // IsEffect a} → {a : V // IsEffect a})
+    {a b : V} (ha : IsEffect a) (hb : IsEffect b) :
+    extendByZero op a b = ((op ⟨a, ha⟩ ⟨b, hb⟩ : {a : V // IsEffect a}) : V) := by
+  rw [extendByZero, dif_pos ⟨ha, hb⟩]
+
+/-! ★★ **ROW 3's ATTACK EVIDENCE, 2026-08-10 (ARC-8 8.6), and the finding is about STATEMENT SIZE not
+difficulty.**  The row's residue is "the article's eight clauses as a structure, plus restriction and
+extension maps".  Attempted this arc.  What the attempt found:
+  * the RESTRICTION direction is trivial (`P.sp` restricted to the effect subtype, well defined by
+    `sp_effect`);
+  * the EXTENSION direction has a canonical construction, `extendByZero` above, and it is already in
+    the tree in instantiated form as `Necessity.badP`;
+  * so the honest cost of this row is **writing the article's seven clauses out over the effect
+    subtype** — roughly thirty lines of *statement* — and not any proof difficulty.  Every clause is
+    the corresponding `SequentialProductOn` field with the guards discharged by the subtype.
+★ That is a materially different price from "restate the definition", which is how a prose price would
+have read it, and different again from the earlier note here that called row 3 "the single highest
+row-movement-per-unit-effort item remaining" — true in effort, but the effort is transcription.
+★ **Deliberately NOT written as a `sorry` here**, because a thirty-line statement transcribed without
+the article open in front of me is exactly how row 22's FALSE gap and row 36(i)'s VACUOUS gap were
+produced in this directory.  The next pass should have `main.tex:363-392` open. -/
 /-- ★ Note what just happened: three of the article's clauses are NOT gaps — they compile above
 with no `sorry`, straight from the structure's fields.  What is missing is only the *packaging* of
 the article's list as a single definition plus the equivalence.  A prose price for row 3 would very
