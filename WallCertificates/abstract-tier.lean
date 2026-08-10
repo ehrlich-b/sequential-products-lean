@@ -79,7 +79,14 @@ PER-ROW STATUS AND GAP
 ATTACK EVIDENCE — REFRESHED FOR ARC-8 (2026-08-10).  The ARC-8 orders require evidence FROM THIS ARC,
 so the ARC-7 block below is provenance only.
 
-  rows 5, 6, 13 — MOVED OUT of this certificate: all three are now **EJA-GATED**
+  rows 5, 6, 13 — ★★★ CORRECTED 2026-08-10 (diff audit): only **row 13** moved out.  Rows 5 and 6 were
+    claimed EJA-GATED and **WITHDRAWN the same day** (their residues contain non-EJA clauses: row 5's
+    ball clause needs the order-unit norm; row 6's clause (ii) is ALREADY abstract as
+    `SequentialProductOn.sp_smul_left`, and the reasoning below citing `HermitianMat.twistSeq_smul_left`
+    — a theorem about ONE product — is the misreading that produced the wrong gate assignment).  **Rows 5
+    and 6 are WALL-CERTIFIED HERE**, and this note claimed otherwise for hours, leaving them pointing at
+    a certificate whose own header disclaimed them.  Original text follows.
+  (formerly:) rows 5, 6, 13 — MOVED OUT of this certificate: all three are now **EJA-GATED**
     (`WallCertificates/eja-gated.lean`; row 5 and row 15 on gate (E2) Peirce, rows 6 and 13 on gate
     (E1) the Jordan spectral theorem).  ★ Row 6's clause (ii) `(λa)·b = λ(a·b)` was also CLOSED on the
     concrete carrier this arc as `HermitianMat.twistSeq_smul_left`, and the way it closed is worth

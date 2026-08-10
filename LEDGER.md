@@ -158,11 +158,17 @@ lists above were prose.
 
 #### CHECKPOINT REVIEW REGISTER — the orders' "at least four checkpoint reviews", in one place
 
-Five cold reviews ran. Each was a **narrow one-concern brief**, **pinned to a fresh tag**, told that
+**Six** cold reviews ran. Each was a **narrow one-concern brief**, **pinned to a fresh tag**, told that
 plain text is not delivered and to call `SendMessage`, and had **every finding verified at source
 before being applied or rejected**. Reviews 1–4 are the four checkpoint reviews the orders require;
-review 5 is the separate 8.6 certificate-refutation requirement. Placement in the block order: CP1
-after 8.1(a)+(b), CP2 after 8.1(d)+(f), the refutation review inside 8.6 where the orders put it.
+review 5 is the separate 8.6 certificate-refutation requirement; **review 6 is the standing
+diff-audit of review 5's own fixes**. Placement in the block order: CP1 after 8.1(a)+(b), CP2 after
+8.1(d)+(f), the refutation review inside 8.6 where the orders put it, the diff audit after it.
+
+★★ **Reviews 5 and 6 found 17 of the arc's defects between them — more than the four checkpoint
+reviews combined — and every one was in a document written in the preceding 48 hours.** The lesson is
+not "review more"; it is that **the freshest prose is the least trustworthy prose**, because it has had
+the least time to be contradicted by a compile.
 
 | # | tag (commit) | the ONE concern | verdict | disposition |
 |---|---|---|---|---|
@@ -171,8 +177,9 @@ after 8.1(a)+(b), CP2 after 8.1(d)+(f), the refutation review inside 8.6 where t
 | 3 | `paperA-arc8-cp4` (`fe2313d`) | Is S2 actually proved for the frame-dependent product, and is the statement the paper's? | NO DEFECT on eight sub-questions (predicate, scalar branch incl. γ=0, joint-continuity input, bound, non-scalar branch, exhaustive dichotomy, self-defeating). **CONFIRMED DEFECT:** the non-collapse witness is **not an effect**, so those theorems separate the total *extensions*, not the operations; plus S2 proved in the **Frobenius** topology where the article's is the **order-unit** norm | **APPLIED** — `not_forall_effects_eq_twistSeq`, `not_forall_effects_tau_eq_twistSeq`, `n2SequentialProduct_firstArgContinuousOu` |
 | 4 | `paperA-arc8-cp4` (`fe2313d`) | Are rows 34 and 35's new status claims right? | Row 34 FORMALIZED **confirmed** (every article clause mapped; `surjInv` choice-independent; quotient-map instances real). **CONFIRMED DEFECT:** row 35's residue was wrong — the "onto" half is **FALSE, not unwritten**, and the tree's own `badP` is the counterexample; plus a citation that did not say what it was cited for | **APPLIED** — `moduli_collide`, `badP_sp_differs`, `not_exists_moduli_of_badP`, `sp_eq_n2Sp_of_moduli`; row 35 rewritten |
 | 5 | `paperA-arc8-cp5` (`735f45c`) | 8.6 certificate-refutation review over **all seven** certificates, three defect-kind tests each | **EIGHT CONFIRMED DEFECTS**, seven in work under two days old, two of them FALSE statements inside the brand-new `eja-gated.lean` | **ALL APPLIED** — see the CERTIFICATE-REFUTATION REVIEW block below |
+| 6 | `paperA-arc8-cp8` | Diff audit: read **only review 5's fixes** — did any fix break something, or leave a stale primary source? | **NINE CONFIRMED DEFECTS.** Worst: `gate_E2_peirce`'s *repair* was **FALSE again** (an existential is antitone in its own witnesses, so "pin the witnesses" falsified it); `orientation_complex_structure` FALSE → VACUOUS → finally **PROVED**; three rows pointing at certificates whose headers still disclaimed them; `hrank`'s "load-bearing" justification an unbanked cross-carrier analogy | **ALL APPLIED** — see the DIFF AUDIT block below. Zero rows moved: every defect was bookkeeping *about* the mathematics |
 
-★ Nothing was rejected: every finding across the five reviews was confirmed at source and fixed. The
+★ Nothing was rejected: every finding across the six reviews was confirmed at source and fixed. The
 only items returned unfixed are the two the reviewers themselves marked UNCERTAIN and I recorded
 rather than guessed — `gate_E3`'s vIR-versus-Koecher identity, and the
 `external-rows.md`/`Interface.lean` citation conflict for row 14.
@@ -409,10 +416,77 @@ occurrence in one arc). The probe's content is now proper in-tree theorems and t
 `Scratch*.lean` and `ColdRev*.lean` are gitignored. **Two identical hygiene failures in one arc means
 the habit, not the incident, is the defect.**
 
-### Block 8.6 — DRY PASS ROUND 7 (post-refutation-review) WENT DRY; ARC-8's TERMINAL CONDITION IS MET
+### ★★★ DIFF AUDIT of the refutation fixes (tag `paperA-arc8-cp8`) — the fixes broke three things, and one of them was a FALSE theorem I had just written to replace a FALSE theorem
+
+Budgeted per the standing rule ([[feedback-audit-your-own-corrections]]): every round that fixes things
+gets an agent whose only job is to read the fixes. It found nine items; all nine verified at source.
+
+★★★ **1. `gate_E2_peirce`'s REPAIR was ALSO FALSE.** The refutation review's fix pinned `ScalarOn`/`J2`
+from below with two conjuncts — and that is precisely what made it false again, because **an
+existential over predicates is antitone in its own witnesses**: pinning them from below *shrinks* the
+set of satisfying witnesses while `C.aOf` and `C.p` remain unconstrained `ComparisonSetup` fields, so
+a setup whose `p` are not orthogonal idempotents and whose `aOf` is not a positive Peirce combination
+refutes it outright. **REPAIRED AGAIN** with the four premises the field actually supplies as standing
+hypotheses (`hp_idem`, `hp_orth`, `hp_sum`, and `haOf` in strict-positivity form).
+★ **RULE: when the fix for a vacuous statement is "constrain the witnesses", check the statement's
+variance in those witnesses first.** Constraining an existential's witnesses does not strengthen it —
+it can falsify it. Vacuity and falsity are one bad turn apart, and I took that turn twice in one file
+in one day.
+
+★★ **2. `orientation_complex_structure` was FALSE, then VACUOUS, then finally PROVED.** Two failed
+statements before the third stood. It is now a real theorem (0 sorries), and `frame-geometry.lean`
+dropped 4 → 3 sorries as a result — **the only certificate line this arc that moved because the
+statement got *better*, not because the row got re-priced.**
+
+★★ **3. Three rows were pointing at certificates whose own headers disclaimed them.** Rows 5 and 6's
+move-out note in `abstract-tier.lean` and row 15's in `frame-geometry.lean` still read "MOVED OUT of
+this certificate: now EJA-GATED" — a claim **withdrawn the same day it was made** — while the manifest
+had already been corrected to cite those very certificates. So the manifest and the certificates each
+told the truth about a different day. Both notes now carry the retraction inline.
+★ **This is [[feedback-fix-the-row-not-just-the-footnote]] with the roles swapped: I fixed the summary
+table and left the primary source asserting the old thing.** The remedy is the same in both
+directions — **grep for the OLD claim, never for the new one** — and it is now 4× in this arc.
+
+★ **4. `thm-quaternionic.lean`'s "hrank is load-bearing" was an unbanked analogy across carriers.** I
+justified rank ≥ 3 by "rank two is row 30's frame-dependent family" — but row 30's family lives on
+`HermitianMat (Fin 2) ℂ` and no twist family is constructed on `QuatCarrier` at `Nat.card n = 2`.
+Corrected to the honest status: both hypotheses are carried **because the article carries them**, and
+neither is shown load-bearing.
+
+★ **5–8. Four propagation misses from the (E3) retraction**, in `eja-gated.lean`'s body, manifest rows
+16/17, `WallCertificates/README.md`, and `EJA-DIVIDEND.md`'s row-14 cell; plus rows 13/16/17's status
+words leading with `EJA-GATED`, which the manifest's own taxonomy rule forbids (terminal state is
+recorded *beside* FORMALIZED/PARTIAL/ABSENT, never *instead of* it, or the census denominator moves).
+
+★ **9. A note about a markup defect reintroduced the markup defect.** Row 5's dividend cell had a
+stray table-separator giving it 8 fields where every other row has 7; the sentence recording that fact
+**named the character**, and awk counted it, so the fix re-broke the row it was documenting. Fixed by
+describing the character instead of writing it. Petty, and exactly the kind of thing that survives
+review because everyone reads the prose and nobody counts the fields.
+
+### Block 8.6 — DRY PASS ROUND 8 (post-diff-audit) WENT DRY
+
+Round 7's dryness **did not survive the diff audit** — nine fixes landed after it, one of them a FALSE
+theorem, so its dry round was invalidated exactly the way round 6's was. Round 8 is the one that counts.
+
+**Round 8 moved nothing.** Build errors 0 (corrected recipe); census PASS at 150 modules; custom axioms
+`[]`; all seven certificates compile at 0 errors with **`sorry`-term count == `sorry`-declaration count
+in every one** (2/0/3/3/2/0/1); no certificate imports `RadicalRelativity/`; manifest re-derived from
+the table = 12 FORMALIZED / 19 PARTIAL / 5 ABSENT = 36; terminal-state ledger re-derived from its own
+cells = 36; every dividend row 7 fields; the cross-document grep for the old (E3) claim and the stale
+six-row lists returns only annotated retractions.
+
+★ **The arc's closing count is unchanged by all of the above — 12 FORMALIZED — and that is the point.
+Nine defects were fixed and not one row moved, because the defects were in the *bookkeeping about* the
+mathematics, not in the mathematics.** The formalized theorems were never in question; every single
+thing the last two review rounds found was a statement I wrote *about* them.
+
+### Block 8.6 — DRY PASS ROUND 7 (post-refutation-review) — **went dry, then was INVALIDATED by the diff audit above; superseded by round 8**
 
 Re-run after the eight refutation-review fixes, because those fixes touched six of the seven
-certificates and a dry round before them would not have counted.
+certificates and a dry round before them would not have counted. **The same reasoning then applied to
+round 7 itself:** the diff audit of those fixes found nine more defects, so round 7's dryness is
+provenance only. See round 8.
 
 **Round 7 moved nothing.** Build errors 0 (using the corrected recipe —
 `grep -E ': error' | grep -vc '^warning:'`; the naive count reports 2 on a green tree); census PASS at
@@ -420,18 +494,21 @@ certificates and a dry round before them would not have counted.
 now equals its `sorry`-declaration count** — the two apparent discrepancies were prose mentions of the
 word inside docstrings, checked line by line, so no `sorry` hides inside a statement anywhere;
 no certificate imported from `RadicalRelativity/`; manifest counts re-derived from the table
-(12 FORMALIZED / 3 EJA-GATED / 16 PARTIAL / 5 ABSENT = 36); terminal-state ledger re-derived from its
-own cells (12 + 6 + 3 + 15 = 36); no stray tracked files; working tree clean.
+(★ this round wrote them as "12 FORMALIZED / 3 EJA-GATED / 16 PARTIAL / 5 ABSENT = 36", which is
+**a taxonomy violation** — EJA-GATED is a terminal state, not a status word, and the three rows are
+PARTIAL; the diff audit caught it and the census reads 12 / 19 / 5); terminal-state ledger re-derived
+from its own cells (12 + 6 + 3 + 15 = 36); no stray tracked files; working tree clean.
 
-**TERMINAL CONDITION — all four requirements now met:**
+**TERMINAL CONDITION — all four requirements met (requirement 3 by round 8, not this round):**
 1. every one of the 36 rows is in one of the four terminal states (ledger above, re-derived);
 2. `EJA-DIVIDEND.md` exists and states per row what the axiomatization would buy — and was itself
    corrected twice this arc (a refuted residue for row 35, then the CLOSES column after rows 5/6/15
    were withdrawn);
-3. the dry pass has produced a round with zero movement (round 7; rounds 2–6 each moved something,
-   and round 6's dryness was invalidated by the review that followed it);
+3. the dry pass has produced a round with zero movement — **round 8**, not round 7: rounds 2–7 each
+   moved something, and each of rounds 6 and 7 had its dryness invalidated by the review that followed
+   it (★ twice in a row, which is itself the finding: a dry round only counts if nothing runs after it);
 4. the certificate-refutation review has been applied to every standing certificate, with all eight
-   findings verified at source and fixed.
+   findings verified at source and fixed — **and then audited, which found nine more.**
 
 ★★ **The honest summary of this arc's last day: the review process found more defects in my own
 two-day-old work than in the two arcs before it, and the two worst were FALSE statements inside the
@@ -570,8 +647,10 @@ separately, per the row-20 rule.
 
 `WallCertificates/eja-gated.lean` (new) gates rows **13, 16, 17** on (E1)/(E2)/(E3), one `sorry`
 per gate. ★ It was written claiming rows 5, 6, 15 as well and those were **withdrawn the same day**
-(non-EJA clauses in their residues); this sentence said all six until a cross-document grep caught it. ★★ **(E3) IS row 14, pre-registered external — so rows 16/17 cannot reach FORMALIZED by
-axiomatization work at all.** `abstract-tier.lean` and `frame-geometry.lean` were refreshed with
+(non-EJA clauses in their residues); this sentence said all six until a cross-document grep caught it. ★★ **(E3): SUPERSEDED — this sentence said "(E3) IS row 14, pre-registered external — so rows 16/17
+cannot reach FORMALIZED by axiomatization work at all", and the diff audit found it standing 95 lines
+after its own retraction, immediately below the paragraph prescribing the grep that would have caught
+it. Whether rows 16/17 can reach FORMALIZED is OPEN: `gate_E3` as stated assumes `Φ` LINEAR.** `abstract-tier.lean` and `frame-geometry.lean` were refreshed with
 this-arc evidence for rows 3, 8, 9, 12 and 22, 26, 29, 31, 36.
 
 ★★ **Two vacuous gaps became real ones, which is the refutation review doing its job on this

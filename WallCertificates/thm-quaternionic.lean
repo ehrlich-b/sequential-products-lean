@@ -138,9 +138,12 @@ commutative, so `P.sp a b = P.sp b a` is no approximation to `Θ_r = id`.
   means the STATEMENT, not the header.
   ★ The restatement is now expressible because `HermitianMat.quatSp` / `quatLuders` landed this arc
   (block 8.3), and `quatSp_eq_quatQuadRep` identifies it with `Q_{√a}` — so the row's own conclusion
-  `a · b = Q_{√a} b` can be written directly.  Hypotheses `hS2` and `hrank` are now load-bearing rather
-  than decorative: without rank ≥ 3 the article's conclusion is false (rank two is row 30's
-  frame-dependent family).
+  `a · b = Q_{√a} b` can be written directly.  ★ CORRECTED 2026-08-10 (diff audit): I wrote that `hS2` and `hrank`
+  are "now load-bearing rather than decorative: without rank ≥ 3 the article's conclusion is false (rank
+  two is row 30's frame-dependent family)".  **That justification is an unbanked analogy across
+  carriers.**  Row 30's family lives on `HermitianMat (Fin 2) ℂ`; the rank-two *quaternionic* carrier is
+  `QuatCarrier` at `Nat.card n = 2`, and no twist family is constructed there in-tree.  Honest status:
+  both hypotheses are carried **because the article carries them**, and neither is shown load-bearing.
 
 Any S1–S7 product with S2 on the quaternionic carrier
 is Lüders: the twist parameter is pinned to zero on the fixed points of the symplectic involution.

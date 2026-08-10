@@ -226,8 +226,37 @@ tree's own `Necessity.opCommute_iff_commuteG`).  It also never used `i ≠ j`.
   ★ **The transferable rule: a free predicate variable in a gap statement is an unconstrained
   hypothesis, and an unconstrained hypothesis is where vacuity and falsity both hide.**  In the field
   it was meant to reproduce, `J2`/`ScalarOn` are *fields constrained by two other fields*; dropping
-  them to variables silently deleted those constraints. -/
-theorem gate_E2_peirce [FiniteDimensional ℝ J] (C : ComparisonSetup J) (_H : JBPremises C) :
+  them to variables silently deleted those constraints.
+
+★★★ **AND THE FIRST REPAIR WAS ALSO FALSE — caught by the diff audit of the repairs, hours later.
+Second falsity on this one statement.**  Pinning `ScalarOn`/`J2` from below removed the vacuity and
+thereby *created* a new falsity, because the existential is **antitone in its own witnesses**:
+conjuncts 1 and 2 bound the predicates from below, conjunct 3 is contravariant in both, so the whole
+thing is provable iff provable at the minimal choice — and **the minimal choice is built from `aOf` and
+`p`, which are UNCONSTRAINED `ComparisonSetup` FIELDS.**  `Interface.lean` requires no idempotency, no
+orthogonality, and no `aOf r = Σ exp(r_i) p_i`.  So take `J = H_3(ℝ)` with the genuine standard frame
+but `aOf := fun _ => diag(1,1,0)`: every `ComparisonSetup` field and all three `JBPremises` hold (it is
+a real EJA), conjunct 1 forces `ScalarOn 0 2 diag(1,1,0)`, conjunct 2 forces `J2 0 2 (E₀₂+E₂₀)`, and
+conjunct 3 then demands an operator commutation that fails.  The reviewer machine-checked all three
+tree-facing ingredients.
+  ★★ **FIXED ABOVE by hypothesizing the standing facts about `p` and `aOf` — which is verbatim the
+  lesson this same commit wrote down one declaration earlier for `gate_E1` ("an 'at the article's
+  generality' statement must carry the article's STANDING hypotheses too") and did not apply here.**
+  Writing a rule and applying it are separate acts, and the gap between them was under twenty lines.
+  ★ Second consequence, also from the audit: **`[FiniteDimensional ℝ J]` is INERT in this gate** (the
+  counterexample is finite-dimensional).  It was added by parallelism with `gate_E1`, where it is
+  genuinely load-bearing — a hypothesis copied for symmetry rather than for need.
+  ★ Note on the form of `haOf`: the article writes `a(r) = Σ e^{r_i} p_i`, and this file states instead
+  that `aOf r` is a **strictly positive** combination of the frame.  Reason: `Real.exp` is not in this
+  file's transitive imports, and strict positivity is exactly what blocks the counterexample (whose
+  `diag(1,1,0)` is a frame combination with a **zero** coefficient).  Weaker than the article's form and
+  sufficient for the purpose — recorded so nobody reads it as the article's clause verbatim. -/
+theorem gate_E2_peirce [FiniteDimensional ℝ J] (C : ComparisonSetup J) (_H : JBPremises C)
+    (hp_idem : ∀ i, C.jordan (C.p i) (C.p i) = C.p i)
+    (hp_orth : ∀ i j, i ≠ j → C.jordan (C.p i) (C.p j) = 0)
+    (hp_sum : ∑ i, C.p i = C.e)
+    (haOf : ∀ r : Fin C.n → ℝ, ∃ c : Fin C.n → ℝ, (∀ i, 0 < c i)
+      ∧ C.aOf r = ∑ i, c i • C.p i) :
     ∃ J2 ScalarOn : Fin C.n → Fin C.n → J → Prop,
       (∀ (r : Fin C.n → ℝ) (i j : Fin C.n), r i = r j → ScalarOn i j (C.aOf r)) ∧
       (∀ (i j : Fin C.n) (x : J), IsBlockElt C.jordan C.p i j x → J2 i j x) ∧
@@ -243,10 +272,15 @@ statable; it does not prove it. -/
 /-- **GAP — GATE (E3), van Imhoff–Roelands.**  A unital order isomorphism of the cone preserves the
 Jordan product.  Gates: the `Theta_jordan` half of rows 16 and 17.
 
-★★★ **THIS GATE IS PRE-REGISTERED EXTERNAL (row 14).**  Discharging it is NOT in ARC-8's scope and
+★★★ **CLAIM WEAKENED — see the header block; this paragraph contradicted it for 200 lines.**  It read
+"THIS GATE IS PRE-REGISTERED EXTERNAL (row 14)", and the diff audit found the retraction had been applied
+to the header and not here.  As stated this gate assumes `Φ` LINEAR, so it is the classical
+Koecher/Alfsen–Shultz theorem, not vIR's JB-generality version; whether rows 16/17 can reach FORMALIZED
+is **OPEN**.  Original text follows.
+★★ (formerly:) **THIS GATE IS PRE-REGISTERED EXTERNAL (row 14).**  Discharging it is NOT in ARC-8's scope and
 would not be in the scope of the axiomatization either — the axiomatization's contribution is that
 this statement becomes expressible at the article's generality, so `ComparisonSetup.Θ_jordan` can be a
-citation instead of an unexaminable field.  Rows 16 and 17 therefore terminate at EJA-GATED. -/
+citation instead of an unexaminable field.  Rows 16 and 17 therefore terminate at EJA-GATED. — ★ SUPERSEDED, see above. -/
 theorem gate_E3_theta_jordan (C : ComparisonSetup J) (_H : JBPremises C)
     (Φ : J ≃ₗ[ℝ] J) (_hunital : Φ C.e = C.e)
     (_horder : ∀ x, C.nonneg x ↔ C.nonneg (Φ x)) (x y : J) :

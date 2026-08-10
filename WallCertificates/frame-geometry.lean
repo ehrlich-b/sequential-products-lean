@@ -58,7 +58,12 @@ ATTACK EVIDENCE — REFRESHED FOR ARC-8 (2026-08-10).  The ARC-8 orders require 
 THIS ARC ("a certificate that was not re-attacked this arc is a prose price with a `.lean` extension"),
 so the ARC-7 evidence below is retained as provenance and superseded by this block.
 
-  row 15 `lem:frame-fix` — MOVED OUT of this certificate: it is now **EJA-GATED**
+  row 15 `lem:frame-fix` — ★★★ CORRECTED 2026-08-10 (diff audit): the EJA-GATED claim was **WITHDRAWN
+    the same day it was made**, because the article's statement includes "and lies in Stab(F)°", which
+    needs identity-component vocabulary and is NOT the axiomatization — and the note below silently
+    narrowed the residue to "the Peirce-block clauses", which is exactly the narrowing `eja-gated.lean`
+    identifies as the defect.  **Row 15 is WALL-CERTIFIED HERE.**  Original text follows.
+  (formerly:) row 15 `lem:frame-fix` — MOVED OUT of this certificate: it is now **EJA-GATED**
     (`WallCertificates/eja-gated.lean`, gate (E2) Peirce).  Its residue is the Peirce-block clauses,
     which are gated on the axiomatization, not on anything in this file.
 
@@ -207,7 +212,36 @@ theorem orientation_complex_structure {N : ℕ}
     (hJ : ∀ x, J x = ⟨Complex.I • (q.mat * x.mat * p.mat)
       - Complex.I • (q.mat * x.mat * p.mat)ᴴ, orientation_isHermitian q p x⟩) :
     ∀ x, q.mat * x.mat * p.mat + (q.mat * x.mat * p.mat)ᴴ = x.mat → J (J x) = -x := by
-  sorry
+  intro x hx
+  have hpq : p.mat * q.mat = 0 := by
+    have h := congrArg Matrix.conjTranspose hqp
+    rw [Matrix.conjTranspose_mul, Matrix.conjTranspose_zero, q.H, p.H] at h
+    exact h
+  have hJx : (J x).mat = Complex.I • (q.mat * x.mat * p.mat)
+      - Complex.I • (q.mat * x.mat * p.mat)ᴴ := by rw [hJ]; rfl
+  have hwh : (q.mat * x.mat * p.mat)ᴴ = p.mat * x.mat * q.mat := by
+    rw [Matrix.conjTranspose_mul, Matrix.conjTranspose_mul, q.H, p.H, x.H, Matrix.mul_assoc]
+  have h1 : q.mat * (q.mat * x.mat * p.mat) * p.mat = q.mat * x.mat * p.mat := by
+    calc q.mat * (q.mat * x.mat * p.mat) * p.mat
+        = (q.mat * q.mat) * x.mat * (p.mat * p.mat) := by noncomm_ring
+      _ = q.mat * x.mat * p.mat := by rw [hq, hp]
+  have h2 : q.mat * (p.mat * x.mat * q.mat) * p.mat = 0 := by
+    calc q.mat * (p.mat * x.mat * q.mat) * p.mat
+        = (q.mat * p.mat) * x.mat * (q.mat * p.mat) := by noncomm_ring
+      _ = 0 := by rw [hqp, Matrix.zero_mul, Matrix.zero_mul]
+  ext1
+  have hmk : (J (J x)).mat = Complex.I • (q.mat * (J x).mat * p.mat)
+      - Complex.I • (q.mat * (J x).mat * p.mat)ᴴ := by rw [hJ]; rfl
+  rw [hmk, HermitianMat.mat_neg, ← hx, hJx, hwh]
+  rw [show q.mat * (Complex.I • (q.mat * x.mat * p.mat)
+        - Complex.I • (p.mat * x.mat * q.mat)) * p.mat
+      = Complex.I • (q.mat * (q.mat * x.mat * p.mat) * p.mat)
+        - Complex.I • (q.mat * (p.mat * x.mat * q.mat) * p.mat) from by
+    simp only [Matrix.mul_sub, Matrix.sub_mul, Matrix.mul_smul, Matrix.smul_mul]]
+  rw [h1, h2, smul_zero, sub_zero, Matrix.conjTranspose_smul, hwh]
+  simp only [Complex.star_def, Complex.conj_I, smul_smul, Complex.I_mul_I, neg_smul, one_smul,
+    neg_neg, sub_neg_eq_add]
+  match_scalars <;> simp [Complex.I_sq]
 
 /-! ★★★ **SECOND RETRACTION ON THIS STATEMENT, 2026-08-10, from the certificate-refutation review —
 THE CORRECTED VERSION WAS ALSO FALSE, and the reviewer compiled the counterexample at the article's own
