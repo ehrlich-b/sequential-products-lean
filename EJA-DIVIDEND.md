@@ -2,7 +2,7 @@
 
 **Created 2026-08-09, ARC-8 block 8.6. Required deliverable of the ARC-8 ORDERS.**
 **Pin:** `STATEMENT-MANIFEST.md`'s 36 rows, main.tex blob `205fdf5a` (never re-pinned).
-**Status snapshot this table is written against:** 12 FORMALIZED / 19 PARTIAL / 5 ABSENT.
+**Status snapshot:** written against 12 FORMALIZED / 19 PARTIAL / 5 ABSENT; **refreshed 2026-08-10 (dry-pass round 4)** to 12 FORMALIZED / 6 EJA-GATED / 13 PARTIAL / 5 ABSENT. ★ The six EJA-GATED rows are exactly this table's six CLOSES rows — see `WallCertificates/eja-gated.lean`, which states the three gates.
 
 ---
 
@@ -60,10 +60,10 @@ Column meaning: **CLOSES** = the axiomatization would move the row to FORMALIZED
 | 20 | `thm:quaternionic` | the **transfer** (`Θ_r = id` for an arbitrary product) | **NOTHING** | the carrier is concrete (`QuatCarrier n`, symplectic-fixed subspace of `H_{2n}(ℂ)`) and the product now exists on it; the open question is whether `Z(ℍ) ∩ Im ℍ = {0}` survives the embedding — a concrete computation |
 | 21 | `thm:albert` | Albert M2 equational machinery; **pre-registered external** | **NOTHING** | not blocked on octonions; blocked on weeks of equational algebra. ★ Octonion claim re-checked 2026-08-10 (dry-pass round 4) and the path corrected: the file is `~/repos/research/lean/RadicalRelativity/Octonions.lean` (a **different Lean project**, toolchain v4.28.0), and `grep -c sorry` on it returns **0**. ★ Scope: that is a grep for the token, not a compile — this arc did not build that project, and the "0 sorries" claim is carried from the 2026-07 record rather than re-verified by elaboration |
 | 22 | `lem:orientation` | the coherence space as a carrier (`J_{q,k}`, splitting-independence, `Ad_{a^{it}}`) | **PARTIAL** | (E2) supplies the Peirce/coherence vocabulary the statement needs; the `Ad_{a^{it}}` formula and splitting-independence are additional work |
-| 26 | `lem:frame-connectivity` | Givens/Jacobi factorization into rank-two block rotations | **NOTHING** | absent from the tree AND from Mathlib; a matrix-group fact, orthogonal to the Jordan layer. Standalone Mathlib contribution |
+| 26 | `lem:frame-connectivity` | Givens/Jacobi factorization into rank-two block rotations | **NOTHING** | absent from the tree AND from Mathlib (`Givens` over v4.28.0: zero hits); a matrix-group fact, orthogonal to the Jordan layer. Standalone Mathlib contribution. ★ Do not "refute" this with `Necessity/BlockRotation.lean` — that file is the rotation *acting on* a Peirce block, not a factorization *into* block rotations; see the note in `frame-geometry.lean` |
 | 29 | `prop:n2-necessity` | gap (b): the Θ-level vs product-level equivalence | **NOTHING** | rank two, concrete carrier |
 | 31 | `thm:qubit-boundary` | unimodular cocycle subcases; clause (iii) in the `(Φ,t)`-conjugation form | **NOTHING** | rank two, concrete |
-| 35 | `cor:qubit-classification` | the "onto" half at **singular** effects (an S2 limiting argument) | **NOTHING** | rank two, concrete; needs continuity, not Jordan structure |
+| 35 | `cor:qubit-classification` | agreement on **effect × effect** — proved at positive-definite first arguments, open at singular ones | **NOTHING** | rank two, concrete. ★★ **This cell's earlier residue ("the onto half at singular effects, an S2 limiting argument") was REFUTED at checkpoint 2**: the onto half is FALSE, not unwritten — the tree's own `Necessity.badP` has the same moduli function and a different `.sp` (`RankTwo.not_exists_moduli_of_badP`). The target is products up to agreement on effects |
 | 36 | `cor:selectors` | clause (i): the Peirce-exchange action on `H_N(ℂ)` | **NOTHING** | the carrier is concrete `H_N(ℂ)`; the missing object is a concrete coherence-block action, and the mechanism is already machine-checked at rank two |
 
 ---
