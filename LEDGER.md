@@ -132,6 +132,33 @@ same commit as each status change; never say "fully formalized".
 
 ### ARC-8 EXECUTION RECORD (append per block; the orders above stay as written)
 
+#### CHECKPOINT REVIEW REGISTER — the orders' "at least four checkpoint reviews", in one place
+
+Five cold reviews ran. Each was a **narrow one-concern brief**, **pinned to a fresh tag**, told that
+plain text is not delivered and to call `SendMessage`, and had **every finding verified at source
+before being applied or rejected**. Reviews 1–4 are the four checkpoint reviews the orders require;
+review 5 is the separate 8.6 certificate-refutation requirement. Placement in the block order: CP1
+after 8.1(a)+(b), CP2 after 8.1(d)+(f), the refutation review inside 8.6 where the orders put it.
+
+| # | tag (commit) | the ONE concern | verdict | disposition |
+|---|---|---|---|---|
+| 1 | `paperA-arc8-cp1` (`0e60b31`) | Is the row-30 claim honest, or is the Lean weaker than the prose? | NO DEFECT on generality, S2-residue, frame identification, self-defeating. **CONFIRMED GAP:** nothing ruled out `n2Sp t` collapsing to a constant twist, and both anti-collapse guards were unavailable (one S2-gated, one in the entry-level encoding) | **APPLIED** — built `exists_twistSeq_diagFamily_ne`, `surjective_colFrame`, `exists_n2Sp_tau_ne_twistSeq`; closed the row-30/31 encoding split |
+| 2 | `paperA-arc8-cp1` (`0e60b31`) | Two "gap closed" claims — are they true, and are the statements the ones that were needed? | Both true. **CONFIRMED DEFECTS:** (a) `n2FrameTwist_eq_of_compatible` has **zero tree consumers** and row 30 closed by a P-free route — a necessity-side lemma mis-filed under a sufficiency row; (b) manifest row 18 **stale**, still issuing a retracted work order and citing a grep as its evidence. **UNCERTAIN:** `frame_stabilizer_is_torus` name overshoots its statement | **APPLIED** — `normSq_diag_eq_one_of_fixes_frameProj` added, row 18 rewritten, certificate annotated, name overshoot recorded |
+| 3 | `paperA-arc8-cp4` (`fe2313d`) | Is S2 actually proved for the frame-dependent product, and is the statement the paper's? | NO DEFECT on eight sub-questions (predicate, scalar branch incl. γ=0, joint-continuity input, bound, non-scalar branch, exhaustive dichotomy, self-defeating). **CONFIRMED DEFECT:** the non-collapse witness is **not an effect**, so those theorems separate the total *extensions*, not the operations; plus S2 proved in the **Frobenius** topology where the article's is the **order-unit** norm | **APPLIED** — `not_forall_effects_eq_twistSeq`, `not_forall_effects_tau_eq_twistSeq`, `n2SequentialProduct_firstArgContinuousOu` |
+| 4 | `paperA-arc8-cp4` (`fe2313d`) | Are rows 34 and 35's new status claims right? | Row 34 FORMALIZED **confirmed** (every article clause mapped; `surjInv` choice-independent; quotient-map instances real). **CONFIRMED DEFECT:** row 35's residue was wrong — the "onto" half is **FALSE, not unwritten**, and the tree's own `badP` is the counterexample; plus a citation that did not say what it was cited for | **APPLIED** — `moduli_collide`, `badP_sp_differs`, `not_exists_moduli_of_badP`, `sp_eq_n2Sp_of_moduli`; row 35 rewritten |
+| 5 | `paperA-arc8-cp5` (`735f45c`) | 8.6 certificate-refutation review over **all seven** certificates, three defect-kind tests each | **EIGHT CONFIRMED DEFECTS**, seven in work under two days old, two of them FALSE statements inside the brand-new `eja-gated.lean` | **ALL APPLIED** — see the CERTIFICATE-REFUTATION REVIEW block below |
+
+★ Nothing was rejected: every finding across the five reviews was confirmed at source and fixed. The
+only items returned unfixed are the two the reviewers themselves marked UNCERTAIN and I recorded
+rather than guessed — `gate_E3`'s vIR-versus-Koecher identity, and the
+`external-rows.md`/`Interface.lean` citation conflict for row 14.
+
+★★ **What the register is for.** The orders ask for four checkpoint reviews *because* prose prices
+decay here. The register makes the count and the disposition auditable without reading the whole
+record — and the honest headline is that **the reviews found more defects in my own recent work than
+in the two prior arcs combined**, including two false gate statements in the certificate written to
+prevent false gate statements.
+
 **Block 8.0 — audit before build (done).** Tree verified at `81feb05`: `lake build` clean (3106
 jobs), `AxiomAudit.lean` Census PASS, custom axioms exactly `[]`, tags through
 `paperA-arc7-cp2`. The two `sorry` tokens grep finds in `Vendor/Misc.lean` are inside a block
