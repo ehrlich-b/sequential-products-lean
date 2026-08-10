@@ -64,6 +64,7 @@ apart. So a file is named for its primary row and its header lists every row it 
 | `differential-trio.lean` | 16, 17, 18 — ★ **ZERO gaps (ARC-8)**; the ℂ converse was already in the tree when the file was written |
 | `abstract-tier.lean` | 3, 5, 6(i), 8, 9, 12, 13 |
 | `frame-geometry.lean` | 15, 22, 26, 29(b), 31, 36(i) |
+| `eja-gated.lean` | 5, 6, 13, 15, 16, 17 — the **EJA-GATED** certificate (ARC-8 8.6). States the three gates (E1) Jordan spectral / (E2) Peirce+FK / (E3) vIR once each rather than six rows six ways. ★ (E3) is row 14, pre-registered external, so rows 16/17 terminate here and cannot reach FORMALIZED by axiomatization alone |
 | `thm-quaternionic.lean` | 20 |
 | `external-rows.md` | 1, 2, 4, 10, 14, 21 — *not* certificates; the pre-registered external six |
 
