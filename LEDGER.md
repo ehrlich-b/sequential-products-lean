@@ -132,6 +132,30 @@ same commit as each status change; never say "fully formalized".
 
 ### ARC-8 EXECUTION RECORD (append per block; the orders above stay as written)
 
+#### ★★★ STATUS-CHANGE PROPAGATION — the arc's most repeated defect, and its mechanical remedy
+
+"Fix the row, not just the footnote" fired **seven times** this arc, three of them on 2026-08-10 alone
+and all three from ONE status change (withdrawing EJA-GATED for rows 5, 6, 15). What it looked like:
+I wrote the corrected tally in a new paragraph and left the old one standing, so `LEDGER.md` carried
+**two contradictory tallies** (`6 EJA-GATED + 12 WALL-CERTIFIED` and `3 + 15`) in one file; then the
+stale six-row list turned up in `STATEMENT-MANIFEST.md`, then in `LEDGER.md` again, then in
+`EJA-DIVIDEND.md` — each found only because I re-ran the grep after each fix.
+
+★★ **THE REMEDY, and it is two commands, not a habit of care.** After any status change:
+
+    grep -n "<the OLD status word>" <every status document>
+    grep -rn "<the OLD row list>" LEDGER.md STATEMENT-MANIFEST.md EJA-DIVIDEND.md THEOREM-MAP.md WallCertificates/
+
+and read **every** hit, keeping only those inside an explicit retraction. Re-run after each fix, because
+the list appears in more places than anyone remembers writing it. ★ The reason care does not work here:
+the documents are long, the claim is short, and the author is the worst-placed person to recall where he
+asserted it. **Grep for the old claim, not for the new one** — searching for what you just wrote finds
+only your fix.
+
+★ Corollary worth keeping: a *numerical* contradiction is the lucky case, because two tallies in one
+file are mechanically detectable. Stale *prose* about the same change is the dangerous case, and the row
+lists above were prose.
+
 #### CHECKPOINT REVIEW REGISTER — the orders' "at least four checkpoint reviews", in one place
 
 Five cold reviews ran. Each was a **narrow one-concern brief**, **pinned to a fresh tag**, told that
