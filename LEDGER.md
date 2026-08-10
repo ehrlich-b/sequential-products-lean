@@ -355,6 +355,41 @@ occurrence in one arc). The probe's content is now proper in-tree theorems and t
 `Scratch*.lean` and `ColdRev*.lean` are gitignored. **Two identical hygiene failures in one arc means
 the habit, not the incident, is the defect.**
 
+### Block 8.6 — DRY PASS: ROUND 6 WENT DRY (2026-08-10)
+
+Rounds 2–5 each moved something; **round 6 moved nothing.** Round 6 is the consolidated mechanical
+pass: build errors 0; census PASS at 150 modules with custom axioms `[]`; all seven certificates
+compile with their expected `sorry` counts (abstract-tier 2, differential-trio 0, eja-gated 3,
+frame-geometry 4, lem-n2-descent 2, prop-n2-sufficiency 0, thm-quaternionic 1); **zero certificates
+imported from `RadicalRelativity/`**; every recorded absence grep re-executed and still holding;
+manifest counts re-derived from the table itself (12/6/13/5 = 36); no stray tracked files; working tree
+clean.
+
+**What the earlier rounds moved, so "went dry" is not read as "was always dry":**
+* round 2 — caught my own row-29 gap statement being **FALSE**: it applied `Θ_a` to the *standard*
+  coherence block while taking `a = Ad_U(diagFamily r)`, mixing frame indices. ★ The test that caught
+  it was not a counterexample hunt but asking **"which frame is each object in this statement indexed
+  by?"** — two of three were indexed by `U` and one was not. That is the specific shape to look for
+  here, and it is the same shape as the retracted `frame_param_eq_of_compatible`.
+* round 3 — caught row 9's recorded grep scope **undercounting** (`iInf|⨅` has ~38 non-comment hits, not
+  the two I described). The substantive absence held: exactly one hit touches `HermitianMat`, and it is
+  an infimum over real *eigenvalues*, not over the Loewner order. ★ **A recorded scope must be the
+  count plus the classification, or it is a recollection.**
+* round 4 — two findings. (a) `RadicalRelativity/Necessity/BlockRotation.lean` **EXISTS**, and row 26's
+  residue is phrased "rank-two block rotations", so the next reader would have found it and declared an
+  eleventh false absence claim. It is not one: that file is the rotation *acting on* a Peirce block
+  (`chiEntryCLM`, `chiEntry_is_rotation`), not a factorization *into* block rotations. Disarmed in the
+  certificate and in `EJA-DIVIDEND.md`. ★ **An absence claim phrased in the same words as an existing
+  filename invites its own refutation.** (b) `EJA-DIVIDEND.md` was itself carrying row 35's
+  **already-refuted** residue and a stale header count.
+* round 5 — audited `THEOREM-MAP.md` for non-existent identifiers and stale "NOT proved" claims:
+  **clean** (the 11 flagged names are Mathlib, structure fields, or the properly-marked eliminated
+  axiom).
+
+★ Honest scope of the claim: round 6 is dry on every *mechanical* check across all 36 rows, and the
+substantive "is any residue now closable" question was worked in rounds 2–5. The remaining gate is the
+certificate-refutation review over every standing certificate, which is out with a cold reviewer.
+
 ### Block 8.6 — ALL 36 ROWS NOW IN A TERMINAL STATE (2026-08-10)
 
 `STATEMENT-MANIFEST.md` carries a TERMINAL-STATE LEDGER: **12 FORMALIZED + 6 EXTERNAL + 6 EJA-GATED +
