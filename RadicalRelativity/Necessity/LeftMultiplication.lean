@@ -440,10 +440,17 @@ carried that sentence forward would be wrong.
 
 Scope, stated so it is not overread: this is the sequential form.  Deriving the article's
 order-infimum form from it additionally needs "a decreasing sequence of effects converges to its
-infimum" for the Loewner order, which is **not** in the tree: grepping
-`iInf|⨅|Antitone|antitone|tendsto_of_antitone` over `RadicalRelativity/` (2026-08-09) returns only
-`Submodule`-kernel infima and one vendored `Set.Icc`-subtype lemma, nothing about this order.  So
-row 9 stays PARTIAL. -/
+infimum" for the Loewner order, which is **not** in the tree.  ★ SCOPE CORRECTED 2026-08-10 (dry-pass
+round 3, self-caught): the first version of this note said the grep "returns only `Submodule`-kernel
+infima and one vendored `Set.Icc`-subtype lemma".  That UNDERCOUNTS — `iInf|⨅` over
+`RadicalRelativity/` has ~38 non-comment hits.  The accurate claim is narrower and still sufficient:
+of those, **exactly one touches `HermitianMat` at all** (`Vendor/HermitianMat/CFC.lean:325`,
+`⨅ i, A.H.eigenvalues i`), and it is an infimum over real EIGENVALUES, not over the Loewner order.
+So no `⨅` for this order exists, and no monotone-convergence lemma for it either.  So row 9 stays
+PARTIAL.
+  ★ Why the first version was wrong: I described the grep's output from the hits I had *looked at*,
+  not from its count.  A recorded scope has to be the count plus the classification, or it is a
+  recollection. -/
 
 /-- **`lem:normality`, compatibility clause.**  If `a` is compatible with every term of a
 convergent sequence of effects, it is compatible with the limit. -/
