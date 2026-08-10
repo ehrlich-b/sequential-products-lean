@@ -323,8 +323,11 @@ staleness.** The dividend table is at the repo root: the axiomatization **CLOSES
 entire rank-two lane. So the orders' skip condition ("would do literally nothing for Paper A") does
 **not** fire; the decision stands. ★ Two qualifications the table insists on: the six CLOSES rows are
 all *generality-only* rows (the mathematics is already done on the concrete carrier), and rows 16/17
-close only if `Theta_jordan` becomes derivable — which IS row 14, pre-registered external — so their
-honest terminus is **EJA-GATED behind a named citation**, not FORMALIZED.
+close only if `Theta_jordan` becomes derivable. ★★★ **THE REST OF THIS SENTENCE IS SUPERSEDED:** it
+said `Theta_jordan` "IS row 14, pre-registered external — so their honest terminus is EJA-GATED behind
+a named citation, not FORMALIZED." The refutation review showed `gate_E3` as stated assumes `Φ`
+**linear**, making it the classical Koecher/Alfsen–Shultz theorem rather than vIR's JB-generality
+version, so **whether rows 16/17 can reach FORMALIZED is OPEN, not settled**.
 
 ★★ **Certificate sweep (partial, ahead of the full 8.6 review).** `prop-n2-sufficiency.lean` and
 `differential-trio.lean` now have **zero** gaps. `lem-n2-descent.lean` went from four `sorry`s to two
@@ -528,9 +531,18 @@ certificate-refutation review over every standing certificate, which is out with
 
 ### Block 8.6 — ALL 36 ROWS NOW IN A TERMINAL STATE (2026-08-10)
 
-`STATEMENT-MANIFEST.md` carries a TERMINAL-STATE LEDGER: **12 FORMALIZED + 6 EXTERNAL + 6 EJA-GATED +
-12 WALL-CERTIFIED-this-arc = 36.** Status words in the table stay FORMALIZED/PARTIAL/ABSENT because the
-census depends on that taxonomy; the terminal state is recorded separately, per the row-20 rule.
+`STATEMENT-MANIFEST.md` carries a TERMINAL-STATE LEDGER. ★★★ **THE TALLY IN THIS PARAGRAPH WAS
+"12 FORMALIZED + 6 EXTERNAL + 6 EJA-GATED + 12 WALL-CERTIFIED = 36" AND IS SUPERSEDED — the correct
+figure after the same-day EJA-GATED withdrawal for rows 5, 6, 15 is 12 + 6 + 3 + 15 = 36** (see the
+refutation-review block above and the ledger in the manifest). Status words in the table stay
+FORMALIZED/PARTIAL/ABSENT because the census depends on that taxonomy; the terminal state is recorded
+separately, per the row-20 rule.
+  ★ **Found 2026-08-10 by grepping this file for its own status word rather than re-reading it: TWO
+  CONTRADICTORY TALLIES were sitting in one file, because I appended the corrected one instead of
+  fixing this one. That is "fix the row, not just the footnote" for the FIFTH time this arc, and the
+  first time it produced a numerical contradiction rather than stale prose.** The mechanical check that
+  caught it — `grep -n "EJA-GATED" LEDGER.md` and read every hit — costs one command and should run
+  after every status change.
 
 `WallCertificates/eja-gated.lean` (new) gates rows 5, 6, 13, 15, 16, 17 on (E1)/(E2)/(E3), one `sorry`
 per gate. ★★ **(E3) IS row 14, pre-registered external — so rows 16/17 cannot reach FORMALIZED by
