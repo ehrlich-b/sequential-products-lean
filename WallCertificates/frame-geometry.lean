@@ -76,6 +76,15 @@ so the ARC-7 evidence below is retained as provenance and superseded by this blo
     re-verified this arc and holds twice over: `Givens|jacobiRot|blockRotation` over
     `RadicalRelativity/` returns one hit and it is the prose sentence recording the gap, and `Givens`
     over **Mathlib v4.28.0 returns zero hits**.  So this is a standalone contribution, not an assembly.
+    ★★ **A NAME COLLISION THAT WILL LOOK LIKE A FALSE ABSENCE CLAIM, so it is disarmed here (dry-pass
+    round 4, 2026-08-10).**  `RadicalRelativity/Necessity/BlockRotation.lean` EXISTS.  A reader who
+    greps the residue's own phrasing ("rank-two block rotations") will find it and conclude this
+    absence claim is the eleventh false one.  It is not: that file is about `chiEntryCLM` /
+    `chiEntry_is_rotation` — the rotation **acting on** a Peirce coherence block, i.e. the image of the
+    χ-map — and says nothing about **factorizing a unitary INTO** rank-two block rotations, which is
+    what connectivity needs.  Read the declaration list, not the filename.
+    ★ Recording this is the point of the dry pass: the absence claim survived, but only because someone
+    checked what the colliding file contains.  The claim as first written invited the refutation.
 
   row 29 gap (b) — attacked this arc and **RESTATED NON-VACUOUSLY**: the previous
     `n2_necessity_theta_level : True` is replaced by the Θ-level conclusion itself, using
