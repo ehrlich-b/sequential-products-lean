@@ -191,14 +191,41 @@ brief asked reviewers to hunt for, and the first instance was mine.
 cross-coherence space as a *carrier*, which the tree does not have — the same missing vocabulary as
 `W_n` in row 29 and the Peirce subalgebra in row 5.  The statement below therefore carries the
 subspace condition as a hypothesis, which is the strongest form that is actually statable here. -/
+theorem orientation_isHermitian {N : ℕ} (q p x : HermitianMat (Fin N) ℂ) :
+    (Complex.I • (q.mat * x.mat * p.mat)
+      - Complex.I • (q.mat * x.mat * p.mat)ᴴ).IsHermitian := by
+  unfold Matrix.IsHermitian
+  rw [Matrix.conjTranspose_sub, Matrix.conjTranspose_smul, Matrix.conjTranspose_smul,
+    Matrix.conjTranspose_conjTranspose]
+  simp only [Complex.star_def, Complex.conj_I]
+  module
+
 theorem orientation_complex_structure {N : ℕ}
-    (q p : HermitianMat (Fin N) ℂ) (J : HermitianMat (Fin N) ℂ → HermitianMat (Fin N) ℂ)
+    (q p : HermitianMat (Fin N) ℂ)
+    (hqp : q.mat * p.mat = 0) (hq : q.mat * q.mat = q.mat) (hp : p.mat * p.mat = p.mat)
+    (J : HermitianMat (Fin N) ℂ → HermitianMat (Fin N) ℂ)
     (hJ : ∀ x, J x = ⟨Complex.I • (q.mat * x.mat * p.mat)
-      - Complex.I • (q.mat * x.mat * p.mat)ᴴ, by sorry⟩) :
+      - Complex.I • (q.mat * x.mat * p.mat)ᴴ, orientation_isHermitian q p x⟩) :
     ∀ x, q.mat * x.mat * p.mat + (q.mat * x.mat * p.mat)ᴴ = x.mat → J (J x) = -x := by
   sorry
 
-/-- The compiled witness behind the retraction above: distinct frame projections annihilate, so the
+/-! ★★★ **SECOND RETRACTION ON THIS STATEMENT, 2026-08-10, from the certificate-refutation review —
+THE CORRECTED VERSION WAS ALSO FALSE, and the reviewer compiled the counterexample at the article's own
+rank `N = 3`.**  With `q p` arbitrary Hermitian and no orthogonality or idempotency, take `q = 𝟙` and
+`p = (1/2)•𝟙`: then `q x p = x/2` is Hermitian, so the coherence hypothesis
+`q x p + (q x p)ᴴ = x` holds for **every** `x`, while `J ≡ 0`, so `J (J x) = 0 ≠ −x`.
+  ★ **FIXED ABOVE** by hypothesizing that `q` and `p` are orthogonal idempotents (`q p = 0`, `q² = q`,
+  `p² = p`) — which is what "frame projections" means and what the first version's prose said while its
+  Lean did not.  **Fifth false gap statement in this directory, second on this row.**
+  ★★ **AND A SEPARATE HYGIENE DEFECT, also fixed above: the previous version had `by sorry` INSIDE the
+  statement** (the `IsHermitian` side condition), so the declaration was not fully written down and
+  could not be attacked as stated — the identical defect `prop-n2-sufficiency.lean` found and repaired
+  in ITSELF on 2026-08-09, surviving one file over.  The side condition is now the proved lemma
+  `orientation_isHermitian`, so this file's `sorry` count equals its gap count.
+  ★ The pattern across both retractions on this row: **the prose knew `q, p` were frame projections
+  both times; the Lean never said so.** A hypothesis stated only in a docstring is not a hypothesis. -/
+
+/-- The compiled witness behind the FIRST retraction: distinct frame projections annihilate, so the
 unrestricted form fails at `x = q`. -/
 theorem frameProj_mul_orthogonal_eq_zero :
     (Necessity.frameProj (0 : Fin 3)).mat * (Necessity.frameProj (1 : Fin 3)).mat = 0 := by

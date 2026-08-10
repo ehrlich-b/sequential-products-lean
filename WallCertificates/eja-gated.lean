@@ -1,5 +1,7 @@
 /-
-EJA-GATED CERTIFICATE — rows 5, 6, 13, 15, 16, 17 of STATEMENT-MANIFEST.md
+EJA-GATED CERTIFICATE — rows 13, 16, 17 of STATEMENT-MANIFEST.md
+  (rows 5, 6, 15 were claimed here on 2026-08-10 and are WITHDRAWN the same day — see the
+   WITHDRAWAL block below)
 Date: 2026-08-10, ARC-8 block 8.6.  Tag at issue: `paperA-arc8-cp4` and later.
 Denominator pin: main.tex blob 205fdf5a (never re-pinned).
 
@@ -15,10 +17,13 @@ WHAT THIS FILE IS, AND WHAT IT IS NOT
   it is wrong in one place, and every row that leans on it moves together.
 
   ★ WHAT THIS FILE DOES NOT DO, stated first so it cannot be misread: it does NOT prove any of the
-  six rows at the article's generality, and it does NOT prove the gates.  Discharging a gate below
-  would make the corresponding `ComparisonSetup` FIELD derivable rather than carried — which is
-  exactly the movement `EJA-DIVIDEND.md` prices.  A reader who converts "EJA-GATED" into
-  "FORMALIZED" has made the error this file exists to prevent.
+  rows at the article's generality, and it does NOT prove the gates.  A reader who converts
+  "EJA-GATED" into "FORMALIZED" has made the error this file exists to prevent.
+  ★★ CORRECTED 2026-08-10: an earlier version of this paragraph said "discharging a gate below would
+  make the corresponding `ComparisonSetup` FIELD derivable".  That is true only of (E3).  (E1) and
+  (E2) correspond to **no field at all** — they are ingredients the fields are built from, and (E2)
+  produces the three `CoalescenceSetup` FK fields rather than a `ComparisonSetup` one.  A tidy
+  three-way parallel was asserted where the structure has none.
 
 THE MISSING PREMISES, EXACTLY
 
@@ -35,21 +40,64 @@ THE THREE GATES (the names used throughout, and in EJA-DIVIDEND.md)
   (E3) `Theta_jordan` DERIVABLE — van Imhoff–Roelands: a unital order isomorphism of the cone
        preserves the Jordan product.
 
-  ★★ (E3) IS THE ONE THAT MATTERS FOR THE STATUS ARITHMETIC, AND IT IS EXTERNAL.  (E3) is the
-  content of `prop:theta` at vIR generality — manifest row 14, PRE-REGISTERED EXTERNAL.  So building
-  the axiomatization does NOT prove it; it makes it statable at the right generality so it can be
-  cited.  Rows 16 and 17, whose residue is exactly (E3), therefore terminate at EJA-GATED behind a
-  named citation and NOT at FORMALIZED, no matter how much axiomatization work is done.  This is the
-  single most likely misreading of `EJA-DIVIDEND.md` and it is why the dividend table says PARTIAL
-  for row 14 rather than CLOSES.
+  ★★ (E3) AND THE STATUS ARITHMETIC — **CLAIM WEAKENED 2026-08-10 after the refutation review.**
+  I had written: (E3) *is* `prop:theta` at vIR generality (row 14, pre-registered external), therefore
+  rows 16/17 "terminate at EJA-GATED behind a named citation and NOT at FORMALIZED, no matter how much
+  axiomatization work is done."  **That inference does not follow from the gate as stated.**
+  `gate_E3_theta_jordan` assumes `Φ : J ≃ₗ[ℝ] J` — **linear** — so it is the classical
+  unital-linear-order-isomorphism theorem (Koecher / Alfsen–Shultz 2.80), which `Interface.lean`
+  itself cites as "classical corroboration" and which the tree already discharges concretely
+  (`KadisonDischarge` / `RealKadison`).  vIR's external delta is the JB-algebra-generality version.
+  Rows 16/17's article statements live on a f.d. **simple EJA**, where the classical linear fact is
+  what is needed — so a Mathlib-grade f.d. EJA layer containing Koecher/AS-2.80 could discharge this
+  gate in-tree, and rows 16/17 could then reach FORMALIZED.
+  ★ Honest status: (E3) as stated is **not** obviously external, the load-bearing sentence of this
+  file's first version was overstated, and whether rows 16/17 can reach FORMALIZED is **OPEN** pending
+  a decision about which theorem row 14 actually reserves.
+  ★ A citation inconsistency found in the same pass and NOT resolved: `external-rows.md` names the
+  row-14 source "van Ittersum–Reijnders" while `Interface.lean` and this file name it "van
+  Imhoff–Roelands" (arXiv:1904.09278).  Two names for the theorem that terminates two rows.  Not
+  resolvable offline; flagged, not guessed.
 
-PER-ROW: WHICH GATE, AND WHAT IS ALREADY CLOSED IN-TREE
+★★★ WITHDRAWAL — ROWS 5, 6 AND 15 ARE **NOT** EJA-GATED (2026-08-10, certificate-refutation review)
 
-  row 5  `lem:span`      — the order-unit half (effects contain the ½-ball about ½e, hence span, hence
+  EJA-GATED requires that EVERY non-EJA clause be closed in-tree first.  For three of the six rows I
+  claimed, that is false, and in each case the manifest's own cell said so:
+
+    row 5  `lem:span` — the **ball clause** ("the effects contain the ½-ball about ½·e") is open, and
+      the manifest records why: it "needs the norm to *be* the order-unit norm".  That is an
+      order-unit-norm fact, **not** the EJA axiomatization.  ★ My per-row line below asserted the
+      ½-ball clause was CLOSED; `OrderUnitSpace.span_isEffect_eq_top` proves *spanning* from
+      order-unit boundedness WITHOUT the ball, which is what I mistook for it.
+    row 6  `lem:homog` — clause (ii) is **already proved at abstract order-unit generality** as
+      `SequentialProductOn.sp_smul_left` (S1–S7 + S2 + `IsArchimedean`), and the manifest cell says
+      outright that this "covers the article's statement, whose ambient `J` is an EJA and hence an
+      order unit space".  I cited `HermitianMat.twistSeq_smul_left` instead — a theorem about **one
+      specific product**, the constant-parameter twist — and then assigned the row to gate (E1), the
+      Jordan spectral theorem, on the strength of that misreading.  Clause (i)'s abstract port needs
+      the order-unit route, not spectral theory.  ★ **Read the statement, not the name** — the two
+      differ by exactly "for an arbitrary S1–S7 product" versus "for the twist product".
+    row 15 `lem:frame-fix` — the article's statement includes "**and lies in Stab(F)°**", which needs
+      the stabilizer as a group with an identity component.  Two other certificates in this directory
+      already record that vocabulary as absent, and it is **not** the EJA axiomatization.  My
+      move-out note silently narrowed the residue to "the Peirce-block clauses".
+
+  ★★ **The shape of the error, since it is one error made three times: I classified each row by its
+  BIGGEST residue and let that stand for its WHOLE residue.**  EJA-GATED is a claim about the
+  complement — that nothing else remains — and a claim about a complement cannot be checked by looking
+  at the largest item in it.  This is the same failure as row 35's "and that is the whole residue",
+  which the same review process caught two days earlier.
+  ★ Rows 5, 6, 15 revert to WALL-CERTIFIED with this arc's attack evidence, and their non-EJA residues
+  are now named in the manifest.
+
+PER-ROW: WHICH GATE, AND WHAT IS ALREADY CLOSED IN-TREE (rows 13, 16, 17; the three withdrawn rows'
+lines are retained below with their defects marked, because the retraction is the content)
+
+  row 5  [WITHDRAWN — see above; the ball clause is open and is NOT an EJA gap] `lem:span` — the order-unit half (effects contain the ½-ball about ½e, hence span, hence
                            linear maps agreeing on effects are equal) is CLOSED in-tree on the
                            concrete carrier.  The residue is the SECOND half: `[0,q]` spans the Peirce
                            subalgebra `J₂(q)`.  GATE (E2).
-  row 6  `lem:homog`     — clause (i) (additive + order bounded ⟹ unique positive linear extension)
+  row 6  [WITHDRAWN — see above; clause (ii) is already abstract, and the cited theorem was the wrong one] `lem:homog` — clause (i) (additive + order bounded ⟹ unique positive linear extension)
                            is `Necessity.seqLeftMul` in-tree; clause (ii) `(λa)·b = λ(a·b)` is in-tree
                            on the concrete carrier (ARC-8: `HermitianMat.twistSeq_smul_left`, obtained
                            from the constant-parameter S5 at a scalar left factor).  Residue = both at
@@ -57,7 +105,7 @@ PER-ROW: WHICH GATE, AND WHAT IS ALREADY CLOSED IN-TREE
   row 13 `prop:pseudo-transfer` — proved in-tree on the concrete carrier in NORMALIZED form
                            (`Necessity/PseudoInverse.lean`).  Residue = the spectral inverse at EJA
                            generality.  GATE (E1).
-  row 15 `lem:frame-fix` — the non-EJA content is closed in-tree.  Residue = the Peirce-block
+  row 15 [WITHDRAWN — see above; the `Stab(F)°` clause is non-EJA and open] `lem:frame-fix` — the non-EJA content is closed in-tree.  Residue = the Peirce-block
                            statements (Θ_r preserves each block; L_{a(r)} is block-diagonal).
                            GATE (E2).
   row 16 `lem:coalescence` — ★ BOTH CLAUSES ARE ALREADY PROVED AT THE INTERFACE'S OWN ABSTRACT
@@ -133,8 +181,19 @@ eigenvalues, which is what a functional calculus (hence `aOf`'s inverse and the 
 row 13 `prop:pseudo-transfer` at EJA generality.
 
 ★ This is the large piece and it has no Mathlib support.  Its natural home is upstream of this paper
-(a Mathlib-grade EJA layer), not inside `RadicalRelativity`. -/
-theorem gate_E1_spectral (C : ComparisonSetup J) (_H : JBPremises C) (x : J) :
+(a Mathlib-grade EJA layer), not inside `RadicalRelativity`.
+
+★★★ **`[FiniteDimensional ℝ J]` ADDED 2026-08-10 after the certificate-refutation review, and without
+it this gate was FALSE.**  `ComparisonSetup` requires only `NormedAddCommGroup` +
+`InnerProductSpace ℝ`, so `J = ℝ[X]` with polynomial multiplication as `jordan`, `Θ = id`, and
+`nonneg` the sums of squares satisfies every `ComparisonSetup` field AND all three `JBPremises` — yet
+`ℝ[X]` is a domain, so its only idempotents are `0` and `1`, `∑ q i = e` forces all but one to vanish,
+and `x = X` has no spectral resolution.  So as first written the gate could never be discharged by
+anyone.  ★ The lesson is narrow and worth keeping: **an "at the article's generality" statement must
+carry the article's STANDING hypotheses too, not only its premises.**  f.d. is standing for EJAs and I
+transcribed only the three premises the interface docstring lists. -/
+theorem gate_E1_spectral [FiniteDimensional ℝ J] (C : ComparisonSetup J) (_H : JBPremises C)
+    (x : J) :
     ∃ (m : ℕ) (q : Fin m → J) (lam : Fin m → ℝ),
       (∀ i, C.jordan (q i) (q i) = q i) ∧
       (∀ i j, i ≠ j → C.jordan (q i) (q j) = 0) ∧
@@ -150,14 +209,29 @@ carry Faraut–Korányi are exactly what this would produce. -/
 /-- **GAP — GATE (E2), the Peirce decomposition and its Faraut–Korányi rules.**  Gates: row 5
 `lem:span`'s Peirce half, row 15 `lem:frame-fix`'s block statements, and the FK half of rows 16/17.
 
-Stated in the form the tree actually consumes: the simultaneous-diagonalization fact that
-`CoalescenceSetup.simDiag_opCommute` carries as a field.  Naming it this way rather than as an
-abstract direct-sum decomposition is deliberate — it is the consumed content, so discharging it is
-what would move the rows. -/
-theorem gate_E2_peirce (C : ComparisonSetup J) (_H : JBPremises C)
-    (J2 ScalarOn : Fin C.n → Fin C.n → J → Prop) (i j : Fin C.n) (a b : J)
-    (_ha : ScalarOn i j a) (_hb : J2 i j b) :
-    OpCommute C.jordan a b := by
+Stated as: the axiomatization **produces the three FK data** that `CoalescenceSetup` carries as fields
+(`aOf_scalarOn`, `block_mem_J2`, `simDiag_opCommute`).  The first two conjuncts pin `ScalarOn` and `J2`
+from below, so they cannot be cheated by `False`, and the third is the content.
+
+★★★ **RESTATED 2026-08-10 after the certificate-refutation review, and the previous version was
+FALSE — the worst defect in this arc, in the file written to prevent exactly this.**  It read
+`(J2 ScalarOn : … → Prop) … (_ha : ScalarOn i j a) (_hb : J2 i j b) : OpCommute C.jordan a b` with the
+two predicates as **free universally-quantified variables**.  Instantiate both at `fun _ _ _ => True`
+and it says *every two elements of every JB-premised `ComparisonSetup` operator-commute*, which is
+false on `H_n(𝕜)` (take `diag(1,0)` against the `(0,1)` block; the reviewer compiled this using the
+tree's own `Necessity.opCommute_iff_commuteG`).  It also never used `i ≠ j`.
+  ★★ **And it was SELF-DEFEATING in the exact sense this project has a test for:** discharging it as
+  written would have proved that no JB-premised `ComparisonSetup` exists on the intended carriers —
+  refuting the axiomatization programme the file exists to price.  Four of the six rows leaned on it.
+  ★ **The transferable rule: a free predicate variable in a gap statement is an unconstrained
+  hypothesis, and an unconstrained hypothesis is where vacuity and falsity both hide.**  In the field
+  it was meant to reproduce, `J2`/`ScalarOn` are *fields constrained by two other fields*; dropping
+  them to variables silently deleted those constraints. -/
+theorem gate_E2_peirce [FiniteDimensional ℝ J] (C : ComparisonSetup J) (_H : JBPremises C) :
+    ∃ J2 ScalarOn : Fin C.n → Fin C.n → J → Prop,
+      (∀ (r : Fin C.n → ℝ) (i j : Fin C.n), r i = r j → ScalarOn i j (C.aOf r)) ∧
+      (∀ (i j : Fin C.n) (x : J), IsBlockElt C.jordan C.p i j x → J2 i j x) ∧
+      (∀ (i j : Fin C.n) (a b : J), ScalarOn i j a → J2 i j b → OpCommute C.jordan a b) := by
   sorry
 
 /-! ### GATE (E3) — `Theta_jordan` derivable, AND IT IS EXTERNAL

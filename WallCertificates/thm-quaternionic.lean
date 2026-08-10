@@ -123,7 +123,26 @@ noncomputable example : OrderUnitSpace (HermitianMat.QuatCarrier n) := inferInst
 
 Now statable, because `QuatCarrier` is a type with an `OrderUnitSpace` instance. -/
 
-/-- **GAP — the actual content of row 20.**  Any S1–S7 product with S2 on the quaternionic carrier
+/-- **GAP — the actual content of row 20.**
+
+★★★ **RESTATED 2026-08-10 after the certificate-refutation review; the previous statement was
+VACUOUS and the review compiled the proof.**  Its conclusion ended `… ∨ True`, discharged by
+`Or.inr trivial`, and it stayed provable with **every hypothesis deleted** — `hS2` and `hrank` both
+inert.  Worse, even the left disjunct was not the row's content: the Lüders product is not
+commutative, so `P.sp a b = P.sp b a` is no approximation to `Θ_r = id`.
+  ★★ **This is the file that was "REFUTED IN FULL and rewritten rather than patched" — and the rewrite
+  reinstalled the directory's already-retracted `True`-placeholder defect in disguise, behind a
+  disjunction instead of on its own.**  A `∨ True` is a `True`.
+  ★ **And I refreshed this file's header earlier in this arc without reading its gap statement.**
+  Updating a certificate's prose is not re-attacking its gap; the ARC-8 rule about attack evidence
+  means the STATEMENT, not the header.
+  ★ The restatement is now expressible because `HermitianMat.quatSp` / `quatLuders` landed this arc
+  (block 8.3), and `quatSp_eq_quatQuadRep` identifies it with `Q_{√a}` — so the row's own conclusion
+  `a · b = Q_{√a} b` can be written directly.  Hypotheses `hS2` and `hrank` are now load-bearing rather
+  than decorative: without rank ≥ 3 the article's conclusion is false (rank two is row 30's
+  frame-dependent family).
+
+Any S1–S7 product with S2 on the quaternionic carrier
 is Lüders: the twist parameter is pinned to zero on the fixed points of the symplectic involution.
 
 The article's mechanism is `Z(ℍ) ∩ Im ℍ = {0}`, computed in-tree at skeleton level; whether it
@@ -132,10 +151,7 @@ theorem quaternionic_luders
     (P : SequentialProductOn (HermitianMat.QuatCarrier n)) (hS2 : P.FirstArgContinuous)
     (hrank : 3 ≤ Nat.card n) :
     ∀ a b : HermitianMat.QuatCarrier n, IsEffect a → IsEffect b →
-      P.sp a b = P.sp b a ∨ True := by
-  -- Stated in the weakest form that is currently expressible: the conclusion the article draws is
-  -- `a · b = Q_{√a} b`, and `Q_{√a}` on `QuatCarrier` needs `quatQuadRep` assembled into a
-  -- functional calculus on the carrier, which is the next thing to build after the transfer.
+      P.sp a b = HermitianMat.quatSp a b := by
   sorry
 
 end WallCertificate

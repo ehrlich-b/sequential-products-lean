@@ -77,7 +77,13 @@ WHAT ACTUALLY REMAINS, after all of the above
 
   row 17.  Generality only, as before; the hyperplane clause closed in ARC-6.
 
-  row 18.  ★ ONLY THE CONVERSE, for the C row: that a frame-fixing unitary MUST be such a torus
+  row 18.  ★★★ THIS SUMMARY LINE IS STALE — corrected 2026-08-10 by the certificate-refutation
+    review.  It says the converse is "writable today ... a short matrix argument"; the converse IS IN
+    THE TREE as `Necessity.offdiag_eq_zero_of_fixes_frameProj`, as the retraction further down this
+    same file states.  The appended retraction left this summary asserting the old thing — the
+    "fix the row, not just the footnote" failure, IN THE FILE THAT TEACHES THE RULE.  Current residue
+    for the C row: the identity-component (`T^{n-1}`) packaging only.  Original text follows.
+    ★ ONLY THE CONVERSE, for the C row: that a frame-fixing unitary MUST be such a torus
     element ("the stabilizer is exactly `T^n`, identity component `T^{n-1}`").  The reviewer checked
     the scope: grepping `fixes_frameProj|frameStabilizer|stabilizes.*frame|isDiag_of_adU|adU_frameProj`
     over `RadicalRelativity/`, every hit is Theta/chi-tilde *fixing* the frame and none is the

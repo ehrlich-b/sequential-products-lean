@@ -96,6 +96,13 @@ ABSENCE CLAIMS AND THEIR SCOPE
   * "no frame-dependent sequential-product structure is constructed for a general t":
       grep -rn 'SequentialProduct.*tau\|tauSeq\|frameDependent' RadicalRelativity/  -> no hits
       (whole first-party tree incl. Vendor/, 2026-08-09).
+    ★★★ NOW FALSE, AND IT WENT UNRETRACTED FOR A DAY — caught by the certificate-refutation review
+    2026-08-10.  `RankTwo.n2SequentialProduct (t : C(RP2, R)) : SequentialProductOn (HermitianMat
+    (Fin 2) C)` IS that object, and THIS FILE'S OWN HEADER announces it as the thing that closed
+    row 30.  Accurate grep, wrong name — the failure mode this file documents twice, live inside it,
+    while the header three screens up already contradicted it.
+    ★ The narrow lesson: when a row closes, its certificate's ABSENCE CLAIMS are the part most likely
+    to survive stale, because the header gets rewritten and the evidence block does not.
   * ★★★ "'compatible effects share a spectral frame' is not stated" — the grep is accurate and the
     INFERENCE IS FALSE.  **The hard half of it was already in the tree**:
     `HermitianMat.commute_of_twistSeq_comm` (`Hermitian/Sequential.lean`) is

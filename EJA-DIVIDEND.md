@@ -2,7 +2,7 @@
 
 **Created 2026-08-09, ARC-8 block 8.6. Required deliverable of the ARC-8 ORDERS.**
 **Pin:** `STATEMENT-MANIFEST.md`'s 36 rows, main.tex blob `205fdf5a` (never re-pinned).
-**Status snapshot:** written against 12 FORMALIZED / 19 PARTIAL / 5 ABSENT; **refreshed 2026-08-10 (dry-pass round 4)** to 12 FORMALIZED / 6 EJA-GATED / 13 PARTIAL / 5 ABSENT. ★ The six EJA-GATED rows are exactly this table's six CLOSES rows — see `WallCertificates/eja-gated.lean`, which states the three gates.
+**Status snapshot:** written against 12 FORMALIZED / 19 PARTIAL / 5 ABSENT; **refreshed 2026-08-10** to 12 FORMALIZED / **3** EJA-GATED / 16 PARTIAL / 5 ABSENT. ★★ **EJA-GATED was briefly claimed for six rows and withdrawn the same day for rows 5, 6 and 15** — their residues include NON-EJA clauses (row 5's ball clause needs the order-unit norm; row 6's clause (ii) is already abstract via `SequentialProductOn.sp_smul_left`; row 15's `Stab(F)°` clause needs identity-component vocabulary). **So this table's "CLOSES" column is NOT the EJA-GATED list**: CLOSES means the axiomatization would move the row, which for rows 5, 6, 15 is true of *part* of the residue only — see `WallCertificates/eja-gated.lean`, which states the three gates.
 
 ---
 
@@ -45,15 +45,15 @@ Column meaning: **CLOSES** = the axiomatization would move the row to FORMALIZED
 | 2 | `mthm:omnibus` | one-theorem form; external | **NOTHING** | same |
 | 3 | `def:sp` | Lean *packaging* of the article's eight clauses + restriction/extension maps | **NOTHING** | pure interface work on an order-unit space; no Jordan structure enters |
 | 4 | `thm:vdw1` | external (vdW) | **NOTHING** | cited theorem |
-| 5 | `lem:span` | the article's **abstract Peirce generality** | **CLOSES** | the statement is a Peirce-span identity; with (E2) it is statable and provable where today only the concrete carrier is |
-| 6 | `lem:homog` | EJA generality | **CLOSES** | homogeneity of the quadratic representation is a Jordan-spectral fact — (E1) |
+| 5 | `lem:span` | the Peirce half **and** the ball clause | **PARTIAL** | ★ **CORRECTED 2026-08-10**: the ball clause needs the norm to *be* the order-unit norm and is not an EJA gap. For the Peirce half: | the statement is a Peirce-span identity; with (E2) it is statable and provable where today only the concrete carrier is |
+| 6 | `lem:homog` | clause (i)'s abstract port | **PARTIAL** | ★ **CORRECTED 2026-08-10**: clause (ii) is **already proved at abstract order-unit generality** (`SequentialProductOn.sp_smul_left`, S1–S7 + S2 + `IsArchimedean`), so the earlier "(E1), a Jordan-spectral fact" was wrong — it came from citing a theorem about the *twist* product rather than an arbitrary one. Clause (i)'s port needs the order-unit route (`span_isEffect_eq_top`), not spectral theory |
 | 8 | `lem:simple-bridge` | clause (ii) at EJA generality (clauses i/iii/iv cited to vdW) | **PARTIAL** | (E1) gives clause (ii) — "every effect is simple" IS the Jordan spectral theorem. Clauses (i), (iii), (iv) stay cited, so the row is ~3/4 external either way |
 | 9 | `lem:normality` | order-**infimum** form; abstract f.d. order-unit generality | **NOTHING** | needs `⨅` for the Loewner/order-unit order and Loewner monotone convergence. An order-theoretic gap, not a Jordan one |
 | 10 | `prop:bridge` | external | **NOTHING** | cited |
 | 12 | `prop:central` | the **restriction** direction (= `prop:central`'s splitting) | **NOTHING** | needs "a product is compatible with each central idempotent"; the carrier is `V × W` order-unit spaces, no Jordan layer involved |
 | 13 | `prop:pseudo-transfer` | EJA generality (proved on the concrete carrier in normalized form) | **CLOSES** | the pseudo-inverse is defined by functional calculus — (E1) |
 | 14 | `prop:theta` | vIR generality; **pre-registered external** | **PARTIAL** | (E3) *is* this row. The axiomatization makes it statable at vIR generality; proving it is the external import. Improving the interior form is in scope, closing it is not |
-| 15 | `lem:frame-fix` | the non-EJA content is closed; the rest | **CLOSES** | frame-fixing is a Peirce-level statement — (E2) |
+| 15 | `lem:frame-fix` | Peirce-block clauses **and** the `Stab(F)°` clause | **PARTIAL** | ★ **CORRECTED 2026-08-10**: the `Stab(F)°` clause needs identity-component vocabulary and is not an EJA gap. The Peirce-block clauses are (E2) |
 | 16 | `lem:coalescence` | **citation/axiomatization gap only** — both clauses are already proved over `ComparisonSetup` | **CLOSES** | this is the cleanest case in the table: the mathematics is done at the interface's generality; what is missing is that `Theta_jordan` and the FK fields are *carried* rather than derived. (E2)+(E3) |
 | 17 | `lem:homomorphism` | generality only (hyperplane clause closed ARC-6) | **CLOSES** | same shape as row 16 |
 | 18 | `prop:stabilizers` | the `T^{n-1}` packaging; the ℝ/ℍ/𝕆 rows | **NOTHING** | ℂ row is done in `U(n)`; the remainder is a quotient-by-global-phase packaging and three concrete type-specific computations. No Jordan generality needed |
@@ -70,7 +70,7 @@ Column meaning: **CLOSES** = the axiomatization would move the row to FORMALIZED
 
 ## The decision, on this evidence
 
-**Counting: CLOSES 6 rows (5, 6, 13, 15, 16, 17); PARTIAL on 3 (8, 14, 22); NOTHING on 15.**
+**Counting, CORRECTED 2026-08-10: CLOSES 3 rows (13, 16, 17); PARTIAL on 6 (5, 6, 8, 14, 15, 22); NOTHING on 15.** ★ The verdict below is unchanged in direction — the axiomatization is still the largest available block of row movement and still the only thing that touches rows 13/16/17 — but it now moves **three** rows outright rather than six, and the ★★ qualification about rows 16/17 is itself **OPEN** (see the terminal-state ledger: `gate_E3` as stated is the classical linear theorem, not vIR's).
 
 So the axiomatization is **not** nothing — it is the single largest remaining block of row movement
 available, and it is the *only* thing that moves rows 5, 6, 13, 15, 16, 17 at all. The

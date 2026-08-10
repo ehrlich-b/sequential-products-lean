@@ -355,6 +355,85 @@ occurrence in one arc). The probe's content is now proper in-tree theorems and t
 `Scratch*.lean` and `ColdRev*.lean` are gitignored. **Two identical hygiene failures in one arc means
 the habit, not the incident, is the defect.**
 
+### CERTIFICATE-REFUTATION REVIEW (tag `paperA-arc8-cp5`; one cold reviewer, all seven certificates)
+
+**Eight confirmed defects, seven of them in work I did in the last two days, two of them FALSE
+statements in the certificate written to prevent exactly this.** All verified at source and fixed.
+
+★★★ **1. `gate_E2_peirce` was FALSE — and SELF-DEFEATING.** Its `J2`/`ScalarOn` were **free
+universally-quantified predicate variables**, so instantiating both at `fun _ _ _ => True` made it
+"every two elements of every JB-premised `ComparisonSetup` operator-commute" — false on `H_n(𝕜)`
+(the reviewer compiled it via the tree's own `opCommute_iff_commuteG`). It never used `i ≠ j`.
+Discharging it as written would have proved that **no JB-premised `ComparisonSetup` exists on the
+intended carriers**, refuting the axiomatization programme the file exists to price. Four of the six
+rows leaned on it. **RESTATED** as producing the three `CoalescenceSetup` FK fields, with the first two
+conjuncts pinning `ScalarOn`/`J2` from below so `False` cannot cheat it.
+★ **RULE: a free predicate variable in a gap statement is an unconstrained hypothesis, and an
+unconstrained hypothesis is where vacuity and falsity both hide.** In the field it was meant to
+reproduce, those predicates are *fields constrained by two other fields*; demoting them to variables
+silently deleted the constraints.
+
+★★ **2. `gate_E1_spectral` was FALSE as stated** — no finite-dimensionality. `J = ℝ[X]` with polynomial
+multiplication satisfies every `ComparisonSetup` field and all three `JBPremises`, yet is a domain, so
+only `0, 1` are idempotent and `x = X` has no spectral resolution. **FIXED** with
+`[FiniteDimensional ℝ J]`. ★ **RULE: an "at the article's generality" statement must carry the
+article's STANDING hypotheses, not only its premises.** I transcribed the three premises the interface
+docstring lists and forgot that f.d. is standing for EJAs.
+
+★★★ **3. Rows 5, 6, 15 are NOT EJA-GATED — claim WITHDRAWN the same day it was made.** Each has a
+non-EJA residue: row 5's ball clause needs the order-unit norm; row 6's clause (ii) is **already
+abstract** (`SequentialProductOn.sp_smul_left`) and I had cited `twistSeq_smul_left`, a theorem about
+*one product*, then assigned the row to the Jordan spectral theorem on that misreading; row 15's
+`Stab(F)°` clause needs identity-component vocabulary. ★★ **One error made three times: I classified
+each row by its BIGGEST residue and let that stand for its WHOLE residue. EJA-GATED is a claim about
+the complement, and a claim about a complement cannot be checked by inspecting the largest item in
+it.** Same shape as row 35's "and that is the whole residue".
+
+★★ **4. The load-bearing (E3) claim was overstated and is now OPEN.** `gate_E3_theta_jordan` assumes
+`Φ` **linear**, so it is the classical Koecher/Alfsen–Shultz theorem — which `Interface.lean` itself
+calls "classical corroboration" and the tree discharges concretely — not vIR's JB-generality version.
+So "rows 16/17 cannot reach FORMALIZED by axiomatization alone" does **not** follow: a Mathlib-grade
+f.d. EJA layer could discharge it in-tree. ★ Also flagged, not guessed: `external-rows.md` names row
+14's source "van Ittersum–Reijnders" while `Interface.lean` names it "van Imhoff–Roelands" — **two
+names for the theorem that terminates two rows.**
+
+★★ **5. `quaternionic_luders` was VACUOUS** — its conclusion ended `… ∨ True`, provable by
+`Or.inr trivial` with **every hypothesis deleted**. **RESTATED** as the row's actual content,
+`P.sp a b = HermitianMat.quatSp a b`, which is expressible only because `quatLuders` landed this arc.
+★★ **A `∨ True` is a `True`** — the directory's already-retracted placeholder defect, wearing a
+disjunction. ★ And I refreshed that file's header earlier in this arc **without reading its gap
+statement**: updating prose is not re-attacking a gap.
+
+★★ **6. `orientation_complex_structure` was FALSE for the second time** — with `q p` arbitrary
+Hermitian, `q = 𝟙`, `p = (1/2)•𝟙` makes the coherence hypothesis hold for *every* `x` while `J ≡ 0`;
+the reviewer compiled it at the article's own `N = 3`. **FIXED** by hypothesizing orthogonal
+idempotents. ★★ **The prose knew `q, p` were frame projections both times; the Lean never said so. A
+hypothesis stated only in a docstring is not a hypothesis.** ★ Same declaration also had `by sorry`
+**inside its statement** — the defect `prop-n2-sufficiency.lean` repaired in itself a day earlier,
+surviving one file over; now the proved lemma `orientation_isHermitian`.
+
+★ **7. `prop-n2-sufficiency.lean`'s standing absence claim is now FALSE and went unretracted for a
+day** — `n2SequentialProduct` IS the "frame-dependent structure for a general `t`", as that file's own
+header announces three screens up. ★ **When a row closes, its certificate's ABSENCE CLAIMS are the
+part most likely to survive stale, because the header gets rewritten and the evidence block does not.**
+
+★ **8. `differential-trio.lean`'s summary still asserted row 18's converse was unwritten**, contradicting
+its own later retraction — "fix the row, not just the footnote", in the file that teaches the rule.
+Also fixed: `abstract-tier.lean`'s `normality` is under-hypothesized (no f.d./Archimedean) while the
+*same file* flags exactly that for its neighbour twelve lines below; and its row-3 block promised an
+"equivalence" that `badP` proves cannot exist (extension is not unique).
+
+★ **Reviewer correction to my own brief, worth keeping:** my instruction to count build errors with
+`grep -cE ': error'` **reports 2 on a green tree** — two style-linter *warnings* whose message text
+contains `error:`. Use `grep -E ': error' | grep -vc '^warning:'`. A verification recipe that
+false-positives is the thing the README already fixed once for the import grep.
+
+**Terminal-state ledger corrected: 12 FORMALIZED + 6 EXTERNAL + 3 EJA-GATED + 15 WALL-CERTIFIED = 36.**
+Of twelve `sorry`-bearing declarations, the reviewer judged exactly two to be live, sound, row-moving
+gap statements before these fixes (`n2_necessity_theta_level`, `adjBlock_connected` — both written
+this arc, both confirmed NO DEFECT, including an independent re-derivation of the phase convention with
+no sign or factor error).
+
 ### Block 8.6 — DRY PASS: ROUND 6 WENT DRY (2026-08-10)
 
 Rounds 2–5 each moved something; **round 6 moved nothing.** Round 6 is the consolidated mechanical

@@ -93,6 +93,11 @@ so the ARC-7 block below is provenance only.
     the article's seven clauses over the effect subtype** — statement size, not proof difficulty.
     Deliberately not `sorry`-ed without `main.tex:363-392` open, for the reason row 22 and row 36(i)
     illustrate.
+    ★★ ONE CORRECTION, 2026-08-10 (refutation review): the row-3 block promises an "equivalence" of the
+    two definitions.  **It cannot be an isomorphism of products** — by the same `badP` mechanism that
+    killed row 35's onto half, extension is **not unique**, so the honest target is agreement on
+    effect × effect.  Sending the next person after a bijection this directory proves does not exist
+    would waste them.
 
   row 8 `lem:simple-bridge` — attacked this arc and **BLOCKED ON THE ARTICLE, not on Lean.** The only
     interior clause is (ii) "every effect is simple (E = E₀)", and `simple` here is vdW's SES notion.
@@ -197,7 +202,19 @@ than the article's statement, which assumes S1 and S2.
 
 The statement below is kept, with its `sorry`, as the **abstract** form — the article's own
 generality, over an arbitrary `OrderUnitSpace` rather than the concrete carrier.  That is what
-remains, together with the compatibility-passes-to-infima clause. -/
+remains, together with the compatibility-passes-to-infima clause.
+
+★★★ UNDER-HYPOTHESIZED — flagged 2026-08-10 by the certificate-refutation review.  The statement
+below quantifies over an arbitrary `OrderUnitSpace V` with **neither finite-dimensionality nor
+`IsArchimedean`**, while its own prose argues "in finite dimension monotone bounded nets converge" —
+about a statement that does not assume it.  `OrderUnitSpace` carries the norm as *independent*
+structure and only order-unit boundedness, so positivity of `seqLeftMul` does not give norm
+continuity, and the in-tree concrete proof (`Necessity.sp_tendsto_of_tendsto`) used
+finite-dimensionality explicitly.  ★★ **The same defect is flagged TWELVE LINES BELOW for its
+neighbour `spCone_right_exists` ("as written it OMITS `IsArchimedean V` … probably not provable at
+all") — flagged there, missed here, in one pass over one file.**  Left as written, with this label, so
+the pair can be compared; the fix is `[FiniteDimensional ℝ V]` (and `hS2` is additionally inert by
+this file's own row-9 finding). -/
 theorem normality (P : SequentialProductOn V) (hS2 : P.FirstArgContinuous)
     {a : V} (ha : IsEffect a) (b : ℕ → V) (hb : ∀ k, IsEffect (b k))
     (hmono : ∀ k, b (k + 1) ≤ b k) (blim : V) (hblim : IsEffect blim)
