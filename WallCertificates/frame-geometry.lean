@@ -225,16 +225,34 @@ was not recording a vocabulary wall, it was recording that nobody had written th
 the identical, already-retracted mistake at row 18 in `differential-trio.lean`.
 
 GATE: none.  This is ordinary work: relate `theta` to `seqLeftMul`/`quadRep` on the block and read off
-the phase.  It is priced as such rather than as a wall. -/
+the phase.  It is priced as such rather than as a wall.
+
+★★★ **SELF-CAUGHT, BEFORE ANYONE ATTACKED IT: THE FIRST VERSION OF THIS STATEMENT WAS FALSE.**  It
+applied `theta` to the STANDARD block `blockHerm 0 1 z` while taking `a = Ad_U(diagFamily r)`.  But the
+article's `W_n` is the coherence space of **a's own frame**, which is `Ad_U(blockHerm 0 1 z)`; for
+general `U` the standard block is not in it, and `Θ_a` off `W_n` has no reason to be a rotation.  So the
+first version mixed a `U`-conjugated base point with an unconjugated block — a FALSE gap, and the
+FOURTH in this directory.
+  ★ **The transferable bit is what caught it:** not a counterexample search, but asking "which frame is
+this object indexed by?" of every object in the statement.  Two of the three were indexed by `U` and one
+was not.  A gap statement that mixes frame indices is the specific shape to look for here, and it is the
+same shape as the retracted `frame_param_eq_of_compatible` (which mixed "U commutes with a" and "U
+diagonalizes a").
+  ★ Route, unchanged by the fix: `Necessity.seqLeftMul` agrees with `HermitianMat.conjLinear ℝ
+(twistFactor a t)` on effects, hence everywhere by `OrderUnitSpace.linearMap_eq_of_eq_on_effects`
+(row 5's order-unit half, in-tree); `theta = quadRepInv ∘ seqLeftMul`; then
+`Necessity.adU_conj_twistSeq` reduces the general `U` to `U = 1`, where it is an entry computation via
+`Necessity.twistSeq_diagFamily_entry`. -/
 theorem n2_necessity_theta_level
     (P : SequentialProductOn (HermitianMat (Fin 2) ℂ)) (hS2 : P.FirstArgContinuous)
     {a : HermitianMat (Fin 2) ℂ} (ha : IsEffect a) (hbd : a.mat.PosDef)
     (U : Matrix.unitaryGroup (Fin 2) ℂ) {r : Fin 2 → ℝ} (hr : ∀ i, r i ≤ 0)
     (hU : a = Necessity.adU (U : Matrix (Fin 2) (Fin 2) ℂ) (Necessity.diagFamily r))
     (z : ℂ) :
-    Necessity.theta P ha hbd (Necessity.blockHerm 0 1 z)
-      = Necessity.blockHerm 0 1
-          (Complex.exp ((↑(Necessity.n2FrameTwist P hS2 U * (r 0 - r 1)) : ℂ) * Complex.I) * z) := by
+    Necessity.theta P ha hbd
+        (Necessity.adU (U : Matrix (Fin 2) (Fin 2) ℂ) (Necessity.blockHerm 0 1 z))
+      = Necessity.adU (U : Matrix (Fin 2) (Fin 2) ℂ) (Necessity.blockHerm 0 1
+          (Complex.exp ((↑(Necessity.n2FrameTwist P hS2 U * (r 0 - r 1)) : ℂ) * Complex.I) * z)) := by
   sorry
 
 /-- **GAP — row 26 `lem:frame-connectivity`, STATED for the first time (2026-08-10, ARC-8 8.6).**
