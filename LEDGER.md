@@ -544,8 +544,9 @@ separately, per the row-20 rule.
   caught it — `grep -n "EJA-GATED" LEDGER.md` and read every hit — costs one command and should run
   after every status change.
 
-`WallCertificates/eja-gated.lean` (new) gates rows 5, 6, 13, 15, 16, 17 on (E1)/(E2)/(E3), one `sorry`
-per gate. ★★ **(E3) IS row 14, pre-registered external — so rows 16/17 cannot reach FORMALIZED by
+`WallCertificates/eja-gated.lean` (new) gates rows **13, 16, 17** on (E1)/(E2)/(E3), one `sorry`
+per gate. ★ It was written claiming rows 5, 6, 15 as well and those were **withdrawn the same day**
+(non-EJA clauses in their residues); this sentence said all six until a cross-document grep caught it. ★★ **(E3) IS row 14, pre-registered external — so rows 16/17 cannot reach FORMALIZED by
 axiomatization work at all.** `abstract-tier.lean` and `frame-geometry.lean` were refreshed with
 this-arc evidence for rows 3, 8, 9, 12 and 22, 26, 29, 31, 36.
 

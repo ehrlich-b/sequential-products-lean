@@ -73,7 +73,9 @@ Column meaning: **CLOSES** = the axiomatization would move the row to FORMALIZED
 **Counting, CORRECTED 2026-08-10: CLOSES 3 rows (13, 16, 17); PARTIAL on 6 (5, 6, 8, 14, 15, 22); NOTHING on 15.** ★ The verdict below is unchanged in direction — the axiomatization is still the largest available block of row movement and still the only thing that touches rows 13/16/17 — but it now moves **three** rows outright rather than six, and the ★★ qualification about rows 16/17 is itself **OPEN** (see the terminal-state ledger: `gate_E3` as stated is the classical linear theorem, not vIR's).
 
 So the axiomatization is **not** nothing — it is the single largest remaining block of row movement
-available, and it is the *only* thing that moves rows 5, 6, 13, 15, 16, 17 at all. The
+available, and it is the *only* thing that CLOSES rows **13, 16, 17** — and the only thing that moves
+the EJA *part* of rows 5, 6, 15, whose residues also contain non-EJA clauses (the ball clause, clause
+(i)'s order-unit port, the `Stab(F)°` clause). The
 do-it-unless-it-does-literally-nothing test is therefore **passed with room to spare**: the ARC-8
 orders' pre-registered condition for skipping it does not fire.
 
