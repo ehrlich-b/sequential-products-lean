@@ -127,6 +127,25 @@ in `EJA/` = 0, `HermMul` consumers outside the EJA layer = 0. **The absence clai
 prose did not.** That is the same asymmetry the refuted power-associativity certificate showed at
 9.8, now measured twice.
 
+★★★ **THE AUDIT TOOK FOUR ROUNDS, AND ROUNDS 2 AND 3 EACH FOUND WHAT ROUND 1 MISSED.** ARC-8's rule
+— *a dry round only counts if nothing runs after it* — held again, on the audit itself:
+
+* **round 2** found the drifting commit-count in `STATE.md` (already wrong when written, because the
+  arc kept committing) and a **fourth** copy of the stale "the FK multiplication rules are not built"
+  scope note, this time in the ledger's own block-9.2/9.3 record;
+* **round 3** found a **fifth** copy of the "and nothing else" overclaim — in the ledger's block-9.9
+  headline, after it had been fixed in `Peirce.lean`, `PeirceMul.lean` and `EJA-DIVIDEND.md` — and the
+  same phrasing in the new `README.md` row;
+* **round 4** is dry: the only remaining matches are the audit's own quotations of the defects.
+
+★★ **The generalisable finding, and it is new: SCOPE NOTES GET COPIED, so they go stale in
+parallel.** Both repeat offenders were careful, correct-when-written sentences — "needs the Jordan
+identity and nothing else", "the FK multiplication rules are not built" — and both were duplicated
+into three to five files *because* they were the careful sentences worth restating. **When a block
+invalidates a scope note, sweep for it by phrase across the whole repo, not in the file you are
+editing.** A number that drifts (the commit count) is best deleted rather than maintained; a sentence
+that drifts must be hunted.
+
 ★ **An operational defect worth recording because it recurred five times tonight:** `cd` drift. Every
 `git` invocation leaves the shell in the parent repo, and the next bare `lake env lean` then runs
 against the *default* toolchain (v4.33.0, not the pinned v4.28.0) and fails with "unknown module
@@ -446,8 +465,11 @@ individually.
 records the three deliverables as **(E1)** a Jordan spectral theorem — "the large piece" — **(E2)**
 the Peirce decomposition, *"depends on (E1)"*, and **(E3)** vIR. **The stated dependency is false in
 the direction that matters.** The Peirce decomposition at a *given* idempotent needs the Jordan
-identity and nothing else: no spectral theorem, no formal reality, no finite dimension, no inner
-product, not even a unit. It is now in the tree, `RadicalRelativity/EJA/Peirce.lean`, census-covered,
+identity and the invertibility of `2`: no spectral theorem, no formal reality, no finite dimension,
+no inner product, not even a unit. ★ **A FIFTH copy of the "and nothing else" overclaim, corrected
+2026-08-13 in audit round 3** — after the docstrings in `Peirce.lean` and `PeirceMul.lean` and the
+cell in `EJA-DIVIDEND.md`. Same sentence, five files. Round 2 was not dry, and neither was round 3
+until this. It is now in the tree, `RadicalRelativity/EJA/Peirce.lean`, census-covered,
 closure = the three core axioms.
 
 **What landed.** For an idempotent `c` in any real commutative Jordan algebra:
@@ -505,6 +527,14 @@ needs the Peirce projections of distinct frame idempotents to commute, which nee
 Faraut–Korányi **multiplication rules** (`J_i ∘ J_j ⊆ …`), and those are **not built**. Nothing in
 `EJA/Peirce.lean` should be read as covering them; the file's own docstring says so. No manifest row
 moves on this work, and none is claimed to.
+  ★★ **SUPERSEDED ONE BLOCK LATER: the multiplication rules were built at 9.4** (`EJA/PeirceMul.lean`,
+  all six) and the orthogonal-idempotent layer at 9.6/9.7. What remains absent is the assembled frame
+  decomposition `⊕_{i≤j} J_{ij}` as a single statement. ★ **This is the FOURTH copy of that one stale
+  sentence** — it also stood in `EJA/Peirce.lean`, `EJA/PeirceMul.lean` and `EJA-DIVIDEND.md`, each
+  written correctly at its own block and invalidated by the next. The generalisable rule, and it is
+  new: **a scope note written in block N is a claim about the tree at block N; when block N+1
+  invalidates it, sweep for it by phrase across the whole repo, because it was copied.** Scope notes
+  get copied precisely because they are the careful sentences.
 
 **Verification:** `lake build` 3108 jobs, 0 errors; `AxiomAudit.lean` PASS — **151** tracked modules
 == frozen 151-name manifest (the root import, the manifest list and all three count strings moved in
