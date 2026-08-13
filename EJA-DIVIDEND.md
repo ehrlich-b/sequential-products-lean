@@ -1,5 +1,25 @@
 # EJA-DIVIDEND.md — what the EJA axiomatization would buy Paper A
 
+★★★ **STATUS 2026-08-12 (ARC-9): PART OF THE AXIOMATIZATION IS NOW BUILT, and this file's dependency
+graph was wrong.** `RadicalRelativity/EJA/` (9 modules) contains the Peirce decomposition, all six
+Faraut–Korányi multiplication rules, orthogonal idempotent families, **Albert's power-associativity
+theorem**, formal reality with no-nilpotents, and the one-generator subalgebra. Consequences for the
+table below:
+
+* **"(E2) depends on (E1)" is STRUCK.** (E2) at a given idempotent needs the Jordan identity and the
+  invertibility of `2`; nothing else. (E1) is what *produces* idempotents. **The order inverts.**
+* **Three of the four hypotheses under `lem:coalescence` (row 16) are now theorems** —
+  `opCommute_scalarOn_frame`, `mem_J2_of_half_half`, `diagFamily_scalarOn`. Only van de Wetering's
+  Prop 5.5 stays cited. ★ Only one of the three uses the Jordan identity; the other two are
+  bookkeeping that becomes available once the frame equations exist.
+* **(E1) is certificated, not done** — `WallCertificates/eja-spectral.lean`, two of four steps built,
+  and the obstruction is structural (ring theory wants a unit; this layer is unit-free).
+* **No row in the table below has moved**, and the CLOSES/PARTIAL/NOTHING verdicts are unchanged. What
+  changed is that the *work* those verdicts price is partly done, and that the residue for rows 16/17
+  is now interface surgery on `ComparisonSetup` — which carries `p : Fin n → J` with **no axioms** —
+  rather than Jordan theory.
+
+
 **Created 2026-08-09, ARC-8 block 8.6. Required deliverable of the ARC-8 ORDERS.**
 **Pin:** `STATEMENT-MANIFEST.md`'s 36 rows, main.tex blob `205fdf5a` (never re-pinned).
 **Status snapshot:** written against 12 FORMALIZED / 19 PARTIAL / 5 ABSENT; **refreshed 2026-08-10** to 12 FORMALIZED / **3** EJA-GATED / 16 PARTIAL / 5 ABSENT. ★★ **EJA-GATED was briefly claimed for six rows and withdrawn the same day for rows 5, 6 and 15** — their residues include NON-EJA clauses (row 5's ball clause needs the order-unit norm; row 6's clause (ii) is already abstract via `SequentialProductOn.sp_smul_left`; row 15's `Stab(F)°` clause needs identity-component vocabulary). **So this table's "CLOSES" column is NOT the EJA-GATED list**: CLOSES means the axiomatization would move the row, which for rows 5, 6, 15 is true of *part* of the residue only — see `WallCertificates/eja-gated.lean`, which states the three gates.
