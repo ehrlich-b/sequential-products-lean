@@ -628,4 +628,5 @@ import RadicalRelativity.EJA.Block
 import RadicalRelativity.EJA.Pattern
 import RadicalRelativity.EJA.Bridge
 import RadicalRelativity.EJA.InterfaceInstance
+import RadicalRelativity.EJA.ConcreteInstance
 import RadicalRelativity.EJA.Witness

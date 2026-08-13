@@ -250,7 +250,23 @@ tree-facing ingredients.
   that `aOf r` is a **strictly positive** combination of the frame.  Reason: `Real.exp` is not in this
   file's transitive imports, and strict positivity is exactly what blocks the counterexample (whose
   `diag(1,1,0)` is a frame combination with a **zero** coefficient).  Weaker than the article's form and
-  sufficient for the purpose — recorded so nobody reads it as the article's clause verbatim. -/
+  sufficient for the purpose — recorded so nobody reads it as the article's clause verbatim.
+  ★★★ **"SUFFICIENT FOR THE PURPOSE" IS WRONG — CORRECTED 2026-08-13 (ARC-9 block 9.23), and the
+  instrument was an actual proof of this gate's conclusion.**  `EJA/InterfaceInstance.lean` discharges
+  exactly this conclusion, and it **could not use `haOf` in this form**.  The reason is precise: the
+  third conjunct `aOf_scalarOn` needs `r i = r j ⟹ aOf r` is scalar on the block, which requires the
+  two block **coefficients to coincide**.  `haOf` gives some positive `c` with `aOf r = Σ c i • p i`
+  and **nothing ties `c` to `r`** — so `r i = r j` yields no information about `c i` versus `c j`, and
+  the conclusion does not follow.  Strict positivity blocks the *zero-coefficient* counterexample the
+  note names; it does nothing about *unequal* coefficients, which is the case `aOf_scalarOn` is about.
+  ★ The honest status: this gate is **UNDER-HYPOTHESISED**, and whether it is outright FALSE is open —
+  no counter-model was built, and the claim here is only that the hypothesis cannot support the
+  conclusion.  The repair is `haOf' : ∀ r, aOf r = ∑ i, Real.exp (r i) • p i`, or equivalently adding
+  `∀ i j, r i = r j → c i = c j`.
+  ★ And the stated *reason* for the weakening no longer holds: `Real.exp` is available —
+  `EJA/InterfaceInstance.lean` imports `Mathlib.Analysis.SpecialFunctions.Exp` and uses exactly that
+  form.  **A hypothesis weakened for an import-convenience reason, with the weakening's cost
+  mis-assessed in the same sentence that recorded it.** -/
 theorem gate_E2_peirce [FiniteDimensional ℝ J] (C : ComparisonSetup J) (_H : JBPremises C)
     (hp_idem : ∀ i, C.jordan (C.p i) (C.p i) = C.p i)
     (hp_orth : ∀ i j, i ≠ j → C.jordan (C.p i) (C.p j) = 0)

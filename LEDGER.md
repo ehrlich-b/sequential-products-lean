@@ -82,6 +82,49 @@ in this arc's first hour, both times by `cd` drift in a fresh shell).
 
 ### ARC-9 EXECUTION RECORD
 
+#### Block 9.23 — the concrete instance, and ARC-8's (E2) gate is under-hypothesised (2026-08-13)
+
+`RadicalRelativity/EJA/ConcreteInstance.lean`. `ejaComparison` is **the paper's own
+`Necessity.comparisonSetup`** plus the five equations, so
+`(ejaComparison hN P hS2 hjord).toCoalescenceSetup` is a `CoalescenceSetup` on
+`HermitianMat (Fin N) ℂ` with `simDiag_opCommute`, `aOf_scalarOn` and `block_mem_J2` **proved**.
+
+★ **Every ingredient was already in the tree** — `frameProj_isProjection`, `frameProj_orth`,
+`sum_frameProj`, `diagFamily_eq_sum_frameProj` have been in `Necessity/DiagonalFamily.lean`
+throughout, and the Jordan identity is the vendored `IsCommJordan`. This file adds three short
+bridges to `jordanBilin` and the assembly. **Fourth time this arc** that a residue's ingredients
+turned out to be in-tree (after row 35, the FK fields, formal reality).
+
+★★★ **AND IT REFUTES A CLAIM IN ARC-8'S OWN EJA-GATED CERTIFICATE — using the proof as the
+instrument.** `WallCertificates/eja-gated.lean`'s `gate_E2_peirce` is, hypothesis for hypothesis,
+the theorem block 9.22 proves. Its `haOf` reads *"`∃ c, (∀ i, 0 < c i) ∧ aOf r = ∑ c i • p i`"*,
+weakened from the article's `∑ e^{rᵢ} pᵢ` with the note: *"`Real.exp` is not in this file's
+transitive imports, and strict positivity is exactly what blocks the counterexample … **weaker than
+the article's form and sufficient for the purpose**."*
+
+**It is not sufficient.** `aOf_scalarOn` needs `r i = r j ⟹ aOf r` scalar on the block, which
+requires the two block **coefficients to coincide**. `haOf` supplies a positive `c` and **nothing
+ties `c` to `r`**, so `r i = r j` says nothing about `c i` versus `c j`. Strict positivity blocks the
+*zero-coefficient* counterexample the note names; it does nothing about *unequal* coefficients, which
+is the case the conjunct is about. My discharge could not use it and needed the `exp` form.
+
+★ **Status recorded honestly: the gate is UNDER-HYPOTHESISED; whether it is outright FALSE is open**
+— no counter-model was built, and the claim is only that the hypothesis cannot support the
+conclusion. Repair: `∀ r, aOf r = ∑ Real.exp (r i) • p i`, or add `r i = r j → c i = c j`.
+★ The stated *reason* for the weakening is also gone: `Real.exp` is available and
+`EJA/InterfaceInstance.lean` uses it. **A hypothesis weakened for import convenience, with the cost
+of the weakening mis-assessed in the same sentence that recorded it** — and caught only because
+something finally tried to *use* the gate rather than read it. That is the certificate format working
+as designed for the second time this arc, after the power-associativity refutation at 9.9.
+
+★ **No manifest row moves.** Row 16 rests on four hypotheses; three are now discharged on the
+concrete carrier, and `Θ_fix` (vdW Prop 5.5) plus `Θ_jordan` (M3, via `ThetaPreservesJordan`) remain
+cited. The EJA-GATED terminal state stands with its **(E2) half discharged and only (E3) remaining**.
+
+**Verification:** `lake build` 3121 jobs, 0 errors; `AxiomAudit.lean` PASS — **164** tracked modules
+== frozen 164-name manifest, custom axioms exactly `[]`; `ejaComparison` `#print axioms`-checked; the
+corrected certificate recompiles with its three gates intact.
+
 #### Block 9.22 — ★★★ AN INTERFACE THAT SAYS ITS FRAME IS A FRAME PRODUCES A `CoalescenceSetup` (2026-08-13)
 
 `RadicalRelativity/EJA/InterfaceInstance.lean`. `EJAComparison extends ComparisonSetup` with the five
