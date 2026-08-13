@@ -82,6 +82,47 @@ in this arc's first hour, both times by `cd` drift in a fresh shell).
 
 ### ARC-9 EXECUTION RECORD
 
+#### Block 9.12 — (E1) certificated: two of four steps done, and the obstruction is structural (2026-08-12)
+
+`WallCertificates/eja-spectral.lean`. The Jordan spectral theorem — what `EJA-DIVIDEND.md` says
+CLOSES row 13 and supplies one of the two ingredients of rows 16/17 — stated in this development's
+own vocabulary (`IsOrthIdemFamily`, `jspan`) with one `sorry`, and with the four steps scored:
+
+1. `ℝ[x]` finite-dimensional + a nontrivial annihilating relation — **DONE** (`jspan_finite`,
+   `exists_jpow_relation`). ★ Neither uses the Jordan identity; step 1 is free.
+2. `ℝ[x]` associative and closed — **DONE** (block 9.11).
+3. reduced — **PARTIAL**: no-nilpotents holds for the ambient algebra (9.10); repackaging it as
+   `IsReduced` on a ring structure over `jspan x` is not built.
+4. finite-dimensional reduced commutative `ℝ`-algebra ⟹ `ℝ^k` — **ABSENT**.
+
+★★ **The obstruction is structural, not effort, and that is the finding.** Step 4 wants ring theory
+and ring theory wants a **unital** ring. `jspan x` is spanned by `x, x², …` with no constant term,
+and the whole EJA layer assumes no `1` in `J`. The classical treatment works in unital
+`ℝ[1, x, x², …]`, which needs `[One J]` added to every file from `EJA/Peirce.lean` onward — all of
+which currently gain generality from being unit-free. ★ And it is **not obvious the unit is
+needed**: `jspan x` *is* unital in its own right, its unit being the support idempotent of `x` — but
+that is a *consequence* of the spectral theorem, so assuming it is circular. **The first action on
+(E1) is that design decision, not a proof.**
+
+★ **The certificate deliberately gives no hour estimate**, and says so. The other ARC-9 certificate
+in this directory gave one and was wrong by an order of magnitude within three hours. It also
+declines to price step 4 before *reading* Mathlib's Artinian machinery, recording only that the file
+was listed and not read — pricing it from the outside is precisely what went wrong at 9.8.
+
+★★★ **AND THE CERTIFICATE SHIPPED A FALSE ABSENCE CLAIM THAT I CAUGHT ON THE VERIFICATION PASS.** It
+asserted `grep -rn "spectral" RadicalRelativity/EJA` → **0 hits**. The true count is **14** — all of
+them prose in the EJA layer's own docstrings, every one written by this arc, hours earlier. The
+number was written down without being run. **That is "verify the verifier saw data" broken inside a
+document whose entire purpose is falsifiable absence claims**, and it is the second self-inflicted
+defect of the night after the vacuous theorem in `EJA/Witness.lean`. Corrected to the arc's standing
+first move — **grep the declaration list, not the file text** (`^def |^theorem |^instance |…`),
+which returns 0 and is the claim that was meant. **A topic word appears in prose; a declaration does
+not.**
+
+**Verification:** `lake build` 3116 jobs, 0 errors; `AxiomAudit.lean` PASS — 159 tracked modules,
+custom axioms exactly `[]`; certificate compiles with exactly one `sorry`, and every non-gap step it
+cites is exercised in the same file as a `sorry`-free `example`.
+
 #### Block 9.11 — Albert's theorem in the form it is usually *stated* (2026-08-12)
 
 `RadicalRelativity/EJA/Subalgebra.lean`. Block 9.9 proved the power law

@@ -4,6 +4,7 @@ Released under Apache 2.0 license.
 Authors: Bryan Ehrlich
 -/
 import RadicalRelativity.EJA.PowerAssoc
+import Mathlib.LinearAlgebra.Dimension.Finite
 
 set_option linter.style.longLine false
 
@@ -105,6 +106,42 @@ theorem jspan_assoc {x a b c : J} (ha : a ∈ jspan x) (hb : b ∈ jspan x) (hc 
   | zero => rw [zero_mul, zero_mul, zero_mul]
   | add u v _ _ hu hv => rw [add_mul, add_mul, add_mul, hu, hv]
   | smul r u _ hu => rw [smul_mul_assoc, smul_mul_assoc, smul_mul_assoc, hu]
+
+/-! ### The finite-dimensional entry point
+
+★ **Both results below are linear algebra, not Jordan theory**, and their `omit` lines prove
+it: neither uses `IsCommJordan`. They are recorded here because they are step 1 of the route
+to (E1) and because it is worth being explicit that step 1 is free — all the difficulty in
+the spectral theorem is downstream, in turning an annihilating relation into idempotents. -/
+
+section Finite
+
+variable [Module.Finite ℝ J]
+
+omit [IsCommJordan J] [IsScalarTower ℝ J J] in
+/-- **A nontrivial annihilating relation among the powers.** In finite dimension the powers of
+`x` cannot be independent, so some nonzero real combination of `x, x², …, x^{N+1}` vanishes —
+the existence half of a minimal polynomial *with zero constant term*, which is the right shape
+for a unit-free setting.
+
+★ No Jordan input: this is "an over-long family in a finite-dimensional space is dependent". -/
+theorem exists_jpow_relation (x : J) :
+    ∃ (n : ℕ) (c : Fin n → ℝ), (∃ i, c i ≠ 0) ∧ ∑ i, c i • jpow x i = 0 := by
+  have hnot : ¬ LinearIndependent ℝ (fun i : Fin (Module.finrank ℝ J + 1) => jpow x i) := by
+    intro h
+    have hle := h.fintype_card_le_finrank
+    simp only [Fintype.card_fin] at hle
+    omega
+  obtain ⟨c, hsum, i, hi⟩ := Fintype.not_linearIndependent_iff.mp hnot
+  exact ⟨_, c, ⟨i, hi⟩, hsum⟩
+
+omit [IsCommJordan J] [IsScalarTower ℝ J J] in
+/-- `jspan x` is finite-dimensional. Immediate — it is a submodule of a finite-dimensional
+space — and recorded only so that the (E1) route can cite it. -/
+instance jspan_finite (x : J) : Module.Finite ℝ (jspan x) :=
+  Module.Finite.of_injective (jspan x).subtype (jspan x).injective_subtype
+
+end Finite
 
 end Subalgebra
 
