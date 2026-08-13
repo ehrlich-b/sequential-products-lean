@@ -82,6 +82,30 @@ in this arc's first hour, both times by `cd` drift in a fresh shell).
 
 ### ARC-9 EXECUTION RECORD
 
+#### Block 9.17 — a Jordan frame on the carrier: the last vacuity exposure closed (2026-08-13)
+
+`EJA/Witness.lean` §5. The diagonal matrix units `E_ii` are proved to form an
+`IsOrthIdemFamily` on `HermitianMat d ℂ`, and to be **complete** (`∑ i, E_ii = 1`).
+
+★★ **`IsOrthIdemFamily` had no witness anywhere in the tree**, so every theorem of
+`EJA/Frame.lean` and `EJA/Block.lean` — including all three derived Faraut–Korányi fields and the
+rank-two block characterisation — was conditional on a structure nothing was known to satisfy. That
+is the ARC-6 failure mode exactly, and the third time this arc a non-vacuity gap was found and
+closed (after `IsFormallyReal` at 9.10 and the `1/2`-eigenspace at 9.5). **The EJA layer now has no
+un-witnessed hypothesis.**
+
+★ Completeness is proved even though **no theorem in the abstract layer assumes it**. That is
+deliberate: `EJA/Frame.lean` keeps completeness out because it is what the spectral theorem
+*produces*, not what the Peirce theory needs. Proving it on the carrier shows the abstract results
+are not staying general by weakening past what the intended model satisfies — a distinction worth
+having evidence for rather than asserting.
+
+★ The file's own docstring said "Two things are verified" and now describes four; corrected in the
+same commit.
+
+**Verification:** `lake build` 3117 jobs, 0 errors; `AxiomAudit.lean` PASS — 160 tracked modules,
+custom axioms exactly `[]`; both frame theorems `#print axioms`-checked.
+
 #### Block 9.16 — the projection commutation, which was the last named missing ingredient (2026-08-13)
 
 Appended to `EJA/Block.lean`. Three generic lemmas — *any* linear `F` commuting with `L_q` commutes

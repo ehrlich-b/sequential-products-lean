@@ -4,6 +4,7 @@ Released under Apache 2.0 license.
 Authors: Bryan Ehrlich
 -/
 import RadicalRelativity.EJA.FormallyReal
+import RadicalRelativity.EJA.Block
 import RadicalRelativity.Vendor.HermitianMat.Jordan
 import RadicalRelativity.Vendor.HermitianMat.Inner
 
@@ -22,7 +23,9 @@ abstract tier whose hypothesis no carrier satisfied** — ARC-6's abstract rows,
 when `HermitianMat.isArchimedean` was proved (`LEDGER.md`). This file is the check that was
 missing then.
 
-Two things are verified, and they are different claims.
+Four things are verified, and they are different claims. ★ The docstring said "two" until
+2026-08-13, when sections 4 and 5 were added — the same stale-scope-note pattern the arc's diff
+audit catalogued, caught here on the same day rather than by a later round.
 
 **1. The instance stack resolves on `H₂(ℂ)`.** The four typeclass hypotheses of the Peirce
 layer — `NonUnitalNonAssocCommRing`, `IsCommJordan`, `Module ℝ`, `IsScalarTower ℝ` — are all
@@ -40,6 +43,13 @@ on a carrier where the half-space is trivial — and the half-space **is** trivi
 idempotents one reaches for first, `0` and `1`. So a witness is exhibited: `cWit` is the
 rank-one projection `diag(1,0)`, `xWit` is the off-diagonal `[[0,1],[1,0]]`, and
 `cWit_mul_xWit` proves `cWit ∘ xWit = ½ · xWit` with `xWit ≠ 0`.
+
+**3. `HermitianMat` is formally real** (§4 below), so `EJA/FormallyReal.lean`'s no-nilpotents
+theorem is live rather than conditional on an uninhabited hypothesis.
+
+**4. The diagonal matrix units are a complete Jordan frame** (§5 below), witnessing
+`IsOrthIdemFamily` — which had **no** carrier in the tree until then, leaving every theorem of
+`EJA/Frame.lean` and `EJA/Block.lean` conditional on a structure nothing was known to satisfy.
 
 ★ **Scope.** This is non-vacuity, not coverage: it shows the Peirce hypotheses have a model
 with all three components nonzero. It does **not** connect the EJA layer to any manifest
@@ -192,5 +202,61 @@ theorem hermitian_jpow_mul_jpow (A : HermitianMat d 𝕜) (m n : ℕ) :
   RadicalRelativity.EJA.jpow_mul_jpow A m n
 
 end FormallyReal
+
+/-! ### 5. A Jordan frame on the paper's carrier
+
+★★ **This closes the last vacuity exposure in the EJA layer.** `IsOrthIdemFamily`
+(`EJA/Frame.lean`) had **no witness** in the tree, so every theorem of `EJA/Frame.lean` and
+`EJA/Block.lean` was conditional on a structure nothing was known to satisfy — the same
+exposure that section 4 closed for `IsFormallyReal`, and the same one ARC-6 shipped and had
+to repair. The diagonal matrix units supply it.
+
+★ Completeness (`∑ i, p i = 1`) is proved here even though **no theorem in the abstract layer
+assumes it** — deliberately, per `EJA/Frame.lean`'s docstring, since completeness is what the
+spectral theorem produces rather than what the Peirce theory needs. Having it on the carrier
+shows the abstract results are not being kept general by weakening past what the intended
+model satisfies. -/
+
+section JordanFrame
+
+variable {d : Type*} [Fintype d] [DecidableEq d]
+
+/-- The diagonal matrix units `E_ii`, as Hermitian matrices. -/
+noncomputable def diagFrame (i : d) : HermitianMat d ℂ :=
+  HermitianMat.diagonal ℂ (fun j => if j = i then 1 else 0)
+
+omit [Fintype d] in
+theorem diagFrame_mat (i : d) :
+    (diagFrame i).mat = Matrix.diagonal (fun j => ((if j = i then (1 : ℝ) else 0 : ℝ) : ℂ)) :=
+  rfl
+
+/-- **The diagonal matrix units are a family of orthogonal idempotents.** -/
+theorem diagFrame_orthIdem :
+    RadicalRelativity.EJA.IsOrthIdemFamily (diagFrame (d := d)) where
+  idem i := by
+    apply HermitianMat.ext
+    rw [mul_eq_symmMul, HermitianMat.symmMul_toMat, diagFrame_mat,
+      Matrix.diagonal_mul_diagonal]
+    ext a b
+    by_cases h : a = b <;> simp [Matrix.smul_apply, h] <;> split_ifs <;> norm_num
+  orth i j hij := by
+    apply HermitianMat.ext
+    rw [mul_eq_symmMul, HermitianMat.symmMul_toMat, diagFrame_mat, diagFrame_mat,
+      Matrix.diagonal_mul_diagonal, Matrix.diagonal_mul_diagonal]
+    ext a b
+    by_cases h : a = b <;> simp [Matrix.smul_apply, h] <;> split_ifs with h1 h2 <;> simp_all
+
+/-- The frame is **complete**: the matrix units sum to the identity. -/
+theorem diagFrame_sum : (∑ i, diagFrame (d := d) i) = 1 := by
+  have hsum : (∑ i, diagFrame (d := d) i).mat = ∑ i, (diagFrame (d := d) i).mat := by simp
+  apply HermitianMat.ext
+  rw [hsum]
+  ext a b
+  simp only [Matrix.sum_apply, diagFrame_mat, Matrix.diagonal_apply]
+  by_cases h : a = b
+  · subst h; simp [apply_ite ((↑) : ℝ → ℂ)]
+  · simp [h]
+
+end JordanFrame
 
 end RadicalRelativity.EJA.Witness
