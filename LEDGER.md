@@ -82,6 +82,47 @@ in this arc's first hour, both times by `cd` drift in a fresh shell).
 
 ### ARC-9 EXECUTION RECORD
 
+#### Block 9.20 — the bridge's real obstruction, pinned: an `AddCommGroup` diamond (2026-08-13)
+
+Block 9.15 called the rows-16/17 blocker an "impedance mismatch" between a bundled bilinear map and
+a typeclass. **That was right but not specific enough.** Probed it:
+
+```
+-- A: EJA layer alone — PASSES
+example (J : Type) [NonUnitalNonAssocCommRing J] [IsCommJordan J] [Module ℝ J]
+    [IsScalarTower ℝ J J] {c : J} (hc : c * c = c) (y : J) :
+    c * peirceOne c y = peirceOne c y := mul_peirceOne hc y
+
+-- B: same, plus ComparisonSetup's ambient classes — FAILS
+example (J : Type) [NormedAddCommGroup J] [InnerProductSpace ℝ J]
+    [NonUnitalNonAssocCommRing J] [IsCommJordan J] [IsScalarTower ℝ J J] … 
+    -- failed to synthesize instance  Module ℝ J   (×3)
+```
+
+★★★ **`ComparisonSetup` requires `[NormedAddCommGroup J] [InnerProductSpace ℝ J]`; the EJA layer
+requires `[NonUnitalNonAssocCommRing J] [Module ℝ J]`. Both supply an `AddCommGroup J`, and they are
+different instances**, so the `Module ℝ J` that `InnerProductSpace` provides is not the one
+`peirceOne` wants. The bridge is therefore **not** "add a field to a structure" — it is
+**reconciling two `AddCommGroup J` instances**, which is the classic Mathlib diamond and is
+structural, not clerical.
+
+★ **Note what does work, and why it is not a counterexample:** `EJA/Witness.lean` uses both worlds on
+`HermitianMat` — the Peirce layer *and* the vendored inner product — with no trouble, because there
+the two `AddCommGroup`s are literally the same instance. **Concrete carriers are fine; the abstract
+bridge is what breaks.** So the shape has to be: derive `NonUnitalNonAssocCommRing J` *from* the
+normed group plus a bilinear multiplication, so only one additive structure is ever in play — rather
+than assuming both and hoping they agree.
+
+★★ **This is the third successive sharpening of the same price** (9.2 "mechanical" → 9.15
+"impedance mismatch" → 9.20 "an `AddCommGroup` diamond, and here is the failing example"), and each
+sharpening came from *trying the next concrete thing* rather than from re-reading. **A price gets
+one grade sharper every time you attempt the cheapest experiment that could refute it.** That is the
+same mechanism that refuted the power-associativity certificate at 9.9, applied to a price that
+survived — the price did not fall, but it is now specific enough to plan against.
+
+Still not attempted, and now for a better reason than "end of a long session": the fix is a
+typeclass-architecture decision about a structure both flagship rows depend on.
+
 #### Block 9.19 — second audit pass, over blocks 9.14–9.18 (2026-08-13)
 
 The 9.13 audit covered blocks 9.1–9.12; these are the five written after it. **One defect, and it is

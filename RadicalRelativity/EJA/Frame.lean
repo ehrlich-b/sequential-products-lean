@@ -61,6 +61,13 @@ instance. So the refactor is three things, not one: the four frame equations, th
 the `AxiomAudit.lean` Layer-6 constructor freeze (which must move deliberately and in the same
 commit — it exists precisely to make silent field drift fail).
 
+★★ **And the bridge is harder than "impedance mismatch" suggests** (pinned 2026-08-13, block
+9.20): `ComparisonSetup` needs `[NormedAddCommGroup J] [InnerProductSpace ℝ J]` and this layer
+needs `[NonUnitalNonAssocCommRing J] [Module ℝ J]`; **both supply an `AddCommGroup J` and they
+are different instances**, so with both in scope `Module ℝ J` fails to synthesise at
+`peirceOne`'s use site. It is an `AddCommGroup` diamond. Concrete carriers are unaffected —
+`EJA/Witness.lean` uses both worlds on `HermitianMat`, where the two are the same instance.
+
 ★ **The low-risk shape, for whoever does it:** an *extension* structure
 `… extends ComparisonSetup` carrying the ring/Jordan instances plus `jordan x y = x * y`,
 rather than editing `ComparisonSetup` itself. That leaves the audited constructor and every
