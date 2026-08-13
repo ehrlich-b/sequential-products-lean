@@ -82,6 +82,47 @@ in this arc's first hour, both times by `cd` drift in a fresh shell).
 
 ### ARC-9 EXECUTION RECORD
 
+#### Blocks 9.6/9.7 — the three Faraut–Korányi fields of `CoalescenceSetup`, derived (2026-08-12)
+
+★★★ **`lem:coalescence` (row 16) is proved over `CoalescenceSetup` from four hypotheses. One is van
+de Wetering's Prop 5.5 and stays cited. The other three are now theorems.**
+
+| carried field | derived as | file |
+| --- | --- | --- |
+| `simDiag_opCommute` | `opCommute_scalarOn` / `opCommute_scalarOn_frame` | `EJA/Orthogonal.lean`, `EJA/Frame.lean` |
+| `block_mem_J2` | `mem_J2_of_half_half` | `EJA/Frame.lean` |
+| `aOf_scalarOn` | `diagFamily_scalarOn` | `EJA/Frame.lean` |
+
+`EJA/Orthogonal.lean` (9.6) gives `add_idem_of_orthogonal`, `opCommute_of_orthogonal`, and the
+general `opCommute_scalarOn`: if `a = μ • c + a₀` with `a₀ ∈ J₀(c)` and `b ∈ J₁(c)`, then `L_a` and
+`L_b` commute. Four lines, because `EJA/PeirceMul.lean` had already done the work — `L_c` commutes
+with `L_b`, `L_{a₀}` commutes with `L_b`, and `L_a` is a linear combination of the two.
+`EJA/Frame.lean` (9.7) adds `IsOrthIdemFamily` with `sum_idem` (any subfamily sums to an idempotent,
+so the interface's rank-two `q = pᵢ + pⱼ` is one) and puts the three fields in the interface's own
+shape.
+
+★★ **A correction I made to my own paragraph before committing it, and it is the useful part of this
+block.** The docstring first said *"all three are theorems of the Jordan identity."* False:
+**only one of the three uses the Jordan identity.** `mem_J2_of_half_half` is `1/2 + 1/2 = 1` and
+`diagFamily_scalarOn` is a `Finset` split — both compile with `omit [IsCommJordan J]`, which is the
+mechanical tell and was sitting in the file while the prose above it said otherwise. **The `omit`
+lines are a machine-checked statement about which hypotheses a theorem uses, and prose that
+contradicts them is refuted by the file it is written in.** New rule: after adding `omit`, re-read
+the surrounding claim — the linter that forced the `omit` has just told you your summary is wrong.
+The honest form is sharper anyway: the FK content here is one theorem plus two pieces of
+bookkeeping, and a reader now knows where the difficulty is.
+
+★ **What still does not move.** `ComparisonSetup` carries `p : Fin n → J` and `aOf` as bare data
+with **no field** saying the `p i` are idempotent, orthogonal, sum to `e`, or that
+`aOf r = Σ exp (r i) • p i`. Every theorem here takes exactly those four equations as hypotheses, in
+that shape, so the refactor is now mechanical — but it must also move `AxiomAudit.lean`'s Layer-6
+constructor freeze for `ComparisonSetup`/`CoalescenceSetup` in the same commit, deliberately, since
+that freeze exists to make silent field drift fail. Not attempted. **No manifest row moves.**
+
+**Verification:** `lake build` 3112 jobs, 0 errors; `AxiomAudit.lean` PASS — **155** tracked modules
+== frozen 155-name manifest, custom axioms exactly `[]`; the frame-layer theorems
+`#print axioms`-checked and their printed statements read back.
+
 #### Blocks 9.4/9.5 — the multiplication rules, and a non-vacuity check that caught its own defect (2026-08-12)
 
 **`RadicalRelativity/EJA/PeirceMul.lean`** completes the single-idempotent Peirce calculus: all six
