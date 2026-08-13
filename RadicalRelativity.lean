@@ -617,3 +617,5 @@ import RadicalRelativity.PaperA.CertifiedConfiguration
 -- finite dimension.  Not consumed by the paper's rows yet — it is the first half of (E2)
 -- of `EJA-DIVIDEND.md`, tracked here so the census audits it on the same terms.
 import RadicalRelativity.EJA.Peirce
+import RadicalRelativity.EJA.PeirceMul
+import RadicalRelativity.EJA.Witness

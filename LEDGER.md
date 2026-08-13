@@ -82,6 +82,55 @@ in this arc's first hour, both times by `cd` drift in a fresh shell).
 
 ### ARC-9 EXECUTION RECORD
 
+#### Blocks 9.4/9.5 — the multiplication rules, and a non-vacuity check that caught its own defect (2026-08-12)
+
+**`RadicalRelativity/EJA/PeirceMul.lean`** completes the single-idempotent Peirce calculus: all six
+Faraut–Korányi multiplication rules, over the same hypotheses as before (the Jordan identity, nothing
+else). `J₁∘J₁ ⊆ J₁`, `J₀∘J₀ ⊆ J₀`, **`J₁∘J₀ = 0`**, `J₁∘J_{1/2} ⊆ J_{1/2}`, `J₀∘J_{1/2} ⊆ J_{1/2}`,
+`J_{1/2}∘J_{1/2} ⊆ J₁ ⊕ J₀`.
+
+★ **The structure of the proof is worth carrying.** Five of the six reduce to a single fact —
+`L_x` commutes with `L_c` whenever `x ∈ J₁(c) ∪ J₀(c)` — and after that each rule is one rewrite.
+Only `J_{1/2}∘J_{1/2}` is genuinely deeper: it needs the *fully* linearised identity
+(`four_lin2_raw`, a second polarisation of `two_lin1_raw`), and at the right evaluation point the
+four `1/4`-terms cancel in pairs leaving exactly `L_c² = L_c` on the product.
+
+★★ **`opCommute_eigen_one_zero` is the one to look at**: it is the single-idempotent case of
+`CoalescenceSetup.simDiag_opCommute`, the load-bearing carried FK field under row 16, and it is
+three lines from the cyclic identity because two of its three brackets vanish. **It is a case, not
+the field** — the field ranges over `q = pᵢ + pⱼ` in a Jordan *frame*, and `EJA/` has no frame.
+
+**`RadicalRelativity/EJA/Witness.lean` (block 9.5) — non-vacuity, because this project has shipped an
+abstract tier with no carrier before.** ARC-6's abstract rows had no model until
+`HermitianMat.isArchimedean` was proved. Two checks, and they are different claims:
+
+1. **The instance stack resolves on the paper's own carrier.** `HermitianMat (Fin 2) ℂ` satisfies all
+   four typeclass hypotheses. ★ Nothing had to be built: `Vendor/HermitianMat/Jordan.lean` has
+   carried `scoped instance : IsCommJordan (HermitianMat d 𝕜)` all along in namespace `HermMul`, and
+   **`grep -rn HermMul` over the tree shows the EJA layer is its first consumer** — it was dead code.
+   ★ This is why the layer was switched mid-arc from `SMulCommClass ℝ J J` to `IsScalarTower ℝ J J`:
+   the two are interchangeable for a commutative product, and `IsScalarTower` is what the carrier
+   supplies. Asking the abstract layer to speak the carrier's dialect is cheaper than the reverse.
+2. **The `1/2`-eigenspace is nonzero** (`cWit` = `diag(1,0)`, `xWit` = the off-diagonal, `xWit ≠ 0`,
+   `cWit ∘ xWit = ½ · xWit`). Without this every `J_{1/2}` rule is vacuously true — and the
+   half-space *is* trivial for the two idempotents one reaches for first, `0` and `1`.
+
+★★★ **AND THE FILE REPRODUCED THE DEFECT IT WAS WRITTEN TO PREVENT, WITHIN THE HOUR.** Its last
+theorem was `witness_trichotomy_half : (2:ℝ)⁻¹ = 0 ∨ (2:ℝ)⁻¹ = (2:ℝ)⁻¹ ∨ (2:ℝ)⁻¹ = 1`, obtained by
+applying `eigenvalue_trichotomy` at the witness. It compiles, it cites the right theorem, it sits
+under a docstring saying "the trichotomy is not vacuous either" — and its middle disjunct is `rfl`,
+so it is provable with no witness, no carrier, and no Jordan identity. **A vacuous theorem inside the
+non-vacuity file.** Replaced by `witness_half_attained : ∃ y ≠ 0, cWit ∘ y = ½ • y`, which is the
+statement that was meant. **The tell was in the prose, not the Lean**: a docstring claiming a
+theorem rules something out, above a proposition that mentions no object. ARC-8's rule was *"a `True`
+placeholder records awkwardness and reads as depth"*; the sharper form is **a tautology dressed in
+the vocabulary of the thing it is supposed to witness reads as evidence, and the check is to ask
+what object the proposition quantifies over.**
+
+**Verification:** `lake build` 3110 jobs, 0 errors; `AxiomAudit.lean` PASS — **153** tracked modules
+== frozen 153-name manifest, custom axioms exactly `[]`; headline theorems `#print axioms`-checked
+individually.
+
 #### Blocks 9.2/9.3 — **(E2) does not depend on (E1)**, and the Peirce decomposition is in the tree (2026-08-12)
 
 ★★★ **The headline, and it is a correction to `EJA-DIVIDEND.md`'s own dependency graph.** That file

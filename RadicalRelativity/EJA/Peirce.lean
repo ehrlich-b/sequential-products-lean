@@ -108,13 +108,19 @@ end Linearisation
 
 section Projections
 
-variable {J : Type*} [NonUnitalNonAssocCommRing J] [Module ℝ J] [SMulCommClass ℝ J J]
+variable {J : Type*} [NonUnitalNonAssocCommRing J] [Module ℝ J] [IsScalarTower ℝ J J]
+
+/-- In a *commutative* algebra the scalar-tower rule already gives the `SMulCommClass`
+rule, so only `IsScalarTower` has to be assumed — which is what the paper's own carrier
+`HermitianMat` supplies (`Vendor/HermitianMat/Jordan.lean`). -/
+theorem mul_smul_comm' (r : ℝ) (a b : J) : a * (r • b) = r • (a * b) := by
+  rw [mul_comm, smul_mul_assoc, mul_comm]
 
 /-- The Jordan multiplication operator `L_c : y ↦ c ∘ y`, as an `ℝ`-linear map. -/
 def mulL (c : J) : J →ₗ[ℝ] J where
   toFun y := c * y
   map_add' := mul_add c
-  map_smul' r y := mul_smul_comm r c y
+  map_smul' r y := mul_smul_comm' r c y
 
 @[simp] theorem mulL_apply (c y : J) : mulL c y = c * y := rfl
 
@@ -164,7 +170,7 @@ theorem peirceOne_of_eigen {c y : J} (h : c * y = y) : peirceOne c y = y := by
 /-- `peirceOne` kills the `1/2`-eigenspace. -/
 theorem peirceOne_of_eigen_half {c y : J} (h : c * y = (2 : ℝ)⁻¹ • y) :
     peirceOne c y = 0 := by
-  simp only [peirceOne_apply, h, mul_smul_comm]
+  simp only [peirceOne_apply, h, mul_smul_comm']
   module
 
 /-- `peirceOne` kills the `0`-eigenspace. -/
@@ -180,7 +186,7 @@ theorem peirceHalf_of_eigen {c y : J} (h : c * y = y) : peirceHalf c y = 0 := by
 /-- On the `1/2`-eigenspace, `peirceHalf` is the identity. -/
 theorem peirceHalf_of_eigen_half {c y : J} (h : c * y = (2 : ℝ)⁻¹ • y) :
     peirceHalf c y = y := by
-  simp only [peirceHalf_apply, h, mul_smul_comm]
+  simp only [peirceHalf_apply, h, mul_smul_comm']
   module
 
 /-- `peirceHalf` kills the `0`-eigenspace. -/
@@ -193,16 +199,16 @@ end Projections
 section Peirce
 
 variable {J : Type*} [NonUnitalNonAssocCommRing J] [IsCommJordan J] [Module ℝ J]
-  [SMulCommClass ℝ J J]
+  [IsScalarTower ℝ J J]
 
-omit [IsCommJordan J] [SMulCommClass ℝ J J] in
+omit [IsCommJordan J] [IsScalarTower ℝ J J] in
 private theorem two_smul_eq_zero' {x : J} (h : (2 : ℕ) • x = 0) : x = 0 := by
   have h2 : (2 : ℝ) • x = 0 := by
     rw [show ((2 : ℝ)) = ((2 : ℕ) : ℝ) by norm_num, Nat.cast_smul_eq_nsmul]
     exact h
   simpa using h2
 
-omit [SMulCommClass ℝ J J] in
+omit [IsScalarTower ℝ J J] in
 /-- **The Peirce polynomial identity.** For an idempotent `c`,
 
   `2·L_c³ − 3·L_c² + L_c = 0`,   i.e.   `L_c (L_c − 1) (2L_c − 1) = 0`.
@@ -218,7 +224,7 @@ theorem peirce_poly {c : J} (hc : c * c = c) (y : J) :
   rw [← h]
   abel
 
-omit [SMulCommClass ℝ J J] in
+omit [IsScalarTower ℝ J J] in
 /-- `peirce_poly` solved for the cube, over `ℝ` — the form every consumer below uses. -/
 theorem peirce_cube {c : J} (hc : c * c = c) (y : J) :
     c * (c * (c * y)) = (3 / 2 : ℝ) • (c * (c * y)) - (2 : ℝ)⁻¹ • (c * y) := by
@@ -236,18 +242,18 @@ theorem peirce_cube {c : J} (hc : c * c = c) (y : J) :
 /-- The image of `peirceOne c` lies in the `1`-eigenspace of `L_c`. -/
 theorem mul_peirceOne {c : J} (hc : c * c = c) (y : J) :
     c * peirceOne c y = peirceOne c y := by
-  simp only [peirceOne_apply, mul_sub, mul_smul_comm, peirce_cube hc y]
+  simp only [peirceOne_apply, mul_sub, mul_smul_comm', peirce_cube hc y]
   module
 
 /-- The image of `peirceHalf c` lies in the `1/2`-eigenspace of `L_c`. -/
 theorem mul_peirceHalf {c : J} (hc : c * c = c) (y : J) :
     c * peirceHalf c y = (2 : ℝ)⁻¹ • peirceHalf c y := by
-  simp only [peirceHalf_apply, mul_sub, mul_smul_comm, peirce_cube hc y]
+  simp only [peirceHalf_apply, mul_sub, mul_smul_comm', peirce_cube hc y]
   module
 
 /-- The image of `peirceZero c` lies in the `0`-eigenspace of `L_c`. -/
 theorem mul_peirceZero {c : J} (hc : c * c = c) (y : J) : c * peirceZero c y = 0 := by
-  simp only [peirceZero_apply, mul_add, mul_sub, mul_smul_comm, peirce_cube hc y]
+  simp only [peirceZero_apply, mul_add, mul_sub, mul_smul_comm', peirce_cube hc y]
   module
 
 /-- **The Peirce decomposition, existence half.** Every element of a real commutative
@@ -290,10 +296,10 @@ Peirce polynomial annihilates it, and its roots are exactly those three.
 theorem eigenvalue_trichotomy {c : J} (hc : c * c = c) {y : J} (hy : y ≠ 0) {μ : ℝ}
     (h : c * y = μ • y) : μ = 0 ∨ μ = (2 : ℝ)⁻¹ ∨ μ = 1 := by
   have hp : peirceOne c y = (2 * μ * μ - μ) • y := by
-    simp only [peirceOne_apply, h, mul_smul_comm, smul_smul]
+    simp only [peirceOne_apply, h, mul_smul_comm', smul_smul]
     module
   have key := mul_peirceOne hc y
-  rw [hp, mul_smul_comm, h, smul_smul] at key
+  rw [hp, mul_smul_comm', h, smul_smul] at key
   have hs : ((2 * μ * μ - μ) * μ - (2 * μ * μ - μ)) • y = 0 := by
     rw [sub_smul, key]
     exact sub_self _
