@@ -66,6 +66,7 @@ apart. So a file is named for its primary row and its header lists every row it 
 | `frame-geometry.lean` | 15, 22, 26, 29(b), 31, 36(i) |
 | `eja-gated.lean` | **13, 16, 17** (rows 5, 6, 15 were claimed 2026-08-10 and WITHDRAWN the same day — their residues include non-EJA clauses; see the file's WITHDRAWAL block) — the **EJA-GATED** certificate (ARC-8 8.6). States the three gates (E1) Jordan spectral / (E2) Peirce+FK / (E3) vIR once each rather than six rows six ways. ★★ An earlier version of this cell said "(E3) is row 14, pre-registered external, so rows 16/17 … cannot reach FORMALIZED by axiomatization alone" — **that is OPEN, not settled**: `gate_E3` as stated assumes `Φ` LINEAR (the classical Koecher/Alfsen–Shultz theorem, not vIR's JB-generality version) |
 | `thm-quaternionic.lean` | 20 |
+| `eja-power-assoc.lean` | **no manifest row** — ARC-9 block 9.8. Albert's power-associativity theorem, the gateway to (E1). ★ A different *kind* of certificate from the rest of this directory: the others price a gap in the paper's coverage, this one prices a gap in the **EJA layer being built under it**. Exactly one `sorry`, and the target theorem is derived from it with no second gap, so discharging the one step lands Albert's theorem immediately |
 | `external-rows.md` | 1, 2, 4, 10, 14, 21 — *not* certificates; the pre-registered external six |
 
 ## How to read a certificate

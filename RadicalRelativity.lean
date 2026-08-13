@@ -620,4 +620,5 @@ import RadicalRelativity.EJA.Peirce
 import RadicalRelativity.EJA.PeirceMul
 import RadicalRelativity.EJA.Orthogonal
 import RadicalRelativity.EJA.Frame
+import RadicalRelativity.EJA.Power
 import RadicalRelativity.EJA.Witness
