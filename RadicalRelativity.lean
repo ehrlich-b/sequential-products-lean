@@ -618,4 +618,5 @@ import RadicalRelativity.PaperA.CertifiedConfiguration
 -- of `EJA-DIVIDEND.md`, tracked here so the census audits it on the same terms.
 import RadicalRelativity.EJA.Peirce
 import RadicalRelativity.EJA.PeirceMul
+import RadicalRelativity.EJA.Orthogonal
 import RadicalRelativity.EJA.Witness
