@@ -82,6 +82,75 @@ in this arc's first hour, both times by `cd` drift in a fresh shell).
 
 ### ARC-9 EXECUTION RECORD
 
+#### Block 9.9 — ★★★ **ALBERT'S THEOREM. Power associativity is proved.** (2026-08-12)
+
+`RadicalRelativity/EJA/PowerAssoc.lean`:
+
+```
+Necessity-free, carrier-free, unconditional:
+  jpow_mul_jpow (x : J) (m n : ℕ) : jpow x m * jpow x n = jpow x (m + n + 1)
+  opCommute_jpow (x : J) (i j : ℕ) (w : J) :
+      jpow x i * (jpow x j * w) = jpow x j * (jpow x i * w)
+```
+
+for any `[NonUnitalNonAssocCommRing J] [IsCommJordan J] [Module ℝ J]`. Closure: the three core
+axioms. **No formal reality, no finite dimension, no unit, no inner product.** This is the gateway
+to (E1) — the spectral resolution of `x` lives in `ℝ[x]` and that argument cannot start until
+`ℝ[x]` is associative — and per `lean-formalization-landscape` it exists in no other proof
+assistant.
+
+**The proof, because its shape is the transferable part.** Everything reduces to the commutator
+`cm x i j w := [L_{x^{i+1}}, L_{x^{j+1}}] w`, because block 9.8's `jpow_mul_jpow_of_commuteAt` had
+already made the product law a *consequence* of commutation. Induct on the total degree `N`. Fix
+`w` and look at the antidiagonal `d k := cm x k (N+1−k) w`. The cyclic identity `cm_cyclic` says
+`d j + d 0 + d i = 0` whenever `i + j = N`; antisymmetry says `d k = −d (N+1−k)`. Together:
+`d (k+1) = d k + d 0`, hence `d k = (k+1)·d 0`, and the wrap-around `d (N+1) = −d 0` forces
+**`(N+3)·d 0 = 0`**, so `d 0 = 0` and the whole antidiagonal dies.
+
+★ **`(N+3)` is where characteristic zero actually bites** — not the factor-of-2 divisions, which
+are carried explicitly throughout the Peirce layer and cost nothing. Albert's theorem needs *every*
+positive integer invertible. This is the one place in the EJA layer where `Module ℝ J` is
+load-bearing rather than convenient, and it is worth knowing if this is ever ported to a general
+base.
+
+★★★ **THE ARC'S SHARPEST FINDING IS THAT THIS REFUTES MY OWN CERTIFICATE, WRITTEN THREE HOURS
+EARLIER IN THIS SAME ARC.** `WallCertificates/eja-power-assoc.lean` (block 9.8) priced the residue
+as *"a simultaneous strong induction over pairs `(i,j)` on both the product law and the commutator
+law … Not attempted. Albert's bookkeeping. Hours, not minutes."* Wrong: **it is a single induction
+on total degree, not a pair induction**, precisely because the reduction *this arc had built two
+hours earlier* made one of the two families derivable from the other. About sixty lines.
+
+The certificate is kept, now with **zero gaps** (its `sorry` replaced by the real proof) and a
+REFUTED header, because the mispricing is the record. Three things it teaches:
+
+1. **"Prices about ROUTE fail, prices about VOCABULARY hold" fired on a price I wrote myself, one
+   block earlier, in the same session.** Every vocabulary claim in that certificate was correct and
+   survived re-verification. The one route claim was wrong.
+2. **The route claim was read off the textbook proof rather than off my own reduction.** The
+   textbook does a pair induction because the textbook has no `jpow_mul_jpow_of_commuteAt`. New
+   rule, and it is the sharper form of the existing one: **read the article for WHICH fact is
+   needed, never for HOW — and that applies to your own two-hour-old lemmas as much as to the
+   article.** Before pricing a residue, check what you have already made derivable.
+3. **The certificate format worked exactly as designed.** `WallCertificates/README.md` says the
+   correct response to a certificate is to try to discharge its `sorry`, and that if this succeeds
+   cheaply the certificate was wrong. It did, and it was — in three hours rather than three arcs,
+   because the gap was stated in Lean rather than in prose.
+
+★ The ARC-9 terminal condition for this item was met twice: option 2 (certificate) at 9.8, then
+option 1 (the theorem) at 9.9. **Only the second counts**, and the orders' "if a target proves
+unreachable, the arc records the wall, it does not restate the target" cuts the other way here —
+the wall was recorded and then turned out not to be a wall.
+
+★ **`EJA/Power.lean`'s module docstring was corrected in the same commit**, since it asserted "this
+file does not prove it … the wall certificate states the general theorem with `sorry`" — false the
+moment `PowerAssoc.lean` landed. Caught by re-reading the file the new one supersedes, which is the
+"grep for the OLD claim" rule applied to a document rather than a status word.
+
+**Verification:** `lake build` 3114 jobs, 0 errors; `AxiomAudit.lean` PASS — **157** tracked modules
+== frozen 157-name manifest, custom axioms exactly `[]`; `jpow_mul_jpow`, `opCommute_jpow`,
+`cm_eq_zero` each `#print axioms`-checked to the three core axioms; the refuted certificate
+recompiled to **0 errors, 0 `sorry`**.
+
 #### Block 9.8 — power associativity: reduced to one statement, three rows discharged, the rest certificated (2026-08-12)
 
 **Albert's theorem** — the subalgebra generated by one element of a Jordan algebra is associative —

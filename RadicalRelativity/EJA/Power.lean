@@ -17,6 +17,11 @@ Jordan algebra is associative — is the gateway to **(E1)**, the Jordan spectra
 spectral resolution of `x` lives inside `ℝ[x]`, and that argument needs `ℝ[x]` associative
 before it can start.
 
+★★★ **SUPERSEDED WITHIN THE ARC, 2026-08-12: `EJA/PowerAssoc.lean` PROVES IT**
+(`jpow_mul_jpow`, unconditional, core axioms only). Everything below described this file's
+own contribution correctly and its *pricing of the remainder* wrongly, and it is kept in
+that form because the mispricing is the finding — see `LEDGER.md` ARC-9 block 9.9.
+
 This file does **not** prove it. What it does is reduce it to a single family of statements
 and discharge the first three members, so that the remaining gap is one sentence long
 instead of a chapter.
@@ -32,10 +37,11 @@ Then `jpow_mul_jpow_of_commuteAt` says: **`CommuteAt x m` alone gives
 `∀ m, CommuteAt x m`, and nothing else is missing.
 
 ★ The reduction itself does **not** use the Jordan identity — its `omit` line says so. Every
-bit of Jordan content in power associativity is concentrated in `CommuteAt`. That is worth
-knowing before pricing the rest: the induction is free, the commutation is the theorem.
+bit of Jordan content in power associativity is concentrated in `CommuteAt`. **This is the
+part that held up**: it is what let `EJA/PowerAssoc.lean` attack a single commutator family
+instead of the product law, and the proof there is exactly that attack.
 
-## What is discharged
+## What is discharged here
 
 | `m` | statement | source |
 | --- | --- | --- |
@@ -43,15 +49,9 @@ knowing before pricing the rest: the induction is free, the commutation is the t
 | `1` | `L_x` commutes with `L_{x²}` | **the Jordan identity itself** |
 | `2` | `L_x` commutes with `L_{x³}` | one instance of `two_lin1_apply` |
 
-so `x ∘ xⁿ`, `x² ∘ xⁿ` and `x³ ∘ xⁿ` are all correct for every `n`.
-
-## What is not
-
-`CommuteAt x m` for `m ≥ 3` is open here. The classical proof is a simultaneous strong
-induction over pairs `(i, j)` — Albert's bookkeeping — using the cyclic identity
-`four_lin2_raw`, and it is not attempted. The wall certificate
-`WallCertificates/eja-power-assoc.lean` states the general theorem in Lean with `sorry` at
-exactly that step, and records what was tried.
+★ All three are now **subsumed** by `commuteAt_all` in `EJA/PowerAssoc.lean`. They are kept
+because they are the elementary route, because `commuteAt_one` *is* the Jordan identity in
+this vocabulary, and because `commuteAt_two` is what made the general pattern visible.
 
 ★ **Do not read `sq_mul_jpow` as power associativity.** It is the `m = 1` row of the table
 above and nothing more.

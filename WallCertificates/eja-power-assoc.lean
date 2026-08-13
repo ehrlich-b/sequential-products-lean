@@ -6,7 +6,43 @@ Authors: Bryan Ehrlich
 import RadicalRelativity
 
 /-!
-# WALL CERTIFICATE — power associativity (Albert's theorem) for Jordan algebras
+# WALL CERTIFICATE — power associativity — ★★★ **REFUTED THE SAME DAY IT WAS WRITTEN**
+
+**Written 2026-08-12, ARC-9 block 9.8. REFUTED 2026-08-12, ARC-9 block 9.9 — roughly three
+hours later, by the agent that wrote it.** `RadicalRelativity/EJA/PowerAssoc.lean` proves
+Albert's theorem outright (`jpow_mul_jpow`), so this certificate's `sorry` is discharged and
+its price was wrong.
+
+**The file is kept, with zero gaps, because the mispricing is the record.** Below, the `sorry`
+is replaced by the real proof, so this compiles clean; everything else is left as written so
+the wrong price can be read against the right one.
+
+## What the price got wrong
+
+It said: *"the classical route is a simultaneous strong induction over pairs `(i, j)` on both
+`x^i ∘ x^j = x^{i+j}` and `⁅L_{x^i}, L_{x^j}⁆ = 0` … Not attempted. This is Albert's
+bookkeeping and the honest price is 'hours, not minutes'."*
+
+What actually worked: **a single induction on the total degree, not a pair induction**, because
+`jpow_mul_jpow_of_commuteAt` had already made the product law a *consequence* of the commutator
+law rather than a partner to it. So only one of the two families needed inducting. Inside the
+step, the cyclic identity plus antisymmetry pin the whole antidiagonal to multiples of one
+element (`d k = (k+1) · d 0`) and the wrap-around gives `(N+3) · d 0 = 0`. About sixty lines.
+
+★★ **This is the project's recorded failure mode "prices about ROUTE fail, prices about
+VOCABULARY hold", and it fired on a price written by the same agent, in the same session, one
+block earlier.** The vocabulary claims in this file were all correct and were re-verified: no
+power associativity in Mathlib, `PNatPowAssoc` exists as the right target class, nothing in
+this tree had Jordan powers. The *route* claim — "pair induction, hours" — was read off the
+textbook proof rather than off the reduction this arc had already built two hours before.
+**Read your own reduction before pricing the remainder against a textbook.**
+
+★ It also means the ARC-9 orders' terminal condition was satisfied twice over for this item:
+first by option 2 (certificate), then by option 1 (the theorem). Only the second counts.
+
+---
+
+**Original certificate text follows, unaltered except for the discharged step.**
 
 **Date: 2026-08-12. Arc: ARC-9, block 9.8. Row: none — this is (E1) infrastructure, not a
 manifest row.**
@@ -23,7 +59,7 @@ Compile deliberately:
 
 ```
 cd /Users/ehrlich/repos/research/twist-normal-form-lean
-lake env lean WallCertificates/eja-power-assoc.lean     # expect: exactly one `sorry` warning
+lake env lean WallCertificates/eja-power-assoc.lean     # expect: NO warnings (the gap is closed)
 ```
 
 ## The claim this certificate makes
@@ -89,12 +125,12 @@ open RadicalRelativity.EJA
 
 variable {J : Type*} [NonUnitalNonAssocCommRing J] [IsCommJordan J] [Module ℝ J]
 
-/-- **THE GAP.** `L_{x^{m+1}}` commutes with `L_x`, for every `m`.
+/-- ★★★ **THE FORMER GAP, DISCHARGED.** `L_{x^{m+1}}` commutes with `L_x`, for every `m`.
 
-Proved in-tree for `m = 0, 1, 2`. The general case is Albert's simultaneous induction over
-pairs and is the single missing step of power associativity. -/
-theorem commuteAt_general (x : J) (m : ℕ) : CommuteAt x m := by
-  sorry
+This read `:= by sorry` when the certificate was written. It is now
+`RadicalRelativity.EJA.commuteAt_all`, proved in `EJA/PowerAssoc.lean` by induction on the
+total degree — not by the pair induction this file predicted. -/
+theorem commuteAt_general (x : J) (m : ℕ) : CommuteAt x m := commuteAt_all x m
 
 /-- **The target, derived from the gap with nothing else missing.** Power associativity:
 `x^{m+1} ∘ x^{n+1} = x^{m+n+2}`.
