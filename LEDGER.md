@@ -82,6 +82,33 @@ in this arc's first hour, both times by `cd` drift in a fresh shell).
 
 ### ARC-9 EXECUTION RECORD
 
+#### Block 9.15 — the refactor is bigger than block 9.2 priced it: an impedance mismatch (2026-08-13)
+
+★★ **Checking whether the EJA layer can actually plug into `ComparisonSetup` — it cannot, yet.**
+`ComparisonSetup` carries its product as a **bundled bilinear map** `jordan : J →ₗ[ℝ] J →ₗ[ℝ] J`,
+with `OpCommute` defined through `mulOp jordan`. The EJA layer uses the **typeclass** `Mul J` from
+`NonUnitalNonAssocCommRing` plus Mathlib's `IsCommJordan`. `grep -rn "IsCommJordan"
+RadicalRelativity` outside `EJA/` returns **one** hit — the vendored `HermitianMat` instance — so
+nothing bridges them.
+
+**This corrects my own pricing from block 9.2, six hours earlier**, which said the residue for rows
+16/17 was "interface surgery, not Jordan theory" and that the refactor was "a matter of adding the
+four equations as fields and applying these lemmas". The first half stands; the second understates
+it. The refactor is **three** things: the four frame equations, **the bridge**, and the Layer-6
+constructor freeze.
+
+★ **The low-risk shape** is an *extension* structure `extends ComparisonSetup` carrying the
+ring/Jordan instances plus `jordan x y = x * y`, leaving the audited constructor and every existing
+instance untouched. Restating the EJA layer over a bilinear map is the alternative and is worse — it
+forfeits `IsCommJordan` and everything Mathlib derives from it.
+
+★★ **Deliberately not attempted tonight, and the reason is the arc's own evidence.** It is
+structural change to the interface both flagship rows run through, and this session has produced
+**eight** prose defects (six at 9.13, two more in rounds 2–3) — all in fresh writing, all caught by
+audits rather than by the compiler. A design change to an audited surface, made solo at the end of a
+long session with no reviewer, is the exact profile those defects came from. **The pricing is the
+deliverable here; the surgery is the next session's first task.**
+
 #### Block 9.14 — the rank-two block, characterised (2026-08-13)
 
 `RadicalRelativity/EJA/Block.lean`. For orthogonal idempotents `p, q`:

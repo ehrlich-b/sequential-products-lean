@@ -47,12 +47,28 @@ no field asserting
 * `∑ i, p i = e`, or
 * `aOf r = ∑ i, Real.exp (r i) • p i`.
 
-Each theorem below takes exactly those as hypotheses, in that shape, so the refactor is a
-matter of adding the four equations as fields and applying these lemmas. ★ That refactor
-also has to move `AxiomAudit.lean`'s Layer-6 constructor freeze for `ComparisonSetup` and
-`CoalescenceSetup`, deliberately and in the same commit — the freeze exists precisely to
-make silent field drift fail, so changing the fields must be an explicit act. Not attempted
-here.
+Each theorem below takes exactly those as hypotheses, in that shape.
+
+★★ **But "add the four equations and apply these lemmas" UNDERSTATES the refactor, and the
+correction is worth stating precisely** (found 2026-08-13, ARC-9 block 9.15, by checking
+whether the EJA layer can actually plug in — it cannot, yet). There is an **impedance
+mismatch**: `ComparisonSetup` carries its product as a *bundled bilinear map*
+`jordan : J →ₗ[ℝ] J →ₗ[ℝ] J`, with `OpCommute` defined through `mulOp jordan`, whereas this
+layer uses the *typeclass* `Mul J` from `NonUnitalNonAssocCommRing` together with Mathlib's
+`IsCommJordan`. **Nothing in the tree bridges the two** — `grep -rn "IsCommJordan"
+RadicalRelativity` outside `EJA/` returns exactly one hit, the vendored `HermitianMat`
+instance. So the refactor is three things, not one: the four frame equations, the bridge, and
+the `AxiomAudit.lean` Layer-6 constructor freeze (which must move deliberately and in the same
+commit — it exists precisely to make silent field drift fail).
+
+★ **The low-risk shape, for whoever does it:** an *extension* structure
+`… extends ComparisonSetup` carrying the ring/Jordan instances plus `jordan x y = x * y`,
+rather than editing `ComparisonSetup` itself. That leaves the audited constructor and every
+existing instance untouched, and the FK facts can be derived on the extension. Restating this
+layer over a bilinear map is the other option and is worse: it would forfeit `IsCommJordan`
+and everything Mathlib proves from it. **Not attempted here** — it is design work, and the
+arc's own record says design work done solo at the end of a long session is where the defects
+come from.
 
 ★ **Completeness (`∑ p i = e`) is not assumed anywhere in this file.** None of the three
 fields needs it; it is what the *spectral* theorem (E1) produces and what the rank argument
