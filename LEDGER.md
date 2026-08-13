@@ -82,6 +82,32 @@ in this arc's first hour, both times by `cd` drift in a fresh shell).
 
 ### ARC-9 EXECUTION RECORD
 
+#### Block 9.18 — the frame block pattern, forced by three constraints (2026-08-13)
+
+`RadicalRelativity/EJA/Pattern.lean`. For an orthogonal idempotent family `p` and a nonzero joint
+eigenvector `x` in `J₁(∑ pᵢ)` with `pᵢ ∘ x = μᵢ • x`:
+
+* `sum_eigen_eq_one` — **`∑ μᵢ = 1`**;
+* `eigen_pattern_mem` — each `μᵢ ∈ {0, 1/2, 1}` (the trichotomy at each `pᵢ`);
+* `eigen_pattern_card_le_two` — **at most two `μᵢ` are nonzero**, since each nonzero one is `≥ 1/2`.
+
+Together these **force** the Faraut–Korányi pattern: exactly one `1` (a diagonal block `J_ii`) or
+exactly two `1/2`s (a coherence block `J_ij`). Zero nonzero entries give sum `0`; one gives a single
+entry equal to `1`; two give `a + b = 1` with `a, b ∈ {1/2, 1}`, whose only solution is `1/2 + 1/2`.
+
+★★ **The packaged "exactly one 1 or exactly two halves" is deliberately NOT stated as a theorem.**
+Formalising it means extracting elements from a `Finset` of cardinality `≤ 2` and case-splitting —
+bookkeeping with no mathematical content — and **stating it without proving it is precisely the
+defect this arc spent four audit rounds removing.** The three constraints are proved; the one-line
+consequence is written out in the module docstring so a reader can check it rather than trust it.
+Choosing what *not* to claim is the part of this block worth carrying.
+
+★ Still not built: the assembled direct sum `J = ⊕_{i≤j} J_{ij}`. The constraints say what the
+summands can be, not that every element decomposes into them.
+
+**Verification:** `lake build` 3118 jobs, 0 errors; `AxiomAudit.lean` PASS — **161** tracked modules
+== frozen 161-name manifest, custom axioms exactly `[]`.
+
 #### Block 9.17 — a Jordan frame on the carrier: the last vacuity exposure closed (2026-08-13)
 
 `EJA/Witness.lean` §5. The diagonal matrix units `E_ii` are proved to form an

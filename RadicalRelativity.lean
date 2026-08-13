@@ -625,4 +625,5 @@ import RadicalRelativity.EJA.PowerAssoc
 import RadicalRelativity.EJA.FormallyReal
 import RadicalRelativity.EJA.Subalgebra
 import RadicalRelativity.EJA.Block
+import RadicalRelativity.EJA.Pattern
 import RadicalRelativity.EJA.Witness
