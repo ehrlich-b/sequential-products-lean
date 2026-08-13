@@ -82,6 +82,43 @@ in this arc's first hour, both times by `cd` drift in a fresh shell).
 
 ### ARC-9 EXECUTION RECORD
 
+#### Block 9.22 — ★★★ AN INTERFACE THAT SAYS ITS FRAME IS A FRAME PRODUCES A `CoalescenceSetup` (2026-08-13)
+
+`RadicalRelativity/EJA/InterfaceInstance.lean`. `EJAComparison extends ComparisonSetup` with the five
+equations the interface never states — the Jordan identity for `jordan`, `p_idem`, `p_orth`, `p_sum`,
+and `aOf r = ∑ exp (r i) • p i` — and **`toCoalescenceSetup` builds a `CoalescenceSetup` in which
+`simDiag_opCommute`, `aOf_scalarOn` and `block_mem_J2` are PROVED rather than carried.** Closure: the
+three core axioms. `coalescence_J2q` — the theorem `lem:coalescence` (manifest row 16) *is* — has been
+applied to the produced setup and compiles.
+
+**Two design points that were forced by the interface, not chosen:**
+
+★ **The block is a `Finset` sum `q i j = ∑_{k ∈ {i,j}} p k`, not `p i + p j`.** The fields carry
+**no `i ≠ j` hypothesis**, and `p i + p i = 2pᵢ` is not idempotent, so the `p i + p j` spelling makes
+the `i = j` instance unprovable. The `Finset` sum collapses to `pᵢ`, and `sum_idem` covers both cases.
+
+★★ **`p_sum` (completeness) is in the structure because `block_mem_J2` at `i = j` demands it, and
+that is a fact about the interface worth recording.** `IsBlockElt jordan p i i x` says `pᵢ ∘ x = ½x`
+and `p_k ∘ x = 0` for `k ≠ i`, which does **not** force `x = 0` — so `J2 i i x` fails outright without
+more. Completeness supplies it: `x = e ∘ x = ∑ p_k ∘ x = ½x`, hence `x = 0`. **So two of the
+interface's FK fields are stated at a generality Faraut–Korányi only supports for a *complete*
+frame.** Found by the `i = j` case refusing to close — **the case I would have skipped if the field
+had carried the `i ≠ j` hypothesis I assumed it did.**
+
+★ **Scope, and it matters: NO MANIFEST ROW MOVES.** What is proved is an *implication* — tell the
+interface its frame is a frame and the three FK fields follow. Closing row 16 needs an
+`EJAComparison` **constructed on `H_N(ℂ)`**: a concrete frame with the equations proved there, `Θ`
+supplied, reconciled with `Necessity.comparisonSetup`. Not attempted. And `Θ_fix` remains a cited
+`ComparisonSetup` field — row 16 rests on it as much as on the FK three.
+
+★ `ComparisonSetup`, its constructor and the Layer-6 freeze are **untouched**: this is an extension
+structure, deliberately, so the audited surface does not move. That was the "low-risk shape" named at
+9.15, and it worked.
+
+**Verification:** `lake build` 3120 jobs, 0 errors; `AxiomAudit.lean` PASS — **163** tracked modules
+== frozen 163-name manifest, custom axioms exactly `[]`; `toCoalescenceSetup` `#print axioms`-checked,
+and `coalescence_J2q` applied to it in a separate compiled example.
+
 #### Block 9.21 — ★★★ THE BRIDGE IS BUILT: the EJA layer speaks the interface's vocabulary (2026-08-13)
 
 `RadicalRelativity/EJA/Bridge.lean`. **`MasterTheorem.OpCommute m a b` — `CoalescenceSetup`'s own

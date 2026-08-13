@@ -179,6 +179,17 @@ theorem diagFamily_scalarOn (f : ι → ℝ) {i j : ι} (hij : i ≠ j) (h : f i
   rw [← hsd, Finset.sum_pair hij, ← h, ← smul_add]
   abel
 
+omit [IsCommJordan J] [IsScalarTower ℝ J J] in
+/-- The `i = j` case of `diagFamily_scalarOn`, which the interface's `aOf_scalarOn` also needs
+because that field carries no `i ≠ j` hypothesis. -/
+theorem diagFamily_scalarOn_self (f : ι → ℝ) (i : ι) :
+    ∑ k, f k • p k = (f i / 2) • (p i + p i) + ∑ k ∈ univ \ {i}, f k • p k := by
+  have hsd := Finset.sum_sdiff (f := fun k => f k • p k) (Finset.subset_univ ({i} : Finset ι))
+  rw [← hsd, Finset.sum_singleton]
+  have : (f i / 2) • (p i + p i) = f i • p i := by module
+  rw [this]
+  abel
+
 /-- **`CoalescenceSetup.simDiag_opCommute`, derived at the interface's own shape.** For a
 rank-two block `q = p i + p j` of an orthogonal idempotent family, a diagonal family with
 `f i = f j` operator-commutes with every element of `J₂(q)`. -/
