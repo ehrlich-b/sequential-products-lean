@@ -81,11 +81,15 @@ orders' pre-registered condition for skipping it does not fire.
 
 **★★ But three qualifications, and they are why this table exists rather than a headline number.**
 
-1. **The six CLOSES rows are all "generality-only" rows.** Each is already proved on the concrete
+1. **The three CLOSES rows are all "generality-only" rows.** Each is already proved on the concrete
    carrier or over `ComparisonSetup`; what the axiomatization buys is that the *article's own*
    hypothesis class becomes expressible. That is exactly the standing bar ("FORMALIZED at the
    article's own generality, no located hypothesis"), so the movement is real — but a reader should
-   know that none of these six is a row where the *mathematics* is missing.
+   know that none of these three is a row where the *mathematics* is missing.
+   ★ **This numeral said "six" in three places until 2026-08-12 (ARC-9 block 9.1)**, one day after
+   the count was corrected to three at the head of this section — the appended correction, the
+   un-rewritten summary. Sixth instance on this project; the check is `grep -n "six" EJA-DIVIDEND.md`
+   and it costs one command.
 2. **Row 14 is the load-bearing one and it is external.** Rows 16 and 17 close only if
    `Theta_jordan` becomes derivable, and deriving it *is* `prop:theta` at vIR generality — a
    pre-registered external import. So the honest form of "16 and 17 close" is: **they become
@@ -103,7 +107,7 @@ none of the Jordan/EJA stack is formalized in any prover); (E2) Peirce decomposi
 natural home is upstream of this paper — a Mathlib-grade EJA layer — not inside `RadicalRelativity`.
 
 **What would change this verdict:** if (E1) turns out to require the spectral theorem only for the
-*specific* frames the article uses (rather than in general), the six CLOSES rows might be reachable
+*specific* frames the article uses (rather than in general), the three CLOSES rows might be reachable
 by a much smaller "Peirce-facts-as-hypotheses" refactor of `ComparisonSetup` that keeps them
 EJA-GATED but removes the unexaminable-field objection. That refactor is cheap and has not been
 priced; it is the first thing to test before committing to (E1).

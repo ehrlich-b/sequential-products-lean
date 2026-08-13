@@ -54,7 +54,8 @@ three kinds, and only the first is conditional on §2:
 | `lem:n2-descent` — the frame parameter of an arbitrary norm-continuous product as a continuous, bounded element of `C(ℝP², ℝ)`; the presentation map `U(2) → ℝP²` is a quotient map (compact → Hausdorff) | `RankTwo.n2QubitModuli`, `RankTwo.continuous_n2ModuliRP2`, `RankTwo.exists_n2QubitModuli_bound`, `RankTwo.sp_eq_twistSeq_n2QubitModuli`, `RankTwo.isQuotientMap_frameRP2` | `RankTwo/Sufficiency.lean` |
 | **the totality obstruction** — `badP` is an S1–S7 + S2 product with the same moduli function as a twist product and a different `.sp`, so "bijection ONTO the products as `.sp` functions" is FALSE for this encoding; the target is products up to agreement on effects | `RankTwo.not_exists_moduli_of_badP`, `RankTwo.moduli_collide`, `RankTwo.badP_sp_differs` | `RankTwo/Sufficiency.lean` |
 | the products agree at every spectral first argument (the `n2Sp` bridge, not the constant-parameter one) | `RankTwo.sp_eq_n2Sp_of_moduli` | `RankTwo/Sufficiency.lean` |
-| `cor:qubit-classification`, **the parameter-level bijection** — forward map injective, and every norm-continuous product determines a unique moduli function; round trip is the identity. ★ Agreement on effects at SINGULAR first arguments is NOT proved, and the naive "onto" reading is refuted above | `RankTwo.qubit_classification`, `RankTwo.exists_unique_qubitModuli`, `RankTwo.n2QubitModuli_n2SequentialProduct` | `RankTwo/Sufficiency.lean` |
+| `cor:qubit-classification`, **the parameter-level bijection** — forward map injective, and every norm-continuous product determines a unique moduli function; round trip is the identity. ★ **Agreement on effects at SINGULAR first arguments is now PROVED (2026-08-12, ARC-9 block 9.1)** — this cell said it was not; the naive "onto" reading is still refuted above, and that is what keeps the row PARTIAL | `RankTwo.qubit_classification`, `RankTwo.exists_unique_qubitModuli`, `RankTwo.n2QubitModuli_n2SequentialProduct` | `RankTwo/Sufficiency.lean` |
+| `cor:qubit-classification` **up to agreement on effects** — the bijection in the only form the `IsEffect`-guarded axioms can support: distinct parameters differ on a pair of effects, and every norm-continuous S1–S7 product agrees on effects with `∘_t` for exactly one `t`. ★ The singular half is `prop:singular` (`Necessity.sp_eq_on_effects_of_eq_on_posDef`, rank-free, in-tree since `LEDGER.md` 2.9) applied to the spectral presentation of a positive-definite effect | `RankTwo.sp_eq_n2Sp_on_effects`, `RankTwo.n2Sp_inj_on_effects`, `RankTwo.qubit_classification_up_to_effects` | `RankTwo/Sufficiency.lean` |
 | the ray-to-projection dictionary the descent runs on — the first spectral projection is the rank-one projection of the first column; equal rays give equal projections, complementary rays complementary ones | `RankTwo.frameMap_eq_rankOne_firstCol`, `RankTwo.frameMap_eq_of_colFrame_eq`, `RankTwo.frameMap_eq_one_sub_of_colFrame_eq_ortho`, `RankTwo.nsq_firstCol` | `RankTwo/Sufficiency.lean` |
 | commutation criterion at rank two — two Hermitian `2×2` matrices commute iff their Bloch axes are parallel, hence carry the same `ℝP²` frame point | `RankTwo.blochHerm_parallel_of_commute`, `RankTwo.blochPoint_eq_of_commute`, `RankTwo.n2Tau_eq_of_commute` | `RankTwo/Sufficiency.lean` |
 | `thm:qubit-boundary`(iii) **at the EFFECTS** — the article's `τ` family agrees with no constant twist product on the effects. ★ CITE THIS ONE; the entry-probe siblings separate the total extensions, because their witness is not an effect when the parameter difference has the other sign | `RankTwo.not_forall_effects_tau_eq_twistSeq`, `RankTwo.not_forall_effects_eq_twistSeq` | `RankTwo/Sufficiency.lean` |
@@ -708,12 +709,16 @@ machine-checked on the concrete carrier: `lem:twist-sufficiency` in §1.)
   sentence below that lists `prop:n2-sufficiency` among the wholly-open items should be read against
   this.
 
-  **What is still open, stated exactly** (as of 2026-08-08; boundedness struck 2026-08-09). The
+  **What is still open, stated exactly** (as of 2026-08-08; boundedness struck 2026-08-09;
+  ★★ **the whole sentence superseded 2026-08-12, ARC-9 block 9.1 — see the SUPERSESSION note that
+  now closes this bullet; every clause of it has since been proved**). The
   frame function exists; nothing yet proves it
   ~~**bounded** (`lem:n2-bounded`)~~ **[PROVED 2026-08-09]**, ~~**continuous**
-  (`lem:n2-continuity`)~~ **[PROVED 2026-08-09]**, or **invariant under
+  (`lem:n2-continuity`)~~ **[PROVED 2026-08-09]**, or ~~**invariant under
   reversing the frame** so as to descend to `ℝP²` (`lem:n2-descent`), and so
-  `cor:qubit-classification` is not assembled. Those three lemmas are now statements *about
+  `cor:qubit-classification` is not assembled~~ **[BOTH PROVED 2026-08-09, ARC-8 8.1(d)/(f):
+  `RankTwo.n2QubitModuli` is the descended function and the row-35 correspondence is assembled]**.
+  Those three lemmas are now statements *about
   a function that exists*, which they were not before. `prop:n2-necessity` itself remains
   PARTIAL for a reason that is presentational rather than mathematical: the article states
   its conclusion about `Θ_a|_{W_n}` with frames indexed by `n ∈ S²`, and Lean states the
@@ -742,6 +747,24 @@ is exactly why building the map was the rank-two work that remained. **SUPERSEDE
   2026-08-09 (`exists_n2FrameTwist_bound`, `continuous_n2FrameTwist`); what remains of this row is
   the `ℝP²` descent (building the quotient function itself), and — of `prop:n2-sufficiency` — its S2
   clause only, the algebraic core having landed the same day (`RankTwo.n2SequentialProduct`).**
+
+  ★★★ **SUPERSESSION, 2026-08-12 (ARC-9 block 9.1) — NOTHING IN THE PARAGRAPHS ABOVE IS STILL OPEN,
+  and this bullet's heading ("no Lean counterpart") stopped applying to the rank-two lane on
+  2026-08-09.** Every residue named above is closed and recorded in §1 of *this file*:
+  the `ℝP²` descent is `RankTwo.n2QubitModuli` (row 34 FORMALIZED, ARC-8 8.1(d));
+  `prop:n2-sufficiency`'s S2 is `RankTwo.n2SequentialProduct_firstArgContinuous` and
+  `…_firstArgContinuousOu` (row 30 FORMALIZED, ARC-8 8.1(b), for an arbitrary `t : C(ℝP², ℝ)`);
+  and `cor:qubit-classification` is assembled up to agreement on effects
+  (`RankTwo.qubit_classification_up_to_effects`, ARC-9 9.1), the singular half supplied by
+  `prop:singular` via `Necessity.sp_eq_on_effects_of_eq_on_posDef`.
+  What remains of row 35 is **not** a gap in the tree: it is that the article's literal "onto the
+  norm-continuous products" is FALSE for this encoding (`RankTwo.not_exists_moduli_of_badP`).
+
+  ★ **Why this note is longer than the fix.** §1 of this file was updated on 2026-08-09 with the
+  new declarations and §3 was not, so for three days the file the manifest designates as *governing*
+  contradicted itself, with the stale half sitting in the summary position where a reader stops —
+  the same shape as the arc-5 review's finding and the `chiTilde` correction above it. The
+  mechanical check is to grep this file for each closed row's *old* claim, never its new one.
 - **`mthm:omnibus`** (the finite-dimensional omnibus classification).
 - ~~**`prop:pseudo-transfer`**~~ — **CORRECTED 2026-08-08.** Not "no counterpart":
   `Necessity/PseudoInverse.lean` proves it on the concrete carrier in *normalized* form.

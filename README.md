@@ -12,7 +12,11 @@ but see Provenance: some of the code is third-party, vendored in.
 
 ## Provenance — first-party vs vendored
 
-Of the tree's 41,135 lines, **12,409 are third-party code vendored verbatim**
+Of the tree's 48,056 lines, **12,409 are third-party code vendored verbatim**
+(counts as of 2026-08-12; reproduce with
+`find RadicalRelativity RadicalRelativity.lean -name '*.lean' -exec cat {} + | wc -l`
+and the same over `RadicalRelativity/Vendor` — the first figure read 41,135 for three arcs
+after it stopped being true, which is why the command is printed here rather than the number alone)
 (pinned, Apache 2.0, per-file copyright headers retained). Full record,
 including the mathlib v4.32→v4.28 backport edit log and its zero-statement-change
 audit: `RadicalRelativity/Vendor/VENDOR.md`.
@@ -144,8 +148,8 @@ They are copied so this project stands alone; they are **not** paper content.
 **Exact statement boundary (target, not a classification proof)**
 - `RadicalRelativity/PaperA/Statement.lean`
 
-**Master theorem chain — abstract skeleton `master_chain` (12 modules including
-Central).** Not a capstone and not a verification of the paper's theorem: it is an
+**Master theorem chain — abstract skeleton `master_chain` (13 modules including
+Central and Witnesses).** Not a capstone and not a verification of the paper's theorem: it is an
 implication quantified over the §2 interface fields. See "Axiom audit" above and
 `THEOREM-MAP.md` §3.
 - `RadicalRelativity/MasterTheorem/Interface.lean`
@@ -160,6 +164,7 @@ implication quantified over the §2 interface fields. See "Axiom audit" above an
 - `RadicalRelativity/MasterTheorem/Master.lean`
 - `RadicalRelativity/MasterTheorem/RankTwo.lean`
 - `RadicalRelativity/MasterTheorem/Central.lean`
+- `RadicalRelativity/MasterTheorem/Witnesses.lean`
 
 **Selection — earlier block-core development (pair-local ansatz route)**
 - `RadicalRelativity/Selection/BaseEquality.lean`
@@ -170,14 +175,15 @@ implication quantified over the §2 interface fields. See "Axiom audit" above an
 - `RadicalRelativity/Selection/TwistIsotropy.lean`
 
 **The rest of the tree** — where the two unconditional rows actually live. The
-lists above are the abstract layer only; they are a small minority of the 147
-modules, so the map is completed by directory rather than by file:
+lists above are the abstract layer only; they are a small minority of the 149
+modules under `RadicalRelativity/` (150 tracked declaration-bearing modules, counting the
+root aggregator), so the map is completed by directory rather than by file:
 
 | Directory | Modules | Role |
 | --- | --- | --- |
 | `RadicalRelativity/Hermitian/` | 11 | the concrete carrier `HermitianMat n 𝕜`: order-unit layer, extreme effects = projections, twist family, CFC continuity, sequential-product instances |
-| `RadicalRelativity/Necessity/` | 75 | the two flagship rows end to end — comparison-map instances, the ℂ twist extraction and its globalization, the ℝ rigidity, the Kadison discharges, and the capstones `complex_classification_unconditional` / `real_classification` |
-| `RadicalRelativity/RankTwo/` | 7 | rank-two moduli space, complementation/descent to `ℝP²`, separation (the classification *map* is absent — `THEOREM-MAP.md` §3) |
+| `RadicalRelativity/Necessity/` | 76 | the two flagship rows end to end — comparison-map instances, the ℂ twist extraction and its globalization, the ℝ rigidity, the Kadison discharges, and the capstones `complex_classification_unconditional` / `real_classification` |
+| `RadicalRelativity/RankTwo/` | 8 | rank-two moduli space, complementation/descent to `ℝP²`, separation, and the frame-dependent twist product with the classification correspondence (`n2SequentialProduct`, `n2QubitModuli`, `qubit_classification_up_to_effects`). ★ This cell said "the classification *map* is absent" until 2026-08-12; it was built 2026-08-09. The correspondence is a bijection **up to agreement on effects** — the article's literal "onto the products" is refuted for this encoding (`not_exists_moduli_of_badP`), so read `THEOREM-MAP.md` §1 before reading this as the article's corollary |
 | `RadicalRelativity/PaperA/` | 3 | frozen statement shapes plus the certification that the two proved rows meet them |
 | `RadicalRelativity/Wigner/` | 1 | first-party real Wigner/Uhlhorn rigidity (see Provenance) |
 | `RadicalRelativity/Vendor/` | 25 | vendored third-party islands (see Provenance) |

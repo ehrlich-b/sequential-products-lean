@@ -1455,4 +1455,83 @@ theorem sp_eq_n2Sp_of_moduli (P : SequentialProductOn (HermitianMat (Fin 2) ℂ)
   rw [n2Sp_eq_twistSeq_at_frame]
   exact sp_eq_twistSeq_n2QubitModuli P hS2 U hr hb
 
+/-! ### Row 35's residue: agreement on ALL effects, not just the positive-definite ones
+
+★★★ **New 2026-08-12 (ARC-9 block 9.1), and it is the sixth row on this project whose status was
+wrong on the page rather than in the tree.**  `STATEMENT-MANIFEST.md` row 35 recorded the residue as
+"agreement on effect × effect between `P.sp` and `n2Sp (n2QubitModuli P hS2)` — proved at
+positive-definite first arguments (`sp_eq_n2Sp_of_moduli`), open at singular ones", and said the
+extension "needs the article's S2 limiting argument (singular effects are limits of positive-definite
+ones and both sides are continuous in the first argument), which is **not written**."
+
+It was written.  `prop:singular` has been wired on the concrete carrier since `LEDGER.md` 2.9 as
+`Necessity.sp_eq_on_effects_of_eq_on_posDef` — *two S1–S7 products with S2 that agree on the
+positive-definite effects agree on all effects* — stated for an arbitrary index type and already
+consumed by the ℂ flagship row at `N ≥ 3`.  Nothing in it is rank-gated.  What was missing was the
+*application*: the spectral theorem (`Necessity.eq_adU_diagFamily`) presents a positive-definite
+effect as `Ad_U (diagFamily r)`, `Necessity.log_eigenvalues_nonpos` makes `r ≤ 0`, and that is
+exactly the shape `sp_eq_n2Sp_of_moduli` consumes.  Eleven lines.
+
+★ **Scope, so this is not read as more than it is.**  This closes the residue *as recorded*, which is
+the post-`badP` honest target: agreement **on effects**.  It does not resurrect the article's literal
+"bijection onto the norm-continuous products" — `not_exists_moduli_of_badP` still refutes that for
+products-as-`SequentialProductOn`-values, and no S2 limiting argument can repair it, because `badP`
+agrees with a twist product on every effect and differs off them, where no axiom looks. -/
+
+/-- **Row 35's residue, discharged.**  An arbitrary norm-continuous S1–S7 product on `H_2(ℂ)` agrees
+with the frame-dependent twist product built from its own moduli function at **every** effect first
+argument — the singular ones included.  `prop:singular` (`Necessity.sp_eq_on_effects_of_eq_on_posDef`)
+supplies the S2 limiting argument; `sp_eq_n2Sp_of_moduli` supplies the positive-definite half. -/
+theorem sp_eq_n2Sp_on_effects (P : SequentialProductOn (HermitianMat (Fin 2) ℂ))
+    (hS2 : P.FirstArgContinuous) {b : HermitianMat (Fin 2) ℂ} (hb : IsEffect b) :
+    ∀ a : HermitianMat (Fin 2) ℂ, IsEffect a →
+      P.sp a b = n2Sp (n2QubitModuli P hS2) a b := by
+  refine Necessity.sp_eq_on_effects_of_eq_on_posDef P
+    (n2SequentialProduct (n2QubitModuli P hS2)) hS2
+    (n2SequentialProduct_firstArgContinuous _) hb ?_
+  intro a ha hpd
+  rw [Necessity.eq_adU_diagFamily hpd]
+  exact sp_eq_n2Sp_of_moduli P hS2 a.H.eigenvectorUnitary
+    (fun i => Necessity.log_eigenvalues_nonpos ha hpd i) hb
+
+/-- **Injectivity of `t ↦ ∘_t` at the level the axioms can see.**  `qubit_classification`'s first
+clause is injectivity of `t ↦ (n2SequentialProduct t).sp` as total functions; this is the sharper
+statement that distinct parameters already differ on a pair of *effects*, which is what the
+`badP`-corrected target needs. -/
+theorem n2Sp_inj_on_effects {t₁ t₂ : C(RP2, ℝ)}
+    (h : ∀ a b : HermitianMat (Fin 2) ℂ, IsEffect a → IsEffect b → n2Sp t₁ a b = n2Sp t₂ a b) :
+    t₁ = t₂ := by
+  ext p
+  obtain ⟨U, hU⟩ := surjective_frameRP2 p
+  rw [← hU]
+  refine (Necessity.n2FrameTwist_unique_param (n2SequentialProduct t₁)
+    (n2SequentialProduct_firstArgContinuous t₁) U).unique
+      (fun r _ b _ => n2Sp_eq_twistSeq_at_frame t₁ U r b) (fun r hr b hb => ?_)
+  show n2Sp t₁ _ _ = _
+  rw [h _ b (Necessity.adU_isEffect (Necessity.unitaryGroup_conjTranspose_mul U)
+        (Necessity.unitaryGroup_mul_conjTranspose U) (Necessity.diagFamily_isEffect hr)) hb]
+  exact n2Sp_eq_twistSeq_at_frame t₂ U r b
+
+/-- **`cor:qubit-classification`, in the form the axioms can support.**  `t ↦ ∘_t` is a bijection
+from `C(ℝP², ℝ)` onto the norm-continuous S1–S7 products on `H_2(ℂ)` **up to agreement on effects**:
+distinct parameters differ on some pair of effects, and every such product agrees on effects with
+`∘_t` for exactly one `t`.
+
+★ The "up to agreement on effects" is not a weakening for convenience — it is forced.  The article's
+literal "onto the products" is false for this encoding (`not_exists_moduli_of_badP`), because every
+`SequentialProductOn` axiom is `IsEffect`-guarded and so cannot see the operation off the effects. -/
+theorem qubit_classification_up_to_effects :
+    (∀ t₁ t₂ : C(RP2, ℝ),
+        (∀ a b : HermitianMat (Fin 2) ℂ, IsEffect a → IsEffect b → n2Sp t₁ a b = n2Sp t₂ a b) →
+          t₁ = t₂)
+      ∧ ∀ P : SequentialProductOn (HermitianMat (Fin 2) ℂ), P.FirstArgContinuous →
+          ∃! t : C(RP2, ℝ), ∀ a b : HermitianMat (Fin 2) ℂ, IsEffect a → IsEffect b →
+            P.sp a b = n2Sp t a b := by
+  refine ⟨fun _ _ h => n2Sp_inj_on_effects h, fun P hS2 => ?_⟩
+  refine ⟨n2QubitModuli P hS2, fun a b ha hb => sp_eq_n2Sp_on_effects P hS2 hb a ha, ?_⟩
+  intro t ht
+  refine n2Sp_inj_on_effects (fun a b ha hb => ?_)
+  rw [← ht a b ha hb]
+  exact sp_eq_n2Sp_on_effects P hS2 hb a ha
+
 end RankTwo

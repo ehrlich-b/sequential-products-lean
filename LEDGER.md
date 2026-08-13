@@ -13,7 +13,144 @@ interface structure instantiated on the intended algebras.
 
 ---
 
-## ★★★ ARC-8 ORDERS (2026-08-09, Fable design pass — the ceiling campaign). READ THIS FIRST.
+## ★★★ ARC-9 ORDERS (2026-08-12, self-authored by the executing agent — the EJA axiomatization). READ THIS FIRST.
+
+★ **Provenance, stated because it differs from every arc above:** ARC-4 through ARC-8 were designed
+by a separate Fable pass and executed by another agent, so the orders were an independent constraint
+on the execution. These orders are written by the agent that executes them. That removes the
+independence, and the mitigation is that the *terminal conditions below are stated before any work
+starts and are not to be relaxed mid-arc* — if a target proves unreachable, the arc records the wall,
+it does not restate the target.
+
+**SCOPE (Bryan, 2026-08-12):** the work ARC-8 deferred — **the EJA axiomatization**. Encode the
+JB-algebra premises (Jordan identity, formal reality, cone of squares) so that the vIR/FK facts
+`MasterTheorem/Interface.lean` carries as *fields* become theorems. `EJA-DIVIDEND.md` is the
+standing decision instrument and its verdict is unchanged: the axiomatization CLOSES rows 13, 16, 17,
+is PARTIAL on 5, 6, 8, 14, 15, 22, and does **nothing** for the entire rank-two lane.
+
+**WHAT THE GROUND ACTUALLY LOOKS LIKE (scouted 2026-08-12, first move of this arc).** Mathlib
+v4.28.0 contains exactly one Jordan-algebra file, `Mathlib/Algebra/Jordan/Basic.lean`, 237 lines:
+the classes `IsJordan` / `IsCommJordan`, five operator-commutation lemmas (`commute_lmul_rmul` and
+friends), and two linearised-identity lemmas. There is **no power associativity, no idempotent
+theory, no spectral theorem, no Peirce decomposition, no trace form, and no notion of a Jordan
+frame** — in Mathlib or, per `lean-formalization-landscape`, in any prover. So (E1) is not a port.
+It is a from-scratch development, and the honest unit of progress for this arc is *theorems in the
+new layer*, not manifest rows.
+
+**TERMINAL CONDITION.** Either
+1. `RadicalRelativity/EJA/` contains a compiling, census-clean development reaching the
+   **single-element spectral theorem** — every element of a finite-dimensional formally real Jordan
+   algebra is a real combination of pairwise-orthogonal idempotents summing to the unit — with
+   custom axioms still exactly `[]`; **or**
+2. a wall certificate in `WallCertificates/` states, in Lean at full generality with `sorry` at
+   exactly the gap, which step of the route resists, with the same evidence standard ARC-7 set:
+   dated absence claims carrying the grep's scope, and what was actually attempted.
+
+Partial credit is real here and must be recorded as such: power associativity alone is a result
+this ecosystem does not have.
+
+**THE BLOCKS (in order):**
+
+* **9.0 Verify the tree.** Build, census, tags, certificate compiles. ✓ done — see the execution
+  record; the four gates were green at `10e845a` before anything was touched.
+* **9.1 Bank what ARC-8's own review discovered but did not land.** Row 35's residue (the finding
+  is that it was never a residue), plus the six documentation defect clusters the closing audit
+  found. ✓ done.
+* **9.2 Price the Peirce-facts-as-hypotheses refactor.** `EJA-DIVIDEND.md` pre-registers this as
+  "the first thing to test before committing to (E1)". Test it, price it, and record the price
+  with evidence — including the price of *not* taking it.
+* **9.3 `EJA/Defs.lean`** — the class, formal reality, the basic consequences.
+* **9.4 `EJA/PowerAssoc.lean`** — power associativity. Everything downstream rests on it.
+* **9.5 `EJA/TraceForm.lean`** — the associative inner product; `L x` self-adjoint.
+* **9.6 `EJA/Idempotent.lean`, `EJA/Spectral.lean`** — idempotents, orthogonality, and the
+  single-element spectral resolution.
+
+**Standing constraints, unchanged and non-negotiable:** all commits LOCAL (public repo — never
+push, never `sync.sh`); manuscript untouched (blob `205fdf5a`); frozen tags untouched; custom
+axioms stay exactly `[]`; a new module means the root import, the `AxiomAudit.lean` manifest list
+and its count string all move in the SAME commit; `THEOREM-MAP.md` and `STATEMENT-MANIFEST.md`
+update in the same commit as any status change; never say "fully formalized"; the count is an
+OUTPUT, not a quota.
+
+**Carried rules that earned their place (ARC-7/8; violating one is a defect even if the result is
+right):** an accurate grep is evidence about a string, not about absence — first move is
+`grep -n "^def \|^theorem \|^instance \|^abbrev \|^structure " <file>`; verify a compile by
+full-output `grep -cE error` and `#print axioms`, never a `head` window; a dry round only counts if
+nothing runs after it; grep for the OLD claim, never the new one; a totalizing phrase inside a
+residual claim is where the error lives; **absolute paths for every file operation** (violated twice
+in this arc's first hour, both times by `cd` drift in a fresh shell).
+
+### ARC-9 EXECUTION RECORD
+
+#### Block 9.1 — row 35's residue was never a residue, and six doc clusters (2026-08-12)
+
+★★★ **`cor:qubit-classification`'s recorded residue is discharged in eleven lines, and the
+ingredient had been in the tree since `LEDGER.md` 2.9.** The manifest said agreement at singular
+first arguments "needs the article's S2 limiting argument … which is **not written**." It was
+written: `Necessity.sp_eq_on_effects_of_eq_on_posDef` is `prop:singular` wired on this carrier —
+*two S1–S7 products with S2 agreeing on the positive-definite effects agree on all effects* — stated
+over an arbitrary index type, consumed by the ℂ flagship row at `N ≥ 3`, and **rank-free**. Landed:
+`RankTwo.sp_eq_n2Sp_on_effects`, `RankTwo.n2Sp_inj_on_effects`,
+`RankTwo.qubit_classification_up_to_effects`. Closure: the three core axioms.
+
+★★ **The transferable rule, and it is new.** Every previous "the row was already true" correction on
+this project was found by re-reading a file. This one was found by a *type query*: the residue was
+recorded as a hypothesis (agreement on positive-definite effects) and a conclusion (agreement on all
+effects), and the question "does a lemma with that signature already exist?" answers itself in one
+grep. **When a residue is stated as hypothesis-plus-conclusion, search for the implication before
+pricing the proof.** Row 35 is the sixth row whose status was wrong on the page rather than in the
+tree, and the first found this way.
+
+★ **The row stays PARTIAL, and that is not modesty.** The article's literal statement is a bijection
+*onto* the norm-continuous products; `not_exists_moduli_of_badP` refutes that for this encoding, and
+no limiting argument repairs it, because `badP` agrees with a twist product on every effect and
+differs off them — where no `IsEffect`-guarded axiom looks. What is proved is the bijection up to
+agreement on effects. Promoting the row needs the *manifest* to restate it, which is a manuscript
+decision, not a Lean one.
+
+**The six documentation clusters, all found by the ARC-8-closing audit, none in the mathematics:**
+
+1. **`STATEMENT-MANIFEST.md`: six rows rendered the wrong status.** Rows 9, 16, 18, 22, 29, 34
+   carried unescaped `|` inside cells — from LaTeX (`$\Theta_a|_{W_n}$`, `$|u_i|^2$`) and from grep
+   alternations — so GFM split them into 8–12 cells against a 7-column header, pushing Status into
+   the `T` column or dropping it. **Row 34 is FORMALIZED and did not render as such.** Same
+   field-count defect the ARC-8 diff audit found once in `EJA-DIVIDEND.md` and never swept here.
+   ★★ **And the fix broke it twice before it worked**, which is the more useful record: the first
+   attempt kept "the first five and last three pipes" as structural, which is wrong precisely for
+   the four rows whose strays are in the *Status* cell, and it produced a file that passed a
+   pipe-count check while showing a statement fragment as the status. The check that catches that is
+   not "does every row have 8 pipes" but **"does cell six start with a status word"** — a
+   count-based check on a table with a shifted boundary is exactly the empty-glob failure again.
+   The census is now derivable by script from the table, and the script is printed in the manifest.
+2. **`STATEMENT-MANIFEST.md:68`** headline read "12 FORMALIZED / 3 EJA-GATED / 16 PARTIAL /
+   5 ABSENT", mixing the terminal-state vocabulary into the status census against the rule stated
+   five lines below it, and disagreeing with both the table and `STATE.md`. Correct: **12 / 19 / 5**,
+   now machine-derived.
+3. **`STATEMENT-MANIFEST.md` row 35** still carried the checkpoint-2-retracted sentence — "WHAT IS
+   MISSING IS THE 'ONTO' HALF AT SINGULAR EFFECTS, and that is the whole residue" — standing two
+   sentences *after* its own retraction, totalizing phrase included, in the one cell whose text
+   names that failure mode.
+4. **`EJA-DIVIDEND.md`** said "the six CLOSES rows" in three places after the count was corrected to
+   three at the head of the same section.
+5. **`THEOREM-MAP.md` §3** still listed the `ℝP²` descent, `prop:n2-sufficiency`'s S2, and
+   "`cor:qubit-classification` is not assembled" as open — all closed 2026-08-09 and recorded in
+   **§1 of the same file**. §1 was updated that day; §3 was not. For three days the file the manifest
+   designates as *governing* contradicted itself, with the stale half in the summary position.
+6. **`README.md`** — the artifact's front door — carried "147 modules" (149 + root), Necessity 75
+   (76), RankTwo 7 (8), a MasterTheorem list of 12 omitting `Witnesses.lean` (13), and "41,135
+   lines" (48,056). Worst: the RankTwo cell asserted "the classification *map* is absent", built
+   three days earlier. Line counts now ship with the command that reproduces them.
+
+**Verification of this block:** `lake build` 3107 jobs, 0 errors (the two `grep -E error` hits are
+pre-existing doc-string linter warnings in vendored files whose *text* contains the word);
+`AxiomAudit.lean` PASS — 150 tracked modules == frozen manifest, custom axioms exactly `[]`, every
+closure ⊆ the three core axioms; all seven wall certificates recompiled, 0 errors, 11 gaps.
+★ **The certificate recount corrected a check of my own**: the first sweep grepped for
+`declaration uses 'sorry'` with straight quotes and reported **zero** gaps in all seven files —
+Lean prints backticks. A non-matching grep exits 0 and reads as clean, which is the project's own
+standing rule, caught here inside the hour it was re-derived.
+
+## ★★ ARC-8 ORDERS (2026-08-09, Fable design pass — the ceiling campaign). **EXECUTED 2026-08-09/10 — terminal condition met; superseded as campaign SSOT by ARC-9 above. The certificate spec, the review protocol and the ten transferable rules remain binding.**
 
 **SCOPE DECISION (Bryan, 2026-08-09):** this arc does everything interior EXCEPT the EJA
 axiomatization — encoding the JB-algebra premises (Jordan identity, formal reality, cone of
