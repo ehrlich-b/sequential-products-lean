@@ -82,6 +82,28 @@ in this arc's first hour, both times by `cd` drift in a fresh shell).
 
 ### ARC-9 EXECUTION RECORD
 
+#### Block 9.25 — third audit pass (blocks 9.20–9.24), and the arc's defect tally (2026-08-13)
+
+**Two defects, both in prose written within the hour.**
+
+**1. A flattering false summary, in block 9.24.** It read *"every link but the first was already in
+the tree and unconnected"* — false: links 1–3 (the Peirce/FK layer, the bridge, the extension
+structure) are this arc's own work. What was in-tree and unconnected is the **concrete** end
+(`comparisonSetup`, the `frameProj` facts, `thetaPreservesJordan_of_S2`). ★ The honest summary — *a
+new abstract layer met an existing concrete one* — is less impressive and is what happened. **A
+summary that makes a result sound cheaper than it was is still a false summary**, and this is the
+first defect tonight that erred toward *understating* the work rather than overstating it. The
+direction does not matter; the check is the same.
+
+**2. `README.md` counts stale for the FOURTH time**, again from this session's own growth
+(EJA 12 → 14, total 161 → 163, lines 50,187 → 50,504). Fixed, and the "went stale three times"
+note is now "four".
+
+★★ **Arc tally: eleven prose defects, zero mathematical ones**, across three audit passes and seven
+rounds. Every Lean statement that compiled was correct; every audit pass found something in the
+writing. **The stable ratio is the finding** — it has held for two arcs now, and it is an argument
+for budgeting audit passes by *volume of prose written*, not by number of theorems proved.
+
 #### Block 9.24 — `lem:coalescence` on the paper's carrier, unconditionally (2026-08-13)
 
 `EJA/ConcreteInstance.lean`, capstones. `ThetaPreservesJordan` — the one hypothesis `ejaComparison`
@@ -108,8 +130,14 @@ theorem now looks unconditional.
 ★ Chain of reductions, for the record: FK fields ← Peirce layer + Albert (9.3–9.7); interface
 vocabulary ← the bridge (9.21); `CoalescenceSetup` ← the extension structure (9.22); the paper's
 carrier ← `Necessity.comparisonSetup` + the frame equations already in-tree (9.23); the last
-hypothesis ← `thetaPreservesJordan_of_S2` (9.24). **Every link but the first was already in the tree
-and unconnected.**
+hypothesis ← `thetaPreservesJordan_of_S2` (9.24).
+★★ **An earlier draft of this line said "every link but the first was already in the tree and
+unconnected", which is false and flatters the result.** Links 1–3 — the Peirce/FK layer, the bridge,
+the extension structure — are **new work from this arc**. What was already in-tree and unconnected is
+the *concrete* end: `comparisonSetup`, `frameProj_isProjection`/`_orth`, `sum_frameProj`,
+`diagFamily_eq_sum_frameProj` and `thetaPreservesJordan_of_S2`. The honest summary is: **a new
+abstract layer met an existing concrete one**, and the last two blocks were the meeting. Caught in
+the arc's third audit pass, in prose written twenty minutes earlier.
 
 **Verification:** `lake build` 3121 jobs, 0 errors; `AxiomAudit.lean` PASS — 164 tracked modules,
 custom axioms exactly `[]`; `coalescence_unconditional` `#print axioms`-checked.
