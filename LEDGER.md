@@ -82,6 +82,43 @@ in this arc's first hour, both times by `cd` drift in a fresh shell).
 
 ### ARC-9 EXECUTION RECORD
 
+#### Block 9.21 — ★★★ THE BRIDGE IS BUILT: the EJA layer speaks the interface's vocabulary (2026-08-13)
+
+`RadicalRelativity/EJA/Bridge.lean`. **`MasterTheorem.OpCommute m a b` — `CoalescenceSetup`'s own
+predicate, the one `simDiag_opCommute` is stated in — is derived from the Jordan identity**, for `a`
+scalar on `range c` and `b ∈ J₂(c)`. Closure: the three core axioms.
+
+**How the diamond is dodged, which is the whole trick and it is one line.** `ringOfBilinear` builds
+the multiplicative structure **on the ambient additive group**:
+`{ (inferInstance : AddCommGroup J) with mul := fun x y => m x y, … }`. Only one `AddCommGroup J` is
+ever in play, so the failure recorded at 9.20 cannot arise. The EJA theorems are then applied under
+`letI`, and the results are stated with `m` alone, exposing no typeclass to the caller.
+
+★★ **Three blocks ago this was "not attempted, it is design work on the interface both flagship rows
+run through."** What changed is not appetite for risk — it is that 9.20's failing example turned a
+vague obstruction into a specific one, and the specific one had a standard fix. **The experiment that
+sharpened the price also solved it.** That is the third time this arc: the reduction at 9.8 made
+Albert's theorem tractable at 9.9, the `omit` lines at 9.13 refuted two docstrings, and now the
+diamond probe at 9.20 produced the bridge at 9.21. **Attempting the cheapest thing that could refute
+a price is also the cheapest way to discover the route.**
+
+★ **What this does NOT do, and no manifest row moves.** `ComparisonSetup` still does not *assert* the
+Jordan identity for its `jordan` field (it has `jordan_comm` and nothing more), so every theorem here
+carries `hjordan` as a hypothesis — the honest state of the interface. The frame equations are still
+not fields. And discharging the field on an actual `CoalescenceSetup` means constructing one, which
+touches the Layer-6 constructor freeze. **The blocker is no longer structural, which is the change:
+before this file the answer to "can the EJA layer speak to the interface at all?" was *no, there is a
+diamond*; it is now *yes, and here is the theorem in the interface's own vocabulary*.**
+
+★ **A real limit, recorded rather than discovered later:** only results whose *statements* are
+expressible with `m` alone can cross. `peirce_poly_bilinear` and `opCommute_scalarOn_interface` do;
+**Albert's theorem does not**, because `jpow` needs the ring instance to exist before its statement
+elaborates. Bridging that needs a bilinear-map power operation, which is not built.
+
+**Verification:** `lake build` 3119 jobs, 0 errors; `AxiomAudit.lean` PASS — **162** tracked modules
+== frozen 162-name manifest, custom axioms exactly `[]`; the interface-level theorem
+`#print axioms`-checked and its printed statement read back against `MasterTheorem.OpCommute`.
+
 #### Block 9.20 — the bridge's real obstruction, pinned: an `AddCommGroup` diamond (2026-08-13)
 
 Block 9.15 called the rows-16/17 blocker an "impedance mismatch" between a bundled bilinear map and
