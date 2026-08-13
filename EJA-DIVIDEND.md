@@ -46,10 +46,15 @@ carries as fields.** Concretely the deliverables would be
   The Peirce decomposition **at a single given idempotent** is in the tree
   (`RadicalRelativity/EJA/Peirce.lean`): the polynomial identity `2L_c³ − 3L_c² + L_c = 0`, the three
   projections, existence *and* uniqueness of `J = J₁(c) ⊕ J_{1/2}(c) ⊕ J₀(c)`, and the eigenvalue
-  trichotomy. It needs the Jordan identity **and nothing else** — no spectral theorem, no formal
-  reality, no finite dimension. ★ Still absent, and not to be read as covered: the FK **multiplication
-  rules** between components, and hence the *frame* decomposition `⊕_{i≤j} J_{ij}`, which needs the
-  projections of distinct frame idempotents to commute;
+  trichotomy. It needs the Jordan identity and the invertibility of `2` — no spectral theorem, no
+  formal reality, no finite dimension, no unit.
+  ★★ **This cell was written at block 9.3 and was stale by 9.4, in two ways, both caught on the
+  re-read after the arc's own diff audit.** (a) It said "and nothing else", the same overclaim the
+  audit had just fixed in two `.lean` docstrings — a third copy, in a third file. (b) It said the FK
+  **multiplication rules** were "still absent": they were built at block 9.4
+  (`EJA/PeirceMul.lean`, all six), together with the orthogonal-idempotent layer at 9.6/9.7.
+  ★ What *is* still absent is the **frame** decomposition `⊕_{i≤j} J_{ij}` as a single statement —
+  the rules and the pairwise machinery exist, the assembled direct sum over a frame does not;
 * **(E3) `Theta_jordan` derivable** — van Imhoff–Roelands: an order isomorphism of the cone that is
   unital preserves the Jordan product. Currently a field, and pre-registered EXTERNAL as row 14.
 
