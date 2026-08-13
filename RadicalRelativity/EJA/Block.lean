@@ -24,8 +24,13 @@ the smallest interesting size, and it is what `MasterTheorem/Coalescence.lean`'s
 
 ## The argument
 
-`L_p` commutes with `L_q` (`opCommute_of_orthogonal`), hence with `L_{p+q}`, hence with every
-polynomial in `L_p` — so the three Peirce projections of `p` all preserve `J₁(p+q)`. Apply
+`L_p` commutes with `L_q` (`opCommute_of_orthogonal`), so `L_p` commutes with `L_{p+q}`, so
+**`L_{p+q}` commutes with every polynomial in `L_p`** — and the three Peirce projections of
+`p` are such polynomials, hence they all preserve `J₁(p+q)`.
+★ The subject of that chain shifts, and an earlier draft let it shift silently ("…hence with
+every polynomial in `L_p`", with `L_p` still the subject, which is trivially true and not what
+is meant). Caught on the arc's second audit pass; a true sentence whose grammar names the
+wrong subject is the same defect kind as a true conclusion with a false reason. Apply
 them to `x ∈ J₁(p+q)`: the pieces have `p`-eigenvalues `1`, `1/2`, `0`, and since
 `q ∘ z = (p+q) ∘ z − p ∘ z = z − p ∘ z` on `J₁(p+q)`, their `q`-eigenvalues are the
 complements `0`, `1/2`, `1`. **The three admissible patterns are exactly the three ways

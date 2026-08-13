@@ -82,6 +82,28 @@ in this arc's first hour, both times by `cd` drift in a fresh shell).
 
 ### ARC-9 EXECUTION RECORD
 
+#### Block 9.19 — second audit pass, over blocks 9.14–9.18 (2026-08-13)
+
+The 9.13 audit covered blocks 9.1–9.12; these are the five written after it. **One defect, and it is
+a new kind.**
+
+`EJA/Block.lean`'s argument sketch read *"`L_p` commutes with `L_q`, hence with `L_{p+q}`, hence with
+every polynomial in `L_p`"*. Every clause is true, but **the subject shifts silently at the second
+"hence"**: with `L_p` still the subject the final clause is trivial (`L_p` commutes with polynomials
+in `L_p`), whereas what is meant — and what the proof uses — is that **`L_{p+q}`** commutes with them.
+★ **A true sentence whose grammar names the wrong subject is the same defect kind as a true
+conclusion with a false reason** (block 9.13, defect 6): nothing downstream breaks, and only a reader
+reconstructing the argument notices. Both were found by re-reading proof sketches against the proofs.
+
+**What the pass confirmed:** block 9.17's claim that `IsOrthIdemFamily` had **no** witness before it
+was checked against the previous commit's `Witness.lean` (`git show 21c9227:… | grep -c
+IsOrthIdemFamily` → **0**), rather than asserted; the job and module counts in 9.14/9.16/9.17 (3117,
+160) and 9.18 (3118, 161) each match the state at the time they were written; and `EJA/Pattern.lean`'s
+docstring arithmetic — the case split on zero, one and two nonzero entries — re-derives correctly.
+
+★ Cumulative for the arc: **nine prose defects, zero mathematical ones**, across two audit passes and
+six rounds. The Lean has been right every time; the writing about it has needed six rounds to settle.
+
 #### Block 9.18 — the frame block pattern, forced by three constraints (2026-08-13)
 
 `RadicalRelativity/EJA/Pattern.lean`. For an orthogonal idempotent family `p` and a nonzero joint
