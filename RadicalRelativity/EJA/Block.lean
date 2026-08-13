@@ -127,6 +127,71 @@ theorem block_mul_eq_self {z : J} (h : (p * z = z ∧ q * z = 0)
   · rw [h1, h2]; module
   · rw [h1, h2, zero_add]
 
+/-! ### The Peirce projections of orthogonal idempotents commute
+
+`EJA/PeirceMul.lean` named this as the ingredient missing for the frame-level joint
+decomposition: *"closing the field needs the joint Peirce decomposition over a frame, which
+needs these rules plus the commutation of the projections of distinct frame idempotents."*
+Here it is.
+
+The generic lemmas below take **any** linear `F` commuting with `L_q` and conclude that `F`
+commutes with each Peirce projection of `q`. Instantiating `F` at a Peirce projection of `p`
+gives all nine commutations; the three diagonal ones are named, and the mixed six are one
+line each from the same lemmas. -/
+
+section ProjComm
+
+omit [IsCommJordan J] in
+/-- A linear map commuting with `L_q` commutes with `q`'s Peirce-1 projection. -/
+theorem peirceOne_comm_of_mul_comm {q : J} {F : J →ₗ[ℝ] J} (h : ∀ w, q * F w = F (q * w))
+    (x : J) : peirceOne q (F x) = F (peirceOne q x) := by
+  simp only [peirceOne_apply, h, map_sub, map_smul]
+
+omit [IsCommJordan J] in
+/-- The same for the Peirce-`1/2` projection. -/
+theorem peirceHalf_comm_of_mul_comm {q : J} {F : J →ₗ[ℝ] J} (h : ∀ w, q * F w = F (q * w))
+    (x : J) : peirceHalf q (F x) = F (peirceHalf q x) := by
+  simp only [peirceHalf_apply, h, map_sub, map_smul]
+
+omit [IsCommJordan J] in
+/-- The same for the Peirce-`0` projection. -/
+theorem peirceZero_comm_of_mul_comm {q : J} {F : J →ₗ[ℝ] J} (h : ∀ w, q * F w = F (q * w))
+    (x : J) : peirceZero q (F x) = F (peirceZero q x) := by
+  simp only [peirceZero_apply, h, map_add, map_sub, map_smul]
+
+/-- For orthogonal idempotents, `L_q` commutes with `p`'s Peirce-1 projection. -/
+theorem mul_peirceOne_comm_orth (hq : q * q = q) (hpq : p * q = 0) (x : J) :
+    q * peirceOne p x = peirceOne p (q * x) :=
+  mul_peirceOne_comm (fun w => opCommute_of_orthogonal hq (by rw [mul_comm]; exact hpq) w) x
+
+/-- For orthogonal idempotents, `L_q` commutes with `p`'s Peirce-`1/2` projection. -/
+theorem mul_peirceHalf_comm_orth (hq : q * q = q) (hpq : p * q = 0) (x : J) :
+    q * peirceHalf p x = peirceHalf p (q * x) :=
+  mul_peirceHalf_comm (fun w => opCommute_of_orthogonal hq (by rw [mul_comm]; exact hpq) w) x
+
+/-- For orthogonal idempotents, `L_q` commutes with `p`'s Peirce-`0` projection. -/
+theorem mul_peirceZero_comm_orth (hq : q * q = q) (hpq : p * q = 0) (x : J) :
+    q * peirceZero p x = peirceZero p (q * x) :=
+  mul_peirceZero_comm (fun w => opCommute_of_orthogonal hq (by rw [mul_comm]; exact hpq) w) x
+
+/-- **The Peirce-1 projections of orthogonal idempotents commute.** -/
+theorem peirceOne_comm_peirceOne (hq : q * q = q) (hpq : p * q = 0) (x : J) :
+    peirceOne q (peirceOne p x) = peirceOne p (peirceOne q x) :=
+  peirceOne_comm_of_mul_comm (F := peirceOne p) (mul_peirceOne_comm_orth hq hpq) x
+
+/-- **The Peirce-`1/2` projections of orthogonal idempotents commute** — the projection onto
+the coherence space is well defined independently of which idempotent is applied first. -/
+theorem peirceHalf_comm_peirceHalf (hq : q * q = q) (hpq : p * q = 0) (x : J) :
+    peirceHalf q (peirceHalf p x) = peirceHalf p (peirceHalf q x) :=
+  peirceHalf_comm_of_mul_comm (F := peirceHalf p) (mul_peirceHalf_comm_orth hq hpq) x
+
+/-- **The Peirce-`0` projections of orthogonal idempotents commute.** -/
+theorem peirceZero_comm_peirceZero (hq : q * q = q) (hpq : p * q = 0) (x : J) :
+    peirceZero q (peirceZero p x) = peirceZero p (peirceZero q x) :=
+  peirceZero_comm_of_mul_comm (F := peirceZero p) (mul_peirceZero_comm_orth hq hpq) x
+
+end ProjComm
+
 end Block
 
 end RadicalRelativity.EJA

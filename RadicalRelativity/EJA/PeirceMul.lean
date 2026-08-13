@@ -49,11 +49,18 @@ operator-commute* — carried as a cited Faraut–Korányi hypothesis. Its singl
 case is `opCommute_eigen_one_zero` below, and it is three lines from `four_lin2_raw`.
 
 ★ **That is a case, not the field.** The field quantifies over a rank-two `q = pᵢ + pⱼ`
-drawn from a Jordan *frame*, and this file has no frame: `EJA/` does not yet know that
-several idempotents can be orthogonal, let alone sum to a unit. Closing the field needs the
-joint Peirce decomposition over a frame, which needs these rules plus the commutation of
-the projections of distinct frame idempotents. Not built. No manifest row moves on this
-file, and none is claimed to.
+drawn from a Jordan *frame*, and this file has no frame. No manifest row moves on this file,
+and none is claimed to.
+
+★★ **Status of that gap, updated 2026-08-13 (ARC-9 blocks 9.6/9.7/9.14/9.16).** This
+paragraph used to end *"…needs these rules plus the commutation of the projections of
+distinct frame idempotents. Not built."* Both named ingredients are now built:
+`EJA/Frame.lean` has orthogonal idempotent families and puts the field in the interface's own
+shape (`opCommute_scalarOn_frame`), and `EJA/Block.lean` has the projection commutation
+(`peirceOne_comm_peirceOne` and siblings) as well as the exact characterisation of the
+rank-two block. What is **still** not built is the assembled frame-level statement
+`J = ⊕_{i ≤ j} J_{ij}` as a single theorem, and the bridge from this typeclass layer to
+`ComparisonSetup`'s bilinear-map interface (block 9.15).
 
 ## References
 

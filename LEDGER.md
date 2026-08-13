@@ -82,6 +82,25 @@ in this arc's first hour, both times by `cd` drift in a fresh shell).
 
 ### ARC-9 EXECUTION RECORD
 
+#### Block 9.16 — the projection commutation, which was the last named missing ingredient (2026-08-13)
+
+Appended to `EJA/Block.lean`. Three generic lemmas — *any* linear `F` commuting with `L_q` commutes
+with each Peirce projection of `q` — plus the three `L_q`-vs-`p`-projection helpers, which together
+give all nine projection-projection commutations for orthogonal idempotents; the three diagonal ones
+are named (`peirceOne_comm_peirceOne`, `peirceHalf_comm_peirceHalf`, `peirceZero_comm_peirceZero`).
+
+★ **This is the ingredient `EJA/PeirceMul.lean` itself named as missing** two blocks earlier
+("…needs these rules plus the commutation of the projections of distinct frame idempotents. Not
+built."). That docstring was corrected **in the same commit** rather than waiting for an audit round
+to catch it — the first time tonight the stale-scope-note pattern was closed preemptively instead of
+retroactively. Eight blocks and four audit rounds to internalise it.
+
+★ Still not built, and now stated in one place: the assembled frame-level `J = ⊕_{i≤j} J_{ij}` as a
+single theorem, and the 9.15 bridge.
+
+**Verification:** `lake build` 3117 jobs, 0 errors; `AxiomAudit.lean` PASS — 160 tracked modules,
+custom axioms exactly `[]`; the named commutations `#print axioms`-checked.
+
 #### Block 9.15 — the refactor is bigger than block 9.2 priced it: an impedance mismatch (2026-08-13)
 
 ★★ **Checking whether the EJA layer can actually plug into `ComparisonSetup` — it cannot, yet.**
