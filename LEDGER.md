@@ -82,6 +82,41 @@ in this arc's first hour, both times by `cd` drift in a fresh shell).
 
 ### ARC-9 EXECUTION RECORD
 
+#### Block 9.10 — formal reality, no nilpotents, and the carrier that makes it non-vacuous (2026-08-12)
+
+`RadicalRelativity/EJA/FormallyReal.lean` adds the `IsFormallyReal` mixin (a vanishing sum of
+squares has vanishing summands, stated over a `Finset` so it is the real condition and not the
+two-summand special case) and proves **`eq_zero_of_jpow_eq_zero`: a formally real Jordan algebra has
+no nilpotents.**
+
+★ **This is the first place Albert's theorem does work rather than sit there.** Formal reality can
+only see *squares*. Turning "some power vanishes" into "a square vanishes" is exactly the product
+identity `jpow_mul_jpow`: from `jpow x (k+1) = 0` one gets `jpow x (k+k+1) = 0`, that element **is**
+`jpow x k * jpow x k`, so `jpow x k = 0` and the index strictly drops. Without block 9.9 the descent
+cannot be written.
+
+★★★ **AND THE FILE'S OWN DECLARED EXPOSURE WAS CLOSED WITHIN THE HOUR.** Its docstring shipped with:
+*"No non-vacuity witness is supplied for `IsFormallyReal` … every theorem in this file is conditional
+on a hypothesis with no carrier in this tree."* That was written deliberately — the ARC-6 failure
+mode (abstract rows whose hypothesis nothing satisfied) is on this project's record and I did not
+want to repeat it silently. Then I closed it: `EJA/Witness.lean` now carries
+`instIsFormallyReal : IsFormallyReal (HermitianMat d 𝕜)`, so `hermitian_eq_zero_of_jpow_eq_zero` and
+`hermitian_jpow_mul_jpow` are live on the paper's own carrier.
+
+★★ **The proof needed nothing new**, and that is the third occurrence of one pattern in this arc:
+`inner_self_nonneg` and `InnerProductCore.definite` are vendored, `symmMul_self` says the Jordan
+square *is* the matrix square, and the whole instance is "sum of non-negative reals is zero ⟹ each
+is zero". **Row 35, the FK fields, and now formal reality: three residues in one arc that named a
+hypothesis and a conclusion whose connecting lemma was already in the tree.** The rule earned at row
+35 — *when a residue is stated as hypothesis-plus-conclusion, search for the implication before
+pricing the proof* — has now paid three times, and the sharper version is: **when a file's own
+docstring declares an exposure, try to close it before writing the sentence that documents it.** The
+sentence takes as long as the fix did.
+
+**Verification:** `lake build` 3115 jobs, 0 errors; `AxiomAudit.lean` PASS — **158** tracked modules
+== frozen 158-name manifest, custom axioms exactly `[]`; the instance and both carrier-level
+corollaries `#print axioms`-checked to the three core axioms.
+
 #### Block 9.9 — ★★★ **ALBERT'S THEOREM. Power associativity is proved.** (2026-08-12)
 
 `RadicalRelativity/EJA/PowerAssoc.lean`:

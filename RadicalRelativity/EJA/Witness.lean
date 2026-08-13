@@ -3,8 +3,9 @@ Copyright (c) 2026 Bryan Ehrlich. All rights reserved.
 Released under Apache 2.0 license.
 Authors: Bryan Ehrlich
 -/
-import RadicalRelativity.EJA.PeirceMul
+import RadicalRelativity.EJA.FormallyReal
 import RadicalRelativity.Vendor.HermitianMat.Jordan
+import RadicalRelativity.Vendor.HermitianMat.Inner
 
 set_option linter.style.longLine false
 
@@ -130,5 +131,66 @@ kind from ARC-8's three-way taxonomy, reproduced inside the file written to rule
 vacuity, within an hour of that file being written. -/
 theorem witness_half_attained : ∃ y : H2, y ≠ 0 ∧ cWit * y = (2 : ℝ)⁻¹ • y :=
   ⟨xWit, xWit_ne_zero, cWit_mul_xWit⟩
+
+/-! ### 4. Formal reality on the paper's carrier
+
+★★★ **This section closes the exposure `EJA/FormallyReal.lean` declares in its own docstring**:
+that `IsFormallyReal` had no carrier in this tree, so every theorem depending on it was
+conditional on an uninhabited hypothesis — the ARC-6 failure mode again.
+
+`HermitianMat d 𝕜` is formally real, and the proof is the classical one: the Jordan square of
+a Hermitian matrix is its matrix square, whose trace is the squared Frobenius norm, so a
+vanishing sum of squares is a vanishing sum of non-negative reals.
+
+★ Nothing new is built here — `inner_self_nonneg` and `InnerProductCore.definite` are vendored
+(`Vendor/HermitianMat/Inner.lean`) and the Jordan-square identity is `symmMul_self`. What was
+missing was, once again, the *application*. -/
+
+section FormallyReal
+
+variable {d : Type*} [Fintype d] [DecidableEq d] {𝕜 : Type*} [RCLike 𝕜]
+
+/-- The trace functional is additive along a `Finset` sum. -/
+private theorem inner_sum_left_one {ι : Type*} (t : Finset ι) (g : ι → HermitianMat d 𝕜) :
+    inner ℝ (∑ j ∈ t, g j) (1 : HermitianMat d 𝕜)
+      = ∑ j ∈ t, inner ℝ (g j) (1 : HermitianMat d 𝕜) := by
+  induction t using Finset.cons_induction with
+  | empty => simp
+  | cons a t ha ih => rw [Finset.sum_cons, HermitianMat.inner_add_left, ih, Finset.sum_cons]
+
+/-- The Jordan square has the same trace as the matrix square: `Tr[(A ∘ A)·1] = Tr[A·A]`. -/
+private theorem inner_mul_self_one (A : HermitianMat d 𝕜) :
+    inner ℝ (A * A) (1 : HermitianMat d 𝕜) = inner ℝ A A := by
+  rw [HermitianMat.inner_def, HermitianMat.inner_def, mul_eq_symmMul, HermitianMat.symmMul_self]
+  simp
+
+/-- **`H_d(𝕜)` is formally real.** -/
+instance instIsFormallyReal : RadicalRelativity.EJA.IsFormallyReal (HermitianMat d 𝕜) where
+  eq_zero_of_sum_mul_self := by
+    intro ι s f hsum i hi
+    have h0 : ∑ j ∈ s, inner ℝ (f j * f j) (1 : HermitianMat d 𝕜) = 0 := by
+      rw [← inner_sum_left_one, hsum]
+      simp
+    have h1 : ∑ j ∈ s, inner ℝ (f j) (f j) = 0 := by
+      rw [← h0]
+      exact Finset.sum_congr rfl fun j _ => (inner_mul_self_one (f j)).symm
+    have h2 : inner ℝ (f i) (f i) = 0 :=
+      (Finset.sum_eq_zero_iff_of_nonneg
+        (fun j _ => HermitianMat.inner_self_nonneg (f j))).mp h1 i hi
+    exact HermitianMat.InnerProductCore.definite (f i) h2
+
+/-- The nilpotence theorem, live on the paper's carrier: a Hermitian matrix with a vanishing
+Jordan power is zero. -/
+theorem hermitian_eq_zero_of_jpow_eq_zero {A : HermitianMat d 𝕜} {n : ℕ}
+    (h : RadicalRelativity.EJA.jpow A n = 0) : A = 0 :=
+  RadicalRelativity.EJA.eq_zero_of_jpow_eq_zero n h
+
+/-- Albert's theorem, live on the paper's carrier. -/
+theorem hermitian_jpow_mul_jpow (A : HermitianMat d 𝕜) (m n : ℕ) :
+    RadicalRelativity.EJA.jpow A m * RadicalRelativity.EJA.jpow A n
+      = RadicalRelativity.EJA.jpow A (m + n + 1) :=
+  RadicalRelativity.EJA.jpow_mul_jpow A m n
+
+end FormallyReal
 
 end RadicalRelativity.EJA.Witness
