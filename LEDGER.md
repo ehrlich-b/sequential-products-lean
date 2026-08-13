@@ -82,6 +82,38 @@ in this arc's first hour, both times by `cd` drift in a fresh shell).
 
 ### ARC-9 EXECUTION RECORD
 
+#### Block 9.24 — `lem:coalescence` on the paper's carrier, unconditionally (2026-08-13)
+
+`EJA/ConcreteInstance.lean`, capstones. `ThetaPreservesJordan` — the one hypothesis `ejaComparison`
+still took — is **itself derivable** from S1–S7 + S2 in the tree
+(`Necessity.thetaPreservesJordan_of_S2`, `Necessity/KadisonDischarge.lean`). Feeding it in gives
+
+```
+coalescence_unconditional (hN : 3 ≤ N) (P : SequentialProductOn (HermitianMat (Fin N) ℂ))
+    (hS2 : P.FirstArgContinuous) {r i j} (h : r i = r j) {x} (hx : IsBlockElt …) :
+  thetaNorm P hS2 (diagFamily r) x = x
+```
+
+— **row 16's conclusion on `H_N(ℂ)` carrying only the paper's own hypotheses**: an S1–S7 sequential
+product, S2, and a dimension bound. Closure: the three core axioms.
+
+★★ **AND THE STATUS WORD STILL DOES NOT MOVE, for a reason worth being precise about.** The article
+states `lem:coalescence` on a finite-dimensional **simple EJA**; this is the concrete carrier. The
+manifest's own vocabulary calls that PARTIAL — *"a concrete carrier where the article is abstract"* —
+and it stays PARTIAL. **What changed is that the concrete instance no longer carries any located
+hypothesis**, which is a different axis from generality. Reporting it as FORMALIZED would be the
+over-claim the standing bar exists to prevent, and the temptation is real precisely because the
+theorem now looks unconditional.
+
+★ Chain of reductions, for the record: FK fields ← Peirce layer + Albert (9.3–9.7); interface
+vocabulary ← the bridge (9.21); `CoalescenceSetup` ← the extension structure (9.22); the paper's
+carrier ← `Necessity.comparisonSetup` + the frame equations already in-tree (9.23); the last
+hypothesis ← `thetaPreservesJordan_of_S2` (9.24). **Every link but the first was already in the tree
+and unconnected.**
+
+**Verification:** `lake build` 3121 jobs, 0 errors; `AxiomAudit.lean` PASS — 164 tracked modules,
+custom axioms exactly `[]`; `coalescence_unconditional` `#print axioms`-checked.
+
 #### Block 9.23 — the concrete instance, and ARC-8's (E2) gate is under-hypothesised (2026-08-13)
 
 `RadicalRelativity/EJA/ConcreteInstance.lean`. `ejaComparison` is **the paper's own

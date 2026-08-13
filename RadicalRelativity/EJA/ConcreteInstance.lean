@@ -5,6 +5,7 @@ Authors: Bryan Ehrlich
 -/
 import RadicalRelativity.EJA.InterfaceInstance
 import RadicalRelativity.Necessity.ComparisonInstance
+import RadicalRelativity.Necessity.KadisonDischarge
 
 set_option linter.style.longLine false
 
@@ -94,5 +95,37 @@ noncomputable def ejaComparison (hN : 3 ≤ N)
     p_orth := fun _ _ hij => frameProj_jordan_orth hij
     p_sum := sum_frameProj
     aOf_eq := diagFamily_eq_sum_frameProj }
+
+/-! ### `lem:coalescence` on the paper's carrier, unconditionally
+
+★★★ The `ThetaPreservesJordan` argument above is **itself derivable** from S1–S7 + S2:
+`Necessity.thetaPreservesJordan_of_S2`. Feeding it in makes row 16's conclusion carry **only
+the paper's own hypotheses** on this carrier — an S1–S7 sequential product, S2, and `N ≥ 3`.
+
+★ **This does NOT make manifest row 16 FORMALIZED, and must not be read that way.** The
+article states `lem:coalescence` on a finite-dimensional **simple EJA**; this is the concrete
+carrier `H_N(ℂ)`. By the manifest's own vocabulary that is PARTIAL ("a concrete carrier where
+the article is abstract"), and it stays PARTIAL. What has changed is that the concrete instance
+no longer carries *any* located hypothesis. -/
+
+/-- `lem:coalescence` on `H_N(ℂ)`, with the Faraut–Korányi fields proved rather than cited. -/
+theorem coalescence_concrete {N : ℕ} (hN : 3 ≤ N)
+    (P : SequentialProductOn (HermitianMat (Fin N) ℂ))
+    (hS2 : P.FirstArgContinuous) (hjord : Necessity.ThetaPreservesJordan P)
+    {r : Fin N → ℝ} {i j : Fin N} (h : r i = r j)
+    {x : HermitianMat (Fin N) ℂ}
+    (hx : MasterTheorem.IsBlockElt Necessity.jordanBilin Necessity.frameProj i j x) :
+    Necessity.thetaNorm P hS2 (Necessity.diagFamily r) x = x :=
+  (ejaComparison hN P hS2 hjord).toCoalescenceSetup.coalescence_block h hx
+
+/-- **The same, unconditional**: only S1–S7, S2 and `N ≥ 3`. -/
+theorem coalescence_unconditional {N : ℕ} (hN : 3 ≤ N)
+    (P : SequentialProductOn (HermitianMat (Fin N) ℂ))
+    (hS2 : P.FirstArgContinuous)
+    {r : Fin N → ℝ} {i j : Fin N} (h : r i = r j)
+    {x : HermitianMat (Fin N) ℂ}
+    (hx : MasterTheorem.IsBlockElt Necessity.jordanBilin Necessity.frameProj i j x) :
+    Necessity.thetaNorm P hS2 (Necessity.diagFamily r) x = x :=
+  coalescence_concrete hN P hS2 (Necessity.thetaPreservesJordan_of_S2 P hS2) h hx
 
 end RadicalRelativity.EJA
