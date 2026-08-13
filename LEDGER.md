@@ -82,6 +82,36 @@ in this arc's first hour, both times by `cd` drift in a fresh shell).
 
 ### ARC-9 EXECUTION RECORD
 
+#### Block 9.27 — the row-17 packaging is assemblable and would move nothing (2026-08-13)
+
+Scoped the task block 9.26 named, before doing it. **The pieces are all there** — the concrete
+development already *factors* the composite rather than only computing it:
+
+```
+rhoChi P hS2 hjord i j r := rhoField i j (dChiStab P hS2 hjord r)      -- PhaseAnchor.lean:260
+```
+
+so `DiagonalHomSetup`'s fields map onto `ρ := rhoField`, `dχAdd := dChiStab`,
+`coalescence_diff := rhoField_dChi_coalesced`, with `V = ℝ × ℝ` and `Stab` the `blockSkewSubmodule`.
+`dχAdd_cont` should come from `Necessity/ChiContinuity.lean`. **It is assembly, not new mathematics.**
+
+★★ **And it would not move row 17.** Row 17's residue is *generality* — the article states
+`lem:homomorphism` over a simple EJA, Lean has it on `H_n(ℂ)`. Packaging the concrete theorems into
+the concrete interface adds no generality; it would let the abstract skeleton instantiate on a
+carrier whose rows are already proved unconditionally by a more direct route
+(`complex_classification_unconditional`). **Real work, real result, zero row movement.**
+
+★ **So the task is recorded as available-but-low-value rather than as the next thing to do**, which
+is a different verdict from 9.26's, reached by scoping before building. Three verdicts on the same
+task in one evening — "same treatment as row 16" (wrong), "package the setup" (right but
+under-specified), "assemblable and low-value" (checked) — and each refinement came from looking at
+the tree rather than at the previous verdict. **The cheapest experiment beats the most careful
+re-reading, and that is now the arc's most repeated finding.**
+
+★ What would actually move row 17 is the same thing that would move row 16: **article-generality**,
+i.e. an abstract EJA statement. That is (E1)-adjacent and blocked behind the unit decision recorded
+in `WallCertificates/eja-spectral.lean`.
+
 #### Block 9.26 — row 17 is NOT the same-shaped win, and the next task is different (2026-08-13)
 
 ★★ **Correcting a "next task" I had just written into `STATE.md`.** Block 9.24 named *"the same
