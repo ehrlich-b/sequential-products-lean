@@ -12,7 +12,7 @@ but see Provenance: some of the code is third-party, vendored in.
 
 ## Provenance — first-party vs vendored
 
-Of the tree's 49,645 lines, **12,409 are third-party code vendored verbatim**
+Of the tree's 50,187 lines, **12,409 are third-party code vendored verbatim**
 (pinned, Apache 2.0, per-file copyright headers retained). ★ Counts as of 2026-08-12;
 reproduce with `find RadicalRelativity RadicalRelativity.lean -name '*.lean' -exec cat {} + | wc -l`
 and the same over `RadicalRelativity/Vendor`. The first figure read 41,135 for three arcs after it
@@ -175,17 +175,19 @@ implication quantified over the §2 interface fields. See "Axiom audit" above an
 - `RadicalRelativity/Selection/TwistIsotropy.lean`
 
 **The rest of the tree** — where the two unconditional rows actually live. The
-lists above are the abstract layer only; they are a small minority of the 158
-modules under `RadicalRelativity/` (159 tracked declaration-bearing modules, counting the
+lists above are the abstract layer only; they are a small minority of the 161
+modules under `RadicalRelativity/` (162 tracked declaration-bearing modules, counting the
 root aggregator), so the map is completed by directory rather than by file.
 ★ Reproduce every count in the table with
 `for d in EJA Hermitian Necessity RankTwo PaperA Wigner Vendor; do echo "$d $(find RadicalRelativity/$d -name '*.lean' | wc -l)"; done`
-— these numbers went stale twice, the second time on 2026-08-12 within hours of being
-corrected, because the tree grew underneath them:
+— these numbers went stale **three** times, the third within the same session that corrected
+them the second time, because the tree kept growing underneath them. ★ That is the argument for
+running the command rather than reading the table: a count in prose is a claim about a moment,
+and this tree changes faster than the prose describing it:
 
 | Directory | Modules | Role |
 | --- | --- | --- |
-| `RadicalRelativity/EJA/` | 9 | **the EJA layer (ARC-9, 2026-08-12)** — Jordan-algebra theory whose only Jordan input is Mathlib's `IsCommJordan` (plus the real scalars, which are load-bearing: the Peirce layer divides by `2` and Albert's theorem needs every integer invertible): the Peirce decomposition at an idempotent with its Faraut–Korányi multiplication rules, orthogonal idempotent families and the three FK facts `CoalescenceSetup` carries as citations, **Albert's power-associativity theorem**, formal reality and the absence of nilpotents, and the one-generator subalgebra. ★ This is (E2) of `EJA-DIVIDEND.md` plus two of (E1)'s four steps; **no manifest row depends on it yet**, and none moved when it landed |
+| `RadicalRelativity/EJA/` | 12 | **the EJA layer (ARC-9, 2026-08-12)** — Jordan-algebra theory whose only Jordan input is Mathlib's `IsCommJordan` (plus the real scalars, which are load-bearing: the Peirce layer divides by `2` and Albert's theorem needs every integer invertible): the Peirce decomposition at an idempotent with its Faraut–Korányi multiplication rules, orthogonal idempotent families and the three FK facts `CoalescenceSetup` carries as citations, **Albert's power-associativity theorem**, formal reality and the absence of nilpotents, and the one-generator subalgebra. ★ This is (E2) of `EJA-DIVIDEND.md` plus two of (E1)'s four steps; **no manifest row depends on it yet**, and none moved when it landed |
 | `RadicalRelativity/Hermitian/` | 11 | the concrete carrier `HermitianMat n 𝕜`: order-unit layer, extreme effects = projections, twist family, CFC continuity, sequential-product instances |
 | `RadicalRelativity/Necessity/` | 76 | the two flagship rows end to end — comparison-map instances, the ℂ twist extraction and its globalization, the ℝ rigidity, the Kadison discharges, and the capstones `complex_classification_unconditional` / `real_classification` |
 | `RadicalRelativity/RankTwo/` | 8 | rank-two moduli space, complementation/descent to `ℝP²`, separation, and the frame-dependent twist product with the classification correspondence (`n2SequentialProduct`, `n2QubitModuli`, `qubit_classification_up_to_effects`). ★ This cell said "the classification *map* is absent" until 2026-08-12; it was built 2026-08-09. The correspondence is a bijection **up to agreement on effects** — the article's literal "onto the products" is refuted for this encoding (`not_exists_moduli_of_badP`), so read `THEOREM-MAP.md` §1 before reading this as the article's corollary |
