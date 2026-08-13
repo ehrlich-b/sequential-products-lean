@@ -82,6 +82,37 @@ in this arc's first hour, both times by `cd` drift in a fresh shell).
 
 ### ARC-9 EXECUTION RECORD
 
+#### Block 9.14 — the rank-two block, characterised (2026-08-13)
+
+`RadicalRelativity/EJA/Block.lean`. For orthogonal idempotents `p, q`:
+
+**`J₁(p + q) = J₁(p) ⊕ (J_{1/2}(p) ∩ J_{1/2}(q)) ⊕ J₁(q)`** — `exists_block_split` forward,
+`block_mul_eq_self` converse, so the block is characterised exactly rather than bounded.
+
+This is the Faraut–Korányi coherence-block structure at the smallest interesting size, and it is what
+`MasterTheorem/Coalescence.lean`'s `J2` and `IsBlockElt` predicates *are about*. Together with 9.4
+and 9.6/9.7 it is (E2) at rank two, complete.
+
+**The mechanism, and it is the one worth carrying.** `L_p` commutes with `L_q`, hence with
+`L_{p+q}`, hence with every polynomial in `L_p` — so the Peirce projections of `p` preserve
+`J₁(p+q)`. Apply them to `x` in the block: the pieces have `p`-eigenvalues `1, 1/2, 0`, and because
+`q ∘ z = (p+q) ∘ z − p ∘ z = z − p ∘ z` **on the block**, their `q`-eigenvalues are forced to the
+complements `0, 1/2, 1`. ★ **The block has three pieces and not nine because `μ + ν = 1` has exactly
+three solutions in `{0, 1/2, 1}`.** The trichotomy explains the shape of the answer without
+appearing in the proof — the projections do the work.
+
+★★ **`q ∘ q = q` is NOT needed, and Lean's unused-variable linter is what noticed.** Every claim
+about `q` comes from `q ∘ z = (p+q) ∘ z − p ∘ z`, which never asks what `q ∘ q` is. The hypothesis
+was **removed rather than silenced**, which makes the theorem strictly stronger; what `hq` buys is
+only the *interpretation* (without it `p+q` need not be idempotent, so "`J₁(p+q)`" stops being a
+Peirce space even though the conclusions stay true). **The linter is a hypothesis-minimality check,
+not noise** — this is the second time tonight it found something real, after the `omit` lines
+refuted two docstrings at 9.13.
+
+**Verification:** `lake build` 3117 jobs, 0 errors; `AxiomAudit.lean` PASS — **160** tracked modules
+== frozen 160-name manifest, custom axioms exactly `[]`; both theorems `#print axioms`-checked and
+their printed statements read back.
+
 #### Block 9.13 — DIFF AUDIT of the arc's own work: six defects, all in prose written tonight (2026-08-12)
 
 The standing rule ("budget a diff-audit after every fix round; late-round defects are created by the
