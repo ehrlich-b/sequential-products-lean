@@ -611,3 +611,9 @@ import RadicalRelativity.PaperA.Statement
 -- `sorry` or stray axiom substituted for any pin's direct proof fails the census.
 import RadicalRelativity.PaperA.AuditPins
 import RadicalRelativity.PaperA.CertifiedConfiguration
+
+-- The EJA layer (ARC-9).  The Peirce decomposition at a single idempotent, built from
+-- Mathlib's `IsCommJordan` and nothing else: no spectral theorem, no formal reality, no
+-- finite dimension.  Not consumed by the paper's rows yet — it is the first half of (E2)
+-- of `EJA-DIVIDEND.md`, tracked here so the census audits it on the same terms.
+import RadicalRelativity.EJA.Peirce

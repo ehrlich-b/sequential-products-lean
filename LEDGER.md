@@ -82,6 +82,78 @@ in this arc's first hour, both times by `cd` drift in a fresh shell).
 
 ### ARC-9 EXECUTION RECORD
 
+#### Blocks 9.2/9.3 — **(E2) does not depend on (E1)**, and the Peirce decomposition is in the tree (2026-08-12)
+
+★★★ **The headline, and it is a correction to `EJA-DIVIDEND.md`'s own dependency graph.** That file
+records the three deliverables as **(E1)** a Jordan spectral theorem — "the large piece" — **(E2)**
+the Peirce decomposition, *"depends on (E1)"*, and **(E3)** vIR. **The stated dependency is false in
+the direction that matters.** The Peirce decomposition at a *given* idempotent needs the Jordan
+identity and nothing else: no spectral theorem, no formal reality, no finite dimension, no inner
+product, not even a unit. It is now in the tree, `RadicalRelativity/EJA/Peirce.lean`, census-covered,
+closure = the three core axioms.
+
+**What landed.** For an idempotent `c` in any real commutative Jordan algebra:
+
+* `peirce_poly` — **`2·L_c³ − 3·L_c² + L_c = 0`**, i.e. `L_c(L_c − 1)(2L_c − 1) = 0`. The engine.
+* `two_lin1_raw` / `two_lin1_apply` — the linearised Jordan identity `⁅L_{a²},L_b⁆ + 2⁅L_{ab},L_a⁆ = 0`
+  (carrying its factor of 2, so no torsion hypothesis is needed to state it).
+* `peirceOne` / `peirceHalf` / `peirceZero` — the three Lagrange interpolants as `ℝ`-linear maps,
+  with `peirce_add_add` (they sum to `1`) and the six lemmas saying what each does to each eigenspace.
+* `mul_peirceOne` / `mul_peirceHalf` / `mul_peirceZero` — the images land in the `1`, `1/2`, `0`
+  eigenspaces.
+* `exists_peirce_decomposition` and `peirce_eq_zero_of_add_eq_zero` — existence **and** uniqueness,
+  so `J = J₁(c) ⊕ J_{1/2}(c) ⊕ J₀(c)` is a genuine direct sum.
+* `eigenvalue_trichotomy` — `L_c` has no eigenvalue outside `{0, 1/2, 1}`.
+
+**How it went, because the route matters more than the result.** Mathlib's entire Jordan library is
+`Mathlib/Algebra/Jordan/Basic.lean`, 237 lines: two classes, five operator-commutation lemmas, two
+linearised identities. No idempotents, no Peirce, no spectral theory. The one usable input is
+`commute_lmul_lmul_sq : Commute (L a) (L (a*a))`. Mathlib's own linearisation
+(`two_nsmul_lie_lmul_lmul_add_eq_lie_lmul_lmul_add`) is the **symmetrised** consequence
+`P(a,b) + P(b,a) = 0`, which is strictly weaker than what the Peirce identity needs. Substituting
+`a − b` as well as `a + b` gives `−P(a,b) + P(b,a) = 0`, and the difference of the two separates the
+halves. **That one extra substitution is the whole gap between what Mathlib has and what the Peirce
+theory needs**, and it is eight lines.
+
+Then the Peirce polynomial is *one* instantiation: `two_lin1_apply` at `a := c`, `b := y`,
+argument `:= c`. Not a page of Peirce calculus — one substitution and an `abel`.
+
+★★ **THE PRICING ANSWER FOR BLOCK 9.2, which is what the orders actually asked for.**
+`EJA-DIVIDEND.md` pre-registers: *"if (E1) turns out to require the spectral theorem only for the
+specific frames the article uses, the CLOSES rows might be reachable by a much smaller
+'Peirce-facts-as-hypotheses' refactor of `ComparisonSetup`. That refactor is cheap and has not been
+priced; it is the first thing to test before committing to (E1)."* Tested. The answer:
+
+1. **Rows 16/17's FK residue is Peirce-calculus-at-a-given-frame, not spectral theory.** Row 16
+   (`lem:coalescence`) is proved over `CoalescenceSetup` from exactly four fields: `Θ_fix` (vdW
+   Prop 5.5), `simDiag_opCommute`, `aOf_scalarOn`, `block_mem_J2`. The last three are Peirce facts
+   about a frame that is **already given as data** — `ComparisonSetup.p` is a field, not something
+   the interface constructs. Producing idempotents is what (E1) is for, and rows 16/17 never ask
+   anyone to produce one.
+2. **So the refactor is viable, and (E1) is not on its critical path.** The order should be
+   **(E2) before (E1)**, which inverts the dividend's stated dependency.
+3. ★ **But the refactor is bigger than "add the Jordan identity", and this is the part a cheap
+   reading would miss.** `ComparisonSetup` carries `p : Fin n → J` with **no axioms whatever**: it
+   does not say the `p i` are idempotent, that they are orthogonal, that they sum to `e`, or that
+   `aOf r = Σ exp (r i) • p i`. Those equations are not currently anywhere in the structure, so the
+   refactor must *add* them before it can *derive* anything. The price is: frame axioms + the `aOf`
+   defining equation + the Jordan identity + formal reality, then derive `frame_opCommute`,
+   `aOf_scalarOn`, `block_mem_J2`, `simDiag_opCommute`. That is real work, but it is bounded, and
+   none of it is a spectral theorem.
+
+★★ **SCOPE, stated before anyone quotes this.** What is proved is the Peirce decomposition **at one
+idempotent**. The *frame* version — the joint decomposition `J = ⊕_{i ≤ j} J_{ij}` — additionally
+needs the Peirce projections of distinct frame idempotents to commute, which needs the
+Faraut–Korányi **multiplication rules** (`J_i ∘ J_j ⊆ …`), and those are **not built**. Nothing in
+`EJA/Peirce.lean` should be read as covering them; the file's own docstring says so. No manifest row
+moves on this work, and none is claimed to.
+
+**Verification:** `lake build` 3108 jobs, 0 errors; `AxiomAudit.lean` PASS — **151** tracked modules
+== frozen 151-name manifest (the root import, the manifest list and all three count strings moved in
+the same commit, per the standing constraint), custom axioms exactly `[]`; the four headline
+theorems `#print axioms`-checked individually to `[propext, Classical.choice, Quot.sound]` and their
+printed statements read back against the intended ones.
+
 #### Block 9.1 — row 35's residue was never a residue, and six doc clusters (2026-08-12)
 
 ★★★ **`cor:qubit-classification`'s recorded residue is discharged in eleven lines, and the

@@ -21,7 +21,15 @@ carries as fields.** Concretely the deliverables would be
 * **(E1) a Jordan spectral theorem** at f.d. formally-real Jordan generality — spectral resolution
   into a Jordan frame with real eigenvalues, and a functional calculus on it;
 * **(E2) the Peirce decomposition** `J = ⊕ J_{ij}` for a Jordan frame, with the Faraut–Korányi
-  multiplication rules — currently carried as `CoalescenceSetup` fields;
+  multiplication rules — currently carried as `CoalescenceSetup` fields.
+  ★★★ **PARTLY BUILT, AND THE DEPENDENCY BELOW IS CORRECTED, 2026-08-12 (ARC-9 blocks 9.2/9.3).**
+  The Peirce decomposition **at a single given idempotent** is in the tree
+  (`RadicalRelativity/EJA/Peirce.lean`): the polynomial identity `2L_c³ − 3L_c² + L_c = 0`, the three
+  projections, existence *and* uniqueness of `J = J₁(c) ⊕ J_{1/2}(c) ⊕ J₀(c)`, and the eigenvalue
+  trichotomy. It needs the Jordan identity **and nothing else** — no spectral theorem, no formal
+  reality, no finite dimension. ★ Still absent, and not to be read as covered: the FK **multiplication
+  rules** between components, and hence the *frame* decomposition `⊕_{i≤j} J_{ij}`, which needs the
+  projections of distinct frame idempotents to commute;
 * **(E3) `Theta_jordan` derivable** — van Imhoff–Roelands: an order isomorphism of the cone that is
   unital preserves the Jordan product. Currently a field, and pre-registered EXTERNAL as row 14.
 
@@ -102,9 +110,22 @@ orders' pre-registered condition for skipping it does not fire.
 
 **Estimated shape of the work, for the record and not as a commitment:** (E1) a Jordan spectral
 theorem is the large piece and has no Mathlib support (`lean-formalization-landscape`: essentially
-none of the Jordan/EJA stack is formalized in any prover); (E2) Peirce decomposition depends on
-(E1); (E3) is a citation. So the axiomatization is one big theorem plus its corollaries, and its
+none of the Jordan/EJA stack is formalized in any prover); ~~(E2) Peirce decomposition depends on
+(E1)~~; (E3) is a citation. So the axiomatization is one big theorem plus its corollaries, and its
 natural home is upstream of this paper — a Mathlib-grade EJA layer — not inside `RadicalRelativity`.
+
+★★★ **"(E2) depends on (E1)" is STRUCK, 2026-08-12 (ARC-9 blocks 9.2/9.3), and the order inverts.**
+The Peirce decomposition at a *given* idempotent is derivable from the Jordan identity alone and is
+now in the tree. (E1) is what *produces* idempotents; rows 13, 16, 17 never ask anyone to produce
+one, because `ComparisonSetup` carries the frame as **data** (`p : Fin n → J`). So (E2) comes first
+and (E1) is not on the critical path for rows 16/17.
+
+★ **And the pre-registered "Peirce-facts-as-hypotheses" test below is ANSWERED: the refactor is
+viable, and it is larger than it sounds.** `ComparisonSetup.p` carries **no axioms** — not
+idempotence, not orthogonality, not summing to `e`, and not `aOf r = Σ exp (r i) • p i`. The refactor
+must add those equations before it can derive `frame_opCommute`, `aOf_scalarOn`, `block_mem_J2` and
+`simDiag_opCommute`. Bounded work, none of it a spectral theorem. Full pricing in `LEDGER.md`,
+ARC-9 blocks 9.2/9.3.
 
 **What would change this verdict:** if (E1) turns out to require the spectral theorem only for the
 *specific* frames the article uses (rather than in general), the three CLOSES rows might be reachable
