@@ -61,7 +61,13 @@ instance. So the refactor is three things, not one: the four frame equations, th
 the `AxiomAudit.lean` Layer-6 constructor freeze (which must move deliberately and in the same
 commit — it exists precisely to make silent field drift fail).
 
-★★ **And the bridge is harder than "impedance mismatch" suggests** (pinned 2026-08-13, block
+★★★ **THE BRIDGE IS NOW BUILT** — `EJA/Bridge.lean` (block 9.21) derives
+`MasterTheorem.OpCommute` from the Jordan identity, by constructing the ring on the ambient
+additive group so only one `AddCommGroup` is in play. So of the three things listed above, the
+bridge is done; the frame equations and the Layer-6 freeze remain. The diagnosis that made it
+possible is kept below because it is what turned a vague obstruction into a fixable one.
+
+★★ **The bridge was harder than "impedance mismatch" suggested** (pinned 2026-08-13, block
 9.20): `ComparisonSetup` needs `[NormedAddCommGroup J] [InnerProductSpace ℝ J]` and this layer
 needs `[NonUnitalNonAssocCommRing J] [Module ℝ J]`; **both supply an `AddCommGroup J` and they
 are different instances**, so with both in scope `Module ℝ J` fails to synthesise at

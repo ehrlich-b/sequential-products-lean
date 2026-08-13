@@ -121,6 +121,11 @@ elaborates. Bridging that needs a bilinear-map power operation, which is not bui
 
 #### Block 9.20 — the bridge's real obstruction, pinned: an `AddCommGroup` diamond (2026-08-13)
 
+★★★ **SOLVED THE SAME DAY, block 9.21.** The diamond diagnosis below is what made the fix
+obvious: build the ring **on the ambient additive group** rather than assuming both. Read this
+block for the diagnosis and 9.21 for the resolution.
+
+
 Block 9.15 called the rows-16/17 blocker an "impedance mismatch" between a bundled bilinear map and
 a typeclass. **That was right but not specific enough.** Probed it:
 
@@ -253,12 +258,18 @@ custom axioms exactly `[]`; the named commutations `#print axioms`-checked.
 
 #### Block 9.15 — the refactor is bigger than block 9.2 priced it: an impedance mismatch (2026-08-13)
 
+★★★ **PARTLY SUPERSEDED BY BLOCK 9.21 (same day): the bridge is BUILT** — `EJA/Bridge.lean`
+derives `MasterTheorem.OpCommute` from the Jordan identity. The obstruction described below was
+real and is now removed; what remains of this block's pricing is the frame equations and the
+Layer-6 freeze, not the bridge.
+
+
 ★★ **Checking whether the EJA layer can actually plug into `ComparisonSetup` — it cannot, yet.**
 `ComparisonSetup` carries its product as a **bundled bilinear map** `jordan : J →ₗ[ℝ] J →ₗ[ℝ] J`,
 with `OpCommute` defined through `mulOp jordan`. The EJA layer uses the **typeclass** `Mul J` from
 `NonUnitalNonAssocCommRing` plus Mathlib's `IsCommJordan`. `grep -rn "IsCommJordan"
 RadicalRelativity` outside `EJA/` returns **one** hit — the vendored `HermitianMat` instance — so
-nothing bridges them.
+nothing bridges them **(as of that block — block 9.21 builds the bridge)**.
 
 **This corrects my own pricing from block 9.2, six hours earlier**, which said the residue for rows
 16/17 was "interface surgery, not Jordan theory" and that the refactor was "a matter of adding the
