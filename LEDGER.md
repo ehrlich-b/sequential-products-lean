@@ -82,6 +82,58 @@ in this arc's first hour, both times by `cd` drift in a fresh shell).
 
 ### ARC-9 EXECUTION RECORD
 
+#### Block 9.13 — DIFF AUDIT of the arc's own work: six defects, all in prose written tonight (2026-08-12)
+
+The standing rule ("budget a diff-audit after every fix round; late-round defects are created by the
+fixes") applied to ARC-9 itself, after ~1,400 lines of new Lean and prose. **Zero defects in the
+mathematics; six in the writing about it.** Consistent with ARC-8's finding, and the sixth arc
+running in which that is the split.
+
+**1. `README.md` was stale again, within hours of being fixed by this same arc.** Block 9.1 corrected
+its module counts; blocks 9.3–9.12 then added **nine** modules, so "149 modules" was wrong again and
+the directory table had **no `EJA/` row at all** — the layer was invisible in the artifact's front
+door. Fixed, an `EJA/` row added, and the table now ships the `find` one-liner that reproduces every
+count. ★ **A number that has gone stale twice should stop being maintained by hand**; that is why the
+command is printed rather than the number alone.
+
+**2. A FOURTH stale "six CLOSES rows", in `LEDGER.md` this time** (block 8.6 groundwork, ~line 866).
+ARC-8 corrected three instances *inside `EJA-DIVIDEND.md`* and left this one asserting the withdrawn
+count. Found by grepping the **whole repo** for the old phrase rather than the file being edited.
+★ **"Fix the row, not just the footnote" has a scope clause: the row may be in another file.** The
+mechanical form is `grep -rn "<old claim>" *.md **/*.lean`, not `grep -n "<old claim>" <the file>`.
+
+**3–4. Two overclaims caught by reading `omit` lines against prose.** `EJA/Peirce.lean` said the
+Peirce decomposition "needs the Jordan identity and nothing else" — false: `peirce_poly` divides by
+`2`, which is why every statement below it carries `Module ℝ J`. Only the *linearised identities* are
+torsion-free (deliberately: their factor is carried, not cancelled). And `EJA/PowerAssoc.lean` said
+`(N+3)` is where characteristic bites, "Not `2` — the factor-of-2 divisions … cost nothing", which
+conflated the carried factors with the division. ★★ **`omit` lines are a machine-checked statement of
+which hypotheses a theorem uses. Prose that contradicts them is refuted by its own file.** Reading
+the two against each other is now a standing check, and it is cheap: `grep -n "omit \[" <file>`.
+
+**5. The same overclaim in a second file, found only by sweeping for the phrase.** `PeirceMul.lean`
+carried "the only hypothesis is the Jordan identity" verbatim. **Fixing one copy of a claim is not
+fixing the claim** — this is defect 2's lesson recurring inside the same audit, one hour later.
+
+**6. A wrong mechanism citation.** `PeirceMul.lean` attributed "no `1/2`-component" to the eigenvalue
+trichotomy; it is the projection formula directly, and the trichotomy is not used. ★ A *true*
+conclusion with a *false* reason is the hardest defect kind to catch, because nothing downstream
+breaks — only a reader following the citation does.
+
+**What the audit confirmed rather than found.** All seven greps asserted in tonight's certificates
+and docstrings were re-run and every one held: Mathlib Jordan∩pow = 0, `Jordan/Basic.lean` = 237
+lines / 12 declarations, `PNatPowAssoc` = 2 files, `IsReduced` in tree = 0, spectral *declarations*
+in `EJA/` = 0, `HermMul` consumers outside the EJA layer = 0. **The absence claims held; the summary
+prose did not.** That is the same asymmetry the refuted power-associativity certificate showed at
+9.8, now measured twice.
+
+★ **An operational defect worth recording because it recurred five times tonight:** `cd` drift. Every
+`git` invocation leaves the shell in the parent repo, and the next bare `lake env lean` then runs
+against the *default* toolchain (v4.33.0, not the pinned v4.28.0) and fails with "unknown module
+prefix". Harmless because it fails loudly — but it burned five round-trips. The project rule already
+says "absolute paths for every file operation"; the missing half is **prefix every command with the
+project root**, not just every path.
+
 #### Block 9.12 — (E1) certificated: two of four steps done, and the obstruction is structural (2026-08-12)
 
 `WallCertificates/eja-spectral.lean`. The Jordan spectral theorem — what `EJA-DIVIDEND.md` says
@@ -864,10 +916,20 @@ continuous), which is not written. So `P.sp = (n2SequentialProduct t).sp` *as fu
 established, and the row must not be read as the full bijection.
 
 **Block 8.6 groundwork — `EJA-DIVIDEND.md` WRITTEN, and the certificate sweep found a fourth
-staleness.** The dividend table is at the repo root: the axiomatization **CLOSES 6 rows** (5, 6, 13,
+staleness.** ★★★ **THE COUNTS IN THIS PARAGRAPH ARE SUPERSEDED and were already superseded when it
+was written** — corrected the same arc to **CLOSES 3 (rows 13, 16, 17), PARTIAL on 6 (5, 6, 8, 14,
+15, 22), NOTHING on 15 rows**. Found 2026-08-12 (ARC-9 block 9.13) by grepping the *whole repo* for
+"six CLOSES" rather than only the file being fixed: ARC-8 corrected three instances inside
+`EJA-DIVIDEND.md` and left this fourth one, in the ledger, asserting the withdrawn numbers.
+**"Fix the row, not just the footnote" has a scope clause: the row may be in another file.**
+★ A second, smaller defect in the same sentence: "does **NOTHING for 15**" sits between two
+parenthesised *row lists*, so it reads as row 15 when it is a *count of rows*. It is the count.
+(I nearly logged this as a contradiction — row 15 appearing in both the CLOSES and NOTHING columns —
+before reading it against the dividend. Verify a finding at source before recording it, including
+your own.) The original text, for the record: the axiomatization **CLOSES 6 rows** (5, 6, 13,
 15, 16, 17), is **PARTIAL on 3** (8, 14, 22), and does **NOTHING for 15** — including nothing for the
 entire rank-two lane. So the orders' skip condition ("would do literally nothing for Paper A") does
-**not** fire; the decision stands. ★ Two qualifications the table insists on: the six CLOSES rows are
+**not** fire; the decision stands. ★ Two qualifications the table insists on: the CLOSES rows are
 all *generality-only* rows (the mathematics is already done on the concrete carrier), and rows 16/17
 close only if `Theta_jordan` becomes derivable. ★★★ **THE REST OF THIS SENTENCE IS SUPERSEDED:** it
 said `Theta_jordan` "IS row 14, pre-registered external — so their honest terminus is EJA-GATED behind

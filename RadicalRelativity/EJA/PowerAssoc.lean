@@ -44,11 +44,14 @@ says exactly `d j + d 0 + d i = 0` whenever `i + j = N`, and antisymmetry says
 and the wrap-around `d (N+1) = − d 0` then gives `(N+3) · d 0 = 0`. In a real vector space
 that means `d 0 = 0`, so the whole antidiagonal vanishes and the induction advances.
 
-★ **`(N+3)` is where the characteristic hypothesis actually bites.** Not `2` — the factor-of-2
-divisions in `EJA/Peirce.lean` are carried explicitly and cost nothing. Albert's theorem needs
-*every* positive integer invertible, which is why the statement lives over `Module ℝ J` and
-would fail in characteristic `p` with `p ≤ N+3`. This is the one place in the EJA layer where
-the real scalars are load-bearing rather than convenient.
+★ **`(N+3)` is where the characteristic hypothesis bites *hardest*.** Albert's theorem needs
+**every** positive integer invertible — it would fail in characteristic `p` for any `p ≤ N+3`
+— whereas the Peirce layer needs only `2`. So `Module ℝ J` is load-bearing everywhere in this
+development, and unboundedly so here.
+★ The first draft of this note said "Not `2` — the factor-of-2 divisions in `EJA/Peirce.lean`
+are carried explicitly and cost nothing", which conflated two things. The *linearised
+identities* carry their factors and are torsion-free; `peirce_poly` then **divides** by `2` and
+is not. Corrected 2026-08-12 by reading `Peirce.lean`'s `omit` lines rather than its prose.
 
 ## Relation to Mathlib
 

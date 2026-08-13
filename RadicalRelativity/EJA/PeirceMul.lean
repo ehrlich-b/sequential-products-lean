@@ -21,8 +21,12 @@ file proves how the three components multiply — the Faraut–Korányi relation
 | **`J_{1/2}`** | `⊆ J_{1/2}` | `⊆ J₁ ⊕ J₀` | `⊆ J_{1/2}` |
 | **`J₀`** | `= 0` | `⊆ J_{1/2}` | `⊆ J₀` |
 
-As in `EJA/Peirce.lean`, the only hypothesis is the Jordan identity: no spectral theorem,
-no formal reality, no finite dimension.
+As in `EJA/Peirce.lean`, the hypotheses are the Jordan identity and the invertibility of the
+integers used (`2` for the commuting rules, `4` for the half-half rule): no spectral theorem,
+no formal reality, no finite dimension, no unit.
+★ Corrected 2026-08-12 from "the only hypothesis is the Jordan identity", which was the same
+overclaim `EJA/Peirce.lean`'s docstring carried — fixed there first, and found here only by
+grepping the layer for the phrase rather than trusting that one fix had covered it.
 
 ## The two ingredients
 
@@ -188,7 +192,10 @@ theorem eigen_zero_mul_half {c x y : J} (hc : c * c = c) (hx : c * x = 0)
   rw [mul_comm_of_eigen_zero hc hx y, hy, mul_smul_comm']
 
 /-- **`J_{1/2}(c) ∘ J_{1/2}(c) ⊆ J₁(c) ⊕ J₀(c)`**, stated as the polynomial relation
-`L_c² = L_c` on the product — which by the trichotomy is exactly "no `1/2`-component".
+`L_c² = L_c` on the product — which is exactly "no `1/2`-component", since
+`peirceHalf c z = 4•(c ∘ z) − 4•(c ∘ (c ∘ z))` collapses to `0` under it (`peirceHalf_mul_half_eq_zero`).
+★ An earlier draft attributed this to the eigenvalue trichotomy. It does not use the
+trichotomy — it is the projection formula directly.
 
 This is the one rule that needs the fully linearised identity: evaluating `four_lin2_raw`
 at `(c, y, x)` and argument `c`, the four `1/4`-terms cancel in pairs and what survives is

@@ -21,9 +21,15 @@ rules, and **(E3)** `Theta_jordan` derivable (van Imhoff–Roelands, pre-registe
 It records (E2) as *depending on* (E1), and (E1) as "the large piece".
 
 **That dependency is false in the direction that matters, and this file is the evidence.**
-The Peirce decomposition at a *given* idempotent needs the Jordan identity and nothing else:
-no spectral theorem, no formal reality, no finite dimension, no inner product, not even a
-unit. What (E1) is needed for is producing idempotents — the *frame* — and
+The Peirce decomposition at a *given* idempotent needs the Jordan identity and the
+invertibility of `2`, and nothing else: no spectral theorem, no formal reality, no finite
+dimension, no inner product, not even a unit.
+★ The first draft of this sentence said "the Jordan identity and nothing else", which is
+wrong — `peirce_poly` divides by `2` (`two_smul_eq_zero'`), which is why every statement below
+it carries `Module ℝ J`. Only the *linearised identities* `two_lin1_raw`/`two_lin1_apply` are
+genuinely torsion-free, and they are, deliberately: their factor of `2` is carried in the
+statement rather than cancelled. Caught 2026-08-12 by reading the `omit` lines against this
+paragraph. What (E1) is needed for is producing idempotents — the *frame* — and
 `MasterTheorem/Interface.lean` already carries the frame as data (`ComparisonSetup.p`).
 See the ARC-9 execution record in `LEDGER.md` for the pricing this settles.
 
