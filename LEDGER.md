@@ -82,6 +82,33 @@ in this arc's first hour, both times by `cd` drift in a fresh shell).
 
 ### ARC-9 EXECUTION RECORD
 
+#### Block 9.11 — Albert's theorem in the form it is usually *stated* (2026-08-12)
+
+`RadicalRelativity/EJA/Subalgebra.lean`. Block 9.9 proved the power law
+`x^{m+1} ∘ x^{n+1} = x^{m+n+2}`, which is how Albert's theorem is *proved*. This is how it is
+*stated*: with `jspan x` the `ℝ`-span of the powers,
+
+* `mul_mem_jspan` — `jspan x` is closed under the Jordan product, so it is a subalgebra;
+* `jspan_assoc` — **the product is associative on it**.
+
+★ **These are not the same statement as 9.9** and the distinction matters: the power law is about
+products of *powers*, this is about products of arbitrary `ℝ`-combinations of powers. Getting from
+one to the other is three nested span inductions, because associativity is trilinear. No new Jordan
+input — `jpow_mul_jpow` and linearity are the whole proof.
+
+★ This is **step one of four** on the route to (E1): `ℝ[x]` associative (done), finite-dimensional
+(not built), reduced in the form the classification wants (formal reality gives no-nilpotents at
+9.10, but the ring-theoretic packaging is not built), and then the classification of
+finite-dimensional reduced commutative `ℝ`-algebras as `ℝ^k` (not built). The idempotents the frame
+layer consumes come out of that last step. **Three of the four steps are open and the file says so.**
+
+★ `jspan x` is a `Submodule`, not a bundled `NonUnitalSubalgebra`: bundling needs the ambient ring to
+carry an `ℝ`-algebra structure, which this deliberately unit-free development does not assume. The
+two theorems state exactly what the bundled version would.
+
+**Verification:** `lake build` 3116 jobs, 0 errors; `AxiomAudit.lean` PASS — **159** tracked modules
+== frozen 159-name manifest, custom axioms exactly `[]`; `jspan_assoc` `#print axioms`-checked.
+
 #### Block 9.10 — formal reality, no nilpotents, and the carrier that makes it non-vacuous (2026-08-12)
 
 `RadicalRelativity/EJA/FormallyReal.lean` adds the `IsFormallyReal` mixin (a vanishing sum of
