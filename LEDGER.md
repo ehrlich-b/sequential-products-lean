@@ -82,6 +82,40 @@ in this arc's first hour, both times by `cd` drift in a fresh shell).
 
 ### ARC-9 EXECUTION RECORD
 
+#### Block 9.26 — row 17 is NOT the same-shaped win, and the next task is different (2026-08-13)
+
+★★ **Correcting a "next task" I had just written into `STATE.md`.** Block 9.24 named *"the same
+treatment for row 17 (`lem:homomorphism`, 'same shape as row 16' per the certificate)"*. Checked it.
+**It is not the same shape, and the certificate's phrase means something narrower than I read into
+it.**
+
+Two differences, both checked at source:
+
+1. **Row 17's interface fields are analytic, not algebraic.** `DiagonalHomSetup extends
+   CoalescenceSetup` with `ρ`, `ρ_skew`, `dχAdd`, `dχAdd_cont`, `coalescence_diff` — the
+   *differential* of the character and the block representations, described in the file itself as
+   "the paper's analytic step". Nothing there is a Faraut–Korányi algebraic fact, so the Peirce layer
+   does not discharge them the way it discharged row 16's three.
+2. **There is no concrete `DiagonalHomSetup` to extend.**
+   `grep -rn "DiagonalHomSetup" RadicalRelativity/Necessity/*.lean | grep -E "def |instance "` →
+   **no hits**, where row 16 had `Necessity.comparisonSetup` waiting. Row 17's concrete content
+   exists as *standalone theorems* (`chiTilde_add`, `chiTilde_eq_exp`, `rhoChi_eq_smul_generator`)
+   that were never packaged into the interface structure.
+
+★ **What "same shape as row 16" meant in `eja-gated.lean`** is that both rows are *generality*-limited
+— the mathematics is done concretely, the article states it abstractly. That is true and is not the
+same claim as "the same discharge route is available".
+
+★★ **The corrected next task, and it is a better one:** package the existing concrete theorems into a
+`DiagonalHomSetup` instance on `H_n(ℂ)`, the way `comparisonSetup` packages `ComparisonSetup`. The
+ingredients look present; the work is assembling `ρ`/`Stab`/`V` and checking `dχAdd_cont` against
+what `PhaseAnchor.lean` proves. **Not attempted.**
+
+★ The general lesson, which is the one the arc keeps re-learning at a finer grain: **a phrase like
+"same shape as" is a pointer, not a claim, and reading it as a claim is how a next-task list acquires
+items that do not exist.** I wrote the wrong task into the program's SSOT and caught it twenty
+minutes later by checking rather than by planning.
+
 #### Block 9.25 — third audit pass (blocks 9.20–9.24), and the arc's defect tally (2026-08-13)
 
 **Two defects, both in prose written within the hour.**
