@@ -16,14 +16,14 @@ is a citation, not a gap.
 | 10 | `prop:bridge` | Cited result | none, by design | that standard-product compatibility is exactly Jordan operator commutation |
 | 1 | `mthm:master` | Stated over an *abstract* simple EJA, so the one-theorem form needs Jordan–von Neumann–Wigner | **the ℝ and ℂ rows outright** (`real_classification`, `complex_classification_unconditional`, both `+ _ouNorm`), each carrying only S1–S7 + S2 + a dimension bound, both Lean-core | JvNW: that every f.d. simple EJA is one of the four types. The campaign's one pre-registered permanent import |
 | 2 | `mthm:omnibus` | Same, plus the summand decomposition | `MasterTheorem.Central.central_decomposition` (componentwise identity) | JvNW again, plus summand inheritance of S1–S7 (which is row 12's interior part, and is **not** external — see `abstract-tier.lean`) |
-| 14 | `prop:theta` | The article states it at van Ittersum–Reijnders' JB-algebra generality | derived on **both** concrete carriers from in-tree Kadison rigidity | vIR's JB-algebra-level statement |
+| 14 | `prop:theta` | The article states it at van Imhoff–Roelands' JB-algebra generality | derived on **both** concrete carriers from in-tree Kadison rigidity | vIR's JB-algebra-level statement |
 | 21 | `thm:albert` | Needs the unscoped Albert-algebra M2 machinery | `MasterTheorem.luders_albert_produced` at skeleton level, from cited Spin(8) block injectivity | the M2-for-Albert equational algebra. ★ **NOT the octonions** — see below |
 
 ## Two things about this table that are easy to get wrong
 
 **`thm:albert` is not blocked on octonions, and the claim that it was got retracted.** The
 octonions are absent from *Mathlib* but they are **built** in this project, at
-`~/repos/research/lean/Octonions.lean`: 0 sorries, same toolchain v4.28.0, compiles clean, and its
+`~/repos/research/lean/RadicalRelativity/Octonions.lean`: 0 sorries, same toolchain v4.28.0, compiles clean, and its
 one computational input `nucleus(𝕆) = ℝ` is **proved** (`Octonion.nucleus_real`, Lean-core axioms).
 That file is out-of-tree, so it does not change the coverage count — but the row's obstruction is
 the Albert-algebra equational machinery (`ALBERT-KERNEL-MEMO.md` rescoped it to "weeks of equational

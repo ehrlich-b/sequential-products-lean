@@ -1605,7 +1605,10 @@ calls "classical corroboration" and the tree discharges concretely — not vIR's
 So "rows 16/17 cannot reach FORMALIZED by axiomatization alone" does **not** follow: a Mathlib-grade
 f.d. EJA layer could discharge it in-tree. ★ Also flagged, not guessed: `external-rows.md` names row
 14's source "van Ittersum–Reijnders" while `Interface.lean` names it "van Imhoff–Roelands" — **two
-names for the theorem that terminates two rows.**
+names for the theorem that terminates two rows.**  ★ **RESOLVED 2026-08-20 against the arXiv metadata
+record for 1904.09278 ("Order isomorphisms between cones of JB-algebras", Hendrik van Imhoff and Mark
+Roelands): "van Imhoff–Roelands" is correct, `external-rows.md` was the lone outlier and is fixed.**
+Both spellings abbreviate to "vIR", which is why ten days of greps for the abbreviation never caught it.
 
 ★★ **5. `quaternionic_luders` was VACUOUS** — its conclusion ended `… ∨ True`, provable by
 `Or.inr trivial` with **every hypothesis deleted**. **RESTATED** as the row's actual content,

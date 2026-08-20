@@ -54,10 +54,13 @@ THE THREE GATES (the names used throughout, and in EJA-DIVIDEND.md)
   ★ Honest status: (E3) as stated is **not** obviously external, the load-bearing sentence of this
   file's first version was overstated, and whether rows 16/17 can reach FORMALIZED is **OPEN** pending
   a decision about which theorem row 14 actually reserves.
-  ★ A citation inconsistency found in the same pass and NOT resolved: `external-rows.md` names the
-  row-14 source "van Ittersum–Reijnders" while `Interface.lean` and this file name it "van
-  Imhoff–Roelands" (arXiv:1904.09278).  Two names for the theorem that terminates two rows.  Not
-  resolvable offline; flagged, not guessed.
+  ★ A citation inconsistency found in the same pass and **RESOLVED 2026-08-20**: `external-rows.md`
+  named the row-14 source "van Ittersum–Reijnders" while `Interface.lean` and this file name it "van
+  Imhoff–Roelands" (arXiv:1904.09278).  Checked against the arXiv metadata record for 1904.09278:
+  "Order isomorphisms between cones of JB-algebras", **Hendrik van Imhoff and Mark Roelands**.
+  `external-rows.md` was the lone outlier and is corrected; "van Ittersum–Reijnders" is not a paper.
+  ★ Why it survived ten days of rewrites: both spellings abbreviate to "vIR", so every grep for the
+  abbreviation matched both and no grep for either full name was ever run across the whole repo.
 
 ★★★ WITHDRAWAL — ROWS 5, 6 AND 15 ARE **NOT** EJA-GATED (2026-08-10, certificate-refutation review)
 
@@ -96,7 +99,8 @@ lines are retained below with their defects marked, because the retraction is th
   row 5  [WITHDRAWN — see above; the ball clause is open and is NOT an EJA gap] `lem:span` — the order-unit half (effects contain the ½-ball about ½e, hence span, hence
                            linear maps agreeing on effects are equal) is CLOSED in-tree on the
                            concrete carrier.  The residue is the SECOND half: `[0,q]` spans the Peirce
-                           subalgebra `J₂(q)`.  GATE (E2).
+                           subalgebra `J₂(q)`.  GATE (E2) — ★ now DISCHARGED, see below; the row
+                           stays WITHDRAWN on its own non-EJA ball clause.
   row 6  [WITHDRAWN — see above; clause (ii) is already abstract, and the cited theorem was the wrong one] `lem:homog` — clause (i) (additive + order bounded ⟹ unique positive linear extension)
                            is `Necessity.seqLeftMul` in-tree; clause (ii) `(λa)·b = λ(a·b)` is in-tree
                            on the concrete carrier (ARC-8: `HermitianMat.twistSeq_smul_left`, obtained
@@ -107,14 +111,24 @@ lines are retained below with their defects marked, because the retraction is th
                            generality.  GATE (E1).
   row 15 [WITHDRAWN — see above; the `Stab(F)°` clause is non-EJA and open] `lem:frame-fix` — the non-EJA content is closed in-tree.  Residue = the Peirce-block
                            statements (Θ_r preserves each block; L_{a(r)} is block-diagonal).
-                           GATE (E2).
+                           GATE (E2) — ★ now DISCHARGED, see below; the row stays WITHDRAWN on its
+                           own non-EJA `Stab(F)°` clause.
   row 16 `lem:coalescence` — ★ BOTH CLAUSES ARE ALREADY PROVED AT THE INTERFACE'S OWN ABSTRACT
                            GENERALITY (`MasterTheorem.CoalescenceSetup.coalescence_J2q` and
                            `coalescence_block`), and instantiated on the concrete carrier.  There is
-                           NO missing mathematics.  Residue = that the FK fields and `Theta_jordan`
-                           are CARRIED.  GATES (E2) + (E3).
-  row 17 `lem:homomorphism` — same shape as row 16; the hyperplane clause closed in ARC-6.
-                           GATES (E2) + (E3).
+                           NO missing mathematics.  Residue = that `Theta_jordan` is CARRIED, plus
+                           `Theta_fix`.  ★ **GATE (E3) ALONE, updated 2026-08-20** — (E2) is
+                           DISCHARGED (see below: `gate_E2_peirce` is now a proved theorem, via
+                           `EJA/InterfaceInstance.lean`'s `toCoalescenceSetup`).
+  row 17 `lem:homomorphism` — the hyperplane clause closed in ARC-6.  GATE (E3) alone, as row 16.
+                           ★ **BUT ROW 17 IS NOT WHOLLY EJA-GATED and its listing here overstates**:
+                           `DiagonalHomSetup`'s `ρ`, `ρ_skew`, `dχAdd`, `dχAdd_cont` and
+                           `coalescence_diff` are the ANALYTIC step (the differential of the
+                           character), not Faraut–Korányi algebra, so no EJA axiomatization produces
+                           them — `dχAdd_cont` is a continuity hypothesis.  This is verbatim the
+                           mis-classification that withdrew rows 5, 6 and 15 above: classifying a row
+                           by its BIGGEST residue and letting that stand for its WHOLE residue.
+                           Row 17 should be read as WALL-CERTIFIED, not EJA-GATED.
 
   ★ Note what the shape of this list means.  Four of the six rows have their mathematics done
   somewhere; what they lack is that the ARTICLE'S hypothesis class is not expressible.  That is a
@@ -126,6 +140,15 @@ ABSENCE CLAIMS AND THEIR SCOPE
   * "no JB-algebra premises are encoded anywhere in the tree":
       grep -rn 'JordanIdentity\|jordan_identity\|FormallyReal\|formally_real\|coneOfSquares\|cone_of_squares' RadicalRelativity/
       -> no hits (whole first-party tree incl. Vendor/, 2026-08-10).
+      ★★★ **FALSE AS OF 2026-08-12, STRUCK 2026-08-20.**  The same pattern now returns hits across
+      `EJA/FormallyReal.lean`, `EJA/Subalgebra.lean` and `EJA/Witness.lean`, including
+      `class IsFormallyReal` and an instance of it for `HermitianMat`.  Beyond the string, the concept
+      is present AND instantiated: `EJA/InterfaceInstance.lean`'s `EJAComparison` carries the Jordan
+      identity and the frame equations as fields, and `EJA/ConcreteInstance.lean` builds one on
+      `H_N(ℂ)`.  What remains absent is not the premises but the spectral theory built on them (gate
+      (E1), step 4).  ★ This is the failure `prop-n2-sufficiency.lean` records: when a row moves, the
+      certificate's ABSENCE CLAIMS are the part most likely to survive stale, because the header gets
+      rewritten and the evidence block does not.  It survived an edit to this very file on 08-13.
   * "no Jordan spectral theorem or Peirce decomposition at abstract generality":
       ★ SELF-CORRECTED on the same day, before this file was committed.  My first wording said the FK
       facts "appear ONLY as `CoalescenceSetup` fields", and that is WRONG: they are also DISCHARGED at
@@ -146,6 +169,7 @@ ABSENCE CLAIMS AND THEIR SCOPE
 NOT imported from RadicalRelativity/.
 -/
 import RadicalRelativity.MasterTheorem.Coalescence
+import RadicalRelativity.EJA.InterfaceInstance
 
 set_option linter.style.longLine false
 
@@ -173,12 +197,13 @@ structure JBPremises (C : ComparisonSetup J) : Prop where
 
 /-! ### GATE (E1) — the Jordan spectral theorem
 
-Gates rows 6 and 13.  Stated as the existence of a spectral resolution in a Jordan frame with real
+Gates row 13 (row 6 was WITHDRAWN above).  Stated as the existence of a spectral resolution in a Jordan frame with real
 eigenvalues, which is what a functional calculus (hence `aOf`'s inverse and the positive extension of
 `L_a`) is built from. -/
 
-/-- **GAP — GATE (E1), the Jordan spectral theorem.**  Gates: row 6 `lem:homog` at EJA generality,
-row 13 `prop:pseudo-transfer` at EJA generality.
+/-- **GAP — GATE (E1), the Jordan spectral theorem.**  Gates: row 13 `prop:pseudo-transfer` at EJA
+generality.  (Row 6 was WITHDRAWN above; the header naming it survived the withdrawal until
+2026-08-20.)
 
 ★ This is the large piece and it has no Mathlib support.  Its natural home is upstream of this paper
 (a Mathlib-grade EJA layer), not inside `RadicalRelativity`.
@@ -201,13 +226,14 @@ theorem gate_E1_spectral [FiniteDimensional ℝ J] (C : ComparisonSetup J) (_H :
       x = ∑ i, lam i • q i := by
   sorry
 
-/-! ### GATE (E2) — the Peirce decomposition
+/-! ### GATE (E2) — the Peirce decomposition — ★ NO LONGER A GATE (2026-08-20)
 
-Gates rows 5 and 15, and half of rows 16/17.  The three `CoalescenceSetup` fields that currently
-carry Faraut–Korányi are exactly what this would produce. -/
+Formerly recorded as gating rows 5 and 15 (both since WITHDRAWN on non-EJA clauses) and the FK half
+of rows 16/17.  It gates nothing now: correctly stated, it is a theorem, proved below from
+`EJA/InterfaceInstance.lean`.  The three `CoalescenceSetup` fields that carried Faraut–Korányi are
+produced rather than carried. -/
 
-/-- **GAP — GATE (E2), the Peirce decomposition and its Faraut–Korányi rules.**  Gates: row 5
-`lem:span`'s Peirce half, row 15 `lem:frame-fix`'s block statements, and the FK half of rows 16/17.
+/-- **FORMERLY GATE (E2) — the Peirce decomposition and its Faraut–Korányi rules; NOW A THEOREM.**
 
 Stated as: the axiomatization **produces the three FK data** that `CoalescenceSetup` carries as fields
 (`aOf_scalarOn`, `block_mem_J2`, `simDiag_opCommute`).  The first two conjuncts pin `ScalarOn` and `J2`
@@ -259,25 +285,53 @@ tree-facing ingredients.
   and **nothing ties `c` to `r`** — so `r i = r j` yields no information about `c i` versus `c j`, and
   the conclusion does not follow.  Strict positivity blocks the *zero-coefficient* counterexample the
   note names; it does nothing about *unequal* coefficients, which is the case `aOf_scalarOn` is about.
-  ★ The honest status: this gate is **UNDER-HYPOTHESISED**, and whether it is outright FALSE is open —
-  no counter-model was built, and the claim here is only that the hypothesis cannot support the
-  conclusion.  The repair is `haOf' : ∀ r, aOf r = ∑ i, Real.exp (r i) • p i`, or equivalently adding
-  `∀ i j, r i = r j → c i = c j`.
+  ★★★ **AND IT IS OUTRIGHT FALSE — THIRD FALSITY ON THIS ONE STATEMENT, established 2026-08-20.**
+  The 08-13 note above stopped one step short of instantiating its own diagnosis.  The counter-model
+  is one entry away from the one printed above: same `J = H_3(ℝ)`, same standard frame, but
+  `aOf := fun _ => diag(1,2,3)` — **constant in `r`, with every coefficient STRICTLY POSITIVE**, so it
+  satisfies `haOf` in the weak form and the strict-positivity repair does not touch it.  No
+  `ComparisonSetup` field ties `aOf r` to `r` (`aOf` is constrained only by `aOf_inv`,
+  `frame_opCommute` and `Θ_cocycle`), so the model is legal.  Then at `r = 0` conjunct 1 forces
+  `ScalarOn 0 1 diag(1,2,3)`; `b = E₀₁+E₁₀` satisfies `IsBlockElt jordan p 0 1` (`p₀ ∘ b = p₁ ∘ b = b/2`,
+  `p₂ ∘ b = 0`) so conjunct 2 forces `J2 0 1 b`; and conjunct 3 then demands `OpCommute` of the two.
+  Evaluating both operator orders at `p₀`: `L_a L_b p₀ = (1/2)(a ∘ b) = 0.75 b` while
+  `L_b L_a p₀ = b ∘ p₀ = 0.5 b`.  It fails.
+  ★★ **The generalisable lesson, and it is the same antitonicity trap a second time:** the first repair
+  constrained the *witnesses* of `aOf`'s value (strict positivity) and left its *dependence on `r`*
+  free.  Conjunct 3 is contravariant in exactly that dependence.  **When the fix for a vacuous
+  existential is "constrain the witnesses", check which variable the contravariant conjunct actually
+  ranges over — constraining the wrong one turns vacuous into false, twice.**
+  ★★★ **THE STATEMENT BELOW IS NOW THE REPAIRED ONE (`haOf` in the article's `∑ exp(r i) • p i`
+  form), AND WITH THAT REPAIR THIS IS NO LONGER A GATE — IT IS A THEOREM, PROVED HERE.**  The
+  hypothesis set of the repaired statement is exactly `EJAComparison`'s: `JBPremises.jordan_identity`
+  supplies `jordan_id`, and `hp_idem`/`hp_orth`/`hp_sum`/`haOf` are `p_idem`/`p_orth`/`p_sum`/`aOf_eq`
+  verbatim.  So `EJA/InterfaceInstance.lean`'s `toCoalescenceSetup` discharges all three conjuncts at
+  the interface's own abstract generality, and the `sorry` is gone.
+  ★ **CONSEQUENCE FOR THE ROWS, propagated below: (E2) is DISCHARGED and rows 16/17 are gated by (E3)
+  ALONE.**  `STATEMENT-MANIFEST.md` already said this on 08-13; this file did not, and the two
+  contradicted each other at HEAD for a week — in the file that teaches "fix the row, not just the
+  footnote."
   ★ And the stated *reason* for the weakening no longer holds: `Real.exp` is available —
   `EJA/InterfaceInstance.lean` imports `Mathlib.Analysis.SpecialFunctions.Exp` and uses exactly that
   form.  **A hypothesis weakened for an import-convenience reason, with the weakening's cost
   mis-assessed in the same sentence that recorded it.** -/
-theorem gate_E2_peirce [FiniteDimensional ℝ J] (C : ComparisonSetup J) (_H : JBPremises C)
+theorem gate_E2_peirce [FiniteDimensional ℝ J] (C : ComparisonSetup J) (H : JBPremises C)
     (hp_idem : ∀ i, C.jordan (C.p i) (C.p i) = C.p i)
     (hp_orth : ∀ i j, i ≠ j → C.jordan (C.p i) (C.p j) = 0)
     (hp_sum : ∑ i, C.p i = C.e)
-    (haOf : ∀ r : Fin C.n → ℝ, ∃ c : Fin C.n → ℝ, (∀ i, 0 < c i)
-      ∧ C.aOf r = ∑ i, c i • C.p i) :
+    (haOf : ∀ r : Fin C.n → ℝ, C.aOf r = ∑ i, Real.exp (r i) • C.p i) :
     ∃ J2 ScalarOn : Fin C.n → Fin C.n → J → Prop,
       (∀ (r : Fin C.n → ℝ) (i j : Fin C.n), r i = r j → ScalarOn i j (C.aOf r)) ∧
       (∀ (i j : Fin C.n) (x : J), IsBlockElt C.jordan C.p i j x → J2 i j x) ∧
       (∀ (i j : Fin C.n) (a b : J), ScalarOn i j a → J2 i j b → OpCommute C.jordan a b) := by
-  sorry
+  let E : RadicalRelativity.EJA.EJAComparison J :=
+    { C with
+      jordan_id := H.jordan_identity
+      p_idem := hp_idem
+      p_orth := hp_orth
+      aOf_eq := haOf
+      p_sum := hp_sum }
+  exact ⟨E.J2', E.ScalarOn', E.aOfScalar', E.blockMem', E.simDiag'⟩
 
 /-! ### GATE (E3) — `Theta_jordan` derivable, AND IT IS EXTERNAL
 
@@ -297,7 +351,7 @@ is **OPEN**.  Original text follows.
 would not be in the scope of the axiomatization either — the axiomatization's contribution is that
 this statement becomes expressible at the article's generality, so `ComparisonSetup.Θ_jordan` can be a
 citation instead of an unexaminable field.  Rows 16 and 17 therefore terminate at EJA-GATED. — ★ SUPERSEDED, see above. -/
-theorem gate_E3_theta_jordan (C : ComparisonSetup J) (_H : JBPremises C)
+theorem gate_E3_theta_jordan [FiniteDimensional ℝ J] (C : ComparisonSetup J) (_H : JBPremises C)
     (Φ : J ≃ₗ[ℝ] J) (_hunital : Φ C.e = C.e)
     (_horder : ∀ x, C.nonneg x ↔ C.nonneg (Φ x)) (x y : J) :
     Φ (C.jordan x y) = C.jordan (Φ x) (Φ y) := by
