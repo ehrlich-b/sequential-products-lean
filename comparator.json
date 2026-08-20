@@ -1,0 +1,9 @@
+{
+  "challenge_module": "Challenge",
+  "solution_module": "Solution",
+  "theorem_names": [
+    "TwistNormalForm.real_classification",
+    "TwistNormalForm.complex_classification"
+  ],
+  "permitted_axioms": ["propext", "Quot.sound", "Classical.choice"]
+}

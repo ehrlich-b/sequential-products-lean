@@ -1,0 +1,136 @@
+# DRAFT — framing and provenance pending author sign-off.
+version: v0.4
+
+project:
+  name: "Sequential products on Hermitian matrix algebras: the real and complex classifications"
+  authors:
+    - "Bryan Ehrlich"
+  responsible_maintainers:
+    - "Bryan Ehrlich"
+  license: "Apache-2.0"
+  description: >-
+    A sequential product on the effects of an order-unit space is a binary operation
+    a & b, read "first test a, then test b with the state updated by the first test",
+    satisfying the seven axioms S1-S7 of van de Wetering (arXiv:1803.11139,
+    Definition 2). This development registers two classification theorems for such
+    products on the Hermitian matrix algebras.
+
+    On H_N(R), the Hermitian N x N real matrices with N >= 1, the Lueders product
+    sqrt(a) b sqrt(a) is the unique sequential product: there is no free parameter.
+    On H_N(C) with N >= 3, the sequential products are exactly the one-real-parameter
+    family of twist products a^(1/2+it) b a^(1/2-it), and the parameter t is uniquely
+    determined by the product. The complex result is the substantial one: the twist
+    family is a genuine one-parameter deformation of the Lueders product, every member
+    of which satisfies S1-S7, and the theorem says there are no others. The equation is
+    asserted on all effects, including singular ones, and the uniqueness of t is part
+    of the registered statement.
+
+    Both theorems are proved from S1-S7 with no hypotheses beyond the stated dimension
+    bounds, and their axiom closures contain only Lean's three core axioms (propext,
+    Classical.choice, Quot.sound). The continuity axiom S2 is stated in the order-unit
+    norm, as an explicit epsilon-delta condition, so the statement file depends on no
+    normed-space or topological instance; the equivalence with continuity in the
+    carrier's Frobenius topology is proved in the development.
+
+    SCOPE. These two theorems are two rows of a thirty-six row manifest tracking the
+    numbered results of the accompanying manuscript. The manuscript as a whole is NOT
+    formalized: as of 2026-08-12 the manifest stands at 12 rows formalized, 19 partial,
+    and 5 absent. In particular the quaternionic row H_n(H) and the Albert-algebra row
+    H_3(O) of the manuscript's main theorem are not proved here, the converse of the
+    complex residue is not proved, and the coalescence and diagonal-homomorphism lemmas
+    are established on the concrete carrier H_N(C) rather than at the manuscript's
+    stated generality of a finite-dimensional simple Euclidean Jordan algebra. Nothing
+    outside the two registered theorems is claimed by this submission.
+
+classification:
+  arxiv: [math.OA, math.RA, quant-ph]
+  msc2020: [17C65, 81P16, 46L70, 81P10, 15B57, 17C90]
+
+automation:
+  methods:
+    - method: agent
+      tool_setup: >-
+        AI-assisted throughout. The Lean development was produced over a series of
+        working arcs using Anthropic's Claude models in an agentic coding harness
+        (Claude Code), with the author directing the mathematics, setting the
+        statements, and reviewing and accepting every result. Proof search,
+        refactoring, and the bulk of tactic writing were model-generated; the choice
+        of what to prove, the statement-fidelity boundary, and all status judgements
+        are the author's.
+    - method: manual
+      tool_setup: >-
+        Portions were written or repaired by hand by the author, and the manuscript
+        the development follows is the author's own prior work.
+
+review:
+  status: agent-reviewed
+  reviewers:
+    - "Bryan Ehrlich (author review, all arcs)"
+    - "Isolated cold-review sub-agents (Anthropic Claude), one or more rounds per arc"
+  notes: >-
+    The development carries its own mechanical audit, AxiomAudit.lean, which on
+    elaboration enforces over every declaration in the tracked tree: an axiom closure
+    contained in Lean's three core axioms, absence of any custom axiom declaration,
+    absence of sorryAx and native_decide, a pinned module manifest, exact-closure
+    sentinels on the principal results, and type and body freezes on the statement
+    boundary. Every non-formalized row of the manifest carries a compiling wall
+    certificate in WallCertificates/ recording the missing step in Lean with a sorry at
+    the gap; those files are at the repository root and are never imported by the
+    library. The campaign record, including retractions and self-corrections, is in
+    LEDGER.md; the frozen row list is STATEMENT-MANIFEST.md. Review was iterative and
+    adversarial rather than external and independent: no third party has refereed this
+    development, and the accompanying manuscript has not been peer reviewed.
+
+sources:
+  - title: >-
+      Sequential Products on Euclidean Jordan Algebras: Classification in Rank at
+      Least Three and the Complex Qubit
+    type: paper
+    authors:
+      - "Bryan Ehrlich"
+    relationship: formalizes
+    author_endorsement: participated
+    note: >-
+      The author's own manuscript, which these two theorems formalize. It is
+      unpublished and has not been refereed: it was submitted to J. Phys. A in August
+      2026 and returned as an immediate editorial reject with no referee reports, so it
+      carries no external correctness signal. No stable public identifier exists at the
+      time of submission; the source cannot be independently confirmed and no priority
+      or novelty is claimed from it.
+  - title: "Sequential product spaces are Jordan algebras"
+    type: paper
+    authors:
+      - "John van de Wetering"
+    identifier: "arXiv:1803.11139"
+    relationship: background
+    note: >-
+      Supplies Definition 2, the axioms S1-S7 that SeqProd states, and the
+      sequential-product-to-Jordan-algebra framework the classification sits in.
+  - title: "Sequential products on effect algebras"
+    type: paper
+    authors:
+      - "Stanley Gudder"
+      - "Richard Greechie"
+    relationship: background
+    note: >-
+      Origin of the sequential product notion and of the Lueders product as its
+      motivating example on operator effects.
+
+related_formalizations:
+  - id: "leanprover-community/physlib"
+    relationship: builds-on
+    note: >-
+      Seventeen modules (Hermitian matrices with the Loewner order, trace inner
+      product, continuous functional calculus, Jordan product) by Alex Meiburg, with
+      HermitianMat/Proj.lean also by Leonardo A Lessa, vendored verbatim at commit
+      ad1d812 under RadicalRelativity/Vendor/ with per-file copyright headers retained.
+      They form the carrier substrate the classification is proved over. Backported
+      from Mathlib v4.32 to v4.28; the edit log and a zero-statement-change audit are
+      in RadicalRelativity/Vendor/VENDOR.md.
+  - id: "zblore/csd-lean4"
+    relationship: builds-on
+    note: >-
+      Eight modules by Zayn Blore giving complex Wigner rigidity on CP^(N-1), vendored
+      verbatim at commit 2287f45; this is an input to the complex row. The
+      corresponding real Wigner/Uhlhorn rigidity is first-party
+      (RadicalRelativity/Wigner/RealWigner.lean) and is not derived from this work.

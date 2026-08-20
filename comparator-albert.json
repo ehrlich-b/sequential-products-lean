@@ -1,0 +1,6 @@
+{
+  "challenge_module": "AlbertChallenge",
+  "solution_module": "AlbertSolution",
+  "theorem_names": ["AlbertPowerAssoc.jpow_mul_jpow"],
+  "permitted_axioms": ["propext", "Quot.sound", "Classical.choice"]
+}

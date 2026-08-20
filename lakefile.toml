@@ -16,3 +16,15 @@ rev = "v4.28.0"
 
 [[lean_lib]]
 name = "RadicalRelativity"
+
+[[lean_lib]]
+name = "Challenge"
+
+[[lean_lib]]
+name = "Solution"
+
+[[lean_lib]]
+name = "AlbertChallenge"
+
+[[lean_lib]]
+name = "AlbertSolution"
