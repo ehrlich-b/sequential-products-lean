@@ -1,0 +1,6 @@
+{
+  "challenge_module": "WignerChallenge",
+  "solution_module": "WignerSolution",
+  "theorem_names": ["WignerReal.exists_isometry_of_transProbPreserving"],
+  "permitted_axioms": ["propext", "Quot.sound", "Classical.choice"]
+}

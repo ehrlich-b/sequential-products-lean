@@ -28,3 +28,9 @@ name = "AlbertChallenge"
 
 [[lean_lib]]
 name = "AlbertSolution"
+
+[[lean_lib]]
+name = "WignerChallenge"
+
+[[lean_lib]]
+name = "WignerSolution"

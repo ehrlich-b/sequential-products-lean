@@ -21,9 +21,15 @@ This file states two classification results.
 * `real_classification`: on the Hermitian real matrices the Lüders product
   `√a · b · √a` is the **only** sequential product.
 * `complex_classification`: on the Hermitian complex matrices of size `N ≥ 3`
-  the sequential products are **exactly** the twist products
-  `a ^ (1/2 + i t) · b · a ^ (1/2 - i t)`, one for each real `t`, and `t` is
-  determined by the product.
+  every sequential product **is** a twist product
+  `a ^ (1/2 + i t) · b · a ^ (1/2 - i t)`, and the parameter `t` is uniquely
+  determined by it.
+
+★ Read the direction carefully. Both theorems are **necessity plus parameter rigidity**: they
+say every product satisfying the axioms has the stated normal form. Neither registers the
+converse — that each `t` in fact yields a product satisfying S1--S7. That sufficiency is proved
+in the wider development but is **not** among the declarations registered here, so nothing
+below should be read as asserting a bijection between parameters and products.
 
 The complex row is the mathematically substantial one: the twist family is a genuine
 one-parameter deformation of the Lüders product, all of whose members satisfy S1--S7,
@@ -88,7 +94,14 @@ def IsEffect (A : Mat N 𝕜) : Prop := (0 : Mat N 𝕜) ≼ A ∧ A ≼ (1 : Ma
 
 This is the norm in which the manuscript's continuity axiom S2 is stated.  It is
 defined here purely from the order, so that the statement below depends on no
-normed-space instance. -/
+normed-space instance.
+
+★ **This is a junk extension off the Hermitian matrices, and deliberately so.** If `A` is not
+Hermitian the defining set is empty (either Loewner inequality would force a real-scalar
+translate of `A` to be Hermitian), and Mathlib's `sInf ∅ = 0`, so `ouNorm A = 0`. That value
+carries no meaning. It is harmless because every use below is guarded: effects are Hermitian,
+differences of effects are Hermitian, and `SeqProd.effect` keeps outputs Hermitian. `ouNorm` is
+asserted to be the order-unit norm only on the Hermitian part. -/
 def ouNorm (A : Mat N 𝕜) : ℝ :=
   sInf {t : ℝ | 0 ≤ t ∧ -scalUnit N 𝕜 t ≼ A ∧ A ≼ scalUnit N 𝕜 t}
 
@@ -147,6 +160,10 @@ functional calculus of `Real.sqrt` at `a` (Mathlib's `cfc` for Hermitian matrice
 def luders {N : ℕ} {𝕜 : Type} [RCLike 𝕜] (a b : Mat N 𝕜) : Mat N 𝕜 :=
   cfc Real.sqrt a * b * cfc Real.sqrt a
 
+-- ★ Mathlib's `cfc` also returns the junk value `0` when its argument is not self-adjoint, so
+-- `luders` and `twist` below are likewise meaningful only on Hermitian arguments. Both
+-- conclusions are stated only for effects, which are Hermitian.
+
 /-- **The twist factor** `a ^ (1/2 + i t)`, defined by the continuous functional calculus
 as `√x · cos(t log x) + i · √x · sin(t log x)` applied to `a`.  On the spectrum of a
 positive `a` this is the principal branch of `x ↦ x ^ (1/2 + i t)`; at the eigenvalue `0`
@@ -173,14 +190,15 @@ theorem real_classification {N : ℕ} (hN : 0 < N)
     {a b : Mat N ℝ} (ha : IsEffect a) (hb : IsEffect b) :
     P.sp a b = luders a b := sorry
 
-/-- **The complex row.**  On the Hermitian `N × N` complex matrices with `N ≥ 3`, the
-sequential products satisfying S1--S7 are exactly the one-real-parameter family of twist
-products `a & b = a ^ (1/2 + i t) · b · a ^ (1/2 - i t)`, and the parameter `t` is
-uniquely determined by the product.
+/-- **The complex row.**  On the Hermitian `N × N` complex matrices with `N ≥ 3`, every
+sequential product satisfying S1--S7 has the twist normal form
+`a & b = a ^ (1/2 + i t) · b · a ^ (1/2 - i t)` for a unique real `t`.
 
-The `∃!` is the full classification: existence says every such product is a twist
-product, uniqueness says distinct parameters give distinct products.  The equation is
-asserted on *all* effects, including singular ones.
+★ What the `∃!` does and does not say. Its existence half is applied to a *given* admissible
+`P` and produces the parameter for that `P`; its uniqueness half says no second parameter
+works for that same `P`. It does **not** say that every real `t` yields an admissible product,
+and this statement would still hold if no `SeqProd` existed at all. The equation is asserted on
+*all* effects, including singular ones.
 
 (van de Wetering, arXiv:1803.11139, Definition 2 for the axioms; the classification
 statement is Theorem `mthm:master`, complex row, of the accompanying manuscript.) -/

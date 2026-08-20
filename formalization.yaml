@@ -2,7 +2,7 @@
 version: v0.4
 
 project:
-  name: "Sequential products on Hermitian matrix algebras: the real and complex classifications"
+  name: "Sequential products on Hermitian matrix algebras, with Albert's power-associativity theorem and real Wigner rigidity"
   authors:
     - "Bryan Ehrlich"
   responsible_maintainers:
@@ -15,15 +15,26 @@ project:
     Definition 2). This development registers two classification theorems for such
     products on the Hermitian matrix algebras.
 
-    On H_N(R), the Hermitian N x N real matrices with N >= 1, the Lueders product
-    sqrt(a) b sqrt(a) is the unique sequential product: there is no free parameter.
-    On H_N(C) with N >= 3, the sequential products are exactly the one-real-parameter
-    family of twist products a^(1/2+it) b a^(1/2-it), and the parameter t is uniquely
-    determined by the product. The complex result is the substantial one: the twist
-    family is a genuine one-parameter deformation of the Lueders product, every member
-    of which satisfies S1-S7, and the theorem says there are no others. The equation is
-    asserted on all effects, including singular ones, and the uniqueness of t is part
-    of the registered statement.
+    On H_N(R), the Hermitian N x N real matrices with N >= 1, every sequential product is
+    the Lueders product sqrt(a) b sqrt(a): there is no free parameter. On H_N(C) with
+    N >= 3, every sequential product has the twist normal form a^(1/2+it) b a^(1/2-it) for
+    a unique real t. The complex result is the substantial one: the twist family is a
+    genuine one-parameter deformation of the Lueders product, and the theorem says nothing
+    outside it satisfies the axioms. The equations are asserted on all effects, including
+    singular ones, and the uniqueness of t is part of the registered statement.
+
+    DIRECTION. Both registered classification theorems are necessity plus parameter
+    rigidity: every product satisfying the axioms has the stated normal form. The converse,
+    that each real t does yield a product satisfying S1-S7, is proved in the wider
+    development but is NOT among the declarations registered here. Nothing in this
+    submission should be read as registering a bijection between parameters and products.
+
+    The package also registers two classical theorems the development proves in passing.
+    Albert's power-associativity theorem: in a commutative Jordan ring carrying an R-module
+    structure, x^(m+1) * x^(n+1) = x^(m+n+2), with no unit, finite dimension, formal reality
+    or positivity assumed. And the real case of Wigner's theorem: every transition
+    probability preserving self-map of the rays of a finite-dimensional real inner product
+    space is induced by a linear isometry, with bijectivity not assumed but derived.
 
     Both theorems are proved from S1-S7 with no hypotheses beyond the stated dimension
     bounds, and their axiom closures contain only Lean's three core axioms (propext,
@@ -73,10 +84,16 @@ review:
     contained in Lean's three core axioms, absence of any custom axiom declaration,
     absence of sorryAx and native_decide, a pinned module manifest, exact-closure
     sentinels on the principal results, and type and body freezes on the statement
-    boundary. Every non-formalized row of the manifest carries a compiling wall
-    certificate in WallCertificates/ recording the missing step in Lean with a sorry at
-    the gap; those files are at the repository root and are never imported by the
-    library. The campaign record, including retractions and self-corrections, is in
+    boundary. Non-formalized rows are itemized in STATEMENT-MANIFEST.md. Many in-scope
+    gaps carry a dated, compiling wall certificate in WallCertificates/ stating the missing
+    step in Lean with a sorry at the gap; those files sit at the repository root and are
+    never imported by the library. That coverage is deliberately not total and the
+    directory's own README says so: the six pre-registered external rows are documented
+    there but are explicitly NOT certificates, several certificate files now carry zero
+    live gaps because their gap was later discharged and are kept for the retraction
+    record, and at least one row is deliberately not written as a sorry because
+    transcribing its statement without the manuscript open is how two defective gap
+    statements were previously produced. The campaign record, including retractions and self-corrections, is in
     LEDGER.md; the frozen row list is STATEMENT-MANIFEST.md. Review was iterative and
     adversarial rather than external and independent: no third party has refereed this
     development, and the accompanying manuscript has not been peer reviewed.
@@ -106,6 +123,30 @@ sources:
     note: >-
       Supplies Definition 2, the axioms S1-S7 that SeqProd states, and the
       sequential-product-to-Jordan-algebra framework the classification sits in.
+  - title: "On Jordan algebras of linear transformations"
+    type: paper
+    authors:
+      - "A. A. Albert"
+    identifier: "doi:10.1090/S0002-9947-1946-0016759-3"
+    relationship: formalizes
+    author_endorsement: "n/a"
+    note: >-
+      Source of the power-associativity theorem registered as
+      AlbertPowerAssoc.jpow_mul_jpow. The Lean proof is independent of Albert's argument
+      in its details but formalizes the same statement.
+  - title: "Wigner's theorem on symmetries of quantum mechanical systems, real case"
+    type: folklore
+    relationship: formalizes
+    author_endorsement: "n/a"
+    note: >-
+      Source of WignerReal.exists_isometry_of_transProbPreserving. The classical statement
+      is due to Wigner, with the weakening that drops bijectivity in the Uhlhorn line of
+      work; the real-scalar case in the exact form registered here is standard but we give
+      no single canonical reference for it, and claim no priority. NOVELTY OF THE
+      FORMALIZATION IS NOT ESTABLISHED: we are aware of no formalization of the real case
+      in Lean or any other proof assistant, and the complex case in this repository is
+      vendored from a separate Lean development, but we have not carried out a systematic
+      search across proof assistants.
   - title: "Sequential products on effect algebras"
     type: paper
     authors:
