@@ -27,8 +27,9 @@ audit: `RadicalRelativity/Vendor/VENDOR.md`.
 | `Vendor/Wigner/` (8 modules) | `zblore/csd-lean4` @ `2287f45` | Zayn Blore | complex Wigner rigidity on `ℂP^{N-1}` — the M3 input for the ℂ row |
 
 Everything outside `RadicalRelativity/Vendor/` is first-party. In particular
-`RadicalRelativity/Wigner/RealWigner.lean` — real Wigner/Uhlhorn rigidity, which
-exists in no other proof assistant and is what makes the real row unconditional —
+`RadicalRelativity/Wigner/RealWigner.lean` — the finite-dimensional real, non-bijective
+Wigner theorem, which is what makes the real row unconditional; we are aware of no
+formalization of it in any proof assistant, but have not searched them systematically —
 is first-party; it lived under `Vendor/` until 2026-08-08 only because it was
 written against the vendored complex development, and it imports nothing vendored.
 

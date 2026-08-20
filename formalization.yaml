@@ -36,14 +36,20 @@ project:
     probability preserving self-map of the rays of a finite-dimensional real inner product
     space is induced by a linear isometry, with bijectivity not assumed but derived.
 
-    Both theorems are proved from S1-S7 with no hypotheses beyond the stated dimension
+    Both CLASSIFICATION theorems are proved from S1-S7 with no hypotheses beyond the dimension
     bounds, and their axiom closures contain only Lean's three core axioms (propext,
     Classical.choice, Quot.sound). The continuity axiom S2 is stated in the order-unit
     norm, as an explicit epsilon-delta condition, so the statement file depends on no
     normed-space or topological instance; the equivalence with continuity in the
     carrier's Frobenius topology is proved in the development.
 
-    SCOPE. These two theorems are two rows of a thirty-six row manifest tracking the
+    SCOPE. Comparator registers FOUR theorems across THREE separate entries: the two
+    sequential-product classifications above, which use the SeqProd interface and the axiom
+    S2 and correspond to numbered rows of the manuscript; and the two ancillary classical
+    theorems, Albert and Wigner, which use neither and correspond to no manuscript row.
+    Nothing beyond those four registered theorems is claimed by this submission.
+
+    The two classification theorems are two rows of a thirty-six row manifest tracking the
     numbered results of the accompanying manuscript. The manuscript as a whole is NOT
     formalized: as of 2026-08-12 the manifest stands at 12 rows formalized, 19 partial,
     and 5 absent. In particular the quaternionic row H_n(H) and the Albert-algebra row
@@ -140,8 +146,10 @@ sources:
     author_endorsement: "n/a"
     note: >-
       Source of WignerReal.exists_isometry_of_transProbPreserving. The classical statement
-      is due to Wigner, with the weakening that drops bijectivity in the Uhlhorn line of
-      work; the real-scalar case in the exact form registered here is standard but we give
+      is due to Wigner; dropping bijectivity gives what the literature calls the
+      non-bijective Wigner theorem, which is NOT the Uhlhorn form (Uhlhorn instead weakens the
+      hypothesis to preservation of orthogonality and traditionally retains bijectivity). The
+      finite-dimensional real case in the exact form registered here is standard but we give
       no single canonical reference for it, and claim no priority. NOVELTY OF THE
       FORMALIZATION IS NOT ESTABLISHED: we are aware of no formalization of the real case
       in Lean or any other proof assistant, and the complex case in this repository is

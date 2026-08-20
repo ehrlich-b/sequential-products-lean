@@ -12,8 +12,10 @@ set_option linter.style.longLine false
 # Real Wigner/Uhlhorn rigidity on `ℝP(E)` — **proved here**
 
 The complex row's Jordan property is discharged (M3) through the vendored
-`Projectivization.wigner_rigidity` on `ℂP^{N-1}`.  The **real** analogue exists in no
-prover, so this file proves it, and the real row is unconditional because of it.
+`Projectivization.wigner_rigidity` on `ℂP^{N-1}`.  The **real** analogue is not available to
+import — we are aware of no formalization of it in any proof assistant, though we have not
+searched them systematically — so this file proves it, and the real row is unconditional
+because of it.
 
 **`exists_isometry_of_transProbPreservingR`** (the capstone, at the end of the file):
 every transition-probability preserving self-map of the rays of a finite-dimensional

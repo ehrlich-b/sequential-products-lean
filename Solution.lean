@@ -126,9 +126,10 @@ functional calculus of `Real.sqrt` at `a` (Mathlib's `cfc` for Hermitian matrice
 def luders {N : ℕ} {𝕜 : Type} [RCLike 𝕜] (a b : Mat N 𝕜) : Mat N 𝕜 :=
   cfc Real.sqrt a * b * cfc Real.sqrt a
 
--- ★ Mathlib's `cfc` also returns the junk value `0` when its argument is not self-adjoint, so
--- `luders` and `twist` below are likewise meaningful only on Hermitian arguments. Both
--- conclusions are stated only for effects, which are Hermitian.
+-- ★ Mathlib's `cfc` inspects only its matrix argument, which here is the FIRST argument. So
+-- `luders` and `twist` take the junk value `0` when their first argument is non-Hermitian; a
+-- non-Hermitian second argument still gives an ordinary, non-junk matrix expression. Their
+-- intended meaning as sequential products is asserted only for effect pairs.
 
 /-- **The twist factor** `a ^ (1/2 + i t)`, defined by the continuous functional calculus
 as `√x · cos(t log x) + i · √x · sin(t log x)` applied to `a`.  On the spectrum of a

@@ -11,8 +11,10 @@ import Mathlib.LinearAlgebra.Projectivization.Basic
 
 Wigner's theorem says that a symmetry of a quantum system — a transformation of states
 preserving all transition probabilities — must be induced by a unitary or antiunitary map.
-This file states the **real** case, in the strong Uhlhorn form where only preservation of
-transition probabilities is assumed and bijectivity is not.
+This file states the **finite-dimensional real, non-bijective** case: only preservation of
+transition probabilities is assumed, and bijectivity is not. That is the non-bijective Wigner
+theorem. It is not the Uhlhorn form, which instead weakens the hypothesis to preservation of
+orthogonality and traditionally retains bijectivity.
 
 Everything the statement mentions is defined here from Mathlib: `ℙ ℝ E` is Mathlib's
 projectivization, `E ≃ₗᵢ[ℝ] E` its linear isometry equivalences, and the two transition
@@ -31,7 +33,12 @@ variable {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E]
 
 This is the quantity a physicist calls the probability of observing the state `φ` given the
 state `ψ`.  It depends only on the rays through `ψ` and `φ`, which is what makes the next
-definition well posed. -/
+definition well posed.
+
+★ At a zero argument the formula is `0/0`, which Lean evaluates to `0`. That value is junk: the
+reading above, and the rescaling invariance the next definition relies on, are asserted for
+**nonzero** vectors and nonzero scalars only. Nothing reaches it from `transProb`, since a point
+of `ℙ ℝ E` has a nonzero representative. -/
 def transProbVec (ψ φ : E) : ℝ :=
   ‖(inner ℝ ψ φ : ℝ)‖ ^ 2 / (‖ψ‖ ^ 2 * ‖φ‖ ^ 2)
 
@@ -61,7 +68,7 @@ This is the rigidity statement underlying Wigner's theorem on symmetries of quan
 a transformation of states that merely preserves the observable transition probabilities has
 no freedom left, and must come from an isometry.
 
-The hypothesis is as weak as it can be. `TransProbPreserving f` is the single equation
+`TransProbPreserving f` is the single equation
 `∀ p q, transProb (f p) (f q) = transProb p q`.  **Bijectivity is not assumed** — preservation
 of transition probabilities alone forces `f` to be induced by an isometry, and hence forces it
 to be bijective. -/

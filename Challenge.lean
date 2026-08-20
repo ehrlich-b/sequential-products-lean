@@ -18,18 +18,20 @@ test", satisfying the seven axioms S1--S7 of van de Wetering
 
 This file states two classification results.
 
-* `real_classification`: on the Hermitian real matrices the Lüders product
-  `√a · b · √a` is the **only** sequential product.
+* `real_classification`: on the Hermitian real matrices every sequential product agrees
+  with the Lüders formula `√a · b · √a` on effects.
 * `complex_classification`: on the Hermitian complex matrices of size `N ≥ 3`
   every sequential product **is** a twist product
   `a ^ (1/2 + i t) · b · a ^ (1/2 - i t)`, and the parameter `t` is uniquely
   determined by it.
 
-★ Read the direction carefully. Both theorems are **necessity plus parameter rigidity**: they
-say every product satisfying the axioms has the stated normal form. Neither registers the
-converse — that each `t` in fact yields a product satisfying S1--S7. That sufficiency is proved
-in the wider development but is **not** among the declarations registered here, so nothing
-below should be read as asserting a bijection between parameters and products.
+★ Read the direction carefully. Both theorems are **necessity**: a product satisfying the
+axioms is *supplied*, and the theorem says it has the stated normal form. Neither constructs
+one, and the two missing converses are different statements. For the real row the converse is
+that the Lüders formula itself satisfies S1--S7; for the complex row it is that every real `t`
+yields a product satisfying S1--S7, which is also what would make the parameter map injective.
+Both are proved in the wider development and **neither is registered here**, so nothing below
+asserts that Lüders is admissible or that parameters and products correspond.
 
 The complex row is the mathematically substantial one: the twist family is a genuine
 one-parameter deformation of the Lüders product, all of whose members satisfy S1--S7,
@@ -160,9 +162,10 @@ functional calculus of `Real.sqrt` at `a` (Mathlib's `cfc` for Hermitian matrice
 def luders {N : ℕ} {𝕜 : Type} [RCLike 𝕜] (a b : Mat N 𝕜) : Mat N 𝕜 :=
   cfc Real.sqrt a * b * cfc Real.sqrt a
 
--- ★ Mathlib's `cfc` also returns the junk value `0` when its argument is not self-adjoint, so
--- `luders` and `twist` below are likewise meaningful only on Hermitian arguments. Both
--- conclusions are stated only for effects, which are Hermitian.
+-- ★ Mathlib's `cfc` inspects only its matrix argument, which here is the FIRST argument. So
+-- `luders` and `twist` take the junk value `0` when their first argument is non-Hermitian; a
+-- non-Hermitian second argument still gives an ordinary, non-junk matrix expression. Their
+-- intended meaning as sequential products is asserted only for effect pairs.
 
 /-- **The twist factor** `a ^ (1/2 + i t)`, defined by the continuous functional calculus
 as `√x · cos(t log x) + i · √x · sin(t log x)` applied to `a`.  On the spectrum of a
