@@ -70,7 +70,8 @@ covering them.
 Mathlib's Jordan support (`Mathlib/Algebra/Jordan/Basic.lean`, 237 lines) is the classes
 `IsJordan` / `IsCommJordan`, five operator-commutation lemmas and two linearised
 identities. There is no idempotent theory, no Peirce decomposition and no spectral theory
-in Mathlib, or — per `lean-formalization-landscape` — in any proof assistant.
+in Mathlib; per `lean-formalization-landscape` we are aware of none in any other proof
+assistant either, though we have not searched them systematically.
 
 * Faraut and Korányi, *Analysis on Symmetric Cones*, Prop. IV.1.1.
 * McCrimmon, *A Taste of Jordan Algebras*, §II.8.

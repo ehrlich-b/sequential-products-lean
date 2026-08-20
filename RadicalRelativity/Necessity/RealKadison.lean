@@ -26,7 +26,8 @@ The classification is **exact**, not one-sided: `orthConj_orderAuto` proves the 
 development — `Projectivization.wigner_rigidity` at ℂ, and
 `Projectivization.exists_isometry_of_transProbPreservingR` at ℝ — and both capstones close over
 Lean core alone.  What was missing at ℝ was not an axiom but a *proof*: the real rigidity
-theorem did not exist here (nor in any library), so the real row carried its Jordan property as
+theorem did not exist here (and we are aware of none in any library, not having searched
+them systematically), so the real row carried its Jordan property as
 a located hypothesis.  That theorem now exists, which is what this file spends.
 
 The structural simplification at ℝ is the absence of the antiunitary alternative: real Wigner

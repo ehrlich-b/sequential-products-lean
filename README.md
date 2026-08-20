@@ -86,9 +86,16 @@ concretely (`real_meets_ludersConclusion`,
 `complex_meets_uniqueTwistConclusion`), so for them the audited shape and the
 proved theorem are the same statement.
 
-The quaternionic and exceptional rows are **not** in this state: `H_n(ℍ)` needs
-quaternionic Wigner rigidity and `H₃(𝕆)` needs the octonions, neither of which
-exists in any proof assistant. `THEOREM-MAP.md` is the governing ledger for
+The quaternionic and exceptional rows are **not** in this state, and neither gap is what an
+earlier version of this file said it was. `H_n(ℍ)`: the carrier exists here
+(`HermitianMat.QuatCarrier`), and the `RCLike` route is closed for an unrelated structural
+reason, so the row runs through the embedding `H_n(ℍ) ↪ H_2n(ℂ)`; on that route the single
+named gap is the **transfer** — that an S1--S7 product on the quaternionic carrier forces
+`Θ_r = id` — and not quaternionic Wigner rigidity. `H₃(𝕆)`: the octonions are **not** missing
+from every prover; they were built in the sibling development
+(`~/repos/research/lean/RadicalRelativity/Octonions.lean`, zero `sorry`), and that claim was
+retracted on 2026-08-08. What is absent is an `H₃(𝕆)` carrier *in this tree* and the
+Albert-branch work above it. `THEOREM-MAP.md` is the governing ledger for
 what is and is not verified; read it before reading any row here as a claim.
 
 ## Axiom audit

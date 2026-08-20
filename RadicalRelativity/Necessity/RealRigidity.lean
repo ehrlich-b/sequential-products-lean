@@ -32,8 +32,9 @@ continuity that the field-general layers already provide.
   block, so it **is** the identity (`linearMap_eq_of_frame_blockG`).
 
 Everything in *this file* takes `ThetaPreservesJordanG` as a hypothesis — but that
-hypothesis is **no longer carried by the row**: real Kadison/Uhlhorn, unavailable in
-any other prover, is proved in this development
+hypothesis is **no longer carried by the row**: real Kadison rigidity, of which we are
+aware of no formalization in any other prover though we have not searched them
+systematically, is proved in this development
 (`Projectivization.exists_isometry_of_transProbPreservingR` in `Wigner/RealWigner.lean`
 → `Necessity.orderAutoR_preservesJordan` in `RealKadison.lean`), and
 `RealRowUnconditional.thetaPreservesJordanR_of_S2` discharges it from S2 alone.  So
