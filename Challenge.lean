@@ -27,16 +27,21 @@ This file states two classification results.
 
 ★ Read the direction carefully. Both theorems are **necessity**: a product satisfying the
 axioms is *supplied*, and the theorem says it has the stated normal form. Neither constructs
-one, and the two missing converses are different statements. For the real row the converse is
-that the Lüders formula itself satisfies S1--S7; for the complex row it is that every real `t`
-yields a product satisfying S1--S7, which is also what would make the parameter map injective.
-Both are proved in the wider development and **neither is registered here**, so nothing below
-asserts that Lüders is admissible or that parameters and products correspond.
+one, and the two missing converses are different statements, with different status.
 
-The complex row is the mathematically substantial one: the twist family is a genuine
-one-parameter deformation of the Lüders product, all of whose members satisfy S1--S7,
-and the theorem says there are no others.  The real row says the analogous deformation
-does not exist over `ℝ`.
+* Real: the converse would say the Lüders formula defines a `SeqProd` and satisfies `S2`. It is
+  **not registered here, and no such construction exists in this development** on the real
+  carrier.
+* Complex: the converse would say each real `t` defines a `SeqProd` and satisfies `S2`. That
+  **is** proved in the wider development (`Hermitian/Sequential.lean`) but is **not registered
+  here**. It is also what, together with the registered uniqueness, would make the parameter
+  map injective.
+
+So nothing below asserts that the Lüders formula is admissible, or that parameters and products
+correspond. The complex row is the mathematically substantial one: the twist family is a genuine
+one-parameter deformation of the Lüders product, and the theorem says nothing outside it
+satisfies the axioms. That every member of the family does satisfy them is the unregistered
+converse above.
 
 ## Reading this statement
 

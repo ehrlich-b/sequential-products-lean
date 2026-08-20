@@ -23,11 +23,14 @@ project:
     outside it satisfies the axioms. The equations are asserted on all effects, including
     singular ones, and the uniqueness of t is part of the registered statement.
 
-    DIRECTION. Both registered classification theorems are necessity plus parameter
-    rigidity: every product satisfying the axioms has the stated normal form. The converse,
-    that each real t does yield a product satisfying S1-S7, is proved in the wider
-    development but is NOT among the declarations registered here. Nothing in this
-    submission should be read as registering a bijection between parameters and products.
+    DIRECTION. Both registered classification theorems are necessity: a product satisfying the
+    axioms is supplied, and the theorem says it has the stated normal form. The two converses
+    differ in status and neither is registered. For the complex row, that each real t defines a
+    SeqProd satisfying S2 is proved in the wider development; together with the registered
+    uniqueness it is what would make the parameter map injective. For the real row, that the
+    Lueders formula defines a SeqProd satisfying S2 is NOT proved anywhere in this development.
+    Nothing here registers a bijection between parameters and products, or the admissibility of
+    the Lueders formula.
 
     The package also registers two classical theorems the development proves in passing.
     Albert's power-associativity theorem: in a commutative Jordan ring carrying an R-module
@@ -57,7 +60,7 @@ project:
     complex residue is not proved, and the coalescence and diagonal-homomorphism lemmas
     are established on the concrete carrier H_N(C) rather than at the manuscript's
     stated generality of a finite-dimensional simple Euclidean Jordan algebra. Nothing
-    outside the two registered theorems is claimed by this submission.
+    outside the four registered theorems is claimed by this submission.
 
 classification:
   arxiv: [math.OA, math.RA, quant-ph]
@@ -181,5 +184,5 @@ related_formalizations:
     note: >-
       Eight modules by Zayn Blore giving complex Wigner rigidity on CP^(N-1), vendored
       verbatim at commit 2287f45; this is an input to the complex row. The
-      corresponding real Wigner/Uhlhorn rigidity is first-party
+      corresponding real, non-bijective Wigner theorem is first-party
       (RadicalRelativity/Wigner/RealWigner.lean) and is not derived from this work.

@@ -59,7 +59,7 @@ bijective, continuous, or induced by anything. -/
 def TransProbPreserving (f : ℙ ℝ E → ℙ ℝ E) : Prop :=
   ∀ p q, transProb (f p) (f q) = transProb p q
 
-/-- **Wigner's theorem over the reals** (the Uhlhorn form).
+/-- **The finite-dimensional real, non-bijective Wigner theorem.**
 
 Every transition-probability preserving self-map of the rays of a finite-dimensional real
 inner product space is induced by a linear isometry of that space.

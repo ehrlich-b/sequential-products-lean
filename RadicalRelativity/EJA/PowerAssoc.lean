@@ -17,7 +17,8 @@ Unconditional; closure is Lean's three core axioms.
 
 This is the gateway to **(E1)**, the Jordan spectral theorem: the spectral resolution of `x`
 lives in the subalgebra `ℝ[x]`, and that argument cannot begin until `ℝ[x]` is associative.
-Per `lean-formalization-landscape` it exists in no other proof assistant, and Mathlib has
+Per `lean-formalization-landscape` we are aware of no formalization of it in any proof assistant,
+though we have not searched them systematically, and Mathlib has
 nothing between `IsCommJordan` and this.
 
 ★★ **This file refutes `WallCertificates/eja-power-assoc.lean`, written three hours earlier

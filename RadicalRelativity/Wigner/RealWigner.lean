@@ -9,7 +9,7 @@ import Mathlib.LinearAlgebra.Projectivization.Basic
 set_option linter.style.longLine false
 
 /-!
-# Real Wigner/Uhlhorn rigidity on `ℝP(E)` — **proved here**
+# The real, non-bijective Wigner theorem on `ℝP(E)` — **proved here**
 
 The complex row's Jordan property is discharged (M3) through the vendored
 `Projectivization.wigner_rigidity` on `ℂP^{N-1}`.  The **real** analogue is not available to

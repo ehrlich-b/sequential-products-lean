@@ -12,7 +12,8 @@ import Mathlib.LinearAlgebra.Projectivization.Basic
 For a finite-dimensional real inner product space `E`, every self-map of the projective
 space `ℙ ℝ E` preserving the transition probability
 `transProb p q = ⟪p.rep, q.rep⟫² / (‖p.rep‖²‖q.rep‖²)` is induced by a linear isometry.
-This is the real case of Wigner's theorem, in the Uhlhorn form: only preservation of the
+This is the real, non-bijective case of Wigner's theorem (not Uhlhorn's form, which instead
+weakens the hypothesis to orthogonality preservation): only preservation of the
 transition probability is assumed, not linearity, and **not bijectivity** — bijectivity is
 a conclusion, since the induced isometry is invertible.
 
@@ -1064,7 +1065,7 @@ theorem TransProbPreserving.eq_projMap [DecidableEq ι] {f : ℙ ℝ E → ℙ �
 
 end PairModuli
 
-/-- **Wigner's theorem over `ℝ`**, in Uhlhorn's form. Every transition-probability preserving
+/-- **Wigner's theorem over `ℝ`**, non-bijective form. Every transition-probability preserving
 self-map of the rays of a finite-dimensional real inner product space is induced by a linear
 isometry equivalence.
 

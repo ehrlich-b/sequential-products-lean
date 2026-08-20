@@ -67,7 +67,7 @@ import RadicalRelativity.Vendor.Wigner.WignerRigidity
 
 -- FIRST-PARTY (not vendored -- moved out of Vendor/ on 2026-08-08, where it had lived
 -- only because it was written against the vendored complex development; it imports
--- nothing vendored).  Real Wigner/Uhlhorn rigidity on RP(E), PROVED here:
+-- nothing vendored).  The real, non-bijective Wigner theorem on RP(E), PROVED here:
 -- `exists_isometry_of_transProbPreservingR` -- every transition-probability preserving
 -- self-map of the rays is induced by a linear isometry, with NO bijectivity hypothesis.
 -- This is what makes the real row unconditional, and it is the tree's one Mathlib

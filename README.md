@@ -193,7 +193,7 @@ and this tree changes faster than the prose describing it:
 | `RadicalRelativity/Necessity/` | 76 | the two flagship rows end to end — comparison-map instances, the ℂ twist extraction and its globalization, the ℝ rigidity, the Kadison discharges, and the capstones `complex_classification_unconditional` / `real_classification` |
 | `RadicalRelativity/RankTwo/` | 8 | rank-two moduli space, complementation/descent to `ℝP²`, separation, and the frame-dependent twist product with the classification correspondence (`n2SequentialProduct`, `n2QubitModuli`, `qubit_classification_up_to_effects`). ★ This cell said "the classification *map* is absent" until 2026-08-12; it was built 2026-08-09. The correspondence is a bijection **up to agreement on effects** — the article's literal "onto the products" is refuted for this encoding (`not_exists_moduli_of_badP`), so read `THEOREM-MAP.md` §1 before reading this as the article's corollary |
 | `RadicalRelativity/PaperA/` | 3 | frozen statement shapes plus the certification that the two proved rows meet them |
-| `RadicalRelativity/Wigner/` | 1 | first-party real Wigner/Uhlhorn rigidity (see Provenance) |
+| `RadicalRelativity/Wigner/` | 1 | first-party finite-dimensional real, non-bijective Wigner theorem (see Provenance) |
 | `RadicalRelativity/Vendor/` | 25 | vendored third-party islands (see Provenance) |
 
 `THEOREM-MAP.md` maps paper statements to declarations across all of these; this

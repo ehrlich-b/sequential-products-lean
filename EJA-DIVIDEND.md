@@ -137,7 +137,8 @@ orders' pre-registered condition for skipping it does not fire.
 
 **Estimated shape of the work, for the record and not as a commitment:** (E1) a Jordan spectral
 theorem is the large piece and has no Mathlib support (`lean-formalization-landscape`: essentially
-none of the Jordan/EJA stack is formalized in any prover); ~~(E2) Peirce decomposition depends on
+we are aware of no formalization of the Jordan/EJA stack in any prover, not having searched
+them systematically); ~~(E2) Peirce decomposition depends on
 (E1)~~; (E3) is a citation. So the axiomatization is one big theorem plus its corollaries, and its
 natural home is upstream of this paper — a Mathlib-grade EJA layer — not inside `RadicalRelativity`.
 

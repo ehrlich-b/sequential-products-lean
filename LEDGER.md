@@ -1,4 +1,10 @@
 # Campaign discharge ledger — Paper A full verification
+> **Note on landscape and novelty claims in this file.** Statements here of the form "exists in
+> no prover" / "available in no proof assistant" are dated campaign-record entries, scoped to the
+> searches described at the time, and are **not authoritative novelty claims**. The submission's
+> own claims are the hedged ones in `formalization.yaml`, which asserts only that we are aware of
+> no formalization and have not searched proof assistants systematically.
+
 
 **Created 2026-08-04 (M0 design pass). Route:** `research/PAPER-A-LEAN-ROUTE.md`
 (blog repo). **Division of labor:** `THEOREM-MAP.md` states what the tree IS
@@ -712,7 +718,8 @@ Necessity-free, carrier-free, unconditional:
 for any `[NonUnitalNonAssocCommRing J] [IsCommJordan J] [Module ℝ J]`. Closure: the three core
 axioms. **No formal reality, no finite dimension, no unit, no inner product.** This is the gateway
 to (E1) — the spectral resolution of `x` lives in `ℝ[x]` and that argument cannot start until
-`ℝ[x]` is associative — and per `lean-formalization-landscape` it exists in no other proof
+`ℝ[x]` is associative — and per `lean-formalization-landscape` we are aware of no formalization
+of it in any other proof
 assistant.
 
 **The proof, because its shape is the transferable part.** Everything reduces to the commutator

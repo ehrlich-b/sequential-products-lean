@@ -13,7 +13,8 @@ set_option linter.style.longLine false
 
 `RealRigidity.sp_eq_luders_of_effect` proves the real row conditional on one located
 hypothesis: the Jordan property of the comparison map in each eigenframe, carried because
-"real Kadison/Uhlhorn is available in no prover".  **It is now available in this one.**
+"real Kadison rigidity is not available to import" — we are aware of no formalization of it in
+any prover, though we have not searched them systematically.  **It is available in this one.**
 
 * `thetaPreservesJordanR_of_S2` — the comparison map of any S1–S7 product with S2 on
   `H_N(ℝ)` is a unital surjective linear order-isomorphism, so real Kadison

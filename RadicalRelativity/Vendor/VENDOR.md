@@ -128,7 +128,7 @@ UNAUDITED.
 UnitaryHaar, MeasureSpace, FubiniStudy, TransitionProbability,
 WignerRigidity (≈ 4.8kL).
 
-**Not in this island:** `RealWigner.lean` (real Wigner/Uhlhorn rigidity) is
+**Not in this island:** `RealWigner.lean` (the finite-dimensional real, non-bijective Wigner theorem) is
 first-party, has no upstream, and imports nothing vendored. It sat in this
 directory from 2026-08-06 to 2026-08-08 only because it was drafted against the
 complex development; it now lives at `RadicalRelativity/Wigner/RealWigner.lean`.

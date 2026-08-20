@@ -15,7 +15,9 @@ Contents:
 The 2026-08-08 tri-agent audit asked what in this tree is worth upstreaming. The answer was
 one clear YES and one maybe:
 
-- **YES — real Wigner/Uhlhorn rigidity.** It exists in no proof assistant (see the collision
+- **YES — the finite-dimensional real, non-bijective Wigner theorem.** We are aware of no
+  formalization of it in any proof assistant, though we have not searched them systematically
+  (see the collision
   check below), it is elementary and self-contained, and Mathlib has nothing in this area at
   all. In-tree it is `RadicalRelativity/Wigner/RealWigner.lean` (first-party, ~1.07 kL).
 - **Maybe, behind it — real Kadison rigidity** (`Necessity/RealKadison.lean`,
@@ -62,7 +64,8 @@ reviewers would rather see `Projectivization.map` inline, the abbreviation can b
 and every use rewritten mechanically.
 
 **"Is bijectivity hidden in the hypothesis?"** No. `TransProbPreserving f` unfolds to
-`∀ p q, transProb (f p) (f q) = transProb p q` and nothing else — this is the Uhlhorn form,
+`∀ p q, transProb (f p) (f q) = transProb p q` and nothing else — this is the non-bijective
+form (NOT Uhlhorn's, which weakens the hypothesis to orthogonality preservation),
 strictly stronger than the version that assumes a bijection. Injectivity is *derived*
 (`transProb = 1` forces equality of rays) and surjectivity comes out with the isometry.
 

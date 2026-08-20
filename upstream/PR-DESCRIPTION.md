@@ -5,7 +5,7 @@ checklist.
 
 ---
 
-Adds Wigner's theorem over `ℝ`, in Uhlhorn's form: for a finite-dimensional real inner
+Adds Wigner's theorem over `ℝ`, in the non-bijective form: for a finite-dimensional real inner
 product space `E`, every self-map of `ℙ ℝ E` that preserves the transition probability is
 induced by a linear isometry equivalence of `E`.
 
@@ -28,7 +28,7 @@ the ones induced by `E ≃ₗᵢ[ℝ] E`.
 ∀ p q, transProb (f p) (f q) = transProb p q
 ```
 
-— no linearity, no continuity, and in particular **no bijectivity**. This is Uhlhorn's
+— no linearity, no continuity, and in particular **no bijectivity**. This is the non-bijective
 strengthening of Wigner's original statement; injectivity is derived inside the proof
 (`transProb = 1` forces equality of rays) and surjectivity falls out with the isometry. A
 version that assumed a bijection would be strictly weaker and, in the applications this

@@ -394,7 +394,8 @@ is the Lüders product on ALL effects** — singular ones included.  The real ty
 admits no twist parameter whatsoever.
 
 Conditional exactly on: S2, and the Jordan property of the comparison map in each
-eigenframe (real Kadison/Uhlhorn is available in no prover, so it is carried as a
+eigenframe (we are aware of no formalization of real Kadison rigidity in any prover, though we
+have not searched them systematically, so it is carried as a
 located hypothesis, precisely as the manuscript cites it). -/
 theorem sp_eq_luders_of_effect (hS2 : P.FirstArgContinuous)
     (hjordAll : ∀ (U : Matrix n n ℝ) (hU : Uᴴ * U = 1) (hU' : U * Uᴴ = 1),

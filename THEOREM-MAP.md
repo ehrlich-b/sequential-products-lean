@@ -1,4 +1,10 @@
 # Theorem-to-file map
+> **Note on landscape and novelty claims in this file.** Statements here of the form "exists in
+> no prover" / "available in no proof assistant" are dated campaign-record entries, scoped to the
+> searches described at the time, and are **not authoritative novelty claims**. The submission's
+> own claims are the hedged ones in `formalization.yaml`, which asserts only that we are aware of
+> no formalization and have not searched proof assistants systematically.
+
 
 Paper statements against Lean declarations, plus — equally important — what is
 **not** machine-checked. Labels are the manuscript's `\label` keys, which the

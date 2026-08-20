@@ -1,4 +1,10 @@
 # Campaign discharge ledger — ARCHIVE: milestone history M1–M7 and the arc-2/arc-3 narrative
+> **Note on landscape and novelty claims in this file.** Statements here of the form "exists in
+> no prover" / "available in no proof assistant" are dated campaign-record entries, scoped to the
+> searches described at the time, and are **not authoritative novelty claims**. The submission's
+> own claims are the hedged ones in `formalization.yaml`, which asserts only that we are aware of
+> no formalization and have not searched proof assistants systematically.
+
 
 **Archived 2026-08-08** (campaign `LEDGER.md` item 4.6). This is the verbatim
 middle of `LEDGER.md` as it stood at that date: the ℂ-residue and ℍ-carrier
