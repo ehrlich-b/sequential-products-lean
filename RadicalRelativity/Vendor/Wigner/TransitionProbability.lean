@@ -3,8 +3,9 @@ Copyright (c) 2026 Zayn Blore. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Zayn Blore
 -/
+module
 
-import RadicalRelativity.Vendor.Wigner.FubiniStudy
+public import RadicalRelativity.Vendor.Wigner.FubiniStudy
 
 /-!
 # Transition probability on complex projective space
@@ -68,7 +69,7 @@ projectivization, transition probability, Fubini-Study, Wigner theorem,
 unitary group, complex projective space
 -/
 
-section
+@[expose] public section
 
 open scoped LinearAlgebra.Projectivization ComplexOrder
 open Matrix

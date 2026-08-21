@@ -9,9 +9,6 @@ public import RadicalRelativity.Vendor.HermitianMat.Order
 public import Mathlib.Analysis.Convex.Contractible
 public import Mathlib.Topology.Instances.Real.Lemmas
 
-set_option relaxedAutoImplicit true
-
-
 /-! # Inner product of Hermitian Matrices
 
 For general matrices there are multiple reasonable notions of "inner product" (Hilbert–Schmidt inner product,
@@ -170,7 +167,7 @@ theorem inner_eq_re_trace : ⟪A, B⟫ = RCLike.re (A.mat * B.mat).trace := by
 
 theorem inner_eq_trace_rc : ⟪A, B⟫ = (A.mat * B.mat).trace := by
   rw [inner_eq_re_trace, ← RCLike.conj_eq_iff_re]
-  convert (Matrix.trace_conjTranspose (A.mat * B.mat)).symm using 1
+  convert! (Matrix.trace_conjTranspose (A.mat * B.mat)).symm using 1
   rw [Matrix.conjTranspose_mul, A.H, B.H, Matrix.trace_mul_comm]
 
 theorem inner_self_nonneg: 0 ≤ ⟪A, A⟫ := by
@@ -343,7 +340,7 @@ noncomputable instance instNormedGroup : NormedAddCommGroup (HermitianMat d 𝕜
 
 theorem norm_eq_frobenius (A : HermitianMat d 𝕜) :
     ‖A‖ = (∑ i : d, ∑ j : d, ‖A i j‖ ^ 2) ^ (1 / 2 : ℝ) := by
-  convert ← Matrix.frobenius_norm_def A.mat
+  convert! ← Matrix.frobenius_norm_def A.mat
   exact Real.rpow_ofNat _ 2
 
 theorem norm_eq_sqrt_inner_self (A : HermitianMat d 𝕜) : ‖A‖ = √(⟪A, A⟫) := by
@@ -384,7 +381,7 @@ open ComplexOrder in
 lemma _root_.RCLike.instOrderClosed : OrderClosedTopology 𝕜 where
   isClosed_le' := by
     conv => enter [1, 1, p]; rw [RCLike.le_iff_re_im]
-    simp_rw [Set.setOf_and]
+    simp_rw [Set.ofPred_and]
     refine IsClosed.inter (isClosed_le ?_ ?_) (isClosed_eq ?_ ?_) <;> continuity
 
 scoped[ComplexOrder] attribute [instance] RCLike.instOrderClosed
@@ -406,7 +403,7 @@ theorem Matrix.IsHermitian_isClosed : IsClosed { A : Matrix n n 𝕜 | A.IsHermi
   conv =>
     enter [1, 1, A]
     rw [Matrix.IsHermitian, ← sub_eq_zero]
-  convert isClosed_singleton.preimage (f := fun (x : Matrix n n 𝕜) ↦ (x.conjTranspose - x))
+  convert! isClosed_singleton.preimage (f := fun (x : Matrix n n 𝕜) ↦ (x.conjTranspose - x))
     (by fun_prop) using 1
 
 open ComplexOrder
@@ -416,7 +413,7 @@ theorem Matrix.PosSemiDef_isClosed : IsClosed { A : Matrix n n 𝕜 | A.PosSemid
     ext A; simp [Matrix.posSemidef_iff_dotProduct_mulVec]]
   refine IsHermitian_isClosed.inter ?_
   suffices IsClosed (⋂ x : n → 𝕜, { A : Matrix n n 𝕜 | 0 ≤ star x ⬝ᵥ A.mulVec x }) by
-    rwa [← Set.setOf_forall] at this
+    rwa [← Set.ofPred_forall] at this
   exact isClosed_iInter fun _ ↦ (isClosed_Ici (a := 0)).preimage (by fun_prop)
 
 theorem isClosed_nonneg : IsClosed { A : HermitianMat n 𝕜 | 0 ≤ A } := by
@@ -431,8 +428,9 @@ instance : OrderClosedTopology (HermitianMat d 𝕜) where
     convert IsClosed.preimage (X := (HermitianMat d 𝕜 × HermitianMat d 𝕜))
       (f := fun xy ↦ (xy.2 - xy.1)) (by fun_prop) isClosed_nonneg
     ext ⟨x, y⟩
-    simp only [Set.mem_setOf_eq, Set.mem_preimage, ← sub_nonneg (b := x)]
+    simp only [Set.mem_ofPred_eq, Set.mem_preimage, ← sub_nonneg (b := x)]
 
+set_option backward.isDefEq.respectTransparency false in
 /-- Equivalently: the matrices `X` such that `X - A` is PSD and `B - X` is PSD, form a compact set. -/
 instance : CompactIccSpace (HermitianMat d 𝕜) where
   isCompact_Icc := by

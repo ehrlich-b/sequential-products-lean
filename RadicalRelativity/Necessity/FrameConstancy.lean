@@ -141,7 +141,6 @@ theorem exp_eq_of_twistSeq_diagFamily_eq {t₁ t₂ : ℝ} {i j : Fin N} (hij : 
     Complex.exp (((t₁ * (r i - r j) : ℝ) : ℂ) * Complex.I)
       = Complex.exp (((t₂ * (r i - r j) : ℝ) : ℂ) * Complex.I) := by
   have hentry := congrArg (fun M : HermitianMat (Fin N) ℂ => M.mat i j) h
-  simp only at hentry
   rw [twistSeq_diagFamily_entry, twistSeq_diagFamily_entry, pairProj_entry hij,
     star_phase_factor, star_phase_factor] at hentry
   have hs : ∀ k : Fin N, ((Real.sqrt (Real.exp (r k)) : ℝ) : ℂ) ≠ 0 := by
@@ -806,6 +805,12 @@ noncomputable def n2Coef (b : HermitianMat (Fin 2) ℂ)
     (U : Matrix.unitaryGroup (Fin 2) ℂ) : ℂ :=
   (adU ((U : Matrix (Fin 2) (Fin 2) ℂ)ᴴ) b).mat 0 1
 
+-- The concrete `(0,1)` entry will not reduce without this: `HermitianMat.mat_smul` and
+-- `HermitianMat.smul_apply` are stated for the section's instances, while the term here carries
+-- `AddGroupWithOne.toAddGroup Complex Complex.addGroupWithOne` (confirmed under `pp.explicit`),
+-- so neither fires. Scoped to this one declaration; see `Necessity.StabilizerInstance` for the
+-- full account of the v4.33 `respectTransparency` flip.
+set_option backward.isDefEq.respectTransparency false in
 /-- **The two test effects share no eigenbasis** — so the banked boundedness route's combined
 weight never vanishes.
 
@@ -829,7 +834,8 @@ theorem frameProj_pairProj_not_commute :
   have h01 := congrFun (congrFun h 0) 1
   have h10 := congrFun (congrFun h 1) 0
   simp [frameProj_mat_eq_single, pairProj, HermitianMat.rankOne, Matrix.mul_apply,
-    Matrix.single, Pi.single_apply, Matrix.vecMulVec_apply] at h01 h10
+    Matrix.single, Pi.single_apply, Matrix.vecMulVec_apply,
+    HermitianMat.mat_smul, Matrix.smul_apply, Pi.smul_apply, smul_eq_mul] at h01 h10
 
 /-- The readout: the `(0,1)` entry of `P.sp (base point in the frame of `U`) b`, pulled back
 to the standard frame. -/
@@ -1065,7 +1071,6 @@ theorem n2Weight_pos (U : Matrix.unitaryGroup (Fin 2) ℂ) :
       = (pairProj (0 : Fin 2) 1).mat * (frameProj (0 : Fin 2)).mat := by
     have h1 := congrArg (fun M => (U : Matrix (Fin 2) (Fin 2) ℂ) * M
       * (U : Matrix (Fin 2) (Fin 2) ℂ)ᴴ) hcomm
-    simp only at h1
     have hUUL : (U : Matrix (Fin 2) (Fin 2) ℂ) * (U : Matrix (Fin 2) (Fin 2) ℂ)ᴴ = 1 := hUU
     calc (frameProj (0 : Fin 2)).mat * (pairProj (0 : Fin 2) 1).mat
         = (U : Matrix (Fin 2) (Fin 2) ℂ) * ((U : Matrix (Fin 2) (Fin 2) ℂ)ᴴ
@@ -1453,6 +1458,8 @@ theorem continuous_of_continuous_phase {X : Type*} [TopologicalSpace X] {f : X �
     exact hcomp
   refine ((hargcont.neg).div_const δ).congr ?_
   intro x
+  -- v4.33 leaves the negation as `(-fun x => …) x`; beta-reduce it before rewriting.
+  simp only [Pi.neg_apply]
   rw [harg x]
   field_simp
 

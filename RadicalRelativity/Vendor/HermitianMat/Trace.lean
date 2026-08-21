@@ -7,9 +7,6 @@ module
 
 public import RadicalRelativity.Vendor.HermitianMat.Reindex
 
-set_option relaxedAutoImplicit true
-
-
 /-! # Trace of Hermitian Matrices
 
 While the trace of a Hermitian matrix is, in informal math, typically just "the same as" a trace of
@@ -34,6 +31,7 @@ variable {R n m α : Type*} [Star R] [TrivialStar R] [Fintype n] [Fintype m]
 section star
 variable [AddGroup α] [StarAddMonoid α] [CommSemiring R] [Semiring α] [Algebra R α] [IsMaximalSelfAdjoint R α]
 
+set_option linter.overlappingInstances false in
 /-- The trace of the matrix. This requires a `IsMaximalSelfAdjoint R α` instance, and then maps from
   `HermitianMat n α` to `R`. This means that the trace of (say) a `HermitianMat n ℤ` gives values in ℤ,
   but that the trace of a `HermitianMat n ℂ` gives values in ℝ. The fact that traces are "automatically"
@@ -41,12 +39,14 @@ variable [AddGroup α] [StarAddMonoid α] [CommSemiring R] [Semiring α] [Algebr
 def trace (A : HermitianMat n α) : R :=
   IsMaximalSelfAdjoint.selfadjMap (A.mat.trace)
 
+set_option linter.overlappingInstances false in
 /-- `HermitianMat.trace` reduces to `Matrix.trace` in the algebra.-/
 theorem trace_eq_trace (A : HermitianMat n α) : algebraMap R α A.trace = Matrix.trace A.mat := by
   rw [trace, Matrix.trace, map_sum, map_sum]
   congr! 1
   exact IsMaximalSelfAdjoint.selfadj_algebra (Matrix.IsHermitian.apply A.H _ _)
 
+set_option linter.overlappingInstances false in
 variable [StarModule R α] in
 @[simp]
 theorem trace_smul (A : HermitianMat n α) (r : R) : (r • A).trace = r * A.trace := by
@@ -138,7 +138,7 @@ theorem trace_diagonal {T : Type*} [Fintype T] [DecidableEq T] (f : T → ℝ) :
 
 theorem sum_eigenvalues_eq_trace [DecidableEq n] (A : HermitianMat n 𝕜) :
     ∑ i, A.H.eigenvalues i = A.trace := by
-  convert congrArg RCLike.re A.H.sum_eigenvalues_eq_trace
+  convert! congrArg RCLike.re A.H.sum_eigenvalues_eq_trace
   rw [RCLike.ofReal_re]
 
 --Proving that traces are 0 or 1 is common enough that we have a convenience lemma here for turning
@@ -151,6 +151,7 @@ theorem trace_eq_one_iff (A : HermitianMat n 𝕜) : A.trace = 1 ↔ A.mat.trace
   rw [← trace_eq_trace_rc]
   exact ⟨mod_cast id, mod_cast id⟩
 
+set_option backward.isDefEq.respectTransparency false in
 @[simp]
 theorem trace_reindex (A : HermitianMat n ℂ) (e : n ≃ m) :
     (A.reindex e).trace = A.trace := by

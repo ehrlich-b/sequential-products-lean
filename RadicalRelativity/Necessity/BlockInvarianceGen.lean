@@ -186,11 +186,12 @@ theorem exp_apply_hasDerivAtG (A : HermitianMat n 𝕜 →L[ℝ] HermitianMat n 
   have hc := hasDerivAt_exp_smul_const (𝕂 := ℝ) A 0
   have hu : HasDerivAt (fun _ : ℝ => x) 0 (0 : ℝ) := hasDerivAt_const 0 x
   have hcomb := hc.clm_apply hu
-  have h0 : exp ((0 : ℝ) • A) = (1 : HermitianMat n 𝕜 →L[ℝ] HermitianMat n 𝕜) := by
-    rw [show (0 : ℝ) • A = 0 from zero_smul ℝ A]
-    exact exp_zero
-  rw [h0] at hcomb
-  simpa using hcomb
+  -- At v4.33 neither `rw` nor `simp only` matches the pre-formed `exp (0 • A)` slots in
+  -- `hcomb`, so discharge the derivative value as an explicit equation instead.
+  have hval : (exp ((0 : ℝ) • A) * A) x + (exp ((0 : ℝ) • A)) 0 = A x := by
+    rw [zero_smul, exp_zero]
+    simp
+  exact hval ▸ hcomb
 
 /-- **The differential preserves every corner** (u3): differentiate the invariance
 of the corner under the character flow. With `dChi_kills_cornerG` (u4), the
@@ -213,9 +214,10 @@ theorem dChi_preserves_cornerG (hS2 : P.FirstArgContinuous)
   have hdL : HasDerivAt
       (fun t : ℝ => cornerConjCLMG 𝕜 i j (exp (t • dChiG P hS2 hjord r) x))
       (cornerConjCLMG 𝕜 i j (dChiG P hS2 hjord r x)) 0 := by
-    have hcC := hasDerivAt_const (0 : ℝ) (cornerConjCLMG 𝕜 i j)
-    have hcomb := hcC.clm_apply hd
-    simpa using hcomb
+    -- Compose with the constant map directly. Going via `hasDerivAt_const .clm_apply` leaves a
+    -- `0 (…)` summand whose zero sits at a different instance path, which at v4.33 neither
+    -- `rw` nor `simp` can reduce.
+    exact (cornerConjCLMG 𝕜 i j).hasFDerivAt.comp_hasDerivAt 0 hd
   rw [show (fun t : ℝ => cornerConjCLMG 𝕜 i j (exp (t • dChiG P hS2 hjord r) x))
       = fun t : ℝ => exp (t • dChiG P hS2 hjord r) x from funext hcurve] at hdL
   exact hdL.unique hd

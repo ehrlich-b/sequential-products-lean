@@ -175,11 +175,11 @@ theorem chiEntryGen_skew (hS2 : P.FirstArgContinuous)
   have hre : HasDerivAt (fun t : ℝ => (exp (t • A) z).re) (A z).re 0 := by
     have h := (Complex.reCLM.hasFDerivAt (x := exp ((0 : ℝ) • A) z)).comp_hasDerivAt (0 : ℝ)
       (exp_apply_hasDerivAt_gen A z)
-    simpa using h
+    simpa [Function.comp_def] using! h
   have him : HasDerivAt (fun t : ℝ => (exp (t • A) z).im) (A z).im 0 := by
     have h := (Complex.imCLM.hasFDerivAt (x := exp ((0 : ℝ) • A) z)).comp_hasDerivAt (0 : ℝ)
       (exp_apply_hasDerivAt_gen A z)
-    simpa using h
+    simpa [Function.comp_def] using! h
   have hF : HasDerivAt (fun t : ℝ => Complex.normSq (exp (t • A) z))
       (2 * (z.re * (A z).re + z.im * (A z).im)) 0 := by
     have hz0 : exp ((0 : ℝ) • A) z = z := by
@@ -193,8 +193,9 @@ theorem chiEntryGen_skew (hS2 : P.FirstArgContinuous)
       funext t
       rw [Complex.normSq_apply]
     rw [heq]
-    convert h using 1
-    ring
+    -- `convert` splits into instance-equality side goals here (the `Real.instAddCommGroup` vs
+    -- `Real.normedAddCommGroup.toAddCommGroup` diamond); adjust the derivative value directly.
+    exact h.congr_deriv (by ring)
   have hC : HasDerivAt (fun _ : ℝ => Complex.normSq z) 0 0 := hasDerivAt_const 0 _
   have hEq : (fun t : ℝ => Complex.normSq (exp (t • A) z))
       = fun _ : ℝ => Complex.normSq z := funext hconst

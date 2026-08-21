@@ -7,6 +7,7 @@ import RadicalRelativity.OrderUnitSpace
 import RadicalRelativity.Vendor.HermitianMat.Order
 import RadicalRelativity.Vendor.HermitianMat.Inner
 import RadicalRelativity.Vendor.HermitianMat.CFC
+import RadicalRelativity.Hermitian.RCLikeGeneral
 
 set_option linter.style.longLine false
 
@@ -76,9 +77,9 @@ theorem le_zero_of_forall_le_smul_one {a : HermitianMat n 𝕜}
   have hev : ∀ i, a.H.eigenvalues i ≤ 0 := by
     intro i
     refine le_of_forall_pos_le_add fun ε hε => ?_
-    have hle := le_smul_one_imp_eigenvalues_le (A := a) ε (h ε hε) i
+    have hle := le_smul_one_imp_eigenvalues_le' (A := a) ε (h ε hε) i
     linarith
-  have h0 := eigenvalues_le_imp_le_smul_one (A := a) 0 hev
+  have h0 := eigenvalues_le_imp_le_smul_one' (A := a) 0 hev
   rwa [show (0 : ℝ) • (1 : HermitianMat n 𝕜) = 0 from zero_smul ℝ 1] at h0
 
 /-! ### The `OrderUnitSpace` instance
@@ -114,7 +115,7 @@ theorem eigenvalues_mem_Icc_of_effect {a : HermitianMat n 𝕜}
     (h0 : 0 ≤ a) (h1 : a ≤ 1) (i : n) :
     a.H.eigenvalues i ∈ Set.Icc (0 : ℝ) 1 :=
   ⟨eigenvalues_nonneg h0 i,
-    le_smul_one_imp_eigenvalues_le (A := a) 1
+    le_smul_one_imp_eigenvalues_le' (A := a) 1
       (by rw [one_smul]; exact h1) i⟩
 
 /-! ### The order-unit norm (unbundled) -/
@@ -232,11 +233,11 @@ theorem abs_eigenvalues_le_ouNorm (a : HermitianMat n 𝕜) (i : n) :
       simpa using h
     obtain ⟨e, he⟩ := cfc_eigenvalues (fun x => -x) a
     rw [hcfc] at he
-    have h2 := le_smul_one_imp_eigenvalues_le (-a) (ouNorm a) hneg (e.symm i)
+    have h2 := le_smul_one_imp_eigenvalues_le' (-a) (ouNorm a) hneg (e.symm i)
     rw [he] at h2
     simp only [Function.comp_apply, Equiv.apply_symm_apply] at h2
     linarith
-  · exact le_smul_one_imp_eigenvalues_le a (ouNorm a) (le_ouNorm_smul_one a) i
+  · exact le_smul_one_imp_eigenvalues_le' a (ouNorm a) (le_ouNorm_smul_one a) i
 
 /-- **The reverse norm comparison**: the carried (Frobenius) norm is at most
 `√(card n)` times the order-unit norm. -/

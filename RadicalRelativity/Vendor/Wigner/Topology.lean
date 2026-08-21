@@ -3,15 +3,16 @@ Copyright (c) 2026 Zayn Blore. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Zayn Blore
 -/
+module
 
-import Mathlib.LinearAlgebra.Projectivization.Basic
-import Mathlib.Topology.Algebra.ConstMulAction
-import Mathlib.Topology.Maps.OpenQuotient
-import Mathlib.Analysis.Normed.Module.FiniteDimension
-import Mathlib.Analysis.RCLike.Basic
-import Mathlib.Analysis.RCLike.Lemmas
-import Mathlib.LinearAlgebra.LinearIndependent.Lemmas
-import Mathlib.Topology.Separation.Hausdorff
+public import Mathlib.LinearAlgebra.Projectivization.Basic
+public import Mathlib.Topology.Algebra.ConstMulAction
+public import Mathlib.Topology.Maps.OpenQuotient
+public import Mathlib.Analysis.Normed.Module.FiniteDimension
+public import Mathlib.Analysis.RCLike.Basic
+public import Mathlib.Analysis.RCLike.Lemmas
+public import Mathlib.LinearAlgebra.LinearIndependent.Lemmas
+public import Mathlib.Topology.Separation.Hausdorff
 
 /-!
 # Topology on projectivization
@@ -57,7 +58,7 @@ idiom.
 projectivization, projective space, quotient topology
 -/
 
-section
+@[expose] public section
 
 open Set Function Topology
 open scoped LinearAlgebra.Projectivization
@@ -366,13 +367,13 @@ lemma isClosed_collinearity_relation :
                   mk' K p.1 = mk' K p.2 }
             = f ⁻¹' { g : Fin 2 → V | LinearIndependent K g }ᶜ := by
     ext ⟨⟨v, hv⟩, ⟨w, hw⟩⟩
-    simp only [Set.mem_setOf_eq, Set.mem_preimage, Set.mem_compl_iff, f]
+    simp only [Set.mem_ofPred_eq, Set.mem_preimage, Set.mem_compl_iff, f]
     rw [mk'_eq_mk, mk'_eq_mk, mk_eq_mk_iff' K v w hv hw,
         LinearIndependent.pair_iff' hw]
-    push_neg
+    push Not
     rfl
   rw [h_eq]
-  exact isOpen_setOf_linearIndependent.isClosed_compl.preimage hf
+  exact isOpen_setOfPred_linearIndependent.isClosed_compl.preimage hf
 
 /-- `ℙ K V` is Hausdorff under finite-dimensional normed hypotheses on
 `V`. Routes through the open-quotient-map criterion
@@ -389,7 +390,7 @@ sphere is a continuous surjection from sphere to `ℙ K V` (every
 projective point has a unit-norm representative obtained by
 normalising `p.rep`). -/
 instance instCompactSpace : CompactSpace (ℙ K V) := by
-  haveI : ProperSpace V := FiniteDimensional.proper_rclike K V
+  have : ProperSpace V := FiniteDimensional.proper_rclike K V
   -- Define the corestricted projection sphere → ℙ K V.
   let g : Metric.sphere (0 : V) 1 → ℙ K V :=
     fun v => mk K (v : V) (by

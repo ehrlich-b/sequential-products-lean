@@ -80,6 +80,10 @@ import RadicalRelativity.Wigner.RealWigner
 -- predicate definitionally the Loewner unit interval), the full Archimedean
 -- property over ℂ, the order-unit norm as an unbundled def, and
 -- extreme-points-of-the-effect-interval = projections (M3 bridge 1).
+-- `RCLike 𝕜`-general restatements of five vendored `ℂ`-only HermitianMat lemmas,
+-- kept first-party so the physlib island stays byte-verbatim across upstream bumps.
+import RadicalRelativity.Hermitian.RCLikeGeneral
+import RadicalRelativity.Hermitian.OperatorInstances
 import RadicalRelativity.Hermitian.OrderUnit
 import RadicalRelativity.Hermitian.ExtremeEffects
 

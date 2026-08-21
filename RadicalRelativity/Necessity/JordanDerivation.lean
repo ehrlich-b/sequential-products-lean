@@ -119,7 +119,7 @@ theorem dChi_jordan_derivation (hS2 : P.FirstArgContinuous)
     intro m
     have h := (exp_entry_hasDerivAt (dChi P hS2 hjord r) x a m).mul
       (exp_entry_hasDerivAt (dChi P hS2 hjord r) y m b)
-    simpa only [h0, ContinuousLinearMap.one_apply] using h
+    simpa only [h0, ContinuousLinearMap.one_apply] using! h
   have hprod' : ∀ m : n, HasDerivAt
       (fun t : ℝ => (exp (t • dChi P hS2 hjord r) y).mat a m
         * (exp (t • dChi P hS2 hjord r) x).mat m b)
@@ -128,7 +128,7 @@ theorem dChi_jordan_derivation (hS2 : P.FirstArgContinuous)
     intro m
     have h := (exp_entry_hasDerivAt (dChi P hS2 hjord r) y a m).mul
       (exp_entry_hasDerivAt (dChi P hS2 hjord r) x m b)
-    simpa only [h0, ContinuousLinearMap.one_apply] using h
+    simpa only [h0, ContinuousLinearMap.one_apply] using! h
   have hsum : HasDerivAt
       (fun t : ℝ =>
         (∑ m, (exp (t • dChi P hS2 hjord r) x).mat a m

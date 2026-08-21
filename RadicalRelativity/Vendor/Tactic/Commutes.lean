@@ -31,9 +31,6 @@ public import Mathlib.Data.Rat.Cast.Defs
 public import Mathlib.GroupTheory.GroupAction.Ring
 public import Mathlib.LinearAlgebra.Matrix.ZPow
 
-set_option relaxedAutoImplicit true
-
-
 /-!
 
 # Tactic for `Commute`

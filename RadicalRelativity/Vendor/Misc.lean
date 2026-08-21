@@ -8,9 +8,6 @@ module
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.Order.CompletePartialOrder
 
-set_option relaxedAutoImplicit true
-
-
 @[expose] public section
 
 --Can this be rewritten more generally? For `finiteness` to work, I don't know how.

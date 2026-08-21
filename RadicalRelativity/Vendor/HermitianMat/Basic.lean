@@ -10,9 +10,6 @@ public import RadicalRelativity.Vendor.IsMaximalSelfAdjoint
 public import RadicalRelativity.Vendor.ContinuousLinearMap
 public import RadicalRelativity.Vendor.Tactic.Commutes
 
-set_option relaxedAutoImplicit true
-
-
 
 @[expose] public section
 
@@ -61,7 +58,7 @@ theorem H (A : HermitianMat n α) : A.mat.IsHermitian :=
 
 instance instFun : FunLike (HermitianMat n α) n (n → α) where
   coe M := (M : Matrix n n α)
-  coe_injective' _ _ h := HermitianMat.ext h
+  coe_injective _ _ h := HermitianMat.ext h
 
 @[simp]
 theorem mat_apply {A : HermitianMat n α} {i j : n} : A.mat i j = A i j := by
@@ -142,7 +139,7 @@ lemma continuousOn_iff_coe {X : Type*} [TopologicalSpace X] {s : Set X}
   constructor
   · intro; fun_prop
   · intro h
-    rw [continuousOn_iff_continuous_restrict] at *
+    rw [continuousOn_iff_continuous_domRestrict] at *
     apply Continuous.subtype_mk h
 
 variable [IsTopologicalAddGroup α]
@@ -160,6 +157,7 @@ instance : IsTopologicalAddGroup (HermitianMat n α) where
 
 variable  [TopologicalSpace R] [SMul R α] [ContinuousSMul R α] [StarModule R α]
 
+set_option backward.isDefEq.respectTransparency false in
 instance : ContinuousSMul R (HermitianMat n α) where
   continuous_smul := by
     rw [continuous_induced_rng]
@@ -194,7 +192,7 @@ instance : AddCommGroup (HermitianMat n α) :=
 @[simp, norm_cast]
 theorem mat_finset_sum (f : ι → HermitianMat n α) (s : Finset ι) :
     (∑ i ∈ s, f i).mat = ∑ i ∈ s, (f i).mat := by
-  apply AddSubgroup.val_finset_sum
+  apply AddSubgroup.val_finsetSum
 
 section module
 
@@ -356,6 +354,7 @@ section conj
 variable [CommRing α] [StarRing α] [Fintype n]
 variable (A : HermitianMat n α)
 
+set_option backward.isDefEq.respectTransparency false in
 /-- The Hermitian matrix given by conjugating by a (possibly rectangular) Matrix. If we required `B` to be
 square, this would apply to any `Semigroup`+`StarMul` (as proved by `IsSelfAdjoint.conjugate`). But this lets
 us conjugate to other sizes too, as is done in e.g. Kraus operators. That is, it's a _heterogeneous_ conjguation.
@@ -388,10 +387,12 @@ theorem conj_conj {m l} [Fintype m] (B : Matrix m n α) (C : Matrix l m α) :
 
 variable (B : HermitianMat n α)
 
+set_option backward.isDefEq.respectTransparency false in
 @[simp]
 theorem conj_zero [DecidableEq n] : A.conj (0 : Matrix m n α) = 0 := by
   simp [conj_apply]
 
+set_option backward.isDefEq.respectTransparency false in
 @[simp]
 theorem conj_one [DecidableEq n] : A.conj 1 = A := by
   simp [conj_apply]
@@ -416,6 +417,7 @@ def conjLinear {m} (B : Matrix m n α) : HermitianMat n α →ₗ[R] HermitianMa
 theorem conjLinear_apply (B : Matrix m n α) : conjLinear R B A = conj B A  := by
   rfl
 
+set_option backward.isDefEq.respectTransparency false in
 @[fun_prop]
 lemma continuous_conj (ρ : HermitianMat n 𝕜) : Continuous (ρ.conj (m := m) ·) := by
   simp only [HermitianMat.conj, AddMonoidHom.coe_mk, ZeroHom.coe_mk]
@@ -438,7 +440,7 @@ noncomputable def lin : EuclideanSpace 𝕜 n →L[𝕜] EuclideanSpace 𝕜 n w
 
 @[simp]
 theorem isSymmetric : A.lin.IsSymmetric :=
-  Matrix.isHermitian_iff_isSymmetric.mp A.H
+  Matrix.isSymmetric_toEuclideanLin_iff.symm.mp A.H
 
 @[simp]
 theorem lin_zero : (0 : HermitianMat n 𝕜).lin = 0 := by
@@ -502,7 +504,7 @@ theorem ker_orthogonal_eq_support : A.kerᗮ = A.support := by
 @[simp]
 theorem support_orthogonal_eq_range : A.supportᗮ = A.ker := by
   rw [ker, support]
-  convert ContinuousLinearMap.orthogonal_range A.lin
+  convert! ContinuousLinearMap.orthogonal_range A.lin
   simp
 
 end eigenspace
@@ -542,6 +544,7 @@ lemma diagonal_sub : diagonal 𝕜 (f - g) = diagonal 𝕜 f - diagonal 𝕜 g :
 theorem diagonal_mul (c : ℝ) : diagonal 𝕜 (fun x ↦ c * f x) = c • diagonal 𝕜 f := by
   ext1; simp [← Matrix.diagonal_smul]
 
+set_option backward.isDefEq.respectTransparency false in
 theorem diagonal_conj_diagonal [Fintype n] :
     (diagonal 𝕜 f).conj (diagonal 𝕜 g) = diagonal 𝕜 (fun i ↦ f i * (g i)^2) := by
   ext1

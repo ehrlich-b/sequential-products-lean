@@ -7,6 +7,7 @@ import RadicalRelativity.Necessity.ThetaFix
 import RadicalRelativity.Hermitian.SqrtMul
 import RadicalRelativity.Hermitian.Sequential
 import RadicalRelativity.Vendor.HermitianMat.Jordan
+import RadicalRelativity.Hermitian.RCLikeGeneral
 import Mathlib.Tactic.Module
 
 set_option linter.style.longLine false
@@ -76,10 +77,10 @@ theorem sqrt_isEffect {a : HermitianMat n 𝕜} (ha : IsEffect a) :
       rw [he]
       simp only [Function.comp_apply]
       have h1 : a.H.eigenvalues (e i) ≤ 1 :=
-        HermitianMat.le_smul_one_imp_eigenvalues_le a 1 (by simpa using ha.2) (e i)
+        HermitianMat.le_smul_one_imp_eigenvalues_le' a 1 (by simpa using ha.2) (e i)
       calc Real.sqrt (a.H.eigenvalues (e i)) ≤ Real.sqrt 1 := Real.sqrt_le_sqrt h1
         _ = 1 := Real.sqrt_one
-    have := HermitianMat.eigenvalues_le_imp_le_smul_one (a.cfc Real.sqrt) 1 hev
+    have := HermitianMat.eigenvalues_le_imp_le_smul_one' (a.cfc Real.sqrt) 1 hev
     simpa using this
 
 /-! ## Commuting effects are compatible; the S5 splitting -/

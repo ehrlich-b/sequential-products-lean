@@ -18,7 +18,8 @@ whose proof routes through `ContinuousOn.cfc` at `CStarMatrix d d ℂ` and there
 cannot generalize: Mathlib's `CStarAlgebra` class is *complex by definition*
 (`extends … NormedAlgebra ℂ A`), so real matrices are simply not an instance.
 
-Together with the (already `𝕜`-general) bound `norm_cfc_sub_le_of_sup_le` and
+Together with the `𝕜`-general bound `norm_cfc_sub_le_of_sup_le'` (in
+`RadicalRelativity.Hermitian.RCLikeGeneral`; upstream states it only for `ℂ`) and
 Stone–Weierstrass on a compact spectrum window, these give continuity of
 `A ↦ A.cfc f` for continuous `f` over any `RCLike 𝕜` — which is what the real
 branch needs for its singular-effect extension.

@@ -81,7 +81,6 @@ theorem strengthR_set_bddAbove {ψ : n → ℝ} (hψ : ψ ⬝ᵥ ψ = 1)
     hψ] at h
   exact h
 
-omit [DecidableEq n] in
 /-- **Order-isomorphism invariance of the strength.**  Any ℝ-linear order isomorphism
 transports the defining set exactly, so the strength is order data — and therefore so is
 anything recovered from it. -/

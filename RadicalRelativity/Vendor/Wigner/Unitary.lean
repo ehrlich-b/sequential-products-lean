@@ -3,10 +3,11 @@ Copyright (c) 2026 Zayn Blore. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Zayn Blore
 -/
+module
 
-import RadicalRelativity.Vendor.Wigner.Topology
-import Mathlib.LinearAlgebra.UnitaryGroup
-import Mathlib.Analysis.InnerProductSpace.PiL2
+public import RadicalRelativity.Vendor.Wigner.Topology
+public import Mathlib.LinearAlgebra.UnitaryGroup
+public import Mathlib.Analysis.InnerProductSpace.PiL2
 
 /-!
 # Matrix unitary group action on projective Euclidean space
@@ -36,7 +37,7 @@ unitary group on the projective space of Euclidean space.
 
 ## What this unlocks
 
-These instances are the substrate for the SU(N)-invariant Borel
+These instances are the substrate for the U(N)-invariant Borel
 probability measure on `ℂℙ^{N-1}` (`fubiniStudyMeasure`) and the associated
 uniqueness theorem (`fubiniStudyMeasure_unique`). Together with the
 finite-measure normalisation `invariant_measure_uniqueness_cpn`
@@ -61,7 +62,7 @@ The file is intended to land in
 projectivization, unitary group, MulAction, complex projective space
 -/
 
-section
+@[expose] public section
 
 open Matrix
 open scoped LinearAlgebra.Projectivization
@@ -76,7 +77,7 @@ the conjugate transpose. Euclidean (`PiLp 2`) companion to Mathlib's
 `Matrix.UnitaryGroup.toLinearEquiv` (which is for `Fin N → ℂ`). -/
 noncomputable def toEuclideanLinearEquiv (A : Matrix.unitaryGroup (Fin N) ℂ) :
     EuclideanSpace ℂ (Fin N) ≃ₗ[ℂ] EuclideanSpace ℂ (Fin N) :=
-  LinearEquiv.ofLinear
+  LinearEquiv.ofLinearMap
     (Matrix.toEuclideanLin (A.val : Matrix (Fin N) (Fin N) ℂ))
     (Matrix.toEuclideanLin (star A.val : Matrix (Fin N) (Fin N) ℂ))
     (by

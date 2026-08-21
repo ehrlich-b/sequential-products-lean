@@ -4,6 +4,7 @@ Released under Apache 2.0 license.
 Authors: Bryan Ehrlich
 -/
 import RadicalRelativity.Hermitian.OrderUnit
+import RadicalRelativity.Hermitian.OperatorInstances
 import RadicalRelativity.Vendor.HermitianMat.Jordan
 import RadicalRelativity.Hermitian.CfcSqrtContinuous
 
@@ -366,15 +367,9 @@ def quatConjHLm : HermitianMat (n ⊕ n) ℂ →ₗ[ℝ] HermitianMat (n ⊕ n) 
 /-- **`Φ` is norm-bounded on `H_{2n}(ℂ)`**: an ℝ-linear map on a finite-dimensional
 normed space is automatically continuous, hence bounded. -/
 theorem quatConjH_bound :
-    ∃ K : ℝ, 0 < K ∧ ∀ A : HermitianMat (n ⊕ n) ℂ, ‖quatConjH A‖ ≤ K * ‖A‖ := by
-  set L := LinearMap.toContinuousLinearMap (quatConjHLm (n := n)) with hL
-  refine ⟨‖L‖ + 1, by positivity, fun A => ?_⟩
-  have hval : quatConjH A = L A := rfl
-  rw [hval]
-  calc ‖L A‖ ≤ ‖L‖ * ‖A‖ := L.le_opNorm A
-    _ ≤ (‖L‖ + 1) * ‖A‖ := by
-        have h1 := norm_nonneg A
-        nlinarith [norm_nonneg L]
+    ∃ K : ℝ, 0 < K ∧ ∀ A : HermitianMat (n ⊕ n) ℂ, ‖quatConjH A‖ ≤ K * ‖A‖ :=
+  SemilinearMapClass.bound_of_continuous (quatConjHLm (n := n))
+    (LinearMap.continuous_of_finiteDimensional _)
 
 /-! ## Closure under the functional calculus -/
 

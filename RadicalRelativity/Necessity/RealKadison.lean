@@ -177,7 +177,7 @@ theorem mul_transpose_eq_one_of {O : Matrix (Fin N) (Fin N) ℝ} (hO : Oᴴ * O 
     ext i j
     simp [Matrix.conjTranspose_apply, Matrix.transpose_apply]
   rw [← h]
-  exact Matrix.mul_eq_one_comm.mp hO
+  exact mul_eq_one_comm.mp hO
 
 /-- Orthogonal conjugation reflects the Loewner order, not just preserves it: conjugating
 back by `Oᴴ` is the inverse operation. -/

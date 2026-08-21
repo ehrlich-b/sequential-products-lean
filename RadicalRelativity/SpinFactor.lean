@@ -236,7 +236,7 @@ theorem sqrtPSD_proj_plus : sqrtPSD projPlus = projPlus := by
     exact (Real.sqrt_eq_iff_mul_self_eq (by positivity) (by positivity)).mpr rfl
   have h_bnorm : Real.sqrt (((1:ℝ)/2) ^ 2 + (0:ℝ) ^ 2) = 1/2 := by
     rw [key, h_sqrt_quarter]
-  rw [h_bnorm]
+  simp only [h_bnorm]
   simp only [if_neg (show (1:ℝ)/2 ≠ 0 from by norm_num)]
   norm_num [Real.sqrt_one, Real.sqrt_zero]
 
@@ -248,7 +248,7 @@ theorem sqrtPSD_proj_up : sqrtPSD projUp = projUp := by
     exact (Real.sqrt_eq_iff_mul_self_eq (by positivity) (by positivity)).mpr rfl
   have h_bnorm : Real.sqrt ((0:ℝ) ^ 2 + ((1:ℝ)/2) ^ 2) = 1/2 := by
     rw [key, h_sqrt_quarter]
-  rw [h_bnorm]
+  simp only [h_bnorm]
   simp only [if_neg (show (1:ℝ)/2 ≠ 0 from by norm_num)]
   norm_num [Real.sqrt_one, Real.sqrt_zero]
 

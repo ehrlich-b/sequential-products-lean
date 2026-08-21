@@ -3,29 +3,37 @@ Copyright (c) 2026 Zayn Blore. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Zayn Blore
 -/
+module
 
-import RadicalRelativity.Vendor.Wigner.Unitary
-import RadicalRelativity.Vendor.Wigner.MeasureSpace
-import RadicalRelativity.Vendor.Wigner.UnitaryHaar
-import Mathlib.Topology.Instances.Matrix
+public import RadicalRelativity.Vendor.Wigner.Unitary
+public import RadicalRelativity.Vendor.Wigner.MeasureSpace
+public import RadicalRelativity.Vendor.Wigner.UnitaryHaar
+public import Mathlib.Topology.Instances.Matrix
 
 /-!
 # Fubini–Study measure on complex projective space
 
 **Category:** 1-Mathlib (CSD-free Mathlib upstream candidate).
 
-Constructs the SU(N)-invariant Borel probability measure on
+Constructs the U(N)-invariant Borel probability measure on
 `Projectivization ℂ (EuclideanSpace ℂ (Fin N))` by pushing the
 probability-normalised Haar measure `unitaryHaarProb` (from
 `UnitaryHaar.lean`) forward through the orbit map `U ↦ U • p₀`
 for a fixed reference point `p₀`.
+
+Invariance is stated over the full unitary group
+`Matrix.unitaryGroup (Fin N) ℂ = U(N)` — the group every definition and
+theorem here actually quantifies over. On projective space the central
+`U(1)` acts trivially, so `U(N)`- and `SU(N)`-invariance are the same
+condition on measures over `ℂℙ^{N-1}`; the literature's "SU(N)-invariant
+Fubini–Study measure" is this measure.
 
 ## Main definitions
 
 - `Matrix.UnitaryGroup.orbitMap p₀` — the orbit map at `p₀`,
   `U ↦ U • p₀ : Matrix.unitaryGroup (Fin N) ℂ → ℙ ℂ (EuclideanSpace ℂ (Fin N))`.
 - `fubiniStudyMeasure p₀` — `Measure.map (orbitMap p₀) unitaryHaarProb`.
-  The SU(N)-invariant Borel probability measure on `ℂℙ^{N-1}`.
+  The U(N)-invariant Borel probability measure on `ℂℙ^{N-1}`.
 - `defaultPoint`, `defaultFubiniStudyMeasure` — canonical choice
   using `EuclideanSpace.single 0 1` as the reference (requires `[NeZero N]`).
 
@@ -34,7 +42,7 @@ for a fixed reference point `p₀`.
 - `orbit_map_continuous` — continuity of the orbit map (Phase A).
 - `orbit_map_measurable` — measurability corollary.
 - `instIsProbabilityMeasureFubiniStudyMeasure` — pushforward is a probability measure.
-- `fubiniStudyMeasure_smul_invariant` — SU(N)-invariance.
+- `fubiniStudyMeasure_smul_invariant` — U(N)-invariance.
 
 ## Provenance
 
@@ -43,10 +51,10 @@ Staged as upstream Mathlib material. Intended location:
 
 ## Tags
 
-projectivization, Fubini-Study, Haar measure, SU(N), invariant measure
+projectivization, Fubini-Study, Haar measure, U(N), invariant measure
 -/
 
-section
+@[expose] public section
 
 open MeasureTheory Matrix
 open scoped LinearAlgebra.Projectivization
@@ -128,7 +136,7 @@ instance instIsProbabilityMeasureFubiniStudyMeasure
   unfold fubiniStudyMeasure
   exact Measure.isProbabilityMeasure_map (orbit_map_measurable p₀).aemeasurable
 
-/-! ## Phase D — SU(N)-invariance -/
+/-! ## Phase D — U(N)-invariance -/
 
 /-- Compatibility lemma: `(U' • ·) ∘ orbitMap p₀ = orbitMap p₀ ∘ (U' * ·)`.
 The MulAction axiom `(U' * U) • p₀ = U' • (U • p₀)` makes the two
@@ -140,7 +148,7 @@ lemma smul_comp_orbitMap (U' : Matrix.unitaryGroup (Fin N) ℂ)
   show U' • (U • p₀) = (U' * U) • p₀
   exact smul_smul U' U p₀
 
-/-- **SU(N)-invariance of the Fubini–Study measure.** For any unitary
+/-- **U(N)-invariance of the Fubini–Study measure.** For any unitary
 `U'`, pushing forward `fubiniStudyMeasure p₀` by the action of `U'`
 yields the same measure.
 
@@ -166,5 +174,37 @@ theorem fubiniStudyMeasure_smul_invariant
         (measurable_const_mul U')]
   congr 1
   exact map_mul_left_eq_self unitaryHaarProb U'
+
+/-! ## Phase E — the canonical reference point
+
+`fubiniStudyMeasure` takes a base point, and every consumer has had to supply one.
+The measure does not in fact depend on it (`fubiniStudyMeasure_basepoint_independent`,
+proved in `FubiniStudyUnique.lean` where uniqueness is available), so a canonical
+choice can be named here and the dependence discharged there. Landed 2026-08-19; the
+module docstring had advertised these two definitions since the file was written
+without either existing. -/
+
+/-- The **canonical reference point** `[e₀]` of `ℂℙ^{N-1}`: the ray through the first
+standard basis vector. -/
+noncomputable def defaultPoint (N : ℕ) [NeZero N] :
+    ℙ ℂ (EuclideanSpace ℂ (Fin N)) :=
+  Projectivization.mk ℂ (EuclideanSpace.single (0 : Fin N) (1 : ℂ)) (by
+    intro h
+    have hz : ‖(EuclideanSpace.single (0 : Fin N) (1 : ℂ))‖ = 0 := by
+      rw [h, norm_zero]
+    rw [PiLp.norm_single, norm_one] at hz
+    exact one_ne_zero hz)
+
+/-- The **Fubini–Study measure at the canonical point**. By
+`fubiniStudyMeasure_basepoint_independent` this is *the* Fubini–Study measure: the base
+point is not a degree of freedom. -/
+noncomputable def defaultFubiniStudyMeasure (N : ℕ) [NeZero N] :
+    Measure (ℙ ℂ (EuclideanSpace ℂ (Fin N))) :=
+  fubiniStudyMeasure (defaultPoint N)
+
+instance instIsProbabilityMeasureDefaultFubiniStudyMeasure (N : ℕ) [NeZero N] :
+    IsProbabilityMeasure (defaultFubiniStudyMeasure N) := by
+  unfold defaultFubiniStudyMeasure
+  infer_instance
 
 end Matrix.UnitaryGroup

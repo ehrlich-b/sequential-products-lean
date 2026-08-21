@@ -213,7 +213,11 @@ def spHM (P : SeqProd N 𝕜) (x y : HermitianMat (Fin N) 𝕜) : HermitianMat (
 @[simp] theorem spHM_of_effect (P : SeqProd N 𝕜) {x y : HermitianMat (Fin N) 𝕜}
     (hx : IsEffect x.mat) (hy : IsEffect y.mat) :
     (spHM P x y).mat = P.sp x.mat y.mat := by
-  unfold spHM; rw [dif_pos ⟨hx, hy⟩]; rfl
+  have hxy : IsEffect x.mat ∧ IsEffect y.mat := ⟨hx, hy⟩
+  -- v4.33: neither `rw [dif_pos]` nor `split_ifs` can match the `dite`'s `Decidable` instance
+  -- under the `.mat` coercion; `simp` discharges the branch, leaving the constructor coercion.
+  simp [spHM, hxy]
+  rfl
 
 /-- **The repackaging carries S1 and S3--S7.**  Each field is the corresponding field of
 `P` transported along `isEffect_iff`, `spHM_of_effect` and `HermitianMat.ext`. -/
@@ -404,7 +408,7 @@ theorem complex_classification {N : ℕ} (hN : 3 ≤ N)
     rw [show ((toHM P).sp (liftEffect ha) (liftEffect hb))
           = spHM P (liftEffect ha) (liftEffect hb) from rfl,
         spHM_of_effect P (by simpa using ha) (by simpa using hb)] at hm
-    simpa [mat_twistSeq] using hm
+    simpa [mat_twistSeq] using! hm
   · intro t' ht'
     refine huniq t' fun A B hA hB => ?_
     have hA' : IsEffect A.mat := (isEffect_iff A).mp hA
@@ -412,6 +416,6 @@ theorem complex_classification {N : ℕ} (hN : 3 ≤ N)
     have := ht' A.mat B.mat hA' hB'
     apply HermitianMat.ext
     rw [show ((toHM P).sp A B) = spHM P A B from rfl, spHM_of_effect P hA' hB']
-    simpa [mat_twistSeq] using this
+    simpa [mat_twistSeq] using! this
 
 end TwistNormalForm

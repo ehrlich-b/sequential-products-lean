@@ -445,7 +445,7 @@ theorem twistSeq_continuousAt_ouNorm (t : ℝ) (b a : HermitianMat n ℂ)
     ∃ δ > 0, ∀ a' : HermitianMat n ℂ, ouNorm (a' - a) < δ →
       ouNorm (twistSeq t a' b - twistSeq t a b) < ε := by
   have hc := (continuous_twistSeq_left t b).continuousAt (x := a)
-  rw [Metric.continuousAt_iff] at hc
+  replace hc := Metric.continuousAt_iff.mp hc
   obtain ⟨δ₀, hδ₀, hball⟩ := hc ε hε
   refine ⟨δ₀ / (Real.sqrt (Fintype.card n) + 1), by positivity, fun a' h => ?_⟩
   have hin : dist a' a < δ₀ := by

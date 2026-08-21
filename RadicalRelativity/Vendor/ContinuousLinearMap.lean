@@ -8,9 +8,6 @@ module
 public import Mathlib.Analysis.InnerProductSpace.Spectrum
 public import Mathlib.Order.CompletePartialOrder
 
-set_option relaxedAutoImplicit true
-
-
 /-!
 # Continuous linear maps
 

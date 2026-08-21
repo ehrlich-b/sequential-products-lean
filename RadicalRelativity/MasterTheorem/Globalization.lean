@@ -116,7 +116,7 @@ theorem real_character_unique {α β a b : ℝ} (hab : a < b)
     (hasDerivAt_const x₀ (1 : ℂ)).congr_of_eventuallyEq hev
   have hofReal : HasDerivAt (fun x : ℝ => (x : ℂ)) 1 x₀ := by
     have := Complex.ofRealCLM.hasDerivAt (x := x₀)
-    simpa using this
+    simpa using! this
   have hd1 : HasDerivAt (fun x : ℝ => Complex.exp ((s : ℂ) * ↑x * Complex.I))
       (Complex.exp ((s : ℂ) * ↑x₀ * Complex.I) * ((s : ℂ) * 1 * Complex.I)) x₀ :=
     ((hofReal.const_mul (s : ℂ)).mul_const Complex.I).cexp

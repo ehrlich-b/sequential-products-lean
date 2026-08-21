@@ -9,6 +9,7 @@ import RadicalRelativity.Necessity.ChiContinuityGen
 import RadicalRelativity.Necessity.ConjTransportGen
 import RadicalRelativity.Necessity.SingularExtension
 import RadicalRelativity.Hermitian.CfcSqrtContinuous
+import RadicalRelativity.Hermitian.RCLikeGeneral
 
 set_option linter.style.longLine false
 
@@ -287,7 +288,7 @@ theorem log_eigenvalues_nonposR {a : HermitianMat n ℝ} (ha : IsEffect a)
     rw [one_smul]
     exact le_of_le_of_eq ha.2 HermitianMat.ousUnit_eq_one
   exact Real.log_nonpos (le_of_lt (hbd.eigenvalues_pos i))
-    (HermitianMat.le_smul_one_imp_eigenvalues_le a 1 hle i)
+    (HermitianMat.le_smul_one_imp_eigenvalues_le' a 1 hle i)
 
 /-- **`prop:real` at every invertible effect.**  Diagonalize the base point, apply
 the diagonal-family result to the conjugated product, and transport back: `Ad_U`

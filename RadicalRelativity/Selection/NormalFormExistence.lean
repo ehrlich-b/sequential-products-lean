@@ -237,7 +237,7 @@ theorem normalForm_existence :
   have hB0 : HasDerivAt (fun s : ℝ => exp (s • B)) B 0 := by
     simpa [exp_zero] using hasDerivAt_exp_smul_const B (0 : ℝ)
   have hderivL : HasDerivAt (fun s : ℝ => exp (s • A) * exp (s • B)) (A + B) 0 := by
-    simpa [exp_zero] using hA0.mul hB0
+    simpa [exp_zero] using! hA0.mul hB0
   have hderivR : HasDerivAt (fun s : ℝ => exp (s • A) * exp (s • B)) 1 0 := by
     have hexp : HasDerivAt (fun s : ℝ => Real.exp s • (1 : W →L[ℝ] W)) 1 0 := by
       simpa using (Real.hasDerivAt_exp 0).smul_const (1 : W →L[ℝ] W)

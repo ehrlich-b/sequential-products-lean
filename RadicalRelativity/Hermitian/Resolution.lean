@@ -209,7 +209,7 @@ theorem mat_cfc_of_resolution
   set p : Polynomial ℝ := Lagrange.interpolate nodes id f with hp
   have hnode_eval : ∀ z ∈ nodes, p.eval z = f z := by
     intro z hz
-    simpa using Lagrange.eval_interpolate_at_node (r := f) (Set.injOn_id _) hz
+    simpa using! Lagrange.eval_interpolate_at_node (r := f) (Set.injOn_id _) hz
   have hcongr : M.cfc f = M.cfc (fun x => p.eval x) := by
     apply cfc_congr
     intro x hx

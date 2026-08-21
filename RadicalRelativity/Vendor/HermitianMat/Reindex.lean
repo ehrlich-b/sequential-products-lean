@@ -9,9 +9,6 @@ public import RadicalRelativity.Vendor.HermitianMat.Basic
 public import RadicalRelativity.Vendor.ContinuousLinearMap
 public import RadicalRelativity.Vendor.LinearEquiv
 
-set_option relaxedAutoImplicit true
-
-
 /-!
 Much like `Matrix.reindex` and `Matrix.submatrix`, we can reindex a Hermitian matrix to get another
 Hermitian matrix; however, this only makes sense when both permutations are the same, accordingly,
@@ -47,7 +44,7 @@ theorem reindex_refl (A : HermitianMat d 𝕜) :
 @[simp]
 theorem reindex_reindex (A : HermitianMat d 𝕜) (e : d ≃ d₂) (f : d₂ ≃ d₃) :
     (A.reindex e).reindex f = A.reindex (e.trans f) := by
-  ext1; simp; rfl
+  ext1; simp
 
 @[simp]
 theorem reindex_zero : (0 : HermitianMat d 𝕜).reindex e = 0 := by
@@ -86,18 +83,22 @@ theorem reindex_conj [Fintype d₂] [Fintype d] (B : Matrix d₃ d₂ 𝕜) :
 
 variable [Fintype d]
 
+set_option backward.isDefEq.respectTransparency false in
 theorem conj_submatrix (B : Matrix d₂ d₄ 𝕜) (e : d₃ ≃ d₂) (f : d → d₄) :
     A.conj (B.submatrix e f) = (A.conj (B.submatrix id f)).reindex e.symm := by
   ext1
   simp [conj_apply, ← Matrix.submatrix_mul_equiv (e₂ := .refl d)]
 
-theorem reindex_eq_conj [DecidableEq d] (e : d ≃ d₂) : A.reindex e = A.conj (Matrix.reindex e (.refl d) 1) := by
+set_option backward.isDefEq.respectTransparency false in
+theorem reindex_eq_conj [DecidableEq d] (e : d ≃ d₂) :
+    A.reindex e = A.conj (Matrix.reindex e (.refl d) 1) := by
   ext : 3
   simp [-mat_apply, reindex, conj_apply, Matrix.submatrix,
     Matrix.mul_apply, Matrix.one_apply]
 
 variable [Fintype d₂] [DecidableEq d] [DecidableEq d₂]
 
+set_option backward.isDefEq.respectTransparency false in
 theorem ker_reindex :
     (A.reindex e).ker = A.ker.comap (LinearEquiv.euclideanOfRelabel 𝕜 e).toLinearMap := by
   dsimp only [reindex, ker, lin]

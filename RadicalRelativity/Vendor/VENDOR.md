@@ -2,13 +2,15 @@
 
 ## physlib HermitianMat island
 
-**Upstream:** `leanprover-community/physlib`, commit `ad1d812` (2026-08-04),
-Apache 2.0 (per-file headers retained; upstream author Alex Meiburg).
-**Why vendored, not required:** physlib pins mathlib/toolchain v4.32.0 (ours:
-v4.28.0), and a live dependency on a fast-moving upstream would make this
-tree's zero-sorry/axiom claims a continuous audit obligation. Vendoring pins
-the exact audited code. Decision record: campaign `docs/history/LEDGER.md` 1.1 and
-`research/PAPER-A-LEAN-ROUTE.md` (blog repo) decision log 2026-08-04.
+**Upstream:** `leanprover-community/physlib`, commit `a50684a191` (its
+"chore: Bump 4.33" commit), targeting Lean/Mathlib **v4.33.0**. Apache 2.0
+(per-file headers retained; upstream author Alex Meiburg, and
+`HermitianMat/Proj.lean` additionally Leonardo A Lessa).
+**Why vendored, not required:** a live dependency on a fast-moving upstream
+would make this tree's zero-sorry/axiom claims a continuous audit obligation.
+Vendoring pins the exact audited code. Decision record: campaign
+`docs/history/LEDGER.md` 1.1 and `research/PAPER-A-LEAN-ROUTE.md` (blog repo)
+decision log 2026-08-04.
 
 **Files** (17; upstream paths `QuantumInfo/ForMathlib/…` → here
 `RadicalRelativity/Vendor/…`): Matrix, Isometry, Misc, LinearEquiv,
@@ -16,17 +18,155 @@ ContinuousLinearMap, IsMaximalSelfAdjoint, Tactic/Commutes,
 Tactic/Commutes/Attribute, HermitianMat/{Basic, Order, Inner, Trace, CFC,
 NonSingular, Reindex, Jordan, Proj}.
 
-**Edits applied at vendor time (2026-08-04), each mechanical:**
+### Re-vendor 2026-08-21 (v4.33.0) — CURRENT
+
+The island is now **verbatim upstream `a50684a191`** with exactly two edits:
+
 1. Import-path rewrite: `QuantumInfo.ForMathlib` → `RadicalRelativity.Vendor`
-   (21 `public import` lines).
-2. Deleted every `set_option backward.isDefEq.respectTransparency false in`
-   line (23 occurrences): the option was introduced in Lean v4.30.0 and does
-   not exist at v4.28.0; its `false` value requests pre-v4.30 behavior, which
-   is v4.28.0's behavior, so deletion is intended to be semantics-preserving.
-3. Deleted every `set_option linter.overlappingInstances false` line (3
-   occurrences): linter option absent at v4.28.0.
-4. Any further edits forced by mathlib v4.32→v4.28 API drift are recorded
-   below as they are made.
+   (21 `public import` lines; every occurrence of the string `QuantumInfo` in
+   these files is on an import line, so the rewrite touches nothing else).
+2. `set_option relaxedAutoImplicit true` restored in `Matrix.lean` only, marked
+   in-file as "Vendor edit 2". This repo's lakefile sets
+   `relaxedAutoImplicit = false`, and upstream binds `dA`/`dB` as relaxed
+   auto-implicits in the four Kronecker/partial-trace lemmas at
+   `Matrix.lean:631-650`. Without the option those 22 occurrences are
+   `Unknown identifier` errors. No other vendored module needs it.
+
+There are **no other edits** — no option-line deletions, no renames, no added
+helpers, no reformatting. The upstream `module` / `public import` /
+`@[expose] public section` headers are retained as-is, and the 40
+`set_option backward.isDefEq.respectTransparency false in` lines and 3
+`set_option linter.overlappingInstances false` lines upstream carries are
+present. Apart from edit 2, the previously inserted
+`set_option relaxedAutoImplicit true` lines (one per module) are gone, so this
+repo's lakefile options now apply to the rest of the island unmodified.
+
+Everything in the "v4.32 → v4.28 backport" record below is **historical**: that
+backport is abandoned as of this re-vendor, and none of its edits survive in
+the tree. It is preserved as provenance for anyone diffing a SHA from
+2026-08-04 through 2026-08-20, not as a description of current contents.
+
+**Those 40 `respectTransparency` lines are load-bearing — do NOT drop them.**
+They are the reason the previous backport's blanket deletion of them was a
+mistake waiting to happen, and here is what they are for. Lean v4.33 flipped
+`backward.isDefEq.respectTransparency`: `isDefEq` at `.instances` transparency
+no longer unfolds non-reducible instance definitions. `HermitianMat` carries two
+topologies —
+
+- the `selfAdjoint` subtype topology, `Vendor/HermitianMat/Basic.lean:126`
+  (`inferInstanceAs (TopologicalSpace (selfAdjoint _))`), and
+- the metric topology induced by `instNormedGroup`,
+  `Vendor/HermitianMat/Inner.lean:338`
+  (`AddSubgroupClass.normedAddCommGroup _`)
+
+— which are defeq but **not syntactically equal**. Under the new default the
+elaborator stops *seeing* them as defeq, so `→L[ℝ]` gets built from one horn
+while the normed-structure instances are registered against the other. Upstream
+physlib hit this same wall and reached for the compatibility knob; that is why
+`Basic.lean` alone carries six of these lines. Deleting them will not produce a
+clean error — it produces instance-synthesis failures and `whnf` grind in
+whatever downstream file happens to trip the diamond first.
+
+**First-party code deliberately does not use this flag.** It is a compatibility
+knob slated for removal, so the first-party fix for the same diamond is explicit
+instance bridges, not the `set_option`. Inside the island the lines stay because
+the island stays verbatim.
+
+### Local generalizations removed by this re-vendor — RESOLVED 2026-08-21
+
+Two first-party commits had generalized five vendored lemmas from `ℂ` to
+`RCLike 𝕜` **in place**, inside the vendored files. Pulling upstream verbatim
+removed all five. They were **not** backport scaffolding; they were capability
+the first-party tree depends on:
+
+- `HermitianMat/Order.lean` — `le_smul_one_imp_eigenvalues_le` and
+  `eigenvalues_le_imp_le_smul_one` (commit 8ac68ca, carried a `DRIFT` note).
+  First-party consumers needing the `𝕜` form: `Hermitian/OrderUnit.lean`,
+  `Hermitian/ExtremeEffects.lean`, `Necessity/PseudoInverse.lean`,
+  `Necessity/ThetaCocycle.lean`, and `Necessity/RealRigidity.lean` — the last
+  over `HermitianMat n ℝ`, which no `ℂ`-only statement can serve at all.
+- `HermitianMat/CFC.lean` — `norm_cfc_le_sqrt_card_mul_bound`,
+  `norm_cfc_sub_cfc_le_sqrt_card`, `norm_cfc_sub_le_of_sup_le` (commit
+  084412e, **no annotation of any kind**). Consumer needing the `𝕜` form:
+  `Hermitian/CfcSqrtContinuous.lean`.
+
+Nothing about v4.33 forces the narrowing: both enabling results
+(`Matrix.PosSemidef.le_smul_one_of_eigenvalues_iff` at `Vendor/Matrix.lean:425`
+and `HermitianMat.norm_eq_sum_eigenvalues_sq` at
+`Vendor/HermitianMat/CFC.lean:283`) are `𝕜`-general upstream already.
+
+**Resolution.** The five are restated at `RCLike 𝕜`, under primed names, in
+first-party code:
+
+> `RadicalRelativity/Hermitian/RCLikeGeneral.lean`
+
+The proofs are the ones from the pre-re-vendor tree, lifted unchanged: they were
+carried over verbatim and **compiled first try at v4.33, needing no drift fixes
+of any kind**. That is direct evidence the `ℂ` narrowing is an upstream
+authorship choice and nothing in the toolchain forces it — the `𝕜`-general
+statements are as provable at v4.33 as they were at v4.28.
+
+The vendored `ℂ`-only originals are untouched and still serve the genuinely
+complex call sites (`Necessity/TwistGeneral.lean`, `Hermitian/Symplectic.lean`). **The
+island itself was not patched** — that is the whole point: the generalization
+now lives in a module that *imports* the vendor instead of editing it, so a
+future bump is a pure re-pull with no patch-reapplication step, and a wiped
+generalization becomes a compile error instead of silent capability loss.
+
+### STANDING INSTRUCTION FOR THE NEXT BUMP
+
+After any re-vendor of this island, **diff declaration signatures against the
+previous pin** before declaring the bump done:
+
+Run this from the package root, with the working tree holding the freshly
+re-vendored files. `OLD` is the commit the island was vendored at *last* time
+(for the 2026-08-21 bump that was the pre-bump `main`). Anything it prints is a
+statement that changed shape across the bump — inspect every block:
+
+```sh
+OLD=<pre-bump-sha>
+SIG='^(private |protected |noncomputable |@\[[^]]*\] )*(theorem|lemma|def|abbrev|instance|structure|class) '
+for f in $(git ls-tree -r --name-only "$OLD" -- RadicalRelativity/Vendor | grep '\.lean$'); do
+  git show "$OLD:$f" | grep -E "$SIG" | sed 's/ *$//' > /tmp/sig-old.txt
+  grep -E "$SIG" "$f" 2>/dev/null | sed 's/ *$//' > /tmp/sig-new.txt
+  if ! diff -q /tmp/sig-old.txt /tmp/sig-new.txt >/dev/null; then
+    echo "=== $f ==="
+    diff /tmp/sig-old.txt /tmp/sig-new.txt
+  fi
+done
+```
+
+Verified against the 2026-08-21 bump: with `OLD=` the pre-bump commit, this
+prints the `HermitianMat/CFC.lean` block showing all three 084412e lemmas going
+`HermitianMat d 𝕜` → `HermitianMat d ℂ`, and the `HermitianMat/Order.lean` block
+showing the 8ac68ca pair doing the same. It also correctly surfaces the removed
+`private theorem PosDef.submatrix_of_injective` in `Matrix.lean`, and two benign
+entries — a line-wrapping change in `Reindex.lean` and new upstream declarations
+in the Wigner island. Two caveats: a docstring line that happens to begin with
+the word `theorem` shows up as a spurious `>` line, and the loop's last `diff`
+sets a non-zero exit status even on success, so do not gate a script on `$?`.
+
+**Do not rely on `DRIFT` comment markers.** Commit 084412e left no marker of any
+kind; a marker sweep found only the Order pair, and the CFC trio was recovered
+solely by the signature diff. Note also that the narrowing does not always
+present as a clean type mismatch: at `Hermitian/CfcSqrtContinuous.lean` it
+surfaced as `whnf` **timeouts**, because forcing `𝕜 := ℂ` makes the elaborator
+grind rather than fail outright.
+
+**Inherited from upstream (still true at `a50684a191`):**
+
+- `HermitianMat/Proj.lean` lacks a closing `end HermitianMat` (style-lint
+  warning only); some docstrings end without a trailing newline. Left as-is to
+  keep the diff against upstream at exactly the import rewrite.
+- The `sorry` tokens in `Misc.lean` (lines 30, 34) sit inside a `/- -/` block
+  quoting a Zulip-tracked mathlib diamond — dead text, not proof obligations.
+- Consumer-side trap (campaign `docs/history/LEDGER.md` H6): the island declares
+  `Matrix.*` lemmas inside `namespace HermitianMat` (`Inner.lean:402` and
+  `Inner.lean:411` at this pin — `NonSingular.lean` no longer does, it opens
+  `namespace Matrix` directly), creating a `HermitianMat.Matrix` namespace that
+  shadows root `Matrix` for any `open scoped Matrix` issued inside
+  `namespace HermitianMat` downstream, silently deactivating the `*ᵥ` notation.
+  Open the scope before entering the namespace.
 
 **Audit status:** vendored modules are inside the `RadicalRelativity` census
 prefix, so `AxiomAudit.lean` Layer 1 covers every vendored declaration
@@ -43,7 +183,24 @@ sorry-free and axiom-free in this closure before vendoring.
 > the tracked surface has grown to 148. Both numbers below are preserved as the
 > historical record of the backport pass, not as current gate values.
 
-### Drift-edit log (v4.32 → v4.28 backport, 2026-08-04)
+### Drift-edit log (v4.32 → v4.28 backport, 2026-08-04) — SUPERSEDED 2026-08-21
+
+> **SUPERSEDED — HISTORICAL RECORD ONLY.** The backport this log describes was
+> abandoned on 2026-08-21 when the island was re-vendored verbatim from physlib
+> `a50684a191` at v4.33.0 (see "Re-vendor 2026-08-21" above). **None of the
+> edits below are present in the tree any more**: the deleted option lines are
+> back, the renames are reverted to upstream spellings, `convert!` is restored
+> at all 19 sites, the inserted `set_option relaxedAutoImplicit true` lines are
+> removed, and the hand-written `private theorem PosDef.submatrix_of_injective`
+> is gone (upstream now provides `Matrix.PosDef.submatrix` natively). Read this
+> section only to interpret a SHA between 2026-08-04 and 2026-08-20.
+>
+> One count below is also **wrong as written**: item 2 of the old vendor-time
+> edit list claimed 23 `set_option backward.isDefEq.respectTransparency false in`
+> occurrences were deleted. The true count at the old pin `ad1d812` is **18**
+> across these 17 files (verified against upstream at that commit on
+> 2026-08-21). The current pin `a50684a191` carries **40** — upstream added 22
+> more between the two commits.
 
 All edits are proof-side only — **zero statement changes** across all 17 files.
 Gates verified after the pass (values as of 2026-08-04; superseded — see the
@@ -91,16 +248,11 @@ Census PASS (44 modules, custom axioms exactly
   each file's import block (physlib builds with Lean's defaults, under which
   dimension variables like `dA dB` auto-bind; this repo's lakefile is strict).
 
-Known cosmetic wart inherited from upstream: `HermitianMat/Proj.lean` lacks a
-closing `end HermitianMat` (style-lint warning only); two docstrings end
-without trailing newline (style-lint). Left as-is to minimize diff vs upstream.
-
-Consumer-side trap inherited from upstream (campaign `docs/history/LEDGER.md` H6): the island
-declares `Matrix.*` lemmas inside `namespace HermitianMat` (Inner.lean:405,
-NonSingular.lean:18), creating a `HermitianMat.Matrix` namespace that shadows
-root `Matrix` for any `open scoped Matrix` issued inside `namespace HermitianMat`
-downstream — which silently deactivates the `*ᵥ` notation. Open the scope before
-entering the namespace.
+The cosmetic wart and the H6 consumer-side trap that were described here both
+still hold at the current pin, but their line references had drifted
+(`Inner.lean:405, NonSingular.lean:18` was accurate for `ad1d812` only). The
+live, re-verified versions are in "Inherited from upstream" under the
+Re-vendor 2026-08-21 section above — read those, not this paragraph.
 
 ## csd-lean4 Wigner-rigidity island
 

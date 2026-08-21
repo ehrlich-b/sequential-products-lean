@@ -3,10 +3,11 @@ Copyright (c) 2026 Zayn Blore. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Zayn Blore
 -/
+module
 
-import RadicalRelativity.Vendor.Wigner.Topology
-import Mathlib.MeasureTheory.Constructions.BorelSpace.Basic
-import Mathlib.MeasureTheory.Constructions.Polish.Basic
+public import RadicalRelativity.Vendor.Wigner.Topology
+public import Mathlib.MeasureTheory.Constructions.BorelSpace.Basic
+public import Mathlib.MeasureTheory.Constructions.Polish.Basic
 
 /-!
 # Measurable structure on projectivization
@@ -63,7 +64,7 @@ projectivization, projective space, Borel measurable space,
 quotient measurable space, scale-invariant measurable function
 -/
 
-section
+@[expose] public section
 
 open MeasureTheory Topology
 open scoped LinearAlgebra.Projectivization
@@ -83,7 +84,7 @@ second-countable via `secondCountable_of_proper`), so the open subtype
 (`Subtype.secondCountableTopology`), and the open quotient map carries
 that to `ℙ K V` (`Topology.IsQuotientMap.secondCountableTopology`). -/
 instance instSecondCountableTopology : SecondCountableTopology (ℙ K V) := by
-  haveI : ProperSpace V := FiniteDimensional.proper_rclike K V
+  have : ProperSpace V := FiniteDimensional.proper_rclike K V
   exact isQuotientMap_mk'.secondCountableTopology isOpenMap_mk'
 
 /-- The Borel σ-algebra on `Projectivization K V`, derived from its
@@ -153,9 +154,9 @@ theorem borel_eq_map_mk' :
     MeasurableSpace.map
       (mk' K : { v : V // v ≠ 0 } → ℙ K V)
       (borel _) = borel (ℙ K V) := by
-  haveI : ProperSpace V := FiniteDimensional.proper_rclike K V
-  haveI : PolishSpace V := inferInstance
-  haveI : PolishSpace ({ v : V // v ≠ 0 }) :=
+  have : ProperSpace V := FiniteDimensional.proper_rclike K V
+  have : PolishSpace V := inferInstance
+  have : PolishSpace ({ v : V // v ≠ 0 }) :=
     isClosed_singleton.isOpen_compl.polishSpace
   exact continuous_mk'.map_borel_eq Quot.mk_surjective
 
@@ -190,7 +191,7 @@ theorem lift_measurable [MeasurableSpace V] [BorelSpace V]
   -- `f ⁻¹' B` is Borel-measurable in V₀ (by hf_meas), hence so is the preimage form.
   -- The subtype's `Subtype.instMeasurableSpace` coincides with `borel _` via
   -- `Subtype.borelSpace` (since `[BorelSpace V]` is in scope).
-  haveI : BorelSpace ({ v : V // v ≠ 0 }) := Subtype.borelSpace _
+  have : BorelSpace ({ v : V // v ≠ 0 }) := Subtype.borelSpace _
   have h_meas :
       @MeasurableSet { v : V // v ≠ 0 } (borel _)
         ((mk' K : _ → ℙ K V) ⁻¹' (Projectivization.lift f hf ⁻¹' B)) := by
@@ -215,7 +216,7 @@ theorem measurable_iff_measurable_comp_mk' [MeasurableSpace V] [BorelSpace V]
   refine ⟨fun hg => hg.comp measurable_mk', fun hg => ?_⟩
   intro B hB
   -- Same coincidence-lemma transport as `lift_measurable`.
-  haveI : BorelSpace ({ v : V // v ≠ 0 }) := Subtype.borelSpace _
+  have : BorelSpace ({ v : V // v ≠ 0 }) := Subtype.borelSpace _
   have h_subtype :
       @MeasurableSet { v : V // v ≠ 0 } (borel _) ((mk' K : _ → ℙ K V) ⁻¹' (g ⁻¹' B)) := by
     rw [← ‹BorelSpace ({ v : V // v ≠ 0 })›.measurable_eq]

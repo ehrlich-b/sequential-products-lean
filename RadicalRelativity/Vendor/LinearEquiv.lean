@@ -7,9 +7,6 @@ module
 
 public import Mathlib.Analysis.InnerProductSpace.PiL2
 
-set_option relaxedAutoImplicit true
-
-
 /-!
 # Relabelling linear equivalences
 

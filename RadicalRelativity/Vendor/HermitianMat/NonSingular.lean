@@ -8,9 +8,6 @@ module
 public import RadicalRelativity.Vendor.HermitianMat.Order
 public import RadicalRelativity.Vendor.Isometry
 
-set_option relaxedAutoImplicit true
-
-
 @[expose] public section
 
 noncomputable section

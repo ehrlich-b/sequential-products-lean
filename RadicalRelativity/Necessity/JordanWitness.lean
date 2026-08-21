@@ -98,7 +98,8 @@ def transposeMap : HermitianMat n ℂ →ₗ[ℝ] HermitianMat n ℂ where
   map_smul' c x := by
     ext1
     show (c • x).mat.transpose = _
-    rw [HermitianMat.mat_smul, Matrix.transpose_smul, HermitianMat.mat_smul]
+    -- v4.33 leaves the scalar wrapped as `(RingHom.id ℝ) c`, which `rw` will not match.
+    simp only [HermitianMat.mat_smul, Matrix.transpose_smul, RingHom.id_apply]
     rfl
 
 omit [Fintype n] in

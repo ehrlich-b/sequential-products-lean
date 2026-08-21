@@ -8,9 +8,6 @@ module
 public import Mathlib.Init
 public import Aesop.Frontend.Command
 
-set_option relaxedAutoImplicit true
-
-
 /-!
 # Commutes Rule Set
 

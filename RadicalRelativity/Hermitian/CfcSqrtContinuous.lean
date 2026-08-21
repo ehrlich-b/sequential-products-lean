@@ -4,6 +4,7 @@ Released under Apache 2.0 license.
 Authors: Bryan Ehrlich
 -/
 import RadicalRelativity.Hermitian.CfcPoly
+import RadicalRelativity.Hermitian.RCLikeGeneral
 
 set_option linter.style.longLine false
 
@@ -24,7 +25,7 @@ the ℂ-only `HermitianMat.cfc_continuous` cannot be generalized (it routes thro
 * Weierstrass gives polynomials uniformly near `√` on `[0,1]`;
 * `A ↦ A.cfc p` is continuous for polynomials (`continuous_cfc_polynomial` — the
   functional calculus at a polynomial is a matrix polynomial);
-* `norm_cfc_sub_le_of_sup_le` turns the uniform scalar bound into a uniform matrix
+* `norm_cfc_sub_le_of_sup_le'` turns the uniform scalar bound into a uniform matrix
   bound on the effect set;
 * uniform approximation by continuous functions gives continuity.
 -/
@@ -70,7 +71,7 @@ theorem continuousOn_cfc_sqrt_effects :
   have hclose : ∀ B : HermitianMat n 𝕜, IsEffect B →
       ‖B.cfc (fun x => p.eval x) - B.cfc Real.sqrt‖ ≤ c * δ := by
     intro B hB
-    exact norm_cfc_sub_le_of_sup_le (spectrum_subset_Icc_of_isEffect hB)
+    exact norm_cfc_sub_le_of_sup_le' (spectrum_subset_Icc_of_isEffect hB)
       (le_of_lt hδpos) (fun x hx => le_of_lt (by simpa using hp x hx))
   -- and it is continuous in the matrix
   have hpc : Continuous (fun B : HermitianMat n 𝕜 => B.cfc (fun x => p.eval x)) :=

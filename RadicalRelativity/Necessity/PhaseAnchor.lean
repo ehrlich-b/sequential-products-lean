@@ -441,8 +441,9 @@ theorem stabilizerCoupling_rho_dChi {N : ℕ} (hN : 3 ≤ N)
       = rhoFieldL2 i j (dChiStab P hS2 hjord r) := by
   show rhoFieldL2 i j ((diagonalHomSetup hN P hS2 hjord).dChiLinear r)
     = rhoFieldL2 i j (dChiStab P hS2 hjord r)
-  rw [DiagonalHomSetup.dChiLinear_apply]
-  rfl
+  -- `rw` cannot match the `dChiLinear` head here (the setup argument sits behind the diamond);
+  -- rewriting as a term elaborates at default transparency.
+  exact congrArg (rhoFieldL2 i j) (DiagonalHomSetup.dChiLinear_apply _ _)
 
 /-- **`thm:complex`, per frame, on `H_N(ℂ)` — PRODUCED.**  For any S1–S7
 sequential product on `H_N(ℂ)` (`N ≥ 3`) with S2 and the M3 Jordan property,

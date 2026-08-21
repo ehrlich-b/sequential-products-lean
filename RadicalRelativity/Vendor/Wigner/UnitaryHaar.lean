@@ -3,10 +3,11 @@ Copyright (c) 2026 Zayn Blore. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Zayn Blore
 -/
+module
 
-import RadicalRelativity.Vendor.Wigner.UnitaryCompact
-import Mathlib.MeasureTheory.Measure.Haar.Basic
-import Mathlib.MeasureTheory.Measure.Haar.Unique
+public import RadicalRelativity.Vendor.Wigner.UnitaryCompact
+public import Mathlib.MeasureTheory.Measure.Haar.Basic
+public import Mathlib.MeasureTheory.Measure.Haar.Unique
 
 /-!
 # Haar measure on the matrix unitary group
@@ -52,7 +53,7 @@ tranche) and the Fubini-Study pushforward to `ℂℙ^{N-1}`.
 unitary group, Haar measure, compact group
 -/
 
-section
+@[expose] public section
 
 open MeasureTheory
 
@@ -103,8 +104,8 @@ We can therefore rescale by `(unitaryHaar Set.univ)⁻¹` to obtain a
 probability measure that is still Haar (Haar property is preserved
 under positive finite scaling).
 
-The resulting `unitaryHaarProb` is the canonical SU(N)-invariant
-probability measure on the matrix unitary group, and the
+The resulting `unitaryHaarProb` is the canonical translation-invariant
+(Haar) probability measure on the unitary group `U(N)`, and the
 ingredient that the Fubini-Study measure on `ℂℙ^{N-1}` will be
 constructed from via pushforward (next tranche).
 -/

@@ -891,7 +891,7 @@ theorem isOpen_blochHerm_ne_zero :
 theorem continuousOn_n2Tau (t : C(RP2, ℝ)) :
     ContinuousOn (n2Tau t) {a : HermitianMat (Fin 2) ℂ | blochHerm a ≠ 0} := by
   rw [continuousOn_iff_continuous_restrict]
-  have hres : (Set.restrict {a : HermitianMat (Fin 2) ℂ | blochHerm a ≠ 0} (n2Tau t))
+  have hres : (Set.domRestrict {a : HermitianMat (Fin 2) ℂ | blochHerm a ≠ 0} (n2Tau t))
       = fun a => t (Projectivization.mk' ℝ ⟨blochHerm a.val, a.property⟩) := by
     funext a
     exact n2Tau_of_ne_zero t a.property
@@ -1019,7 +1019,7 @@ theorem n2SequentialProduct_firstArgContinuous (t : C(RP2, ℝ)) :
     have huc := hcomp.uniformContinuousOn_of_continuous
       (hG.mono (Set.prod_mono (Set.subset_univ _) le_rfl))
     rw [Metric.uniformContinuousOn_iff] at huc
-    rw [Metric.continuousWithinAt_iff]
+    refine Metric.continuousWithinAt_iff.mpr ?_
     intro ε hε
     obtain ⟨δ, hδ, hball⟩ := huc ε hε
     refine ⟨δ, hδ, fun {a} ha hda => ?_⟩
@@ -1232,7 +1232,7 @@ theorem exists_n2QubitModuli_bound (P : SequentialProductOn (HermitianMat (Fin 2
     ∃ C : ℝ, ∀ p : RP2, |n2QubitModuli P hS2 p| ≤ C := by
   obtain ⟨C, hC⟩ := (isCompact_univ (X := RP2)).exists_bound_of_continuousOn
     (continuous_n2ModuliRP2 P hS2).continuousOn
-  exact ⟨C, fun p => by simpa using hC p (Set.mem_univ p)⟩
+  exact ⟨C, fun p => by simpa using! hC p (Set.mem_univ p)⟩
 
 /-! ### `cor:qubit-classification`: the correspondence is a bijection
 

@@ -6,6 +6,7 @@ Authors: Bryan Ehrlich
 import RadicalRelativity.Necessity.ChiExtensionGen
 import RadicalRelativity.Necessity.OneParameter
 import Mathlib.Analysis.Normed.Ring.Lemmas
+import RadicalRelativity.Hermitian.OperatorInstances
 
 set_option linter.style.longLine false
 
@@ -98,7 +99,7 @@ theorem continuous_spPos_compG (hS2 : P.FirstArgContinuous) {X : Type*} [Topolog
     Continuous fun t => spPos P (g t) x := by
   show Continuous fun t => (‖x‖ + 1) • P.sp (g t) ((‖x‖ + 1)⁻¹ • x)
   exact (continuous_sp_compG P hS2 hg hgeff
-    (norm_smul_inv_effect hx (by positivity) (le_norm_add_one_smul_one x))).const_smul _
+    (norm_smul_inv_effect hx (by positivity) (le_norm_add_one_smul_one x))).const_smul (‖x‖ + 1)
 
 /-- The extended left multiplication applied to a fixed vector, along an effect
 curve (the `L'`-part of Θ). -/
@@ -155,15 +156,13 @@ theorem continuous_thetaUnit_valG (hS2 : P.FirstArgContinuous) {X : Type*}
     Continuous fun t =>
       ((thetaUnitG P hS2 (γ t) : (HermitianMat n 𝕜 →L[ℝ] HermitianMat n 𝕜)ˣ) :
         HermitianMat n 𝕜 →L[ℝ] HermitianMat n 𝕜) := by
-  rw [continuous_clm_apply]
-  intro x
+  refine continuous_clm_apply.mpr fun x => ?_
   have hval : ∀ t, ((thetaUnitG P hS2 (γ t)).val) x
       = theta P (diagFamilyG_isEffect (hγ0 t)) (diagFamilyG_posDef (γ t)) x := by
     intro t
     rw [thetaUnit_val_applyG, thetaNorm_apply_eq_thetaG P hS2
       (diagFamilyG_isEffect (hγ0 t)) (diagFamilyG_posDef (γ t))]
-  simp only [hval]
-  exact continuous_theta_applyG P hS2 hγ hγ0 x
+  exact (continuous_theta_applyG P hS2 hγ hγ0 x).congr fun t => (hval t).symm
 
 theorem continuous_thetaUnit_inv_valG (hS2 : P.FirstArgContinuous) {X : Type*}
     [TopologicalSpace X] {γ : X → (n → ℝ)} (hγ : Continuous γ)

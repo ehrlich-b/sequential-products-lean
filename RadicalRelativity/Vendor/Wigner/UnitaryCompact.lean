@@ -3,13 +3,14 @@ Copyright (c) 2026 Zayn Blore. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Zayn Blore
 -/
+module
 
-import Mathlib.LinearAlgebra.UnitaryGroup
-import Mathlib.Analysis.Matrix.Normed
-import Mathlib.Analysis.Normed.Module.FiniteDimension
-import Mathlib.Topology.Algebra.Star.Unitary
-import Mathlib.MeasureTheory.Constructions.BorelSpace.Basic
-import Mathlib.Algebra.Star.Unitary
+public import Mathlib.LinearAlgebra.UnitaryGroup
+public import Mathlib.Analysis.Matrix.Normed
+public import Mathlib.Analysis.Normed.Module.FiniteDimension
+public import Mathlib.Topology.Algebra.Star.Unitary
+public import Mathlib.MeasureTheory.Constructions.BorelSpace.Basic
+public import Mathlib.Algebra.Star.Unitary
 
 /-!
 # Compactness and measurability of the matrix unitary group
@@ -44,7 +45,7 @@ ingredients (`MeasurableSpace`, `BorelSpace`) are also installed here.
 
 Specialised to `Matrix.unitaryGroup (Fin N) ℂ`. The argument works for
 any `Matrix.unitaryGroup n α` where `n` is finite and `α` is an `RCLike`
-field, but we install the concrete case used by LF4's eventual SU(N)
+field, but we install the concrete case used by LF4's eventual U(N)
 Haar construction.
 
 ## Provenance
@@ -58,7 +59,7 @@ usage stabilises.
 unitary group, compactness, Haar measure
 -/
 
-section
+@[expose] public section
 
 open scoped Matrix.Norms.Elementwise
 
@@ -139,7 +140,7 @@ finite-dim normed `Matrix (Fin N) (Fin N) ℂ` (proper via
 `FiniteDimensional.proper_rclike`), discharging `IsClosed` via
 `isClosed_underlyingSet` and `IsBounded` via `isBounded_underlyingSet`. -/
 instance instCompactSpace : CompactSpace (Matrix.unitaryGroup (Fin N) ℂ) := by
-  haveI : ProperSpace (Matrix (Fin N) (Fin N) ℂ) :=
+  have : ProperSpace (Matrix (Fin N) (Fin N) ℂ) :=
     FiniteDimensional.proper_rclike ℂ _
   have h_compact :
       IsCompact ((Matrix.unitaryGroup (Fin N) ℂ : Submonoid _) :

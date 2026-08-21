@@ -441,7 +441,7 @@ theorem unitaryConj_one {U : Matrix (Fin N) (Fin N) ℂ} (hU : Uᴴ * U = 1) :
     unitaryConj U (1 : HermitianMat (Fin N) ℂ) = 1 := by
   ext1
   rw [unitaryConj_apply, HermitianMat.conj_apply_mat]
-  simp [Matrix.mul_eq_one_comm.mp hU]
+  simp [mul_eq_one_comm.mp hU]
 
 /-- Unitary conjugation is surjective, with `Uᴴ`-conjugation as the preimage. -/
 theorem unitaryConj_surjective {U : Matrix (Fin N) (Fin N) ℂ} (hU : Uᴴ * U = 1) :
@@ -449,7 +449,7 @@ theorem unitaryConj_surjective {U : Matrix (Fin N) (Fin N) ℂ} (hU : Uᴴ * U =
   intro y
   refine ⟨y.conj Uᴴ, ?_⟩
   rw [unitaryConj_apply, HermitianMat.conj_conj]
-  simp [Matrix.mul_eq_one_comm.mp hU]
+  simp [mul_eq_one_comm.mp hU]
 
 /-- **The unitary branch of the classification is realized.**  `Ad_U` is a unital
 order-automorphism for every `U` with `UᴴU = 1`, so `orderAuto_classification`'s hypothesis

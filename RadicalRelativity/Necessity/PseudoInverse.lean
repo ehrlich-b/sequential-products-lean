@@ -4,6 +4,7 @@ Released under Apache 2.0 license.
 Authors: Bryan Ehrlich
 -/
 import RadicalRelativity.Necessity.SharpEffects
+import RadicalRelativity.Hermitian.RCLikeGeneral
 
 set_option linter.style.longLine false
 
@@ -61,7 +62,7 @@ theorem eigFinset_le_one {b : HermitianMat n 𝕜} (hb : b ≤ 1) :
     ∀ μ ∈ b.eigFinset, μ ≤ 1 := by
   intro μ hμ
   obtain ⟨i, -, rfl⟩ := Finset.mem_image.mp hμ
-  exact HermitianMat.le_smul_one_imp_eigenvalues_le b 1 (by simpa using hb) i
+  exact HermitianMat.le_smul_one_imp_eigenvalues_le' b 1 (by simpa using hb) i
 
 theorem eigFinset_pos {b : HermitianMat n 𝕜} (hbd : b.mat.PosDef) :
     ∀ μ ∈ b.eigFinset, 0 < μ := by

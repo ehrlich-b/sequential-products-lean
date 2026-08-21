@@ -3,13 +3,20 @@ Copyright (c) 2026 Zayn Blore. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Zayn Blore
 -/
+module
 
-import RadicalRelativity.Vendor.Wigner.TransitionProbability
+public import RadicalRelativity.Vendor.Wigner.TransitionProbability
 
 /-!
 # Step (1) of the Wigner / Fubini–Study rigidity converse
 
 **Category:** 1-Mathlib (CSD-free Mathlib upstream candidate).
+
+**Glossary:** https://glossary.constraintsurfacedynamics.com/wigner-rigidity/
+Plain-language, CSD-role and formal statements of Wigner rigidity, with
+this module as its Lean anchor. Kept symmetric by `scripts/check-glossary.sh`.
+**On upstreaming:** this is a Category 1 file. Strip this Glossary block before any
+Mathlib or Physlib PR; a personal project link has no place in a canonical header.
 
 This file builds **STEP (1)** of the Wigner / Fubini–Study rigidity converse on
 top of the transition-probability foundation
@@ -142,7 +149,21 @@ The converse of the realisability inclusion `transProbPreserving_unitary` is the
 
 equivalently, the isometry group of `ℂℙⁿ` with the Fubini–Study metric is the
 projective **semi**-unitary group. It is **not** stated here as an axiom or a
-`sorry`. Piece 3 (W5) delivers the branch-distinguishing machinery:
+`sorry`.
+
+**Scope note (CL-024 audit, 2026-08-06; updated same day).** This module
+proves the EXISTENCE clause of the Wigner/Bargmann theorem. The up-to-phase
+**uniqueness** clause is formalized in companion modules: matrix vocabulary in
+`PhaseRigidity.lean` (`exists_unit_smul_of_smul_eq_smul`, the `U(N) → PU(N)`
+circle kernel — predating the audit, which missed it) and this theorem's own
+`projMap`/`conjProj` vocabulary in `WignerUniqueness.lean`
+(`exists_unit_smul_of_projMap_eq`, `exists_unit_smul_of_projMap_conjProj_eq`,
+via the involution `conjProj_conjProj`). The branch-EXCLUSIVITY facts (a map
+cannot be both unitary- and antiunitary-induced, `2 ≤ N`) live downstream:
+`Projectivization.conjProj_ne_projMap` / `smul_action_not_antiunitary`
+(`Empirical/CSD/Gates/WignerDischarge.lean`) and the Bargmann-invariant
+discriminator (`Projectivization/Bargmann.lean`, `LF4/BargmannSelection.lean`).
+Cite those modules, not this one, for uniqueness/exclusivity claims. Piece 3 (W5) delivers the branch-distinguishing machinery:
 
 * `two_level_imrelphase_of_fixes` / `_flips` — the **complex `I`-probe** pins the
   *imaginary* part of the relative phase, the datum the real probes of pieces 1–2
@@ -200,7 +221,7 @@ projectivization, transition probability, Fubini-Study, Wigner theorem,
 unitary group, complex projective space, isometry, orthogonality
 -/
 
-section
+@[expose] public section
 
 open scoped LinearAlgebra.Projectivization ComplexOrder
 open Matrix
@@ -329,7 +350,9 @@ noncomputable def conjProj (p : ℙ ℂ (EuclideanSpace ℂ (Fin N))) :
 Reduce both image rays to `mk (conjVec ·.rep)` via `transProb_mk`, then apply
 `conjVec_transProbVec`. This exhibits a concrete `TransProbPreserving` inhabitant
 of the **antiunitary** class: `conjVec` is conjugate-linear (`conjVec_smul`), not
-the underlying map of any `≃ₗᵢ[ℂ]`, so `conjProj` is not `projMap` of a unitary.
+the underlying map of any `≃ₗᵢ[ℂ]`; for `2 ≤ N` the ray-level map `conjProj` is
+not `projMap` of any unitary (`conjProj_ne_projMap`, WignerDischarge — at
+`N ≤ 1` the projective space has at most one point and the distinction vanishes).
 The eventual Wigner dichotomy is thus non-vacuous on the antiunitary side. -/
 theorem conjProj_transProbPreserving :
     TransProbPreserving (conjProj (N := N)) := by
@@ -642,6 +665,23 @@ lemma projMap_mk (e : E ≃ₗᵢ[ℂ] E) (v : E) (hv : v ≠ 0) :
   unfold projMap
   rw [Projectivization.map_mk]
   rfl
+
+/-- `projMap` of the identity is the identity ray map. -/
+@[simp] lemma projMap_refl :
+    projMap (LinearIsometryEquiv.refl ℂ E) = id := by
+  funext p
+  induction p using Projectivization.ind with
+  | h v hv => rw [projMap_mk]; rfl
+
+/-- `projMap` is functorial: the ray map of a composite is the composite of the
+ray maps (`trans` composes left-to-right, so `projMap e₂` applies second). -/
+lemma projMap_trans (e₁ e₂ : E ≃ₗᵢ[ℂ] E) :
+    projMap (e₁.trans e₂) = projMap e₂ ∘ projMap e₁ := by
+  funext p
+  induction p using Projectivization.ind with
+  | h v hv =>
+    rw [Function.comp_apply, projMap_mk, projMap_mk, projMap_mk]
+    rfl
 
 /-- **Transition probability is invariant under a linear isometry equivalence
 (vector level).** `transProbVec (e u) (e v) = transProbVec u v`: the numerator
@@ -2926,7 +2966,7 @@ theorem diagReducedMap_complexSign_closure
             (Projectivization.mk ℂ (b i + Complex.I • b j) (Iadd_basis_ne_zero b hij))
           = Projectivization.mk ℂ (b i - Complex.I • b j) (subI_basis_ne_zero b hij)) := by
   rcases lt_or_ge N 2 with hN | hN
-  · haveI : Subsingleton (Fin N) := Fin.subsingleton_iff_le_one.mpr (by omega)
+  · have : Subsingleton (Fin N) := Fin.subsingleton_iff_le_one.mpr (by omega)
     exact Or.inl (fun i j hij => absurd (Subsingleton.elim i j) hij)
   · have h01 : (⟨0, by omega⟩ : Fin N) ≠ ⟨1, by omega⟩ := Fin.ne_of_val_ne (by norm_num)
     rcases diagReducedMap_complex_probe_general hf b i₀ h01 with hfix | hflip
@@ -3106,7 +3146,7 @@ lemma unitaryOfIsometry_apply
     _ = (Matrix.toEuclideanLin (unitaryOfIsometry e)
           (EuclideanSpace.basisFun (Fin N) ℂ j)).ofLp i := by
           rw [EuclideanSpace.basisFun_apply, Matrix.ofLp_toLpLin, Matrix.toLin'_apply,
-            EuclideanSpace.ofLp_single]
+            PiLp.ofLp_single]
     _ = e (EuclideanSpace.basisFun (Fin N) ℂ j) i := by rw [h]
 
 /-- `unitaryOfIsometry e` is a unitary matrix: `star M * M = 1`, because the

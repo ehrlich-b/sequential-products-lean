@@ -49,7 +49,6 @@ def orthConj (U : Matrix n n ℝ) : HermitianMat n ℝ →ₗ[ℝ] HermitianMat 
       HermitianMat.conj_apply_mat, Matrix.mul_smul, Matrix.smul_mul]
     rfl
 
-omit [DecidableEq n] in
 @[simp]
 theorem orthConj_apply (U : Matrix n n ℝ) (x : HermitianMat n ℝ) :
     orthConj U x = x.conj U := rfl
@@ -78,7 +77,6 @@ theorem orthConj_preservesJordan {U : Matrix n n ℝ} (hU : Uᴴ * U = 1) :
 
 /-! ## It moves rank-ones to rank-ones -/
 
-omit [DecidableEq n] in
 /-- **`U(ψψᵀ)Uᵀ = (Uψ)(Uψ)ᵀ`.**  So a conjugation is determined on the rank-ones by its
 action on vectors, which is exactly the hypothesis shape that part 2's span argument
 consumes. -/

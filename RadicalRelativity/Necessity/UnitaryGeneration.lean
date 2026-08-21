@@ -492,8 +492,7 @@ theorem nrm2_pairVec {i j : Fin N} (hij : i ≠ j) : nrm2 (pairVec i j) = 2 := b
   rw [Finset.sum_eq_add_of_mem i j (Finset.mem_univ i) (Finset.mem_univ j) hij
     (fun k _ hk => ?_)]
   · norm_num [pairVec]
-  · simp only [Finset.mem_insert, Finset.mem_singleton, not_or] at hk
-    simp [pairVec, hk.1, hk.2]
+  · simp [pairVec, hk.1, hk.2]
 
 /-- **`AdjBlock` has content beyond reflexivity**: the identity frame is article-adjacent to
 a *different* frame, namely the Householder reflection whose axis is supported on the block.

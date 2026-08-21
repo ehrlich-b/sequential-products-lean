@@ -130,7 +130,7 @@ theorem probe_nonneg (φ : n → ℂ) : 0 ≤ probe φ := by
     rw [zero_le_iff, rankOne_mat]
     have := Matrix.posSemidef_conjTranspose_mul_self
       (Matrix.replicateRow (Fin 1) (star φ))
-    simpa [Matrix.vecMulVec_eq (Fin 1), Matrix.conjTranspose_replicateRow] using this
+    simpa [Matrix.vecMulVec_eq (Fin 1), Matrix.conjTranspose_replicateRow] using! this
   exact _root_.add_nonneg h1 h2
 
 theorem probe_le_one {φ : n → ℂ} (hφ : star φ ⬝ᵥ φ = 1) : probe φ ≤ 1 := by

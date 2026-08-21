@@ -9,14 +9,11 @@ public import RadicalRelativity.Vendor.HermitianMat.Inner
 public import RadicalRelativity.Vendor.HermitianMat.NonSingular
 public import RadicalRelativity.Vendor.Isometry
 
-
 public import Mathlib.Analysis.CStarAlgebra.ContinuousFunctionalCalculus.Continuity
 public import Mathlib.Analysis.CStarAlgebra.ContinuousFunctionalCalculus.Commute
 public import Mathlib.Analysis.CStarAlgebra.CStarMatrix
 public import Mathlib.Topology.TietzeExtension
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
-
-set_option relaxedAutoImplicit true
 
 /-! Matrix operations on HermitianMats with the CFC -/
 
@@ -39,7 +36,7 @@ theorem isSelfAdjoint : IsSelfAdjoint A.mat := by
 @[fun_prop]
 theorem continuousOn_finite {α β : Type*} (f : α → β) (S : Set α)
     [TopologicalSpace α] [TopologicalSpace β] [T1Space α] [Finite S] : ContinuousOn f S := by
-  rw [continuousOn_iff_continuous_restrict]
+  rw [continuousOn_iff_continuous_domRestrict]
   exact continuous_of_discreteTopology
 
 @[simp]
@@ -122,6 +119,7 @@ theorem spectrum_cfc_eq_image (A : HermitianMat d 𝕜) (f : ℝ → ℝ) :
     spectrum ℝ (A.cfc f).mat = f '' (spectrum ℝ A.mat) := by
   exact cfc_map_spectrum f A.mat
 
+set_option backward.isDefEq.respectTransparency false in
 /--
 Spectral decomposition of `A.cfc f` as a sum of scaled projections (matrix version).
 -/
@@ -143,6 +141,7 @@ theorem cfc_toMat_eq_sum_smul_proj : (A.cfc f).mat =
 --Ensure we get this instance:
 /-- info: locallyCompact_of_proper -/
 #guard_msgs in
+set_option backward.isDefEq.respectTransparency false in
 #synth LocallyCompactSpace (HermitianMat d 𝕜)
 
 theorem cfc_eigenvalues (A : HermitianMat d 𝕜) :
@@ -243,6 +242,7 @@ theorem cfc_pow {n : ℕ} : A.cfc (· ^ n) = A ^ n := by
   · simp_rw [pow_succ, mat_pow, mat_cfc_mul_apply, pow_succ, cfc_id']
     congr
 
+set_option backward.isDefEq.respectTransparency false in
 theorem cfc_nonneg_iff : 0 ≤ A.cfc f ↔ ∀ i, 0 ≤ f (A.H.eigenvalues i) := by
   open MatrixOrder in
   rw [cfc_eq, ← Subtype.coe_le_coe, ZeroMemClass.coe_zero]
@@ -265,12 +265,14 @@ theorem cfc_nonneg_of_nonneg (hA : 0 ≤ A) (hf : ∀ i ≥ 0, 0 ≤ f i) :
   rw [zero_le_iff, A.H.posSemidef_iff_eigenvalues_nonneg] at hA
   exact fun i ↦ hf _ (hA i)
 
+set_option backward.isDefEq.respectTransparency false in
 theorem cfc_nonSingular (hf : ∀ i, f (A.H.eigenvalues i) ≠ 0) : NonSingular (A.cfc f) := by
   rw [nonSingular_iff_eigenvalue_ne_zero]
   obtain ⟨e, he⟩ := cfc_eigenvalues f A
   simpa [he] using fun i ↦ hf (e i)
 
 
+set_option backward.isDefEq.respectTransparency false in
 theorem trace_mul_cfc (A : HermitianMat d 𝕜) (f : ℝ → ℝ) :
     (A.mat * (A.cfc f).mat).trace = ∑ i, A.H.eigenvalues i * f (A.H.eigenvalues i) := by
   conv_lhs => rw [A.eq_conj_diagonal]
@@ -351,6 +353,7 @@ theorem spectrum_subset_of_mem_Icc (A B : HermitianMat d 𝕜) :
 --   simp only [dist, AddSubgroupClass.subtype_apply, val_eq_coe, cfc_toMat] at ha ⊢
 --   sorry
 
+set_option backward.isDefEq.respectTransparency false in
 @[fun_prop]
 protected theorem cfc_continuous {f : ℝ → ℝ} (hf : Continuous f) :
     Continuous (HermitianMat.cfc · f : HermitianMat d ℂ → HermitianMat d ℂ) := by
@@ -404,11 +407,11 @@ ContinuousOn variant for when all the matrices (A x) have a spectrum in a set T,
 theorem continuousOn_cfc_fun {T : Set ℝ}
   (hf : ∀ i ∈ T, ContinuousOn (f · i) S) (hA : spectrum ℝ A.mat ⊆ T) :
     ContinuousOn (fun x ↦ A.cfc (f x)) S := by
-  simp_rw [continuousOn_iff_continuous_restrict] at hf ⊢
+  simp_rw [continuousOn_iff_continuous_domRestrict] at hf ⊢
   apply Continuous.subtype_mk
   conv => enter [1, x]; apply A.cfc_toMat_eq_sum_smul_proj (f x)
-  unfold Set.restrict at hf
-  apply continuous_finset_sum _
+  unfold Set.domRestrict at hf
+  apply continuous_finsetSum _
   rw [A.H.spectrum_real_eq_range_eigenvalues] at hA
   refine fun i _ ↦ Continuous.smul (hf _ (by grind)) (by fun_prop)
 
@@ -419,12 +422,12 @@ section joint_continuity
 /--
 Bound the Frobenius norm of a functional calculus application.
 -/
-lemma norm_cfc_le_sqrt_card_mul_bound {A : HermitianMat d 𝕜} {f : ℝ → ℝ} {C : ℝ}
+lemma norm_cfc_le_sqrt_card_mul_bound {A : HermitianMat d ℂ} {f : ℝ → ℝ} {C : ℝ}
     (hC : 0 ≤ C) (hf : ∀ x ∈ spectrum ℝ A.mat, ‖f x‖ ≤ C) :
     ‖A.cfc f‖ ≤ Real.sqrt (Fintype.card d) * C := by
   rw [ ← Real.sqrt_sq ( norm_nonneg _ ) ];
   -- Recall that the Frobenius norm of a Hermitian matrix is the square root of the sum of the squares of its eigenvalues.
-  have h_frobenius_eigenvalues : ∀ (M : HermitianMat d 𝕜), ‖M‖ ^ 2 = ∑ i ∈ Finset.univ, (M.H.eigenvalues i) ^ 2 := by
+  have h_frobenius_eigenvalues : ∀ (M : HermitianMat d ℂ), ‖M‖ ^ 2 = ∑ i ∈ Finset.univ, (M.H.eigenvalues i) ^ 2 := by
     exact fun M => norm_eq_sum_eigenvalues_sq M;
   -- Applying the bound on the eigenvalues to the Frobenius norm.
   have h_bound : ∑ i ∈ Finset.univ, ((A.cfc f).H.eigenvalues i) ^ 2 ≤ (Fintype.card d) * C ^ 2 := by
@@ -443,7 +446,7 @@ lemma norm_cfc_le_sqrt_card_mul_bound {A : HermitianMat d 𝕜} {f : ℝ → ℝ
 /-
 The norm of the difference of two functional calculus applications is bounded by `sqrt(d)` times the sup norm of the difference of the functions.
 -/
-lemma norm_cfc_sub_cfc_le_sqrt_card {A : HermitianMat d 𝕜} {f g : ℝ → ℝ} :
+lemma norm_cfc_sub_cfc_le_sqrt_card {A : HermitianMat d ℂ} {f g : ℝ → ℝ} :
     ‖A.cfc f - A.cfc g‖ ≤ Real.sqrt (Fintype.card d) * ⨆ x ∈ spectrum ℝ A.mat, ‖f x - g x‖ := by
   rw [ ← HermitianMat.cfc_sub ];
   refine' le_trans ( norm_cfc_le_sqrt_card_mul_bound _ _ ) _;
@@ -465,7 +468,7 @@ lemma norm_cfc_sub_cfc_le_sqrt_card {A : HermitianMat d 𝕜} {f g : ℝ → ℝ
 /-
 If f and g are close on T, and the spectrum of A is in T, then A.cfc f and A.cfc g are close.
 -/
-lemma norm_cfc_sub_le_of_sup_le {A : HermitianMat d 𝕜} {f g : ℝ → ℝ} {T : Set ℝ} {ε : ℝ}
+lemma norm_cfc_sub_le_of_sup_le {A : HermitianMat d ℂ} {f g : ℝ → ℝ} {T : Set ℝ} {ε : ℝ}
     (hT : spectrum ℝ A.mat ⊆ T) (hε : 0 ≤ ε) (h_sup : ∀ x ∈ T, ‖f x - g x‖ ≤ ε) :
     ‖A.cfc f - A.cfc g‖ ≤ Real.sqrt (Fintype.card d) * ε := by
   refine' le_trans ( norm_cfc_sub_cfc_le_sqrt_card ) _;
@@ -506,6 +509,7 @@ lemma dist_lt_of_continuous' {X : Type*} [TopologicalSpace X]
     have := hUV t' ( ht_fin.1 t' ht'_fin ) x₀ ⟨ mem_of_mem_nhds ( hU t' ( ht_fin.1 t' ht'_fin ) ), hx₀ ⟩ t ⟨ ht'_t, ht ⟩;
     exact abs_lt.mpr ⟨ by linarith [ abs_lt.mp ‹‖f x t - f x₀ t'‖ < ε / 2›, abs_lt.mp ‹‖f x₀ t - f x₀ t'‖ < ε / 2› ], by linarith [ abs_lt.mp ‹‖f x t - f x₀ t'‖ < ε / 2›, abs_lt.mp ‹‖f x₀ t - f x₀ t'‖ < ε / 2› ] ⟩
 
+set_option backward.isDefEq.respectTransparency false in
 /--
 The functional calculus is continuous on matrices with spectrum in a compact set.
 -/
@@ -521,7 +525,7 @@ lemma continuousOn_cfc_of_compact {K : Set ℝ} {g : ℝ → ℝ} (hK : IsCompac
       -- Extend $g$ to a continuous function on $[a, b]$.
       obtain ⟨f, hf⟩ : ∃ f : ℝ → ℝ, ContinuousOn f (Set.Icc a b) ∧ ∀ x ∈ K, f x = g x := by
         have := @ContinuousMap.exists_restrict_eq;
-        specialize this ( show IsClosed K from hK.isClosed ) ( ContinuousMap.mk ( fun x => g x ) <| by exact continuousOn_iff_continuous_restrict.mp hg );
+        specialize this ( show IsClosed K from hK.isClosed ) ( ContinuousMap.mk ( fun x => g x ) <| by exact continuousOn_iff_continuous_domRestrict.mp hg );
         exact ⟨ _, this.choose.continuous.continuousOn, fun x hx => by simpa using congr_arg ( fun f => f ⟨ x, hx ⟩ ) this.choose_spec ⟩;
       exact fun ε εpos => by rcases this a b f hf.1 ε εpos with ⟨ p, hp ⟩ ; exact ⟨ p, fun x hx => by simpa only [ hf.2 x hx ] using hp x ( hab hx ) ⟩ ;
     exact ⟨ fun n => Classical.choose ( h_stone_weierstrass ( 1 / ( n + 1 ) ) ( by positivity ) ), fun n x hx => le_of_lt ( Classical.choose_spec ( h_stone_weierstrass ( 1 / ( n + 1 ) ) ( by positivity ) ) x hx ) ⟩;
@@ -558,6 +562,7 @@ lemma continuousOn_cfc_of_compact {K : Set ℝ} {g : ℝ → ℝ} (hK : IsCompac
 
 end joint_continuity
 
+set_option backward.isDefEq.respectTransparency false in
 theorem continuous_cfc_joint_compact {X d : Type*} [TopologicalSpace X] [Fintype d] [DecidableEq d]
   {f : X → ℝ → ℝ} {A : X → HermitianMat d ℂ} {S : Set X} {T : Set ℝ}
   (hT : IsCompact T)
@@ -630,6 +635,7 @@ The proof uses the resolvent approach and compactness.
 Note: we need to connect spectrum ℝ B.mat (the real spectrum) to IsUnit in the complex matrix ring. Use that for self-adjoint elements, t ∈ spectrum ℝ A.mat iff algebraMap ℝ (Matrix d d ℂ) t ∈ spectrum ℂ A.mat, and the resolvent set is open. We can use spectrum.isOpen_resolventSet or the characterization via IsUnit.
 -/
 set_option maxHeartbeats 400000 in
+set_option backward.isDefEq.respectTransparency false in
 lemma spectrum_subset_of_isOpen (A₀ : HermitianMat d ℂ) (U : Set ℝ)
     (hU : IsOpen U) (hAU : spectrum ℝ A₀.mat ⊆ U) :
     ∀ᶠ B in nhds A₀, spectrum ℝ B.mat ⊆ U := by
@@ -726,6 +732,7 @@ Step 5: Combine. By the triangle inequality:
 Both terms → 0, so the map is ContinuousWithinAt.
 Use `Metric.continuousWithinAt_iff` and an ε/2 argument.
 -/
+set_option backward.isDefEq.respectTransparency false in
 set_option maxHeartbeats 800000 in
 lemma continuousWithinAt_cfc_of_continuousOn {T : Set ℝ} {g : ℝ → ℝ}
     {A₀ : HermitianMat d ℂ}
@@ -739,7 +746,7 @@ lemma continuousWithinAt_cfc_of_continuousOn {T : Set ℝ} {g : ℝ → ℝ}
       exact hg.mono hA₀
     generalize_proofs at *; (
     have := @ContinuousMap.exists_restrict_eq ℝ;
-    specialize this ( show IsClosed ( spectrum ℝ A₀.val ) from h_finite.isClosed ) ( ContinuousMap.mk ( fun x => g x ) <| by exact continuousOn_iff_continuous_restrict.mp h_cont ) ; rcases this with ⟨ h, hh ⟩ ; exact ⟨ h, h.continuous, fun x hx => by simpa using congr_arg ( fun f => f ⟨ x, hx ⟩ ) hh ⟩ ;));
+    specialize this ( show IsClosed ( spectrum ℝ A₀.val ) from h_finite.isClosed ) ( ContinuousMap.mk ( fun x => g x ) <| by exact continuousOn_iff_continuous_domRestrict.mp h_cont ) ; rcases this with ⟨ h, hh ⟩ ; exact ⟨ h, h.continuous, fun x hx => by simpa using congr_arg ( fun f => f ⟨ x, hx ⟩ ) hh ⟩ ;));
   obtain ⟨h, hh_cont, hh_eq⟩ := h_ext;
   have h_cfc_cont : ContinuousWithinAt (fun B => B.cfc h) {B : HermitianMat d ℂ | spectrum ℝ B.mat ⊆ T} A₀ := by
     exact Continuous.continuousWithinAt (HermitianMat.cfc_continuous hh_cont)
@@ -933,6 +940,7 @@ In code, the proof structure should mirror continuous_cfc_joint_compact closely,
 - `dist_lt_of_continuous' hT hf x_in_S ε_pos` with `dist_lt_of_continuous_spectrum hf hA₁ hA₂ x_in_S ε_pos`
 - `continuousOn_cfc_of_compact hT (hf.uncurry_left x x_in_S)` with `continuousWithinAt_cfc_of_continuousOn (hf.uncurry_left x x_in_S) (hA₁ x x_in_S)` composed with hA₂ and hA₁.
 -/
+set_option backward.isDefEq.respectTransparency false in
 @[fun_prop]
 theorem continuous_cfc_joint {X d : Type*} [TopologicalSpace X] [Fintype d] [DecidableEq d]
   {f : X → ℝ → ℝ} {A : X → HermitianMat d ℂ} {S : Set X} {T : Set ℝ}
@@ -1048,6 +1056,7 @@ open MeasureTheory
 open scoped Matrix.Norms.Frobenius
 
 omit [DecidableEq d] in
+set_option backward.isDefEq.respectTransparency false in
 /--
 The integral of a Hermitian matrix function commutes with `toMat`.
 -/
@@ -1056,6 +1065,7 @@ lemma integral_toMat (A : ℝ → HermitianMat d 𝕜) (T₁ T₂ : ℝ) {μ : M
     (∫ t in T₁..T₂, A t ∂μ).mat = ∫ t in T₁..T₂, (A t).mat ∂μ := by
   exact ((matₗ (R := ℝ)).intervalIntegral_comp_comm hA).symm
 
+set_option backward.isDefEq.respectTransparency false in
 /--
 A sum of scaled constant matrices is integrable if the scalar functions are integrable.
 -/
@@ -1063,8 +1073,9 @@ lemma intervalIntegrable_sum_smul_const (T₁ T₂ : ℝ) {μ : Measure ℝ} (g 
     (P : d → Matrix d d 𝕜) (hg : ∀ i, IntervalIntegrable (fun t ↦ g t i) μ T₁ T₂) :
     IntervalIntegrable (fun t ↦ ∑ i, g t i • P i) μ T₁ T₂ := by
   simp_all [intervalIntegrable_iff]
-  exact integrable_finset_sum _ fun i _ ↦ Integrable.smul_const (hg i) _
+  exact integrable_finsetSum _ fun i _ ↦ Integrable.smul_const (hg i) _
 
+set_option backward.isDefEq.respectTransparency false in
 /--
 A function to Hermitian matrices is integrable iff its matrix values are integrable.
 -/
@@ -1101,6 +1112,7 @@ lemma intervalIntegrable_toMat_iff (A : ℝ → HermitianMat d 𝕜) (T₁ T₂ 
       fun_prop
     · filter_upwards with t using le_rfl
 
+set_option backward.isDefEq.respectTransparency false in
 /--
 The CFC of an integrable function family is integrable.
 -/
@@ -1123,7 +1135,7 @@ lemma integral_cfc_eq_cfc_integral (T₁ T₂ : ℝ) {μ : Measure ℝ} (f : ℝ
   ext1
   rw [ integral_toMat ];
   · rw [ intervalIntegral.integral_congr fun t ht ↦
-        HermitianMat.cfc_toMat_eq_sum_smul_proj A ( f t ), intervalIntegral.integral_finset_sum ];
+        HermitianMat.cfc_toMat_eq_sum_smul_proj A ( f t ), intervalIntegral.integral_finsetSum ];
     · rw [ Finset.sum_congr rfl fun i _ ↦ intervalIntegral.integral_smul_const _ _ ];
       exact Eq.symm (cfc_toMat_eq_sum_smul_proj A fun u ↦ ∫ (t : ℝ) in T₁..T₂, f t u ∂μ);
     · simp_all [ intervalIntegrable_iff ];
@@ -1151,6 +1163,7 @@ theorem cfc_pos_of_pos {A : HermitianMat d 𝕜} {f : ℝ → ℝ} (hA : 0 < A)
     simp [h_f_pos, spectrum.mem_iff, Matrix.isUnit_iff_isUnit_det, Algebra.algebraMap_eq_smul_one]
   exact lt_of_le_of_ne h_f_nonneg h_f_nonzero.symm
 
+set_option backward.isDefEq.respectTransparency false in
 /-- If two matrices A and B commute, then they is a common matrix with which they are both CFCs of.
 This is a variant of the common theorem that "commuting matrices can be simultaneously diagonalized." -/
 theorem _root_.Commute.exists_HermitianMat_cfc (hAB : Commute A.mat B.mat) :
@@ -1273,7 +1286,7 @@ lemma trace_cfc_eq (A : HermitianMat d ℂ) (f : ℝ → ℝ) :
   rw [HermitianMat.mat_cfc] at h1
   rw [h2] at h1
   have h3 : (Complex.ofReal) (A.cfc f).trace = Complex.ofReal (∑ i, f (A.H.eigenvalues (e i))) := by
-    convert h1 using 1
+    convert! h1 using 1
     simp
   have h4 := Complex.ofReal_injective h3
   rw [h4]
@@ -1335,7 +1348,7 @@ lemma cfc_mulVec_expansion (A : HermitianMat d ℂ) (f : ℝ → ℝ) (x : Eucli
     intro x; congr; ext y; simp [ Finset.sum_ite, Finset.filter_eq, Finset.filter_and ] ; ring_nf
     rw [ Finset.sum_eq_single y ] <;> aesop;
   simp_all [mul_comm, mul_left_comm ] ; ring_nf
-  convert congr_arg ( fun y => ∑ j, x.ofLp j * y j ) h_cfc_def using 1
+  convert! congr_arg ( fun y => ∑ j, x.ofLp j * y j ) h_cfc_def using 1
   simp [ Finset.mul_sum _ _ _, mul_assoc, mul_left_comm ]
   ring_nf!
   rw [ Finset.sum_comm, Finset.sum_congr rfl ]

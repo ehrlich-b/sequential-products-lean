@@ -81,21 +81,37 @@ commutes with every quaternion is zero. This is the finite computation the paper
 invokes twice in `thm:quaternionic`. -/
 theorem central_im_zero {q : Quaternion ℝ} (hre : q.re = 0)
     (h : ∀ x : Quaternion ℝ, q * x = x * q) : q = 0 := by
-  refine QuaternionAlgebra.ext hre ?_ ?_ ?_
-  · -- q.imI = 0, from commuting with j = ⟨0,0,1,0⟩ (imK component)
-    change q.imI = 0
-    have hK := congrArg QuaternionAlgebra.imK (h ⟨0, 0, 1, 0⟩)
+  -- Expand the commutation identity against a *variable* quaternion `y` first.
+  -- `imK_mul`/`imJ_mul` are stated over `ℍ[ℝ] = Quaternion ℝ`, while a raw
+  -- structure literal `⟨0,0,1,0⟩` carries the inferred type `ℍ[ℝ,-1,0,-1]`;
+  -- unifying the two unfolds the semireducible `Quaternion`, which `simp` no
+  -- longer does. Instantiating at the literals *after* the rewrite avoids it.
+  have hKgen : ∀ y : Quaternion ℝ,
+      q.re * y.imK + q.imI * y.imJ - q.imJ * y.imI + q.imK * y.re
+        = y.re * q.imK + y.imI * q.imJ - y.imJ * q.imI + y.imK * q.re := by
+    intro y
+    have hK := congrArg QuaternionAlgebra.imK (h y)
     simp only [imK_mul] at hK
-    linarith
-  · -- q.imJ = 0, from commuting with i = ⟨0,1,0,0⟩ (imK component)
-    change q.imJ = 0
-    have hK := congrArg QuaternionAlgebra.imK (h ⟨0, 1, 0, 0⟩)
-    simp only [imK_mul] at hK
-    linarith
-  · -- q.imK = 0, from commuting with i = ⟨0,1,0,0⟩ (imJ component)
-    change q.imK = 0
-    have hJ := congrArg QuaternionAlgebra.imJ (h ⟨0, 1, 0, 0⟩)
+    exact hK
+  have hJgen : ∀ y : Quaternion ℝ,
+      q.re * y.imJ - q.imI * y.imK + q.imJ * y.re + q.imK * y.imI
+        = y.re * q.imJ - y.imI * q.imK + y.imJ * q.re + y.imK * q.imI := by
+    intro y
+    have hJ := congrArg QuaternionAlgebra.imJ (h y)
     simp only [imJ_mul] at hJ
+    exact hJ
+  -- q.imI: commute with j = ⟨0,0,1,0⟩ (imK component); q.imJ: commute with
+  -- i = ⟨0,1,0,0⟩ (imK component); q.imK: commute with i (imJ component).
+  have hI := hKgen ⟨0, 0, 1, 0⟩
+  have hJ := hKgen ⟨0, 1, 0, 0⟩
+  have hK := hJgen ⟨0, 1, 0, 0⟩
+  norm_num at hI hJ hK
+  refine QuaternionAlgebra.ext hre ?_ ?_ ?_
+  · change q.imI = 0
+    linarith
+  · change q.imJ = 0
+    linarith
+  · change q.imK = 0
     linarith
 
 /-- **Two-slot injectivity** (the decisive quaternionic fact, paper §4 remark). The

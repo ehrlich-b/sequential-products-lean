@@ -56,7 +56,6 @@ theorem tvalLm_of_coupling {N : ℕ} (hN : 3 ≤ N)
     rw [hx, LinearEquiv.apply_symm_apply]
   have hval := congrArg
     (fun L : BlockV →ₗ[ℝ] BlockV => (WithLp.linearEquiv 2 ℝ (ℝ × ℝ)) (L x)) h
-  simp only at hval
   -- the left side: block coordinates of `dχ(r)` on `blockHerm i j 1`
   rw [rhoFieldL2_apply, LinearEquiv.apply_symm_apply,
     rhoField_apply_of_ne (n := Fin N) hij, hxe] at hval

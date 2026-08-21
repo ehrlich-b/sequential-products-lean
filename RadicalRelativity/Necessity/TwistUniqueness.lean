@@ -141,7 +141,6 @@ theorem twist_param_unique {N : ℕ} (hN : 2 ≤ N) {t₁ t₂ : ℝ}
   have hentry := congrArg (fun M : HermitianMat (Fin N) ℂ => M.mat i j)
     (h (diagFamily r) (pairProj i j) (diagFamily_isEffect hrle)
       (pairProj_isEffect hij))
-  simp only at hentry
   rw [twistSeq_diagFamily_entry, twistSeq_diagFamily_entry,
     pairProj_entry hij, hri, hrj] at hentry
   -- the `j`-side factors are `1`, the common positive factor cancels

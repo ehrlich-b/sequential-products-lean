@@ -7,6 +7,30 @@ import RadicalRelativity.Necessity.BlockSkew
 import RadicalRelativity.MasterTheorem.DiagonalHom
 import Mathlib.Analysis.InnerProductSpace.ProdL2
 
+/-
+### The one first-party use of `backward.isDefEq.respectTransparency`
+
+Lean v4.33 flipped `backward.isDefEq.respectTransparency`: `isDefEq` at `.instances`
+transparency no longer unfolds non-reducible instance definitions. `HermitianMat` carries two
+definitionally-equal-but-not-syntactically-equal topologies (see
+`RadicalRelativity.Hermitian.OperatorInstances` for the full account), and everywhere else in
+this development the fix is an explicit instance bridge, which is permanent and survives the
+eventual removal of the `backward.*` compatibility knobs.
+
+That approach does NOT terminate here. `blockSkewSubmodule` is a submodule of the endomorphism
+space, so the mismatch has to be bridged at every layer of the submodule's own instance chain:
+`NormedAddCommGroup`, then `NormedSpace`, then `IsScalarTower`, and the last of these cannot be
+supplied at all — declaring `IsScalarTower ℝ ℝ (HermitianMat n ℂ →L[ℝ] HermitianMat n ℂ)`
+explicitly still leaves synthesis unable to find it, because by that depth the `SMul` instances
+themselves have diverged. Each bridge also widens the diamond it is patching.
+
+So this file uses the knob instead. Consequences, recorded honestly: it is a compatibility
+option scheduled for removal, and when it goes this file needs revisiting. Upstream physlib made
+the same trade — the vendored `HermitianMat/Basic.lean` carries six such lines, and the island
+40 in total.
+-/
+set_option backward.isDefEq.respectTransparency false
+
 set_option linter.style.longLine false
 
 /-!
@@ -203,6 +227,20 @@ theorem rhoFieldL2_apply (i j : n) (ξ : ↥(blockSkewSubmodule (n := n)))
     rhoFieldL2 i j ξ x
       = (WithLp.linearEquiv 2 ℝ (ℝ × ℝ)).symm
           (rhoField i j ξ (WithLp.linearEquiv 2 ℝ (ℝ × ℝ) x)) := rfl
+
+/-- The normed structure on the stabilizer, exported so that downstream files
+(`Necessity.PhaseAnchor`) inherit it and do NOT need the `respectTransparency` knob above.
+Declaring it here keeps that compatibility option confined to this one file. -/
+noncomputable instance instNormedAddCommGroupBlockSkew :
+    NormedAddCommGroup ↥(blockSkewSubmodule (n := n)) :=
+  Submodule.normedAddCommGroup (𝕜 := ℝ)
+    (E := HermitianMat n ℂ →L[ℝ] HermitianMat n ℂ) (s := blockSkewSubmodule)
+
+/-- Likewise the `ℝ`-normed-space structure, exported for downstream use. -/
+noncomputable instance instNormedSpaceBlockSkew :
+    NormedSpace ℝ ↥(blockSkewSubmodule (n := n)) :=
+  Submodule.normedSpace (𝕜 := ℝ)
+    (E := HermitianMat n ℂ →L[ℝ] HermitianMat n ℂ) (s := blockSkewSubmodule)
 
 /-- **The concrete `DiagonalHomSetup` on `H_N(ℂ)`.** Every differential-face
 field is a proved theorem of this development; the comparison face is

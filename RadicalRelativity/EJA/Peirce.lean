@@ -110,6 +110,11 @@ Stated with the factor `2` carried rather than cancelled, so that this lemma nee
 torsion hypothesis and holds over any `NonUnitalNonAssocCommRing`. -/
 theorem two_lin1_raw (a b : J) :
     (2 : ℕ) • ⁅L b, L (a * a)⁆ + (4 : ℕ) • ⁅L a, L (a * b)⁆ = 0 := by
+  -- Mathlib's `LieRing.ofAssociativeRing` is only a `local instance` of its own file, so a ring's
+  -- commutator carries `Ring.instBracket` but no `LieRing`, and `lie_add`/`add_lie`/`lie_sub`/
+  -- `sub_lie` cannot fire on `AddMonoid.End J`.  Reinstating it here is what makes the `simp only`
+  -- below distribute the bracket over the polarised sums.
+  let _ : LieRing (AddMonoid.End J) := LieRing.ofAssociativeRing
   have hs := (commute_lmul_lmul_sq (a + b)).lie_eq
   have hd := (commute_lmul_lmul_sq (a - b)).lie_eq
   have ha := (commute_lmul_lmul_sq a).lie_eq

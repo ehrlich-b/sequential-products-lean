@@ -4,6 +4,7 @@ Released under Apache 2.0 license.
 Authors: Bryan Ehrlich
 -/
 import RadicalRelativity.Hermitian.OrderUnit
+import RadicalRelativity.Hermitian.RCLikeGeneral
 import Mathlib.Analysis.Convex.Extreme
 import Mathlib.Data.Matrix.Mul
 
@@ -171,7 +172,7 @@ theorem isProjection_of_mem_extremePoints {a : HermitianMat n 𝕜}
   obtain ⟨⟨ha0, ha1⟩, hext⟩ := ha
   have hev0 : ∀ i, 0 ≤ a.H.eigenvalues i := eigenvalues_nonneg ha0
   have hev1 : ∀ i, a.H.eigenvalues i ≤ 1 := fun i =>
-    le_smul_one_imp_eigenvalues_le a 1 (by simpa using ha1) i
+    le_smul_one_imp_eigenvalues_le' a 1 (by simpa using ha1) i
   -- the two perturbations are effects
   have hb_eff : a.cfc (fun x => x + min x (1 - x)) ∈
       {x : HermitianMat n 𝕜 | 0 ≤ x ∧ x ≤ 1} := by

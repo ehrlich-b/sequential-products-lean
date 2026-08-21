@@ -4,6 +4,7 @@ Released under Apache 2.0 license.
 Authors: Bryan Ehrlich
 -/
 import RadicalRelativity.Necessity.BlockChi
+import RadicalRelativity.Hermitian.OperatorInstances
 
 set_option linter.style.longLine false
 
@@ -69,9 +70,9 @@ theorem dChi_block_skew (hS2 : P.FirstArgContinuous) (hjord : ThetaPreservesJord
   have hcurve : HasDerivAt (fun t : ℝ => entryCLM i j (exp (t • A) x))
       (entryCLM i j (A x)) 0 := by
     have hd := exp_apply_hasDerivAt A x
-    have hcC := hasDerivAt_const (0 : ℝ) (entryCLM i j)
-    have hcomb := hcC.clm_apply hd
-    simpa using hcomb
+    -- Compose with the constant map directly. The `hasDerivAt_const .clm_apply` route needs a
+    -- normed structure on `HermitianMat n ℂ →L[ℝ] ℂ`, which the topology diamond blocks.
+    exact (entryCLM i j).hasFDerivAt.comp_hasDerivAt 0 hd
   -- the value at 0 is z₀
   have hval0 : entryCLM i j (exp ((0 : ℝ) • A) x) = z₀ := by
     rw [show (0 : ℝ) • A = 0 from zero_smul ℝ A, exp_zero]

@@ -251,10 +251,7 @@ theorem conjMatStarAlg_apply (A : Matrix n n ℂ) :
 
 theorem continuous_conjMatStarAlg :
     Continuous (conjMatStarAlg : Matrix n n ℂ → Matrix n n ℂ) := by
-  rw [continuous_pi_iff]
-  intro i
-  rw [continuous_pi_iff]
-  intro j
+  refine continuous_pi_iff.mpr fun i => continuous_pi_iff.mpr fun j => ?_
   exact Complex.continuous_conj.comp ((continuous_apply j).comp (continuous_apply i))
 
 omit [Fintype n] [DecidableEq n] in
@@ -282,7 +279,7 @@ theorem cfc_transpose (f : ℝ → ℝ) {A : Matrix n n ℂ} (hA : IsSelfAdjoint
     continuous_conjMatStarAlg hA (by
       change IsSelfAdjoint (conjMatStarAlg A)
       rw [conjMatStarAlg_apply, ← transpose_eq_conj_of_isHermitian hherm]
-      exact (Matrix.isHermitian_transpose_iff A).mpr hherm)
+      exact (Matrix.isHermitian_transpose_iff (A := A)).mpr hherm)
   simpa using hmap
 
 /-- Transposition does not move the real spectrum: `algebraMap r - Aᵀ` is the transpose of
@@ -324,7 +321,7 @@ theorem cfc_transpose_unconditional (f : ℝ → ℝ) (A : Matrix n n ℂ) :
   · rw [cfc_apply_of_not_predicate (R := ℝ) A hA, Matrix.transpose_zero,
       cfc_apply_of_not_predicate (R := ℝ) _ (by
         rw [show IsSelfAdjoint A.transpose ↔ A.IsHermitian from
-          Matrix.isHermitian_transpose_iff A]
+          Matrix.isHermitian_transpose_iff (A := A)]
         exact hA)]
 
 /-- The `HermitianMat` form, likewise unconditional — the continuity hypothesis it used to

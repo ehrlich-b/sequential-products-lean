@@ -147,7 +147,7 @@ theorem oneParameter_eq_exp (g : ℝ → 𝔸) (hcont : Continuous g)
     have hshift : HasDerivAt (fun t : ℝ => F (t + d)) (g (t + d)) t := by
       have hinner : HasDerivAt (fun t : ℝ => t + d) 1 t := (hasDerivAt_id t).add_const d
       have := (hFd (t + d)).scomp t hinner
-      simpa using this
+      simpa using! this
     have hrepr : HasDerivAt (fun t => (F (t + d) - F t) * Jinv)
         ((g (t + d) - g t) * Jinv) t :=
       ((hshift.sub (hFd t)).mul_const Jinv)
@@ -166,7 +166,7 @@ theorem oneParameter_eq_exp (g : ℝ → 𝔸) (hcont : Continuous g)
     have h4 : HasDerivAt (fun s : ℝ => g (t + s)) ((g (t + d) - g t) * Jinv) 0 := by
       have hinner : HasDerivAt (fun s : ℝ => t + s) 1 0 := (hasDerivAt_id 0).const_add t
       have := (hg' (t + 0)).scomp 0 hinner
-      simpa using this
+      simpa using! this
     have heq : (g (t + d) - g t) * Jinv = g t * A := h4.unique h3
     exact heq ▸ hg' t
   -- ## Step 4: the ODE kill

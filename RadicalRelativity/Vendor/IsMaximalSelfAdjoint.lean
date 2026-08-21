@@ -7,9 +7,6 @@ module
 
 public import Mathlib.Analysis.Matrix.Normed
 
-set_option relaxedAutoImplicit true
-
-
 /-!
 # Maximal self-adjoint subrings
 

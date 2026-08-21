@@ -73,7 +73,10 @@ theorem continuousOnOu_iff_continuousOn [Nonempty n]
     (f : HermitianMat n 𝕜 → HermitianMat n 𝕜) (s : Set (HermitianMat n 𝕜)) :
     ContinuousOnOu f s ↔ ContinuousOn f s := by
   have hCpos : (0 : ℝ) < Real.sqrt (Fintype.card n) := sqrt_card_pos
-  rw [Metric.continuousOn_iff]
+  -- `rw` cannot match here: `Metric.continuousOn_iff`'s `ContinuousOn` carries the pseudo-metric
+  -- topology while the goal's carries `HermitianMat.instTopologicalSpace`. Compose the iff as a
+  -- term, which elaborates at default transparency where the two agree.
+  refine Iff.trans ?_ Metric.continuousOn_iff.symm
   constructor
   · intro h a₀ ha₀ ε hε
     obtain ⟨δ, hδ, hmain⟩ := h a₀ ha₀ (ε / Real.sqrt (Fintype.card n)) (div_pos hε hCpos)

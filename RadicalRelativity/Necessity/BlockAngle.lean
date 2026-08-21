@@ -52,7 +52,6 @@ theorem chiEntryGen_eq_dChiEntry (hS2 : P.FirstArgContinuous)
     have h := chiEntry_eq_exp_gen P hS2 hjord hij (t • r)
     rw [map_smul] at h
     have h2 := congrFun (congrArg (fun L : ℂ →L[ℝ] ℂ => (L : ℂ → ℂ)) h) z
-    simp only at h2
     rw [← chiEntryCLM_apply P hS2 (t • r) i j z]
     exact h2
   have h1 : HasDerivAt (fun t : ℝ => chiEntry P hS2 (t • r) i j z)

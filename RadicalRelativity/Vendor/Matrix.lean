@@ -18,9 +18,10 @@ public import Mathlib.LinearAlgebra.Matrix.IsDiag
 public import Mathlib.Tactic.Bound
 public import Mathlib.Tactic.NormNum.GCD
 
-
 public import RadicalRelativity.Vendor.Misc
 
+-- Vendor edit 2: this repo's lakefile sets `relaxedAutoImplicit = false`; upstream
+-- physlib relies on relaxed auto-bound implicits for `dA`/`dB` in this file.
 set_option relaxedAutoImplicit true
 
 @[expose] public section
@@ -46,6 +47,7 @@ theorem fromBlocks_gram_posSemidef {m n k : Type*} [Fintype m] [Fintype n] [Fint
   rw [fromBlocks_conjTranspose, fromBlocks_multiply]
   simp
 
+set_option backward.isDefEq.respectTransparency false in
 theorem zero_rank_eq_zero {A : Matrix n n 𝕜} [Fintype n] (hA : A.rank = 0) : A = 0 := by
   have h : ∀ v, A.mulVecLin v = 0 := by
     intro v
@@ -79,10 +81,10 @@ theorem smul_real (c : ℝ) : (c • A).IsHermitian := by
 
 def HermitianSubspace (n 𝕜 : Type*) [Fintype n] [RCLike 𝕜] : Subspace ℝ (Matrix n n 𝕜) where
   carrier := { A : Matrix n n 𝕜 | A.IsHermitian }
-  add_mem' _ _ := by simp_all only [Set.mem_setOf_eq, IsHermitian.add]
-  zero_mem' := by simp only [Set.mem_setOf_eq, isHermitian_zero]
+  add_mem' _ _ := by simp_all only [Set.mem_ofPred_eq, IsHermitian.add]
+  zero_mem' := by simp only [Set.mem_ofPred_eq, isHermitian_zero]
   smul_mem' c A := by
-    simp only [Set.mem_setOf_eq]
+    simp only [Set.mem_ofPred_eq]
     intro hA
     exact IsHermitian.smul_real hA c
 
@@ -290,7 +292,7 @@ theorem zero_dotProduct_zero_iff : (∀ x : m → 𝕜, 0 = star x ⬝ᵥ A.mulV
     ext i j
     have h₂ := fun x ↦ (PosSemidef.dotProduct_mulVec_zero_iff hA x).mp (h x).symm
     classical have : DecidableEq m := inferInstance
-    convert congrFun (h₂ (Pi.single j 1)) i using 1
+    convert! congrFun (h₂ (Pi.single j 1)) i using 1
     simp
   · rintro rfl
     simp
@@ -339,7 +341,7 @@ theorem ker_range_antitone {d : Type*} [Fintype d] [DecidableEq d] {A B : Matrix
     LinearMap.ker A.toEuclideanLin ≤ LinearMap.ker B.toEuclideanLin ↔
     LinearMap.range B.toEuclideanLin ≤ LinearMap.range A.toEuclideanLin
      := by
-  rw [isHermitian_iff_isSymmetric] at hA hB
+  rw [isSymmetric_toEuclideanLin_iff.symm] at hA hB
   exact ContinuousLinearMap.ker_le_ker_iff_range_le_range
     (T := Matrix.toEuclideanCLM.toFun B) (U := Matrix.toEuclideanCLM.toFun A) hB hA
 
@@ -607,13 +609,13 @@ def traceRight (m : Matrix (d₁ × d) (d₂ × d) R) : Matrix d₁ d₂ R :=
 variable [Fintype d₁] [Fintype d₂] in
 @[simp]
 theorem traceLeft_trace (A : Matrix (d₁ × d₂) (d₁ × d₂) R) : A.traceLeft.trace = A.trace := by
-  convert (Fintype.sum_prod_type_right _).symm
+  convert! (Fintype.sum_prod_type_right _).symm
   rfl
 
 variable [Fintype d₁] [Fintype d₂] in
 @[simp]
 theorem traceRight_trace (A : Matrix (d₁ × d₂) (d₁ × d₂) R) : A.traceRight.trace = A.trace := by
-  convert (Fintype.sum_prod_type _).symm
+  convert! (Fintype.sum_prod_type _).symm
   rfl
 
 variable [StarAddMonoid R] in
@@ -706,18 +708,9 @@ theorem PosDef.kron {d₁ d₂ 𝕜 : Type*} [Fintype d₁] [DecidableEq d₁] [
     use (star hA.left.eigenvectorUnitary.val) ⊗ₖ (star hB.left.eigenvectorUnitary.val)
     simp [← Matrix.mul_kronecker_mul]
 
-private theorem PosDef.submatrix_of_injective {n m 𝕜 : Type*} [RCLike 𝕜]
-    {M : Matrix n n 𝕜} (hM : M.PosDef) {e : m → n} (he : Function.Injective e) :
-    (M.submatrix e e).PosDef := by
-  refine ⟨hM.1.submatrix _, fun x hx ↦ ?_⟩
-  have hx' : x.mapDomain e ≠ 0 := by
-    simpa [Finsupp.mapDomain_zero] using (Finsupp.mapDomain_injective he).ne hx
-  simpa [Finsupp.sum_mapDomain_index, add_mul, mul_add] using hM.2 hx'
-
 theorem PosDef.reindex {d₁ d₂ 𝕜 : Type*} [Fintype d₁] [DecidableEq d₁] [Fintype d₂] [DecidableEq d₂] [RCLike 𝕜]
-    {M : Matrix d₁ d₁ 𝕜} (hM : M.PosDef) (e : d₁ ≃ d₂) : (M.reindex e e).PosDef := by
-  rw [Matrix.reindex_apply]
-  exact hM.submatrix_of_injective e.symm.injective
+    {M : Matrix d₁ d₁ 𝕜} (hM : M.PosDef) (e : d₁ ≃ d₂) : (M.reindex e e).PosDef :=
+  hM.submatrix e.symm.injective
 
 @[simp]
 theorem PosDef.reindex_iff {d₁ d₂ 𝕜 : Type*} [Fintype d₁] [DecidableEq d₁] [Fintype d₂] [DecidableEq d₂] [RCLike 𝕜]
@@ -778,11 +771,11 @@ theorem IsHermitian.cfc_eigenvalues {M : Matrix d d 𝕜} (hM : M.IsHermitian) (
         norm_num +zetaDelta at *;
       refine' Polynomial.funext fun t => _;
       convert h_char_poly t using 1;
-      · simp [ Matrix.det_apply', Polynomial.eval_finset_sum ];
+      · simp [ Matrix.det_apply', Polynomial.eval_finsetSum ];
         simp [ Matrix.one_apply, Polynomial.eval_prod ];
         congr! 3;
         aesop;
-      · simp [ Matrix.det_apply', Polynomial.eval_finset_sum ];
+      · simp [ Matrix.det_apply', Polynomial.eval_finsetSum ];
         simp [ Matrix.one_apply, Polynomial.eval_prod ];
         exact Finset.sum_congr rfl fun _ _ => by congr; ext; aesop;
     simp_all [ Matrix.charmatrix, Matrix.det_diagonal ];
@@ -826,9 +819,9 @@ lemma IsHermitian.eigenvalues_eq_of_unitary_similarity_diagonal {d 𝕜 : Type*}
         simp
       refine' Polynomial.funext fun t => _;
       convert h_det t using 1 <;> simp [ Matrix.charpoly, Matrix.det_apply' ];
-      · simp [ Polynomial.eval_finset_sum, Polynomial.eval_mul, Polynomial.eval_prod, Matrix.one_apply ];
+      · simp [ Polynomial.eval_finsetSum, Polynomial.eval_mul, Polynomial.eval_prod, Matrix.one_apply ];
         exact Finset.sum_congr rfl fun _ _ => by congr; ext; aesop;
-      · simp [ Polynomial.eval_finset_sum, Polynomial.eval_mul, Polynomial.eval_prod, Matrix.one_apply ];
+      · simp [ Polynomial.eval_finsetSum, Polynomial.eval_mul, Polynomial.eval_prod, Matrix.one_apply ];
         exact Finset.sum_congr rfl fun _ _ => by congr; ext; aesop;
     rw [ h, h_char_poly ];
   -- The roots of the characteristic polynomial of A are its eigenvalues (by `IsHermitian.charpoly_roots_eq_eigenvalues`).
@@ -866,6 +859,7 @@ open ComplexOrder
 
 variable {d 𝕜 : Type*} [Fintype d] [DecidableEq d] [RCLike 𝕜]
 
+set_option backward.isDefEq.respectTransparency false in
 @[simp]
 theorem cfc_diagonal (g : d → ℝ) (f : ℝ → ℝ) :
     cfc f (Matrix.diagonal (fun x ↦ (g x : 𝕜))) = diagonal (RCLike.ofReal ∘ f ∘ g) := by
@@ -874,7 +868,7 @@ theorem cfc_diagonal (g : d → ℝ) (f : ℝ → ℝ) :
       change Matrix.conjTranspose _ = _
       simp [Matrix.conjTranspose]
   --TODO cfc_cont_tac
-  rw [cfc, dif_pos ⟨h_self_adjoint, continuousOn_iff_continuous_restrict.mpr <| by fun_prop⟩]
+  rw [cfc, dif_pos ⟨h_self_adjoint, continuousOn_iff_continuous_domRestrict.mpr <| by fun_prop⟩]
   rw [cfcHom_eq_of_continuous_of_map_id]
   rotate_left
   · refine' { .. }
@@ -1237,7 +1231,7 @@ lemma sub_iInf_eignevalues (hA : A.IsHermitian) :
       simp_all only [mul_assoc, mul_comm, mul_left_comm, RCLike.star_def] ;
       rw [ ← mul_assoc ];
       exact mul_nonneg h_nonneg ( sub_nonneg_of_le <| mod_cast h_eigenvalue i );
-    convert Finset.sum_nonneg fun i _ => h_sum_nonneg i;
+    convert! Finset.sum_nonneg fun i _ => h_sum_nonneg i;
     rw [ hΛ.1 ]
 
 lemma iInf_eigenvalues_le_dotProduct_mulVec (hA : A.IsHermitian) (v : d → ℂ) :
@@ -1437,7 +1431,7 @@ theorem IsHermitian.spectrum_subset_Iic_of_sub {d 𝕜 : Type*} [Fintype d] [Dec
     intro μ hμ
     specialize h (Set.neg_mem_neg.mpr hμ)
     rw [← Set.mem_neg, Set.neg_Ici] at h
-    convert h
+    convert! h
     rw [iInf, iSup, ← spectrum_real_eq_range_eigenvalues, ← spectrum_real_eq_range_eigenvalues]
     rw [← spectrum.neg_eq, csInf_neg ?_ (A.finite_real_spectrum.bddAbove), neg_neg]
     exact ContinuousFunctionalCalculus.spectrum_nonempty _ hA

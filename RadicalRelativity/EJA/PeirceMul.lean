@@ -103,6 +103,12 @@ The factor `4` is carried rather than cancelled so that this holds with no torsi
 hypothesis. -/
 theorem four_lin2_raw (p q b : J) :
     (4 : ℕ) • (⁅L b, L (p * q)⁆ + ⁅L p, L (q * b)⁆ + ⁅L q, L (p * b)⁆) = 0 := by
+  -- Same instance gap as in `two_lin1_raw`: `LieRing.ofAssociativeRing` is a `local instance`
+  -- of its own Mathlib file, so a ring's commutator carries `Ring.instBracket` but no `LieRing`,
+  -- and `lie_add`/`add_lie` cannot fire on `AddMonoid.End J`.  Reinstating it inside the proof —
+  -- never at section scope, which would elaborate this theorem's own `⁅·,·⁆` against a different
+  -- instance — is what makes the `simp only` below distribute the bracket.
+  let _ : LieRing (AddMonoid.End J) := LieRing.ofAssociativeRing
   have h1 := two_lin1_raw (p + q) b
   have hp := two_lin1_raw p b
   have hq := two_lin1_raw q b
