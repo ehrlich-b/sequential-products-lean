@@ -25,7 +25,7 @@ This file states two classification results.
   `a ^ (1/2 + i t) · b · a ^ (1/2 - i t)`, and the parameter `t` is uniquely
   determined by it.
 
-★ Read the direction carefully. Both theorems are **necessity**: a product satisfying the
+**Direction.** Both theorems are statements of necessity: a product satisfying the
 axioms is *supplied*, and the theorem says it has the stated normal form. Neither constructs
 one, and the two missing converses are different statements, with different status.
 
@@ -37,11 +37,10 @@ one, and the two missing converses are different statements, with different stat
   here**. It is also what, together with the registered uniqueness, would make the parameter
   map injective.
 
-So nothing below asserts that the Lüders formula is admissible, or that parameters and products
-correspond. The complex row is the mathematically substantial one: the twist family is a genuine
-one-parameter deformation of the Lüders product, and the theorem says nothing outside it
-satisfies the axioms. That every member of the family does satisfy them is the unregistered
-converse above.
+Nothing below asserts that the Lüders formula is admissible, or that parameters and products
+correspond. The twist family is a one-parameter deformation of the Lüders product, and the
+complex theorem says nothing outside it satisfies the axioms; that every member of the family
+does satisfy them is the unregistered converse above.
 
 ## Reading this statement
 
@@ -103,12 +102,12 @@ This is the norm in which the manuscript's continuity axiom S2 is stated.  It is
 defined here purely from the order, so that the statement below depends on no
 normed-space instance.
 
-★ **This is a junk extension off the Hermitian matrices, and deliberately so.** If `A` is not
+**Off the Hermitian matrices this is a junk extension.** If `A` is not
 Hermitian the defining set is empty (either Loewner inequality would force a real-scalar
 translate of `A` to be Hermitian), and Mathlib's `sInf ∅ = 0`, so `ouNorm A = 0`. That value
-carries no meaning. It is harmless because every use below is guarded: effects are Hermitian,
-differences of effects are Hermitian, and `SeqProd.effect` keeps outputs Hermitian. `ouNorm` is
-asserted to be the order-unit norm only on the Hermitian part. -/
+carries no meaning. Every use below is guarded: effects are Hermitian, differences of effects
+are Hermitian, and `SeqProd.effect` keeps outputs Hermitian. `ouNorm` is asserted to be the
+order-unit norm only on the Hermitian part. -/
 def ouNorm (A : Mat N 𝕜) : ℝ :=
   sInf {t : ℝ | 0 ≤ t ∧ -scalUnit N 𝕜 t ≼ A ∧ A ≼ scalUnit N 𝕜 t}
 
@@ -167,7 +166,7 @@ functional calculus of `Real.sqrt` at `a` (Mathlib's `cfc` for Hermitian matrice
 def luders {N : ℕ} {𝕜 : Type} [RCLike 𝕜] (a b : Mat N 𝕜) : Mat N 𝕜 :=
   cfc Real.sqrt a * b * cfc Real.sqrt a
 
--- ★ Mathlib's `cfc` inspects only its matrix argument, which here is the FIRST argument. So
+-- Mathlib's `cfc` inspects only its matrix argument, which here is the FIRST argument. So
 -- `luders` and `twist` take the junk value `0` when their first argument is non-Hermitian; a
 -- non-Hermitian second argument still gives an ordinary, non-junk matrix expression. Their
 -- intended meaning as sequential products is asserted only for effect pairs.
@@ -187,29 +186,27 @@ def twist {N : ℕ} (t : ℝ) (a b : Mat N ℂ) : Mat N ℂ :=
 
 /-! ## The two results -/
 
-/-- **The real row.**  On the Hermitian `N × N` real matrices with `N ≥ 1`, every
+/-- **The real case.**  On the Hermitian `N × N` real matrices with `N ≥ 1`, every
 sequential product satisfying S1--S7 is the Lüders product `a & b = √a · b · √a`.
 There is no free parameter: the classification is rigid.
 
 (van de Wetering, arXiv:1803.11139, Definition 2 for the axioms; the classification
-statement is Theorem `mthm:master`, real row, of the accompanying manuscript.) -/
+statement is Theorem `mthm:master`, real case, of the accompanying manuscript.) -/
 theorem real_classification {N : ℕ} (hN : 0 < N)
     (P : SeqProd N ℝ) (hS2 : S2 P)
     {a b : Mat N ℝ} (ha : IsEffect a) (hb : IsEffect b) :
     P.sp a b = luders a b := sorry
 
-/-- **The complex row.**  On the Hermitian `N × N` complex matrices with `N ≥ 3`, every
+/-- **The complex case.**  On the Hermitian `N × N` complex matrices with `N ≥ 3`, every
 sequential product satisfying S1--S7 has the twist normal form
 `a & b = a ^ (1/2 + i t) · b · a ^ (1/2 - i t)` for a unique real `t`.
 
-★ What the `∃!` does and does not say. Its existence half is applied to a *given* admissible
-`P` and produces the parameter for that `P`; its uniqueness half says no second parameter
-works for that same `P`. It does **not** say that every real `t` yields an admissible product,
-and this statement would still hold if no `SeqProd` existed at all. The equation is asserted on
-*all* effects, including singular ones.
+**Scope of the `∃!`.** It classifies a supplied `P`: the existence half produces the parameter
+for that `P`, the uniqueness half says no second parameter works for it. Existence of such
+products is not asserted. The equation is asserted on *all* effects, including singular ones.
 
 (van de Wetering, arXiv:1803.11139, Definition 2 for the axioms; the classification
-statement is Theorem `mthm:master`, complex row, of the accompanying manuscript.) -/
+statement is Theorem `mthm:master`, complex case, of the accompanying manuscript.) -/
 theorem complex_classification {N : ℕ} (hN : 3 ≤ N)
     (P : SeqProd N ℂ) (hS2 : S2 P) :
     ∃! t : ℝ, ∀ a b : Mat N ℂ, IsEffect a → IsEffect b →

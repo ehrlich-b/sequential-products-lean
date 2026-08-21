@@ -35,10 +35,10 @@ This is the quantity a physicist calls the probability of observing the state `�
 state `ψ`.  It depends only on the rays through `ψ` and `φ`, which is what makes the next
 definition well posed.
 
-★ At a zero argument the formula is `0/0`, which Lean evaluates to `0`. That value is junk: the
-reading above, and the rescaling invariance the next definition relies on, are asserted for
-**nonzero** vectors and nonzero scalars only. Nothing reaches it from `transProb`, since a point
-of `ℙ ℝ E` has a nonzero representative. -/
+At a zero argument the formula is `0/0`, which Lean evaluates to `0`. That value is junk: the
+reading above, and the rescaling invariance the next definition relies on, hold for **nonzero**
+vectors and nonzero scalars. Nothing reaches it from `transProb`, since a point of `ℙ ℝ E` has a
+nonzero representative. -/
 def transProbVec (ψ φ : E) : ℝ :=
   ‖(inner ℝ ψ φ : ℝ)‖ ^ 2 / (‖ψ‖ ^ 2 * ‖φ‖ ^ 2)
 
@@ -64,9 +64,9 @@ def TransProbPreserving (f : ℙ ℝ E → ℙ ℝ E) : Prop :=
 Every transition-probability preserving self-map of the rays of a finite-dimensional real
 inner product space is induced by a linear isometry of that space.
 
-This is the rigidity statement underlying Wigner's theorem on symmetries of quantum systems:
-a transformation of states that merely preserves the observable transition probabilities has
-no freedom left, and must come from an isometry.
+This is the rigidity statement underlying Wigner's theorem on symmetries of quantum systems: a
+transformation of states preserving the observable transition probabilities must come from an
+isometry.
 
 `TransProbPreserving f` is the single equation
 `∀ p q, transProb (f p) (f q) = transProb p q`.  **Bijectivity is not assumed** — preservation

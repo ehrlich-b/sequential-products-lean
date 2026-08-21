@@ -1,4 +1,3 @@
-# DRAFT — framing and provenance pending author sign-off.
 version: v0.4
 
 project:
@@ -70,13 +69,11 @@ automation:
   methods:
     - method: agent
       tool_setup: >-
-        AI-assisted throughout. The Lean development was produced over a series of
-        working arcs using Anthropic's Claude models in an agentic coding harness
-        (Claude Code), with the author directing the mathematics, setting the
-        statements, and reviewing and accepting every result. Proof search,
-        refactoring, and the bulk of tactic writing were model-generated; the choice
-        of what to prove, the statement-fidelity boundary, and all status judgements
-        are the author's.
+        The development was produced with Anthropic's Claude models in an agentic coding
+        harness (Claude Code) under the author's direction. Proof search, refactoring and
+        the bulk of tactic writing were model-generated; the choice of what to prove, the
+        statements, and all status judgements are the author's, who reviewed and accepted
+        every result.
     - method: manual
       tool_setup: >-
         Portions were written or repaired by hand by the author, and the manuscript
@@ -85,27 +82,21 @@ automation:
 review:
   status: agent-reviewed
   reviewers:
-    - "Bryan Ehrlich (author review, all arcs)"
-    - "Isolated cold-review sub-agents (Anthropic Claude), one or more rounds per arc"
+    - "Bryan Ehrlich (author)"
+    - "Adversarial review by separate language-model sessions (Anthropic Claude, OpenAI Codex)"
   notes: >-
-    The development carries its own mechanical audit, AxiomAudit.lean, which on
-    elaboration enforces over every declaration in the tracked tree: an axiom closure
-    contained in Lean's three core axioms, absence of any custom axiom declaration,
-    absence of sorryAx and native_decide, a pinned module manifest, exact-closure
-    sentinels on the principal results, and type and body freezes on the statement
-    boundary. Non-formalized rows are itemized in STATEMENT-MANIFEST.md. Many in-scope
-    gaps carry a dated, compiling wall certificate in WallCertificates/ stating the missing
-    step in Lean with a sorry at the gap; those files sit at the repository root and are
-    never imported by the library. That coverage is deliberately not total and the
-    directory's own README says so: the six pre-registered external rows are documented
-    there but are explicitly NOT certificates, several certificate files now carry zero
-    live gaps because their gap was later discharged and are kept for the retraction
-    record, and at least one row is deliberately not written as a sorry because
-    transcribing its statement without the manuscript open is how two defective gap
-    statements were previously produced. The campaign record, including retractions and self-corrections, is in
+    The development carries a mechanical audit, AxiomAudit.lean, which on elaboration
+    enforces over every declaration in the tracked tree: an axiom closure contained in
+    Lean's three core axioms, absence of any custom axiom declaration, absence of sorryAx
+    and native_decide, a pinned module manifest, and type and body freezes on the statement
+    boundary. STATEMENT-MANIFEST.md records which of the manuscript's numbered results are
+    formalized and which are not. Many of the unformalized ones carry a dated, compiling
+    certificate in WallCertificates/ that states the missing step in Lean with a sorry at
+    the gap rather than estimating it in prose; that coverage is not total, and those files
+    are never imported by the library. The campaign record, including retractions and self-corrections, is in
     LEDGER.md; the frozen row list is STATEMENT-MANIFEST.md. Review was iterative and
     adversarial rather than external and independent: no third party has refereed this
-    development, and the accompanying manuscript has not been peer reviewed.
+    development.
 
 sources:
   - title: >-
@@ -117,12 +108,10 @@ sources:
     relationship: formalizes
     author_endorsement: participated
     note: >-
-      The author's own manuscript, which these two theorems formalize. It is
-      unpublished and has not been refereed: it was submitted to J. Phys. A in August
-      2026 and returned as an immediate editorial reject with no referee reports, so it
-      carries no external correctness signal. No stable public identifier exists at the
-      time of submission; the source cannot be independently confirmed and no priority
-      or novelty is claimed from it.
+      Unpublished manuscript by the author, which these two theorems formalize. It has
+      not been peer reviewed. No stable public identifier exists at the time of
+      submission, so the source cannot be independently confirmed, and no priority or
+      novelty is claimed from it.
   - title: "Sequential product spaces are Jordan algebras"
     type: paper
     authors:
@@ -153,11 +142,10 @@ sources:
       non-bijective Wigner theorem, which is NOT the Uhlhorn form (Uhlhorn instead weakens the
       hypothesis to preservation of orthogonality and traditionally retains bijectivity). The
       finite-dimensional real case in the exact form registered here is standard but we give
-      no single canonical reference for it, and claim no priority. NOVELTY OF THE
-      FORMALIZATION IS NOT ESTABLISHED: we are aware of no formalization of the real case
-      in Lean or any other proof assistant, and the complex case in this repository is
-      vendored from a separate Lean development, but we have not carried out a systematic
-      search across proof assistants.
+      no single canonical reference for it. No priority claim is made. We are aware of no
+      formalization of the real case in Lean or any other proof assistant, and have not
+      carried out a systematic search; the complex case here is vendored from a separate
+      Lean development.
   - title: "Sequential products on effect algebras"
     type: paper
     authors:
