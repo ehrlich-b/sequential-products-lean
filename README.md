@@ -9,7 +9,7 @@ It has **zero dependency** on any other project code, and no build-time
 dependency other than Mathlib — but see Provenance: some of the code is
 third-party, vendored in.
 
-## What is registered, and what the `sorry`s in this repository are
+## What this repository proves
 
 Three Palomar submissions are prepared here, as three Comparator configurations:
 
@@ -19,24 +19,25 @@ Three Palomar submissions are prepared here, as three Comparator configurations:
 | `comparator-albert.json` | `AlbertPowerAssoc.jpow_mul_jpow` — Albert's power-associativity theorem |
 | `comparator-wigner.json` | `WignerReal.exists_isometry_of_transProbPreserving` — the finite-dimensional real, non-bijective Wigner theorem |
 
-Each `*Challenge.lean` states its theorems with `sorry` **by design**: that is what
-Comparator compares against, and the matching `*Solution.lean` proves them. All four
-registered theorems close over `propext`, `Classical.choice` and `Quot.sound` and nothing
-else.
+The library contains no `sorry` and declares no axioms of its own. All four registered theorems
+close over `propext`, `Classical.choice` and `Quot.sound`. `AxiomAudit.lean` enforces both on
+elaboration, over every declaration in the tree, along with a pinned module manifest and frozen
+statement boundaries.
 
-★ **`WallCertificates/` also contains `sorry`s, and they are not gaps in anything
-registered.** That directory is a deliberate discipline: for results of the paper that are
-**not** formalized, it states the missing step in Lean with a `sorry` marking exactly where
-the gap is, instead of estimating the gap in prose. Those files live at the repository root
-and are **never imported by the library** — `AxiomAudit.lean` enforces that mechanically, and
-the check is reproducible with
-`grep -rn "^import.*WallCertificates" RadicalRelativity/ RadicalRelativity.lean`, which
-returns nothing. `STATEMENT-MANIFEST.md` is the frozen list of which of the paper's results
-are formalized and which are not; `LEDGER.md` is the campaign record, including every
-retraction.
+Each `*Challenge.lean` states its theorems with `sorry`; that is the Challenge/Solution format,
+and the matching `*Solution.lean` proves them.
 
-The library itself contains **no `sorry` and declares no axioms of its own**; `AxiomAudit.lean`
-enforces both over every declaration on elaboration.
+## Wall certificates
+
+For results of the paper that are **not** formalized, `WallCertificates/` states the missing step
+in Lean, with a `sorry` marking exactly where the gap is, rather than estimating the gap in prose.
+Prose prices decay. A Lean statement can be attacked, and this one has falsified several of its
+own entries — one of them within three hours of being written, by the author of that entry.
+
+Those files sit at the repository root and are never imported by the library; `AxiomAudit.lean`
+enforces it, and `grep -rn "^import.*WallCertificates" RadicalRelativity/ RadicalRelativity.lean`
+returns nothing. `STATEMENT-MANIFEST.md` is the frozen list of which results are formalized and
+which are not. `LEDGER.md` is the campaign record, including every retraction.
 
 ## Provenance — first-party vs vendored
 
