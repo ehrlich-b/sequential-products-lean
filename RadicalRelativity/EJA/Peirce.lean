@@ -81,6 +81,23 @@ namespace RadicalRelativity.EJA
 
 local notation "L" => AddMonoid.End.mulLeft
 
+/-! Applying an `AddMonoid.End` expression to an element is definitional in every constructor
+we use, but Mathlib's corresponding lemmas are phrased for the `AddMonoidHom` coercion and do not
+match the `AddMonoid.End` one.  Lean 4.28's simp set bridged this on its own; 4.30's does not, so
+the four `rfl`s are stated here and passed to `simpa` explicitly. -/
+
+private theorem L_apply {J : Type*} [NonUnitalNonAssocSemiring J] (a w : J) :
+    (AddMonoid.End.mulLeft a) w = a * w := rfl
+
+private theorem End_add_apply {J : Type*} [NonUnitalNonAssocCommRing J]
+    (f g : AddMonoid.End J) (w : J) : (f + g) w = f w + g w := rfl
+
+private theorem End_mul_apply {J : Type*} [NonUnitalNonAssocCommRing J]
+    (f g : AddMonoid.End J) (w : J) : (f * g) w = f (g w) := rfl
+
+private theorem End_neg_apply {J : Type*} [NonUnitalNonAssocCommRing J]
+    (f : AddMonoid.End J) (w : J) : (-f) w = -(f w) := rfl
+
 section Linearisation
 
 variable {J : Type*} [NonUnitalNonAssocCommRing J] [IsCommJordan J]
@@ -109,7 +126,8 @@ theorem two_lin1_apply (a b w : J) :
     (2 : ℕ) • (b * (a * a * w) - a * a * (b * w))
       + (4 : ℕ) • (a * (a * b * w) - a * b * (a * w)) = 0 := by
   have h := congrArg (fun f : AddMonoid.End J => f w) (two_lin1_raw a b)
-  simpa [Ring.lie_def, sub_eq_add_neg] using h
+  simpa [Ring.lie_def, sub_eq_add_neg, L_apply, End_add_apply, End_mul_apply,
+    End_neg_apply] using h
 
 end Linearisation
 

@@ -36,6 +36,8 @@ noncomputable section
 
 open OrderUnitSpace
 
+universe u
+
 namespace LocalTomography
 
 /-- The EJA types from the Jordan-von Neumann-Wigner classification. -/
@@ -167,9 +169,10 @@ def Composite.dimMatches {V : Type*} [OrderUnitSpace V] [FiniteDimensional ℝ V
     This is the dimension condition that excludes non-complex EJA types.
     It is derived (not axiomatized) from self-modeling minimality in
     `SelfModelingBridge.self_modeling_locally_tomographic`. -/
-class IsLocallyTomographic (V : Type*) [SequentialProduct V]
+class IsLocallyTomographic (V : Type u) [SequentialProduct V]
     [FiniteDimensional ℝ V] : Prop where
-  /-- There exists a composite whose dimension equals dim(V)². -/
-  composite_exists : ∃ (C : Composite V), C.dimMatches
+  /-- There exists a composite whose dimension equals dim(V)².  The composite's carrier is
+  taken in the same universe as `V`; Lean 4.30 will not infer that universe on its own. -/
+  composite_exists : ∃ (C : Composite.{u, u} V), C.dimMatches
 
 end LocalTomography
