@@ -37,7 +37,7 @@ project:
     probability preserving self-map of the rays of a finite-dimensional real inner product
     space is induced by a linear isometry, with bijectivity not assumed but derived.
 
-    Both CLASSIFICATION theorems are proved from S1-S7 with no hypotheses beyond the dimension
+    Both classification theorems are proved from S1-S7 with no hypotheses beyond the dimension
     bounds, and their axiom closures contain only Lean's three core axioms (propext,
     Classical.choice, Quot.sound). The continuity axiom S2 is stated in the order-unit
     norm, as an explicit epsilon-delta condition, so the statement file depends on no
