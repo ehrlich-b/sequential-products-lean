@@ -1,14 +1,42 @@
-# Lean formalization — Twist Normal Form paper
+# Sequential products on Euclidean Jordan algebras — Lean 4
 
 Standalone Lean 4 development accompanying the paper
 
 > **Sequential Products on Euclidean Jordan Algebras: Classification in Rank
 > at Least Three and the Complex Qubit**.
 
-This project is a self-contained extract of the paper's modules from the
-parent *Radical Relativity* Lean development. It has **zero dependency** on
-any other program code, and no build-time dependency other than Mathlib —
-but see Provenance: some of the code is third-party, vendored in.
+It has **zero dependency** on any other project code, and no build-time
+dependency other than Mathlib — but see Provenance: some of the code is
+third-party, vendored in.
+
+## What is registered, and what the `sorry`s in this repository are
+
+Three Palomar submissions are prepared here, as three Comparator configurations:
+
+| Configuration | Registers |
+| --- | --- |
+| `comparator.json` | `TwistNormalForm.real_classification`, `TwistNormalForm.complex_classification` |
+| `comparator-albert.json` | `AlbertPowerAssoc.jpow_mul_jpow` — Albert's power-associativity theorem |
+| `comparator-wigner.json` | `WignerReal.exists_isometry_of_transProbPreserving` — the finite-dimensional real, non-bijective Wigner theorem |
+
+Each `*Challenge.lean` states its theorems with `sorry` **by design**: that is what
+Comparator compares against, and the matching `*Solution.lean` proves them. All four
+registered theorems close over `propext`, `Classical.choice` and `Quot.sound` and nothing
+else.
+
+★ **`WallCertificates/` also contains `sorry`s, and they are not gaps in anything
+registered.** That directory is a deliberate discipline: for results of the paper that are
+**not** formalized, it states the missing step in Lean with a `sorry` marking exactly where
+the gap is, instead of estimating the gap in prose. Those files live at the repository root
+and are **never imported by the library** — `AxiomAudit.lean` enforces that mechanically, and
+the check is reproducible with
+`grep -rn "^import.*WallCertificates" RadicalRelativity/ RadicalRelativity.lean`, which
+returns nothing. `STATEMENT-MANIFEST.md` is the frozen list of which of the paper's results
+are formalized and which are not; `LEDGER.md` is the campaign record, including every
+retraction.
+
+The library itself contains **no `sorry` and declares no axioms of its own**; `AxiomAudit.lean`
+enforces both over every declaration on elaboration.
 
 ## Provenance — first-party vs vendored
 
