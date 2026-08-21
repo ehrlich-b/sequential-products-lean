@@ -1,6 +1,6 @@
 # Wall certificates
 
-**Created 2026-08-09 as block 7.5 of the ARC-7 orders (`../LEDGER.md`).**
+**Created 2026-08-09 as block 7.5 of the ARC-7 orders (`../history/LEDGER.md`).**
 
 ## Why this directory exists
 
@@ -32,22 +32,29 @@ never see it: the `sorry`s here cannot leak into the census, and the tree's "cus
 `[]`" claim is unaffected. Verify with:
 
 ```
-grep -rn "^import.*WallCertificates" RadicalRelativity/ RadicalRelativity.lean   # expect no hits
-grep -n "lean_lib\|defaultTargets" lakefile.toml    # expect only RadicalRelativity
+grep -rn "^import.*wall-certificates" RadicalRelativity/ RadicalRelativity.lean   # expect no hits
+grep -n "defaultTargets" lakefile.toml                                           # expect RadicalRelativity
 ```
 
 ★ **The first version of this recipe was `grep -rn WallCertificates …` with "expect no hits", and it
-was wrong** — caught 2026-08-09 by the certificate-refutation review. That pattern returns two hits
-(`Necessity/LeftMultiplication.lean` and `Necessity/FrameConstancy.lean`), both harmless prose
-cross-references inside docstrings. A verification recipe that reports failure on a healthy tree is
-worse than none: it trains the reader to ignore it. The substance was independently confirmed —
-`lakefile.toml` declares exactly one `lean_lib`, so `lake build` never compiles this directory.
+was wrong** — caught 2026-08-09 by the certificate-refutation review. That pattern returns hits from
+harmless prose cross-references inside docstrings. A verification recipe that reports failure on a
+healthy tree is worse than none: it trains the reader to ignore it.
+
+★ **And this recipe decayed in turn, exactly as that paragraph predicts** — caught 2026-08-21 by an
+external pre-submission review. Two defects: the grep named the pre-2026-08-20 directory
+`WallCertificates/`, and the isolation claim rested on `lakefile.toml` declaring "exactly one
+`lean_lib`", which stopped being true when the Palomar Challenge/Solution libraries were added. It
+now declares seven. The substance is unchanged but the argument for it must be the import closure,
+not a library count: `defaultTargets` is `RadicalRelativity`, no module under `RadicalRelativity/`
+imports this directory, and none of the six Comparator libraries does either. So neither `lake build`
+nor `AxiomAudit.lean` ever elaborates these files.
 
 Compile a certificate deliberately, one at a time:
 
 ```
-cd /Users/ehrlich/repos/research/twist-normal-form-lean
-lake env lean WallCertificates/<row>.lean      # expect: only `declaration uses 'sorry'` warnings
+lake env lean docs/wall-certificates/<row>.lean   # from the repo root
+                                                  # expect: only `declaration uses 'sorry'` warnings
 ```
 
 ## One file, sometimes several rows

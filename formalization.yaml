@@ -18,7 +18,14 @@ project:
     the Lueders product sqrt(a) b sqrt(a): there is no free parameter. On H_N(C) with
     N >= 3, every sequential product has the twist normal form a^(1/2+it) b a^(1/2-it) for
     a unique real t. The twist family is a one-parameter deformation of the Lueders product,
-    and the complex theorem says nothing outside it satisfies the axioms. The equations are asserted on all effects, including
+    and the complex theorem says nothing outside it satisfies the axioms.
+
+    Prior art. That Lueders is not the only sequential product, and twisted products of this
+    shape in particular, are not new: Gudder asked the question in 2005, Shen and Wu answered
+    it negatively and gave a general construction in 2009 (arXiv:0905.0596), and Liu, Wu and
+    Wu showed those examples are unitary equivalent to Lueders (arXiv:1009.2593). What is
+    registered here is the converse direction. The examples are not exhibited; they are shown
+    to be forced, with the parameter unique, and with no product outside the family admissible. The equations are asserted on all effects, including
     singular ones, and the uniqueness of t is part of the registered statement.
 
     Direction. Both registered classification theorems are necessity: a product satisfying the
@@ -44,11 +51,13 @@ project:
     normed-space or topological instance; the equivalence with continuity in the
     carrier's Frobenius topology is proved in the development.
 
-    Scope. Comparator registers four theorems across three separate entries: the two
-    sequential-product classifications above, which use the SeqProd interface and the axiom
-    S2 and correspond to numbered rows of the manuscript; and the two ancillary classical
-    theorems, Albert and Wigner, which use neither and correspond to no manuscript row.
-    Nothing beyond those four registered theorems is claimed by this submission.
+    Scope. The repository carries three Comparator configurations, selecting four theorems
+    between them: the two sequential-product classifications above, which use the SeqProd
+    interface and the axiom S2 and correspond to numbered rows of the manuscript; and the two
+    ancillary classical theorems, Albert and Wigner, which use neither and correspond to no
+    manuscript row. Each configuration is a separate submission and a separate entry; no one
+    entry contains all four. No Palomar claim is made here for any other declaration in the
+    repository.
 
     The two classification theorems are two rows of a thirty-six row manifest tracking the
     numbered results of the accompanying manuscript. The manuscript as a whole is not
@@ -119,17 +128,51 @@ sources:
     note: >-
       Supplies Definition 2, the axioms S1-S7 that SeqProd states, and the
       sequential-product-to-Jordan-algebra framework the classification sits in.
-  - title: "On Jordan algebras of linear transformations"
+  - title: "Power-associative rings"
     type: paper
     authors:
       - "A. A. Albert"
-    identifier: "doi:10.1090/S0002-9947-1946-0016759-3"
-    relationship: formalizes
+    identifier: "doi:10.1090/S0002-9947-1948-0027750-7"
+    relationship: adapts
     author_endorsement: "n/a"
     note: >-
-      Source of the power-associativity theorem registered as
-      AlbertPowerAssoc.jpow_mul_jpow. The Lean proof is independent of Albert's argument
-      in its details but formalizes the same statement.
+      Origin of the power-associativity result registered as
+      AlbertPowerAssoc.jpow_mul_jpow. The Lean theorem specializes Albert's torsion-free
+      power-associativity criterion to commutative Jordan rings; it is not a transcription
+      of Albert's statement. Albert works with algebras over a field of characteristic
+      zero, whereas the registered statement is about a non-unital commutative Jordan ring
+      carrying a real module structure that need not interact with the multiplication and
+      is used only for additive torsion-freeness. The Lean proof is independent of
+      Albert's argument in its details.
+  - title: "Sequential product on standard effect algebra E(H)"
+    type: paper
+    authors:
+      - "Jun Shen"
+      - "Junde Wu"
+    identifier: "arXiv:0905.0596"
+    relationship: background
+    note: >-
+      Records that Lueders is not the only sequential product on the standard effect
+      algebra, answering a question of Gudder (2005), and gives a general method for
+      constructing others. Its construction includes a twisted product of the shape
+      registered here. The twisted products are therefore not new with this development;
+      what is registered here is the converse direction, that S1-S7 together with
+      order-unit-norm continuity force that family on H_N(C) for N >= 3 and pin the
+      parameter uniquely, and force the Lueders product outright on H_N(R). Shen and Wu
+      prove no such classification.
+  - title: "Remarks on the Sequential Products"
+    type: paper
+    authors:
+      - "Weihua Liu"
+      - "Zhaoqi Wu"
+      - "Junde Wu"
+    identifier: "arXiv:1009.2593"
+    relationship: background
+    note: >-
+      Shows the sequential products constructed in the two 2009 J. Phys. A papers are
+      unitary equivalent to the Lueders product. Relevant to how the twisted family
+      should be read, and cited so that the prior status of these examples is on the
+      record alongside the classification registered here.
   - title: "Wigner's theorem on symmetries of quantum mechanical systems, real case"
     type: folklore
     relationship: formalizes
@@ -160,15 +203,17 @@ related_formalizations:
     note: >-
       Seventeen modules (Hermitian matrices with the Loewner order, trace inner
       product, continuous functional calculus, Jordan product) by Alex Meiburg, with
-      HermitianMat/Proj.lean also by Leonardo A Lessa, vendored verbatim at commit
-      ad1d812 under RadicalRelativity/Vendor/ with per-file copyright headers retained.
-      They form the carrier substrate the classification is proved over. Backported
-      from Mathlib v4.32 to v4.28; the edit log and a zero-statement-change audit are
-      in RadicalRelativity/Vendor/VENDOR.md.
+      HermitianMat/Proj.lean also by Leonardo A Lessa, vendored at commit a50684a191
+      under RadicalRelativity/Vendor/ with per-file copyright headers retained. They
+      form the carrier substrate the classification is proved over. The modules match
+      that upstream pin except for two documented edits, an import-path rewrite and one
+      restored set_option; five lemmas upstream states only over the complex numbers are
+      restated at RCLike generality in first-party code rather than patched in place. The
+      edit log and a zero-statement-change audit are in RadicalRelativity/Vendor/VENDOR.md.
   - id: "zblore/csd-lean4"
     relationship: builds-on
     note: >-
       Eight modules by Zayn Blore giving complex Wigner rigidity on CP^(N-1), vendored
-      verbatim at commit 2287f45; this is an input to the complex case. The
+      at commit 818b770010ae; this is an input to the complex case. The
       corresponding real, non-bijective Wigner theorem is first-party
       (RadicalRelativity/Wigner/RealWigner.lean) and is not derived from this work.

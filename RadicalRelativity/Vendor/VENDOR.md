@@ -256,15 +256,32 @@ Re-vendor 2026-08-21 section above — read those, not this paragraph.
 
 ## csd-lean4 Wigner-rigidity island
 
-**Upstream:** `zblore/csd-lean4`, commit `2287f45` (2026-08-05), Apache 2.0
+**Upstream:** `zblore/csd-lean4`, commit `818b770010ae` (2026-08-21), Apache 2.0
 (per-file headers retained; upstream author Zayn Blore).  The files are
 self-labeled "1-Mathlib (CSD-free Mathlib upstream candidate)" and live under
 `namespace Projectivization`; nothing from the repo's speculative layers is
 imported.
 
-**Why vendored:** upstream is written in the new module system and pins
-toolchain v4.33.0-rc1 (ours: v4.28.0), so a live dependency is impossible;
-vendoring pins the exact audited code.  Due-diligence record: campaign
+### Re-vendor 2026-08-21 (v4.33.0) — CURRENT
+
+Re-pulled from upstream `main` alongside the physlib island when this tree moved to
+v4.33.0, landing on `818b770010ae` (2026-08-21T09:44:09Z) — **not** the `2287f45`
+(2026-08-05) recorded before this section, which the earlier text still asserted. All
+eight vendored files were diffed line-by-line against that pin on 2026-08-21 and match
+it exactly once the import rewrite is discounted. Upstream paths: six from
+`CsdLean4/Mathlib/LinearAlgebra/Projectivization/` (FubiniStudy, MeasureSpace, Topology,
+TransitionProbability, Unitary, WignerRigidity) and two from
+`CsdLean4/Mathlib/LinearAlgebra/Matrix/` (UnitaryCompact, UnitaryHaar). The island is now upstream's own v4.33 code with the import-path rewrite to
+`RadicalRelativity.Vendor.Wigner.<Module>` applied, and the module-system headers
+(`module`, `public import`, `@[expose] public section`) retained rather than stripped,
+since v4.33 supports them. **The entire v4.28 backport recorded below is historical:
+none of its edits survive.** In particular the four v4.33 → v4.28 identifier and tactic
+renames listed in item 3 have been reverted to upstream's own names, because the tree is
+now at the version those names belong to.
+
+**Why vendored:** upstream pins its own toolchain and moves independently of this tree,
+so a live dependency would make this tree's zero-sorry/axiom claims a continuous audit
+obligation; vendoring pins the exact audited code.  Due-diligence record: campaign
 `docs/history/LEDGER.md` 3.0 (2026-08-04) — the WignerRigidity closure was built from
 source and `#print axioms Projectivization.wigner_rigidity` was verified to be
 `[propext, Classical.choice, Quot.sound]` **before** any vendoring decision,
@@ -287,6 +304,9 @@ complex development; it now lives at `RadicalRelativity/Wigner/RealWigner.lean`.
 Anyone diffing this tree against a SHA at or before `ba317b8` will see the move.
 
 **Edits applied at vendor time (2026-08-05), each mechanical:**
+**The numbered list that follows describes the SUPERSEDED v4.28 backport, not the
+current contents.**
+
 1. Module-system strip: the `module` header line deleted, `public import X` →
    `import X`, `@[expose] public section` → `section`.
 2. Import-path rewrite to `RadicalRelativity.Vendor.Wigner.<Module>`.

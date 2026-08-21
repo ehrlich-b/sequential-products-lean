@@ -28,8 +28,8 @@ reader is meant to audit; each `*Solution.lean` proves them.
 | [`comparator-albert.json`](comparator-albert.json) | [`AlbertChallenge.lean`](AlbertChallenge.lean) | [`AlbertSolution.lean`](AlbertSolution.lean) | `AlbertPowerAssoc.jpow_mul_jpow` |
 | [`comparator-wigner.json`](comparator-wigner.json) | [`WignerChallenge.lean`](WignerChallenge.lean) | [`WignerSolution.lean`](WignerSolution.lean) | `WignerReal.exists_isometry_of_transProbPreserving` |
 
-The library declares no axioms of its own and contains no `sorry`. All four registered theorems
-close over `propext`, `Classical.choice` and `Quot.sound`. `AxiomAudit.lean` enforces both on
+The library declares no axioms of its own and contains no `sorry`. All four theorems selected by
+the three configurations close over `propext`, `Classical.choice` and `Quot.sound`. `AxiomAudit.lean` enforces both on
 elaboration, over every declaration in the tree.
 
 ## Scope
@@ -51,7 +51,7 @@ lake exe cache get   # prebuilt Mathlib oleans at the pinned revision
 lake build
 ```
 
-Toolchain `leanprover/lean4:v4.28.0`; Mathlib `v4.28.0`, pinned in `lake-manifest.json`.
+Toolchain `leanprover/lean4:v4.33.0`; Mathlib `v4.33.0`, pinned in `lake-manifest.json`.
 
 The two classification theorems, at the carrier level:
 
@@ -69,8 +69,8 @@ retained.
 
 | Vendored | Upstream | Author(s) | Role |
 | --- | --- | --- | --- |
-| `Vendor/*.lean`, `Vendor/HermitianMat/`, `Vendor/Tactic/` | [`leanprover-community/physlib`](https://github.com/leanprover-community/physlib) @ `ad1d812` | Alex Meiburg; `HermitianMat/Proj.lean` also Leonardo A Lessa | Hermitian matrices with the Loewner order, trace inner product, continuous functional calculus, Jordan product |
-| `Vendor/Wigner/` | [`zblore/csd-lean4`](https://github.com/zblore/csd-lean4) @ `2287f45` | Zayn Blore | complex Wigner rigidity on `ℂP^{N-1}` |
+| `Vendor/*.lean`, `Vendor/HermitianMat/`, `Vendor/Tactic/` | [`leanprover-community/physlib`](https://github.com/leanprover-community/physlib) @ `a50684a191` | Alex Meiburg; `HermitianMat/Proj.lean` also Leonardo A Lessa | Hermitian matrices with the Loewner order, trace inner product, continuous functional calculus, Jordan product |
+| `Vendor/Wigner/` | [`zblore/csd-lean4`](https://github.com/zblore/csd-lean4) @ `818b770010ae` | Zayn Blore | complex Wigner rigidity on `ℂP^{N-1}` |
 
 Everything outside `RadicalRelativity/Vendor/` is first-party, including
 `RadicalRelativity/Wigner/RealWigner.lean`, the real Wigner theorem. Both vendored islands sit
@@ -84,7 +84,7 @@ the author's direction; see `automation` in [`formalization.yaml`](formalization
 
 - [`docs/coverage/STATEMENT-MANIFEST.md`](docs/coverage/STATEMENT-MANIFEST.md) — which manuscript results are formalized.
 - [`docs/coverage/THEOREM-MAP.md`](docs/coverage/THEOREM-MAP.md) — result-to-declaration map.
-- `docs/wall-certificates/` — for results that are **not** formalized, the missing step stated in Lean
+- `docs/wall-certificates/` — for selected unformalized results, the missing step stated in Lean
   with a `sorry` marking the gap, rather than estimated in prose. Never imported by the library.
 - [`docs/history/LEDGER.md`](docs/history/LEDGER.md) — the development record, including retractions.
 - `upstream/` — a Mathlib pull request prepared from `RealWigner.lean`; not part of this library.
