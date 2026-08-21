@@ -90,3 +90,5 @@ the author's direction; see `automation` in [`formalization.yaml`](formalization
   with a `sorry` marking the gap, rather than estimated in prose. Never imported by the library.
 - [`LEDGER.md`](LEDGER.md) — the development record, including retractions.
 - `upstream/` — a Mathlib pull request prepared from `RealWigner.lean`; not part of this library.
+- `scripts/check_rank_two_identities.py` — a SymPy cross-check of the rank-two identities,
+  supplementary and not part of any Lean proof.

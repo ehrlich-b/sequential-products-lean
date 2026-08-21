@@ -1,0 +1,23 @@
+cff-version: 1.2.0
+message: "If you use this formalization, please cite it as below."
+title: "Sequential products on Euclidean Jordan algebras: a Lean 4 formalization"
+abstract: >-
+  Lean 4 proofs that the sequential-product axioms S1-S7 of van de Wetering force the
+  Lueders product on the Hermitian real matrices and the twist normal form, with a unique
+  parameter, on the Hermitian complex matrices of size at least three. Also includes
+  Albert's power-associativity theorem for commutative Jordan rings and the
+  finite-dimensional real, non-bijective Wigner theorem.
+authors:
+  - family-names: Ehrlich
+    given-names: Bryan
+type: software
+license: Apache-2.0
+repository-code: "https://github.com/ehrlich-b/sequential-products-lean"
+keywords:
+  - Lean 4
+  - Mathlib
+  - formalized mathematics
+  - Jordan algebras
+  - sequential product
+  - operator algebras
+  - quantum foundations
