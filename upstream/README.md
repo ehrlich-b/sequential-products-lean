@@ -1,7 +1,7 @@
-# `upstream/` — Mathlib contribution candidates, STAGED
+# `upstream/` — Mathlib contribution candidate
 
-**Status: STAGED, NOT SUBMITTED. Nothing here has been sent anywhere.** Submission is
-Bryan's decision, not this directory's. Created 2026-08-08 (campaign `docs/history/LEDGER.md` item 4.4).
+A pull request prepared against Mathlib, not yet submitted. This directory is not part of the
+Lean library in this repository and nothing here is imported by it.
 
 Contents:
 
@@ -12,8 +12,8 @@ Contents:
 
 ## Why this one file and nothing else
 
-The 2026-08-08 tri-agent audit asked what in this tree is worth upstreaming. The answer was
-one clear YES and one maybe:
+Of the material in this repository, one result looked clearly worth upstreaming and one is a
+possibility:
 
 - **YES — the finite-dimensional real, non-bijective Wigner theorem.** We are aware of no
   formalization of it in any proof assistant, though we have not searched them systematically
