@@ -15,7 +15,7 @@ set_option linter.style.longLine false
 
 **(E2), the first half — ARC-9 blocks 9.2/9.3, 2026-08-12.**
 
-`EJA-DIVIDEND.md` names three deliverables for the EJA axiomatization: **(E1)** a Jordan
+`docs/history/EJA-DIVIDEND.md` names three deliverables for the EJA axiomatization: **(E1)** a Jordan
 spectral theorem, **(E2)** the Peirce decomposition with the Faraut–Korányi multiplication
 rules, and **(E3)** `Theta_jordan` derivable (van Imhoff–Roelands, pre-registered external).
 It records (E2) as *depending on* (E1), and (E1) as "the large piece".
@@ -31,7 +31,7 @@ genuinely torsion-free, and they are, deliberately: their factor of `2` is carri
 statement rather than cancelled. Caught 2026-08-12 by reading the `omit` lines against this
 paragraph. What (E1) is needed for is producing idempotents — the *frame* — and
 `MasterTheorem/Interface.lean` already carries the frame as data (`ComparisonSetup.p`).
-See the ARC-9 execution record in `LEDGER.md` for the pricing this settles.
+See the ARC-9 execution record in `docs/history/LEDGER.md` for the pricing this settles.
 
 ## The mathematics
 

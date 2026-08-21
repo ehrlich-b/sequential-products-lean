@@ -7,7 +7,7 @@ Apache 2.0 (per-file headers retained; upstream author Alex Meiburg).
 **Why vendored, not required:** physlib pins mathlib/toolchain v4.32.0 (ours:
 v4.28.0), and a live dependency on a fast-moving upstream would make this
 tree's zero-sorry/axiom claims a continuous audit obligation. Vendoring pins
-the exact audited code. Decision record: campaign `LEDGER.md` 1.1 and
+the exact audited code. Decision record: campaign `docs/history/LEDGER.md` 1.1 and
 `research/PAPER-A-LEAN-ROUTE.md` (blog repo) decision log 2026-08-04.
 
 **Files** (17; upstream paths `QuantumInfo/ForMathlib/…` → here
@@ -95,7 +95,7 @@ Known cosmetic wart inherited from upstream: `HermitianMat/Proj.lean` lacks a
 closing `end HermitianMat` (style-lint warning only); two docstrings end
 without trailing newline (style-lint). Left as-is to minimize diff vs upstream.
 
-Consumer-side trap inherited from upstream (campaign `LEDGER.md` H6): the island
+Consumer-side trap inherited from upstream (campaign `docs/history/LEDGER.md` H6): the island
 declares `Matrix.*` lemmas inside `namespace HermitianMat` (Inner.lean:405,
 NonSingular.lean:18), creating a `HermitianMat.Matrix` namespace that shadows
 root `Matrix` for any `open scoped Matrix` issued inside `namespace HermitianMat`
@@ -113,7 +113,7 @@ imported.
 **Why vendored:** upstream is written in the new module system and pins
 toolchain v4.33.0-rc1 (ours: v4.28.0), so a live dependency is impossible;
 vendoring pins the exact audited code.  Due-diligence record: campaign
-`LEDGER.md` 3.0 (2026-08-04) — the WignerRigidity closure was built from
+`docs/history/LEDGER.md` 3.0 (2026-08-04) — the WignerRigidity closure was built from
 source and `#print axioms Projectivization.wigner_rigidity` was verified to be
 `[propext, Classical.choice, Quot.sound]` **before** any vendoring decision,
 with statement fidelity checked at the definition level (`transProbVec ψ φ =

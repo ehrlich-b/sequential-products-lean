@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""verify_n2.py -- Exact symbolic verification for the n = 2 frame-dependent
+"""scripts/check_rank_two_identities.py -- Exact symbolic verification for the n = 2 frame-dependent
 twist theorem (the qubit-boundary theorem) of "A Classification of Sequential
 Products on Simple Euclidean Jordan Algebras of Rank >= 3".
 
@@ -13,7 +13,7 @@ on M_2(C)^sa, where t(a) depends only on the unordered spectral frame of a
 on scalar effects.  Each numbered check below is cited from the proof of the
 qubit-boundary theorem in main.tex.
 
-Run:  python3 verify_n2.py   (exits 0 and prints PASS lines iff all checks pass)
+Run:  python3 scripts/check_rank_two_identities.py   (exits 0 and prints PASS lines iff all checks pass)
 """
 
 import sys

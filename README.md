@@ -9,8 +9,8 @@ algebras.
 On `H_N(ℝ)`, every sequential product agrees with the Lüders formula `√a · b · √a` on effects:
 there is no free parameter. On `H_N(ℂ)` with `N ≥ 3`, every sequential product has the twist
 normal form `a^(1/2+it) · b · a^(1/2−it)`, and the parameter `t` is uniquely determined by it.
-The complex case is the substantive one: the twist family is a one-parameter deformation of the
-Lüders product, and the theorem says nothing outside it satisfies the axioms.
+The twist family is a one-parameter deformation of the Lüders product, and the complex theorem
+says nothing outside it satisfies the axioms.
 
 The development also proves two classical theorems along the way, both stated over Mathlib alone:
 **Albert's power-associativity theorem** for commutative Jordan rings, and the
@@ -40,7 +40,7 @@ converse is registered here.
 
 The manuscript states its results on a finite-dimensional simple Euclidean Jordan algebra. This
 development proves them on the real and complex Hermitian matrices; the quaternionic and
-exceptional cases are not proved. [`STATEMENT-MANIFEST.md`](STATEMENT-MANIFEST.md) records, result
+exceptional cases are not proved. [`docs/coverage/STATEMENT-MANIFEST.md`](docs/coverage/STATEMENT-MANIFEST.md) records, result
 by result, which of the manuscript's thirty-six numbered statements are formalized here and which
 are not.
 
@@ -64,10 +64,8 @@ import RadicalRelativity
 
 ## Provenance
 
-Part of the tree is third-party code, vendored verbatim with per-file copyright headers retained.
-Reproduce the line counts with
-`find RadicalRelativity RadicalRelativity.lean -name '*.lean' -exec cat {} + | wc -l`, and the
-same over `RadicalRelativity/Vendor`.
+Part of the tree is third-party code, vendored verbatim with per-file copyright headers
+retained.
 
 | Vendored | Upstream | Author(s) | Role |
 | --- | --- | --- | --- |
@@ -84,11 +82,11 @@ the author's direction; see `automation` in [`formalization.yaml`](formalization
 
 ## Further documentation
 
-- [`STATEMENT-MANIFEST.md`](STATEMENT-MANIFEST.md) — which manuscript results are formalized.
-- [`THEOREM-MAP.md`](THEOREM-MAP.md) — result-to-declaration map.
-- `WallCertificates/` — for results that are **not** formalized, the missing step stated in Lean
+- [`docs/coverage/STATEMENT-MANIFEST.md`](docs/coverage/STATEMENT-MANIFEST.md) — which manuscript results are formalized.
+- [`docs/coverage/THEOREM-MAP.md`](docs/coverage/THEOREM-MAP.md) — result-to-declaration map.
+- `docs/wall-certificates/` — for results that are **not** formalized, the missing step stated in Lean
   with a `sorry` marking the gap, rather than estimated in prose. Never imported by the library.
-- [`LEDGER.md`](LEDGER.md) — the development record, including retractions.
+- [`docs/history/LEDGER.md`](docs/history/LEDGER.md) — the development record, including retractions.
 - `upstream/` — a Mathlib pull request prepared from `RealWigner.lean`; not part of this library.
 - `scripts/check_rank_two_identities.py` — a SymPy cross-check of the rank-two identities,
   supplementary and not part of any Lean proof.

@@ -73,7 +73,7 @@ Two elementary norm facts about conjugation, and they carry more weight than the
 suggests: together they are what makes S2 at the *single* point `𝟙` yield a scale valid at
 **every** frame, which is the step `lem:n2-bounded` turns on (`FrameConstancy.lean`).
 
-`LEDGER-ARCHIVE-M1-M7.md` recorded that Mathlib has `frobenius_norm_def` "but no congruence
+`docs/history/LEDGER-ARCHIVE-M1-M7.md` recorded that Mathlib has `frobenius_norm_def` "but no congruence
 invariance". That is still true of Mathlib, and it is why these are proved here — but the proof
 is three lines, because on `HermitianMat` the Frobenius norm is `√⟪a,a⟫ = √(re tr(a·a))` and
 trace cyclicity does all the work. No entrywise argument is needed. -/

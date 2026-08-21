@@ -137,7 +137,7 @@ trace (`inner_twistSeq_left`).  So trace symmetry says the product is represente
 `-t` as well as by `t`, and the `∃!` of `complex_classification_unconditional` closes
 it: `-t = t`.  No new analysis is involved; the selector is a corollary of uniqueness.
 
-**Clauses (i) and (iii) are NOT proved here** — see `THEOREM-MAP.md`.  Clause (iii)
+**Clauses (i) and (iii) are NOT proved here** — see `docs/coverage/THEOREM-MAP.md`.  Clause (iii)
 (covariance under every unital order automorphism; the article notes the transpose
 suffices) needed one missing ingredient, and only one: that transposition commutes with
 the real functional calculus, `(cfc f a)ᵀ = cfc f (aᵀ)`.  ★ **That ingredient is now in

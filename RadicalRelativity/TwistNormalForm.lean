@@ -34,7 +34,7 @@ Live content in the standalone release:
 * the Barnum–Graydon–Wilce composite table, carried as the **definition**
   `bgwComposite` with `rfl`-proved rows (`bgwComposite_table`). The former
   packaging as this file's one `axiom` (`bgw_canonical_composite`) was
-  eliminated 2026-08-04 (`LEDGER.md` 2.8): it asserted only a constructible
+  eliminated 2026-08-04 (`docs/history/LEDGER.md` 2.8): it asserted only a constructible
   existence, so it recorded no falsifiable import. This file now declares
   **no custom axiom**; the BGW attribution is prose provenance (see the
   `prop:closure` section docstring).
@@ -357,14 +357,14 @@ formal label value, not a BGW result; those instances are consumed nowhere and
 lie outside the `master_chain` closure. The table is carried as the
 **definition** `bgwComposite`, with the nine matrix rows proved by `rfl`
 (`bgwComposite_table`). The former packaging as a single `axiom`
-(`bgw_canonical_composite`, eliminated 2026-08-04, campaign `LEDGER.md` 2.8)
+(`bgw_canonical_composite`, eliminated 2026-08-04, campaign `docs/history/LEDGER.md` 2.8)
 asserted only the *existence* of an operation with these nine values — a
 constructible statement that cannot be false — so it padded the axiom ledger
 without recording any falsifiable import. What IS imported from
 Barnum–Graydon–Wilce 2020 is the **interpretation**: that this table is the
 composition table of their canonical standard-embedding composite `⊙c`
 (`def:canonical-composite`). That identification lives here and in
-`THEOREM-MAP.md` as prose provenance — exactly where it lived before, since
+`docs/coverage/THEOREM-MAP.md` as prose provenance — exactly where it lived before, since
 `#print axioms` never checked fidelity to the source either. Non-matrix rows
 (spin, Albert) carry the junk-total convention `.real 0`, consumed nowhere,
 mirroring the manuscript's partial/undefined composite — the same epistemic

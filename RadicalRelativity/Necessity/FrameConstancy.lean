@@ -295,7 +295,7 @@ per-frame parameters to a single `t`.  At rank two that collapse is exactly what
 the article's `prop:n2-necessity` is the surviving statement: *one real parameter per ordered
 frame*, with no cross-frame constancy.
 
-`THEOREM-MAP.md` recorded that the classification map `product ↦ moduli` "does not exist in
+`docs/coverage/THEOREM-MAP.md` recorded that the classification map `product ↦ moduli` "does not exist in
 Lean at all", and that the `N ≥ 3` machinery could not be reused because `StabilizerCoupling`
 carries `rank_ge : 3 ≤ n`.  The first half is what this section changes; the second half was
 true but misleading about *which* machinery is rank-gated.  Auditing the chain: only 15 of the
@@ -1545,7 +1545,7 @@ Row 33's caveat was therefore load-bearing and wrong, and the reviewer recommend
 that it deletes the expensive step of my own wall certificate.**  `n2FrameTwist_eq_of_base_eq` at
 `m = m' = 0` gives constancy on the fibres of `U ↦ Ad_U(frameProj 0)` — genuine fibre-constancy,
 not invariance at two group words — because `basePt x = 𝟙 + (e^{−x} − 1)·frameProj 0`, so equal
-first spectral projections force equal base points at every scale.  `WallCertificates/lem-n2-descent.lean`
+first spectral projections force equal base points at every scale.  `docs/wall-certificates/lem-n2-descent.lean`
 had priced the descent's first step at ~200 lines of `ℂ²` linear algebra ("same first-column ray ⟹
 the unitaries differ by a diagonal unitary").  **That step is unnecessary: one never needs rays if
 one descends along the projection.**  The whole descent below is ~50 lines.
@@ -1620,7 +1620,7 @@ theorem n2FrameTwist_eq_of_frameMap_eq (U V : Matrix.unitaryGroup (Fin 2) ℂ)
 
 /-! ### Toward "compatible ⟹ same frame": the two elementary steps
 
-★★ New 2026-08-09.  `WallCertificates/prop-n2-sufficiency.lean` identifies "compatible effects share
+★★ New 2026-08-09.  `docs/wall-certificates/prop-n2-sufficiency.lean` identifies "compatible effects share
 a spectral frame" as the load-bearing missing fact for rows 30/35, and its own absence claim about it
 was refuted twice over: the hard half (**compatibility ⟹ matrix commutation**) was already in the tree
 as `HermitianMat.commute_of_twistSeq_comm`, and the two-parameter form the rank-two application needs
@@ -1720,7 +1720,7 @@ theorem frameMap_mul_swap (V : Matrix.unitaryGroup (Fin 2) ℂ) :
 /-! ### "Compatible ⟹ same parameter": steps 3(b) and 4, and the chain closed
 
 ★★★ New 2026-08-09, ARC-8 block 8.1(a).  The section above mapped the chain in four steps and
-banked steps 1 and 2; `WallCertificates/prop-n2-sufficiency.lean` recorded the remainder as
+banked steps 1 and 2; `docs/wall-certificates/prop-n2-sufficiency.lean` recorded the remainder as
 "steps 3(b) and 4: matrix plumbing over `Fin 2`, no new mathematics and no missing vocabulary".
 That price is now **paid**, and the chain ends in `n2FrameTwist_eq_of_compatible`.
 
@@ -1925,7 +1925,7 @@ theorem frameMap_eq_or_compl_of_compatible (hS2 : P.FirstArgContinuous)
     rw [← hQV, h, hsum, adU_sub, adU_unital hUc', frameMap]
 
 /-- **THE CHAIN, CLOSED: compatible non-scalar effects carry the same twist parameter.**  This
-is the fact `WallCertificates/prop-n2-sufficiency.lean` names load-bearing for
+is the fact `docs/wall-certificates/prop-n2-sufficiency.lean` names load-bearing for
 `prop:n2-sufficiency`'s S5 and S7 clauses — the inner and outer products of `a & (b & c)` carry
 `t_a` and `t_b`, and this is what makes them equal when the effects are compatible.
 
@@ -2316,7 +2316,7 @@ theorem hx_is_load_bearing :
 
 ★★★ **New 2026-08-09, and it discharges a gap a wall certificate had called unstatable.**
 
-`WallCertificates/differential-trio.lean` recorded row 18's remaining content as "that the
+`docs/wall-certificates/differential-trio.lean` recorded row 18's remaining content as "that the
 coefficient `tvalCoef` is realized by an element of the frame stabilizer's identity component acting
 as `z ↦ i(θ_i − θ_j)z`", and parked it behind a `True` placeholder justified by "the missing object's
 *type* needs the stabilizer group as a Lie group with an identity component, which the tree does not
@@ -2346,7 +2346,7 @@ theorem stabilizer_group_action_complex {n : Type*} [Fintype n] [DecidableEq n]
 /-- **The converse: the frame stabilizer is exactly the diagonal subgroup.**
 
 ★★ New 2026-08-09.  After the cold review discharged row 18's forward direction, the rewritten
-`WallCertificates/differential-trio.lean` recorded this converse as the row's **single** remaining
+`docs/wall-certificates/differential-trio.lean` recorded this converse as the row's **single** remaining
 stated gap, judged "writable today with `adU`/`frameProj`/`Matrix.unitaryGroup`, no new vocabulary,
 and looks like a short matrix argument".  That judgement was right, and this is it — so that
 certificate's one gap closed within the hour of being written, which is now the fourth time a
@@ -2576,7 +2576,7 @@ connectivity for the article's graph (`lem:frame-connectivity`) does **not** fol
 `adjAxis_connected` — it is a strictly stronger statement, needing every unitary to
 factor into rank-two block rotations (a Givens/Jacobi decomposition) rather than into the
 three axis-fixing Householder factors `exists_axisFixing_factor` provides.  That row stays
-open; see `THEOREM-MAP.md`. -/
+open; see `docs/coverage/THEOREM-MAP.md`. -/
 
 /-- **The article's frame adjacency.**  `F` and `G` differ by a rotation inside the rank-two
 block on indices `i ≠ j` and agree on every other atom: `F*G` is diagonal outside `{i, j}`,

@@ -47,7 +47,7 @@ import RadicalRelativity.MasterTheorem.Central
 
 -- Interface inhabitedness witnesses: one degenerate instance per interface
 -- structure (vacuity guard; certifies inhabitedness only, NOT the intended EJA
--- instantiation — see the module docstring and LEDGER.md).
+-- instantiation — see the module docstring and docs/history/LEDGER.md).
 import RadicalRelativity.MasterTheorem.Witnesses
 
 -- Vendored physlib HermitianMat island (Apache 2.0, pinned; see
@@ -615,7 +615,7 @@ import RadicalRelativity.PaperA.CertifiedConfiguration
 -- The EJA layer (ARC-9).  The Peirce decomposition at a single idempotent, built from
 -- Mathlib's `IsCommJordan` and nothing else: no spectral theorem, no formal reality, no
 -- finite dimension.  Not consumed by the paper's rows yet — it is the first half of (E2)
--- of `EJA-DIVIDEND.md`, tracked here so the census audits it on the same terms.
+-- of `docs/history/EJA-DIVIDEND.md`, tracked here so the census audits it on the same terms.
 import RadicalRelativity.EJA.Peirce
 import RadicalRelativity.EJA.PeirceMul
 import RadicalRelativity.EJA.Orthogonal

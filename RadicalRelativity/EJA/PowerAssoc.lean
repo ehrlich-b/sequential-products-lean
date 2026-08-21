@@ -21,8 +21,8 @@ Per `lean-formalization-landscape` we are aware of no formalization of it in any
 though we have not searched them systematically, and Mathlib has
 nothing between `IsCommJordan` and this.
 
-★★ **This file refutes `WallCertificates/eja-power-assoc.lean`, written three hours earlier
-in the same arc.** See that file's REFUTED header, and `LEDGER.md` ARC-9 block 9.9, for what
+★★ **This file refutes `docs/wall-certificates/eja-power-assoc.lean`, written three hours earlier
+in the same arc.** See that file's REFUTED header, and `docs/history/LEDGER.md` ARC-9 block 9.9, for what
 the mispricing was and why it is the arc's most useful finding.
 
 ## The proof

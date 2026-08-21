@@ -395,7 +395,7 @@ theorem seqLeftMul_one {a : HermitianMat n 𝕜} (ha : IsEffect a) :
 /-! ## `lem:normality`'s convergence clause — and it needs no S2
 
 ★★ **New 2026-08-09 (ARC-7 block 7.5), and it REFUTES this arc's own wall certificate for row 9
-within the hour it was written.**  `WallCertificates/abstract-tier.lean` recorded row 9 as ABSENT
+within the hour it was written.**  `docs/wall-certificates/abstract-tier.lean` recorded row 9 as ABSENT
 with the price "plausibly cheap; never attempted".  It was cheap, and the certificate is corrected
 rather than quietly dropped — that is the format working as intended.
 

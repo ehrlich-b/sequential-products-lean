@@ -16,7 +16,7 @@ set_option linter.style.longLine false
 `Hermitian/Sequential.lean` builds the twist product for a **constant** parameter
 (`twistSequentialProduct`, `lem:twist-sufficiency`).  The article's rank-two sufficiency
 proposition needs the parameter to vary with the left argument's spectral frame, and
-`WallCertificates/prop-n2-sufficiency.lean` records where that generalization is genuinely
+`docs/wall-certificates/prop-n2-sufficiency.lean` records where that generalization is genuinely
 harder: the axioms relating *two* left arguments (S5, S7) stop being formal, because the inner
 and outer products carry different numbers.
 
@@ -1458,13 +1458,13 @@ theorem sp_eq_n2Sp_of_moduli (P : SequentialProductOn (HermitianMat (Fin 2) ℂ)
 /-! ### Row 35's residue: agreement on ALL effects, not just the positive-definite ones
 
 ★★★ **New 2026-08-12 (ARC-9 block 9.1), and it is the sixth row on this project whose status was
-wrong on the page rather than in the tree.**  `STATEMENT-MANIFEST.md` row 35 recorded the residue as
+wrong on the page rather than in the tree.**  `docs/coverage/STATEMENT-MANIFEST.md` row 35 recorded the residue as
 "agreement on effect × effect between `P.sp` and `n2Sp (n2QubitModuli P hS2)` — proved at
 positive-definite first arguments (`sp_eq_n2Sp_of_moduli`), open at singular ones", and said the
 extension "needs the article's S2 limiting argument (singular effects are limits of positive-definite
 ones and both sides are continuous in the first argument), which is **not written**."
 
-It was written.  `prop:singular` has been wired on the concrete carrier since `LEDGER.md` 2.9 as
+It was written.  `prop:singular` has been wired on the concrete carrier since `docs/history/LEDGER.md` 2.9 as
 `Necessity.sp_eq_on_effects_of_eq_on_posDef` — *two S1–S7 products with S2 that agree on the
 positive-definite effects agree on all effects* — stated for an arbitrary index type and already
 consumed by the ℂ flagship row at `N ≥ 3`.  Nothing in it is rank-gated.  What was missing was the

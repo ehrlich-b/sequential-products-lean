@@ -36,7 +36,7 @@ idempotent, and then the general result applies.
 with **no axioms at all**: nothing says the `p i` are idempotent, orthogonal, or sum to the
 unit, and nothing says `aOf r = Σ exp (r i) • p i`. Those equations have to be *added* to the
 structure before anything can be *derived* from them. That refactor is the pricing recorded
-in `LEDGER.md` (ARC-9 block 9.2), and it is not attempted here.
+in `docs/history/LEDGER.md` (ARC-9 block 9.2), and it is not attempted here.
 
 What this file does is remove the mathematical uncertainty from that price: the FK content
 is derivable from the Jordan identity, so the remaining work on rows 16/17 is interface

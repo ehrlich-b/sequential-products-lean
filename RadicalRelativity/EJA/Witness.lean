@@ -20,7 +20,7 @@ Jordan algebra and are *conditional* throughout: every theorem assumes `c ∘ c 
 sharper ones assume an element with `c ∘ y = ½ y`. Conditional theorems are worth exactly
 as much as their hypotheses are satisfiable, and **this project has already shipped an
 abstract tier whose hypothesis no carrier satisfied** — ARC-6's abstract rows, fixed only
-when `HermitianMat.isArchimedean` was proved (`LEDGER.md`). This file is the check that was
+when `HermitianMat.isArchimedean` was proved (`docs/history/LEDGER.md`). This file is the check that was
 missing then.
 
 Four things are verified, and they are different claims. ★ The docstring said "two" until

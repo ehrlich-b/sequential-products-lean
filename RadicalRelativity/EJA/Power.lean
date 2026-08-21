@@ -20,7 +20,7 @@ before it can start.
 ★★★ **SUPERSEDED WITHIN THE ARC, 2026-08-12: `EJA/PowerAssoc.lean` PROVES IT**
 (`jpow_mul_jpow`, unconditional, core axioms only). Everything below described this file's
 own contribution correctly and its *pricing of the remainder* wrongly, and it is kept in
-that form because the mispricing is the finding — see `LEDGER.md` ARC-9 block 9.9.
+that form because the mispricing is the finding — see `docs/history/LEDGER.md` ARC-9 block 9.9.
 
 This file does **not** prove it. What it does is reduce it to a single family of statements
 and discharge the first three members, so that the remaining gap is one sentence long

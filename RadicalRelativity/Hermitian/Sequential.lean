@@ -233,7 +233,7 @@ theorem trace_twistSeq_mul_left {a : HermitianMat n ℂ} (ha : 0 ≤ a) (b : Her
 /-- **Compatibility ⇒ commutation for the twist product, at TWO parameters.**
 
 ★★ New 2026-08-09 (ARC-7). The one-parameter form below was already here; this generalization exists
-because `WallCertificates/prop-n2-sufficiency.lean` recorded "compatible ⟹ same frame" as a fact
+because `docs/wall-certificates/prop-n2-sufficiency.lean` recorded "compatible ⟹ same frame" as a fact
 "nothing in the tree states", and that was wrong — the one-parameter form *is* the hard half of it.
 What the rank-two application actually needs is this two-parameter shape, because
 `n2_sp_eq_twistSeq_frame` gives the two orders of the product with the parameters of *different*

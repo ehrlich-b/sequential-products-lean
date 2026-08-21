@@ -17,9 +17,8 @@ project:
     On H_N(R), the Hermitian N x N real matrices with N >= 1, every sequential product is
     the Lueders product sqrt(a) b sqrt(a): there is no free parameter. On H_N(C) with
     N >= 3, every sequential product has the twist normal form a^(1/2+it) b a^(1/2-it) for
-    a unique real t. The complex result is the substantial one: the twist family is a
-    genuine one-parameter deformation of the Lueders product, and the theorem says nothing
-    outside it satisfies the axioms. The equations are asserted on all effects, including
+    a unique real t. The twist family is a one-parameter deformation of the Lueders product,
+    and the complex theorem says nothing outside it satisfies the axioms. The equations are asserted on all effects, including
     singular ones, and the uniqueness of t is part of the registered statement.
 
     DIRECTION. Both registered classification theorems are necessity: a product satisfying the
@@ -89,12 +88,12 @@ review:
     enforces over every declaration in the tracked tree: an axiom closure contained in
     Lean's three core axioms, absence of any custom axiom declaration, absence of sorryAx
     and native_decide, a pinned module manifest, and type and body freezes on the statement
-    boundary. STATEMENT-MANIFEST.md records which of the manuscript's numbered results are
+    boundary. docs/coverage/STATEMENT-MANIFEST.md records which of the manuscript's numbered results are
     formalized and which are not. Many of the unformalized ones carry a dated, compiling
-    certificate in WallCertificates/ that states the missing step in Lean with a sorry at
+    certificate in docs/wall-certificates/ that states the missing step in Lean with a sorry at
     the gap rather than estimating it in prose; that coverage is not total, and those files
     are never imported by the library. The campaign record, including retractions and self-corrections, is in
-    LEDGER.md; the frozen row list is STATEMENT-MANIFEST.md. Review was iterative and
+    docs/history/LEDGER.md; the frozen row list is docs/coverage/STATEMENT-MANIFEST.md. Review was iterative and
     adversarial rather than external and independent: no third party has refereed this
     development.
 

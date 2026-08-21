@@ -163,7 +163,7 @@ def quatQuadRepEquiv {a : HermitianMat (n ⊕ n) ℂ} (ha : IsQuaternionic a)
 
 /-! ## The Lüders product ON the quaternionic carrier
 
-★★★ New 2026-08-09 (ARC-8 block 8.3).  `WallCertificates/thm-quaternionic.lean` records the honest
+★★★ New 2026-08-09 (ARC-8 block 8.3).  `docs/wall-certificates/thm-quaternionic.lean` records the honest
 state of row 20 as: the carrier `QuatCarrier n` exists, `quatQuadRep` exists, and **no product is
 defined on the carrier at all** (its absence claim, with grep scope, is
 `SequentialProductOn (QuatCarrier …)` → no hits).  This closes that half.

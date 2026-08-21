@@ -57,7 +57,7 @@ Six layers, all enforced by elaborating this file
    helpers those types name opaquely (the `OpCommute`-to-`False` escape) is
    separately caught by the constructed witnesses in
    `RadicalRelativity.MasterTheorem.Witnesses`, and neither guard claims the
-   fields are *true* on the intended EJA instances (see `LEDGER.md`).
+   fields are *true* on the intended EJA instances (see `docs/history/LEDGER.md`).
 -/
 
 -- A recursive `.lean` source enumeration for the coverage check in Layer 1(c).
@@ -614,7 +614,7 @@ census and exact-closure guarded here. -/
 
 /-! ### Layer 6: master-chain interface constructor freezes
 
-The five interface structures of `THEOREM-MAP.md` §2 (`ComparisonSetup`,
+The five interface structures of `docs/coverage/THEOREM-MAP.md` §2 (`ComparisonSetup`,
 `CoalescenceSetup`, `DiagonalHomSetup`, `StabilizerCoupling`, `IsAlbertModel`)
 carry the cited imports as *fields*, so their constructor types ARE the import
 ledger: a silently added, removed, or re-typed field changes the printed
@@ -628,7 +628,7 @@ the Layer-1 census) consume those bodies through real proofs, so that edit class
 now fails the build there; (ii) no freeze speaks to the *truth* of the fields on
 the intended EJA instances — the witnesses are explicitly degenerate, and
 discharging the fields on the intended algebras is the formalization campaign
-(`LEDGER.md`). -/
+(`docs/history/LEDGER.md`). -/
 
 /-- info: @MasterTheorem.ComparisonSetup.mk : {J : Type u_1} →
   [inst : NormedAddCommGroup J] →

@@ -20,7 +20,7 @@ chain quantifies over (`ComparisonSetup`, `CoalescenceSetup`, `DiagonalHomSetup`
 
 ## What this module certifies — and what it does not
 
-**Certifies (the vacuity guard).** `THEOREM-MAP.md` §2 documented an escape class:
+**Certifies (the vacuity guard).** `docs/coverage/THEOREM-MAP.md` §2 documented an escape class:
 because the tree constructed no witness of any interface structure, a hostile edit
 could redefine a helper *body* (e.g. `MasterTheorem.OpCommute` to `False`) so that a
 field became unsatisfiable — making the whole skeleton vacuous — while every frozen
@@ -39,7 +39,7 @@ instantiate **none** of the cited van de Wetering / van Imhoff–Roelands /
 Faraut–Korányi / Yokota content. Inhabitedness removes the vacuity *failure mode*;
 it does **not** shrink the conditionality of the skeleton: the distance between
 these degenerate instances and the intended EJA instances is exactly the remaining
-formalization campaign (`LEDGER.md`). Nothing downstream may cite this module as
+formalization campaign (`docs/history/LEDGER.md`). Nothing downstream may cite this module as
 evidence that the interface hypotheses hold on the paper's algebras.
 
 `#print axioms` on every declaration here is Lean core only.
@@ -140,7 +140,7 @@ noncomputable def trivialCoupling : StabilizerCoupling 3 PUnit ℝ where
 block representations are injective (any map out of a subsingleton is), so the
 marker is inhabited. This consumes `Function.Injective` through a real proof — the
 guard companion to `opCommute_mul_real` — while modelling nothing about `H₃(𝕆)`:
-the intended `Spin(8)`-triality content is untouched (see `LEDGER.md`). -/
+the intended `Spin(8)`-triality content is untouched (see `docs/history/LEDGER.md`). -/
 theorem trivialCoupling_isAlbertModel : IsAlbertModel trivialCoupling :=
   ⟨fun _ _ _ a b _ => Subsingleton.elim a b⟩
 

@@ -1,7 +1,7 @@
 # `upstream/` — Mathlib contribution candidates, STAGED
 
 **Status: STAGED, NOT SUBMITTED. Nothing here has been sent anywhere.** Submission is
-Bryan's decision, not this directory's. Created 2026-08-08 (campaign `LEDGER.md` item 4.4).
+Bryan's decision, not this directory's. Created 2026-08-08 (campaign `docs/history/LEDGER.md` item 4.4).
 
 Contents:
 

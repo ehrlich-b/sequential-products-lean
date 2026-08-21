@@ -19,7 +19,7 @@ carries intrinsically.  On a finite-dimensional carrier the two are equivalent, 
 `Hermitian/OrderUnit.lean` proves the two-sided comparison
 (`ouNorm_le_norm`, `norm_le_sqrt_card_mul_ouNorm`) — but a comparison of *norms* is not by
 itself a statement about `ContinuousOn`, so until now the fidelity of the Lean S2 to the
-paper's S2 was an argument in `THEOREM-MAP.md` rather than a theorem.  This file makes it a
+paper's S2 was an argument in `docs/coverage/THEOREM-MAP.md` rather than a theorem.  This file makes it a
 theorem, and restates both rows so that their S2 hypothesis is the paper's verbatim.
 
 Why the restatement is not vacuous bookkeeping: `ContinuousOn` cannot express "continuous in

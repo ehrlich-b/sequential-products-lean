@@ -823,7 +823,7 @@ theorem spCone_smul (harch : IsArchimedean V) (hS2 : P.FirstArgContinuous)
 ★★ **New 2026-08-09 (ARC-7), contributed by the certificate-refutation review, and it refutes this
 project's own price twice over.**
 
-`WallCertificates/abstract-tier.lean` recorded "no second-argument cone extension" with the claim
+`docs/wall-certificates/abstract-tier.lean` recorded "no second-argument cone extension" with the claim
 that the article's companion identity `a · a⁻¹ = 𝟙` "needs a second-argument extension nothing in
 the tree has".  The grep behind that was accurate and the *pricing* was wrong on both counts.
 
